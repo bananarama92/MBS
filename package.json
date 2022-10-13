@@ -1,0 +1,36 @@
+{
+    "name": "bondage-club-scripts",
+    "version": "0.1.0",
+    "repository": "git@github.com:bananarama92/BC-Scripts.git",
+    "author": "bananarama92 <105885570+bananarama92@users.noreply.github.com>",
+    "license": "LGPL-3.0",
+    "private": true,
+    "dependencies": {
+        "bondage-club-mod-sdk": "^1.1.0"
+    },
+    "devDependencies": {
+        "@open-wc/building-rollup": "*",
+        "@rollup/plugin-node-resolve": "^13.3.0",
+        "@rollup/plugin-typescript": "^8.3.3",
+        "@typescript-eslint/eslint-plugin": "^5.47.1",
+        "@typescript-eslint/parser": "^5.31.0",
+        "eslint": "^8.31.0",
+        "eslint-config-standard-with-typescript": "^24.0.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-n": "^15.6.0",
+        "eslint-plugin-promise": "^6.1.1",
+        "rollup": "^2.77.2",
+        "rollup-plugin-progress": "^1.1.2",
+        "typescript": "^4.9.4",
+        "rollup-plugin-serve": "*",
+        "@rollup/plugin-commonjs": "*",
+        "rollup-plugin-terser": "*"
+    },
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "typecheck": "tsc --noEmit -p .",
+        "lint": "eslint --max-warnings 0 .",
+        "lint:fix": "eslint --fix ."
+    }
+}
