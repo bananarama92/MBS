@@ -114,7 +114,7 @@ function fortuneWheelEquip(
     if (stripNaked) {
         CharacterNaked(Player);
     }
-    for (const {Name, Group, Equip, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
+    for (const {Name, Group, Equip, Craft, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
 
@@ -134,13 +134,16 @@ function fortuneWheelEquip(
             Player.FocusGroup = null;
             continue;
         }
-        //InventoryWearCraft(newItem, Craft);
-        //InventoryCraft(Player, Player, Group, Craft, false);
+        // InventoryWearCraft(newItem, Craft);
+        InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
         if (ItemCallbacks != null) {
             Object.values(ItemCallbacks).forEach(next => next(newItem));
+        }
+        if (globalCallbacks != null) {
+            globalCallbacks.forEach(next => next(newItem));
         }
     }
     CharacterRefresh(Player, true, false);
