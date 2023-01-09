@@ -45,3 +45,13 @@ declare function CraftingValidate(
 declare let TextScreenCache: TextCache | null;
 declare function SkillGetWithRatio(SkillType: string): number;
 declare const WheelFortuneCharacter: Character;
+declare function InventoryWearCraft(Item: Item, Craft: CraftingItem): void;
+declare function CharacterAppearanceSetItem(
+    C: Character,
+    Group: AssetGroupName,
+    ItemAsset?: Asset,
+    NewColor?: ItemColor,
+    DifficultyFactor?: number,
+    ItemMemberNumber?: number,
+    Refresh?: boolean,
+): void;

@@ -90,7 +90,7 @@ function equipLock(item: Item, lockName: AssetLockType): void {
     ) {
         return;
     }
-    InventoryLock(Player, item, { Asset: lock }, null, true);
+    InventoryLock(Player, item, { Asset: lock }, null, false);
 }
 
 /**
@@ -128,12 +128,17 @@ function fortuneWheelEquip(
             continue;
         }
         Player.FocusGroup = asset.Group;
+        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), undefined, false);
+        const newItem = InventoryGet(Player, Group);
+        if (newItem == null) {
+            continue;
+        }
+        InventoryWearCraft(newItem, Craft);
         InventoryWear(Player, Name, Group, "Default", SkillGetWithRatio("Bondage"), null, Craft);
         InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
-        const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
             continue;
         }
