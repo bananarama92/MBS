@@ -33,6 +33,12 @@ jobs:
       - run: npm run build
       - run: npm run typecheck
       - run: npm run lint
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: '.'
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
