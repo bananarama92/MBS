@@ -38,7 +38,7 @@ jobs:
       - run: |
           case "${{ github.event_name }}" in
             "release")
-              VERSION="${{ github.ref_name }}""
+              VERSION="${{ github.ref_name }}"
             *)
               VERSION="dev0"
           esac
