@@ -50,7 +50,7 @@ function equipTimerLock(item: Item, minutes: number): void {
     // Equip the timer lock if desired and possible
     if (!equipLock(item, "TimerPasswordPadlock")) {
         return;
-    };
+    }
 
     if (item.Property == null) item.Property = {};
     item.Property.RemoveTimer = CurrentTime + minutes * 60000;
