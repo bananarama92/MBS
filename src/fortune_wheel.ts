@@ -89,7 +89,7 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     if (
         lock == null
         || InventoryGetLock(item) != null
-        || InventoryDoesItemAllowLock(item)
+        || !InventoryDoesItemAllowLock(item)
         || InventoryBlockedOrLimited(Player, { Asset: lock })
     ) {
         return false;
