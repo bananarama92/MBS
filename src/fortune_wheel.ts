@@ -127,8 +127,10 @@ function fortuneWheelEquip(
         ) {
             continue;
         }
+        Player.FocusGroup = asset.Group;
         InventoryWear(Player, Name, Group, "Default", SkillGetWithRatio("Bondage"), null, Craft);
         InventoryCraft(Player, Player, Group, Craft, false);
+        Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
         const newItem = InventoryGet(Player, Group);
