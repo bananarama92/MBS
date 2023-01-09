@@ -60,7 +60,7 @@ export function getRandomPassword(n: number): string {
     let ret = "";
     while (n > 0) {
         ret += randomElement(ALPHA_NUMERICAL);
-        n += 1;
+        n -= 1;
     }
     return ret;
 }
