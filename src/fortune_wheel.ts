@@ -149,7 +149,7 @@ function fortuneWheelEquip(
             globalCallbacks.forEach(next => next(newItem));
         }
     }
-    CharacterRefresh(Player);
+    CharacterRefresh(Player, true, false);
     ChatRoomCharacterUpdate(Player);
 }
 
