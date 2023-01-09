@@ -136,6 +136,11 @@ function fortuneWheelEquip(
         InventoryWearCraft(newItem, Craft);
         InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
+
+        // Fire up any of the provided item-specific dynamic callbacks
+        if (ItemCallbacks != null) {
+            Object.values(ItemCallbacks).forEach(next => next(newItem));
+        }
     }
     CharacterRefresh(Player, true, false);
     ChatRoomCharacterUpdate(Player);
