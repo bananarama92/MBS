@@ -43,7 +43,7 @@ jobs:
               VERSION="dev0" ;;
           esac
           mkdir ./dist/$VERSION
-          mv ./dist ./dist/$VERSION
+          mv ./dist/* ./dist/$VERSION/
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
