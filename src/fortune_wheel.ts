@@ -139,15 +139,15 @@ function fortuneWheelEquip(
         Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
-        if (newItem == null) {
-            continue;
-        }
-        if (ItemCallbacks != null) {
+        /**
+         *         if (ItemCallbacks != null) {
             Object.values(ItemCallbacks).forEach(next => next(newItem));
         }
         if (globalCallbacks != null) {
             globalCallbacks.forEach(next => next(newItem));
         }
+         */
+
     }
     CharacterRefresh(Player, true, false);
     ChatRoomCharacterUpdate(Player);
