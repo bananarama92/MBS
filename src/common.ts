@@ -3,16 +3,14 @@
 import bcModSdk from "bondage-club-mod-sdk";
 
 /** An array with all alpha-numerical characters. */
-const ALPHA_NUMERICAL: readonly string[] = [
+const ALPHABET: readonly string[] = [
     "A", "B", "C", "D",
     "E", "F", "G", "H",
     "I", "J", "K", "L",
     "M", "N", "O", "P",
     "Q", "R", "S", "T",
     "U", "V", "W", "X",
-    "Y", "Z", "1", "2",
-    "3", "4", "5", "6",
-    "7", "8", "9", "0",
+    "Y", "Z",
 ];
 
 /**
@@ -48,7 +46,7 @@ export function randomElement<T>(list: readonly T[]): T {
 }
 
 /**
- * Generate a password consisting of `n` random alpha-numerical characters.
+ * Generate a password consisting of `n` random latin characters.
  * @param n The length of the password; must be in the [0, 8] interval
  * @returns the newly generated password
  */
@@ -59,7 +57,7 @@ export function getRandomPassword(n: number): string {
 
     let ret = "";
     for (const _ of range(0, n)) {
-        ret += randomElement(ALPHA_NUMERICAL);
+        ret += randomElement(ALPHABET);
     }
     return ret;
 }
