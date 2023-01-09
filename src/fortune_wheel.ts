@@ -48,7 +48,10 @@ function equipTimerLock(item: Item, minutes: number): void {
     }
 
     // Equip the timer lock if desired and possible
-    equipLock(item, "TimerPasswordPadlock");
+    if (!equipLock(item, "TimerPasswordPadlock")) {
+        return;
+    };
+
     if (item.Property == null) item.Property = {};
     item.Property.RemoveTimer = CurrentTime + minutes * 60000;
     item.Property.RemoveItem = true;
@@ -72,8 +75,9 @@ function equipHighSecLock(item: Item): void {
  * Note that no lock-specific {@link Item.Property} values are set on the item.
  * @param item The item in question
  * @param lockName The to-be attached lock
+ * @returns whether the lock was equiped or not
  */
-function equipLock(item: Item, lockName: AssetLockType): void {
+function equipLock(item: Item, lockName: AssetLockType): boolean {
     if (typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     } else if (typeof lockName !== "string") {
@@ -88,9 +92,10 @@ function equipLock(item: Item, lockName: AssetLockType): void {
         || InventoryDoesItemAllowLock(item)
         || InventoryBlockedOrLimited(Player, { Asset: lock })
     ) {
-        return;
+        return false;
     }
     InventoryLock(Player, item, { Asset: lock }, null, false);
+    return true;
 }
 
 /**
@@ -127,16 +132,14 @@ function fortuneWheelEquip(
         ) {
             continue;
         }
-        Player.FocusGroup = asset.Group;
         CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), undefined, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
             Player.FocusGroup = null;
             continue;
         }
-        // InventoryWearCraft(newItem, Craft);
+        newItem.Craft = Craft;
         InventoryCraft(Player, Player, Group, Craft, false);
-        Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
         if (ItemCallbacks != null) {
@@ -175,7 +178,7 @@ function copyHairColor(item: Item, indices: number[]): void {
         throw `Invalid "indices" type: ${typeof indices}`;
     }
 
-    const hair = Player.Appearance.find(i => i.Asset.Name === "HairFront3");
+    const hair = Player.Appearance.find(i => i.Asset.Group.Name === "HairFront");
     if (hair === undefined) {
         return;
     }
@@ -385,7 +388,6 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Chain",
                     Description: "Never to escape",
                     Type: null,
-                    Color: "#680096",
                 },
                 ItemCallbacks: {
                     Color: (item) => copyHairColor(item, [0]),
@@ -398,7 +400,6 @@ function generateItemSets(): FortuneWheelItemSets {
                     Property: "Secure",
                     Name: "Permanent PSO Piercings",
                     Type: "Chain",
-                    Color: "#000000,#680096,#424242",
                 },
                 ItemCallbacks: {
                     Color: (item) => copyHairColor(item, [0, 1, 2]),
