@@ -49,11 +49,11 @@ export function randomElement<T>(list: readonly T[]): T {
 
 /**
  * Generate a password consisting of `n` random alpha-numerical characters.
- * @param n The length of the password; must be smaller than or equal to 8
+ * @param n The length of the password; must be in the [0, 8] interval
  * @returns the newly generated password
  */
 export function getRandomPassword(n: number): string {
-    if (!Number.isInteger(n) || n > 8) {
+    if (!Number.isInteger(n) || n > 8 || n < 0) {
         throw `Invalid "n" value: ${typeof n}`;
     }
 
