@@ -118,7 +118,7 @@ function fortuneWheelEquip(
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
 
-        // Equip the item if possible
+        // Equip the item if possible; avoid refreshes as much as possible until all items are
         if (
             (typeof Equip === "function" && !Equip())
             || asset == null
@@ -134,7 +134,7 @@ function fortuneWheelEquip(
             continue;
         }
         InventoryWearCraft(newItem, Craft);
-        InventoryWear(Player, Name, Group, "Default", SkillGetWithRatio("Bondage"), null, Craft);
+        InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
     }
     CharacterRefresh(Player, true, false);
