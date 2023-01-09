@@ -485,6 +485,7 @@ function generateNewOptions(
 
 const BC88_BETA1: readonly [88, 1] = [88, 1];
 if (BC_VERSION >= BC88_BETA1) {
+    console.log(`MBS: Initializing wheel of fortune additions (BC ${GameVersion})`);
     const WHEEL_ITEMS_NEW = Object.freeze(generateNewOptions(WheelFortuneOption.map(i => i.ID)));
     Object.values(WHEEL_ITEMS_NEW).forEach((item) => {
         if (WheelFortuneOption.some(i => i.Name === item.Name)) {
@@ -500,4 +501,6 @@ if (BC_VERSION >= BC88_BETA1) {
             TextScreenCache.cache[`Option${item.ID}`] = item.Description;
         }
     });
+} else {
+    console.log(`MBS: Aborting initializion of wheel of fortune additions (BC ${GameVersion})`);
 }
