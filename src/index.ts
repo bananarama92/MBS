@@ -11,4 +11,4 @@ export const MBS_MOD_API = bcModSdk.registerMod({
     version: MBS_VERSION,
 });
 
-console.log(`Initializing BCS ${MBS_VERSION}`);
+console.log(`MBS: Initializing MBS version ${MBS_VERSION}`);
