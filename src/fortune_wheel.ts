@@ -131,10 +131,11 @@ function fortuneWheelEquip(
         CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), undefined, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
+            Player.FocusGroup = null;
             continue;
         }
-        InventoryWearCraft(newItem, Craft);
-        InventoryCraft(Player, Player, Group, Craft, false);
+        //InventoryWearCraft(newItem, Craft);
+        //InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
 
         // Fire up any of the provided item-specific dynamic callbacks
