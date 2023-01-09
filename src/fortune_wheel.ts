@@ -1,6 +1,7 @@
 "use strict";
 
 import { BC_VERSION, range, randomElement, getRandomPassword } from "common";
+import { MBS_MOD_API } from "index";
 
 /**
  * Generate a list of unique length-1 UTF16 characters.
@@ -486,6 +487,7 @@ function generateNewOptions(
 const BC88_BETA1: readonly [88, 1] = [88, 1];
 if (BC_VERSION >= BC88_BETA1) {
     console.log(`MBS: Initializing wheel of fortune additions (BC ${GameVersion})`);
+
     const WHEEL_ITEMS_NEW = Object.freeze(generateNewOptions(WheelFortuneOption.map(i => i.ID)));
     Object.values(WHEEL_ITEMS_NEW).forEach((item) => {
         if (WheelFortuneOption.some(i => i.Name === item.Name)) {
@@ -495,11 +497,15 @@ if (BC_VERSION >= BC88_BETA1) {
         if (item.Default) {
             WheelFortuneDefault += item.ID;
         }
-        console.log("MBS:", TextScreenCache);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneDraw", 0, (args, next) => {
         if (TextScreenCache != null) {
-            console.log("MBS:", TextScreenCache.cache);
-            TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+            for (const item of Object.values(WHEEL_ITEMS_NEW)) {
+                TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+            }
         }
+        return next(args);
     });
 } else {
     console.log(`MBS: Aborting initializion of wheel of fortune additions (BC ${GameVersion})`);
