@@ -98,7 +98,10 @@ export function getVersions(): Record<string, string> {
     return rec;
 }
 
+/** The MBS version. */
 export const MBS_VERSION = "0.1.0.dev0";
+
+/** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({
     name: "MBS",
     fullName: "Maid's Bondage Scripts",

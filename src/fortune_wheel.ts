@@ -516,8 +516,8 @@ function generateNewOptions(
     return <FortuneWheelOptions>ret;
 }
 
-const BC88_BETA1: readonly [88, 1] = [88, 1];
-if (BC_VERSION >= BC88_BETA1) {
+// Requires BC R88Beta1 or higher
+if (BC_VERSION >= <[number, number]>[88, 1]) {
     console.log(`MBS: Initializing wheel of fortune additions (BC ${GameVersion})`);
 
     /** A read-only record with all new MBS fortune wheel options. */
