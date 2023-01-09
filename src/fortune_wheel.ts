@@ -135,19 +135,7 @@ function fortuneWheelEquip(
         }
         InventoryWearCraft(newItem, Craft);
         InventoryWear(Player, Name, Group, "Default", SkillGetWithRatio("Bondage"), null, Craft);
-        InventoryCraft(Player, Player, Group, Craft, false);
         Player.FocusGroup = null;
-
-        // Fire up any of the provided item-specific dynamic callbacks
-        /**
-         *         if (ItemCallbacks != null) {
-            Object.values(ItemCallbacks).forEach(next => next(newItem));
-        }
-        if (globalCallbacks != null) {
-            globalCallbacks.forEach(next => next(newItem));
-        }
-         */
-
     }
     CharacterRefresh(Player, true, false);
     ChatRoomCharacterUpdate(Player);
