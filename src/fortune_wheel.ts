@@ -494,7 +494,9 @@ if (BC_VERSION >= BC88_BETA1) {
         if (item.Default) {
             WheelFortuneDefault += item.ID;
         }
+        console.log(TextScreenCache);
         if (TextScreenCache != null) {
+            console.log(TextScreenCache.cache);
             TextScreenCache.cache[`Option${item.ID}`] = item.Description;
         }
     });

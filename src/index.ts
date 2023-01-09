@@ -1,11 +1,14 @@
 "use strict";
 
 import bcModSdk from "bondage-club-mod-sdk";
-import "fortune_wheel";
+
+export const MBS_VERSION = "0.1.0.dev0";
 
 export const MBS_MOD_API = bcModSdk.registerMod({
     name: "MBS",
     fullName: "Maid's Bondage Scripts",
     repository: "https://github.com/bananarama92/MBS",
-    version: "0.1.0",
+    version: MBS_VERSION,
 });
+
+console.log(`Initializing BCS ${MBS_VERSION}`);
