@@ -27,7 +27,7 @@ export function* range(start: number, stop: number, step: number = 1): Generator
     if (typeof step !== "number") throw `Invalid "step" type: ${typeof step}`;
 
     let i = start;
-    while (start < stop) {
+    while (i < stop) {
         yield i;
         i += step;
     }
