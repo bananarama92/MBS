@@ -1,6 +1,7 @@
 "use strict";
 
 import bcModSdk from "bondage-club-mod-sdk";
+import "fortune_wheel";
 
 export const MBS_MOD_API = bcModSdk.registerMod({
     name: "MBS",
