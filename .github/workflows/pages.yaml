@@ -24,21 +24,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check_release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set image tag
-        run: |
-          case "${{ github.event_name }}" in
-            "release")
-              echo "URL_SUFFIX=${{ github.ref_name }}" >> $GITHUB_ENV ;;
-            *)
-              echo "URL_SUFFIX=dev0" >> $GITHUB_ENV ;;
-          esac
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}/${{ env.URL_SUFFIX }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,6 +35,15 @@ jobs:
       - run: npm run build
       - run: npm run typecheck
       - run: npm run lint
+      - run: |
+          case "${{ github.event_name }}" in
+            "release")
+              VERSION="${{ github.ref_name }}""
+            *)
+              VERSION="dev0"
+          esac
+          mkdir ./dist/$VERSION
+          mv ./dist ./dist/$VERSION
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
