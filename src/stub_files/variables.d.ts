@@ -55,3 +55,4 @@ declare function CharacterAppearanceSetItem(
     ItemMemberNumber?: number,
     Refresh?: boolean,
 ): void;
+declare let CraftingSlotMax: number;
