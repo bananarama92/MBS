@@ -3,14 +3,12 @@ interface FortuneWheelOptionBase {
     Color: string,
     Script?: () => void,
     Description?: string,
-    Name?: string,
     Default?: boolean,
 }
 
 interface FortuneWheelOption extends FortuneWheelOptionBase{
     Script: () => void,
     Description: string,
-    Name: string,
     Default: boolean,
 }
 

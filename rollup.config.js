@@ -13,6 +13,7 @@ import { terser } from "rollup-plugin-terser";
 const config = {
     input: "src/index.ts",
     output: {
+        name: "mbs",
         file: "dist/mbs.js",
         format: "iife",
         sourcemap: true,

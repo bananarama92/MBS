@@ -1,7 +1,6 @@
 "use strict";
 
-import { BC_VERSION, range, randomElement, getRandomPassword } from "common";
-import { MBS_MOD_API } from "index";
+import { MBS_MOD_API, BC_VERSION, range, randomElement, getRandomPassword } from "common";
 
 /**
  * Generate a list of unique length-1 UTF16 characters.
@@ -36,6 +35,11 @@ function generateIDs(n: number, exclude: null | readonly string[] = null): strin
     return ret;
 }
 
+/**
+ * Attach and set a timer lock to the passed item for the specified duration.
+ * @param item The item in question
+ * @param minutes The duration of the timer lock; its value must fall in the [0, 240] interval
+ */
 function equipTimerLock(item: Item, minutes: number): void {
     if (typeof minutes !== "number") {
         throw `Invalid "minutes" type: ${typeof minutes}`;
@@ -52,14 +56,24 @@ function equipTimerLock(item: Item, minutes: number): void {
     item.Property.Password = getRandomPassword(8);
 }
 
+/**
+ * Attach a high security padlock to the passed item.
+ * @param item The item in question
+ */
 function equipHighSecLock(item: Item): void {
     // Equip the timer lock if desired and possible
-    equipLock(item, "HighSecurityLock");
+    equipLock(item, "HighSecurityPadlock");
     if (item.Property == null) item.Property = {};
     item.Property.MemberNumberListKeys = "";
 }
 
-function equipLock(item: Item, lockName: string): void {
+/**
+ * Attach a the specified padlock to the passed item.
+ * Note that no lock-specific {@link Item.Property} values are set on the item.
+ * @param item The item in question
+ * @param lockName The to-be attached lock
+ */
+function equipLock(item: Item, lockName: AssetLockType): void {
     if (typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     } else if (typeof lockName !== "string") {
@@ -79,6 +93,12 @@ function equipLock(item: Item, lockName: string): void {
     InventoryLock(Player, item, { Asset: lock }, null, true);
 }
 
+/**
+ * Equip the player with all items from the passed fortune wheel item list.
+ * @param itemList The items in question
+ * @param globalCallbacks A list of callbacks (or `null`) that will be applied to all items after they're equiped
+ * @param stripNaked Whether all appearance items should be removed from the player
+ */
 function fortuneWheelEquip(
     itemList: readonly FortuneWheelItem[],
     globalCallbacks: null | readonly FortuneWheelCallback[] = null,
@@ -108,7 +128,7 @@ function fortuneWheelEquip(
             continue;
         }
         InventoryWear(Player, Name, Group, "Default", SkillGetWithRatio("Bondage"), null, Craft);
-        InventoryCraft(Player, Player, Group, Craft, true);
+        InventoryCraft(Player, Player, Group, Craft, false);
 
         // Fire up any of the provided item-specific dynamic callbacks
         const newItem = InventoryGet(Player, Group);
@@ -126,6 +146,7 @@ function fortuneWheelEquip(
     ChatRoomCharacterUpdate(Player);
 }
 
+/** A list of all valid wheel of fortune colors. */
 const FORTUNE_WHEEL_COLORS: readonly string[] = [
     "Blue",
     "Gold",
@@ -137,6 +158,11 @@ const FORTUNE_WHEEL_COLORS: readonly string[] = [
     "Yellow",
 ];
 
+/**
+ * Copy the player's hair color the to passed item.
+ * @param item The item in question
+ * @param indices The indices of the {@link item.Color} array whose color will be updated
+ */
 function copyHairColor(item: Item, indices: number[]): void {
     if (typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
@@ -173,6 +199,7 @@ function copyHairColor(item: Item, indices: number[]): void {
     }
 }
 
+/** Return a record with all new MBS fortune wheel item sets. */
 function generateItemSets(): FortuneWheelItemSets {
     const ret: Record<FortuneWheelNames, FortuneWheelItemBase[]> = {
         leash_candy: [
@@ -412,8 +439,14 @@ function generateItemSets(): FortuneWheelItemSets {
     return <FortuneWheelItemSets>ret;
 }
 
+/** A read-only record with all new MBS fortune wheel item sets. */
 const FORTUNATE_WHEEL_ITEM_SETS = Object.freeze(generateItemSets());
 
+/**
+ * Return a record with all new MBS fortune wheel options.
+ * @param idExclude A list of {@link FortuneWheelOption.ID} values already present in {@link WheelFortuneOption}
+ * @param colors A list of colors whose entries will be used at random
+ */
 function generateNewOptions(
     idExclude: null | readonly string[] = null,
     colors: readonly string[] = FORTUNE_WHEEL_COLORS,
@@ -476,7 +509,6 @@ function generateNewOptions(
     const entries = Object.entries(ret);
     const IDs = generateIDs(entries.length, idExclude);
     entries.forEach(([name, struct], i) => {
-        struct.Name = `MBS_${name}`;
         struct.ID = IDs[i];
         struct.Color = randomElement(colors);
         ret[name] = Object.freeze(struct);
@@ -488,11 +520,10 @@ const BC88_BETA1: readonly [88, 1] = [88, 1];
 if (BC_VERSION >= BC88_BETA1) {
     console.log(`MBS: Initializing wheel of fortune additions (BC ${GameVersion})`);
 
+    /** A read-only record with all new MBS fortune wheel options. */
     const WHEEL_ITEMS_NEW = Object.freeze(generateNewOptions(WheelFortuneOption.map(i => i.ID)));
+
     Object.values(WHEEL_ITEMS_NEW).forEach((item) => {
-        if (WheelFortuneOption.some(i => i.Name === item.Name)) {
-            return;
-        }
         WheelFortuneOption.push(item);
         if (item.Default) {
             WheelFortuneDefault += item.ID;
