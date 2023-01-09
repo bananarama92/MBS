@@ -53,14 +53,13 @@ export function randomElement<T>(list: readonly T[]): T {
  * @returns the newly generated password
  */
 export function getRandomPassword(n: number): string {
-    if (!Number.isInteger(n) || n > 8 || n < 0) {
+    if (n < 0) {
         throw `Invalid "n" value: ${typeof n}`;
     }
 
     let ret = "";
-    while (n > 0) {
+    for (const _ of range(0, n)) {
         ret += randomElement(ALPHA_NUMERICAL);
-        n -= 1;
     }
     return ret;
 }
