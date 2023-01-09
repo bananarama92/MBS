@@ -114,7 +114,7 @@ function fortuneWheelEquip(
     if (stripNaked) {
         CharacterNaked(Player);
     }
-    for (const {Name, Group, Equip, Craft, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
+    for (const {Name, Group, Equip, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
 
