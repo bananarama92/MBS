@@ -8,7 +8,7 @@
 // @include      /^https:\/\/(www\.)?bondage-europe\.com\/R\d+\/(BondageClub|\d+)(\/((index|\d+)\.html)?)?$/
 // @homepage     https://github.com/bananarama92/MBS.git#readme
 // @source       https://github.com/bananarama92/MBS.git
-// @downloadURL  https://cdn.jsdelivr.net/gh/bananarama92/MBS/src/index.ts
+// @downloadURL  https://cdn.jsdelivr.net/gh/bananarama92/MBS/src/loader.user.js
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
