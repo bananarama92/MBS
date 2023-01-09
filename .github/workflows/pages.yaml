@@ -38,9 +38,9 @@ jobs:
       - run: |
           case "${{ github.event_name }}" in
             "release")
-              VERSION="${{ github.ref_name }}"
+              VERSION="${{ github.ref_name }}" ;;
             *)
-              VERSION="dev0"
+              VERSION="dev0" ;;
           esac
           mkdir ./dist/$VERSION
           mv ./dist ./dist/$VERSION
