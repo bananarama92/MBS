@@ -94,7 +94,7 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     ) {
         return false;
     }
-    InventoryLock(Player, item, { Asset: lock }, null, false);
+    InventoryLock(Player, item, { Asset: lock }, Player.ID, false);
     return true;
 }
 
@@ -132,7 +132,7 @@ function fortuneWheelEquip(
         ) {
             continue;
         }
-        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), undefined, false);
+        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.ID, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
             Player.FocusGroup = null;
