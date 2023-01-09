@@ -24,10 +24,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set image tag
+        run: |
+          case "${{ github.event_name }}" in
+            "release")
+              echo "URL_SUFFIX=${{ github.ref_name }}" >> $GITHUB_ENV ;;
+            *)
+              echo "URL_SUFFIX=dev0" >> $GITHUB_ENV ;;
+          esac
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}/${{ env.URL_SUFFIX }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

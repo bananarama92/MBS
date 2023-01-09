@@ -19,7 +19,7 @@ setTimeout(
         const n = document.createElement("script");
         n.language = "JavaScript";
         n.crossorigin = "anonymous";
-        n.src = "https://bananarama92.github.io/MBS/mbs.js";
+        n.src = "https://bananarama92.github.io/MBS/0.1.0/mbs.js";
         document.head.appendChild(n);
     },
     2000,
