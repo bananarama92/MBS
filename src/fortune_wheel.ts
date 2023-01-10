@@ -129,7 +129,7 @@ function fortuneWheelEquip(
             || !(oldItem == null || InventoryGetLock(oldItem) == null)
             || InventoryBlockedOrLimited(Player, { Asset: asset })
             || !InventoryAllow(Player, asset, asset.Prerequisite, false)
-            || InventoryGroupIsBlocked(Player, Group, false)
+            // || InventoryGroupIsBlocked(Player, Group, false)
         ) {
             continue;
         }
@@ -299,7 +299,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Property: "Secure",
                     Name: "Permanent PSO Panties",
                     Description: "No escape and no Orgasms",
-                    Type: "c0i2o1s0",
+                    Type: "c3i4o1s2",
                 },
                 ItemCallback: (item) => copyHairColor(item, [0, 2, 4, 5]),
             },
@@ -310,7 +310,6 @@ function generateItemSets(): FortuneWheelItemSets {
                     Property: "Secure",
                     Name: "Permanent PSO Collar",
                     Type: "Ring",
-                    Color: "#222222,#888888,#AA2121,#AA2121,#888888",
                 },
                 ItemCallback: (item) => {
                     item.Color = ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"];
@@ -391,7 +390,10 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Piercings",
                     Type: "Chain",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0, 1, 2]),
+                ItemCallback: (item) => {
+                    item.Color = ["Default", "#E781B1", "#E781B1"];
+                    copyHairColor(item, [1, 2]);
+                },
             },
             {
                 Name: "CollarAutoShockUnit",
