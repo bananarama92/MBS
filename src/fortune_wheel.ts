@@ -107,20 +107,17 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
  */
 function fortuneWheelEquip(
     itemList: readonly FortuneWheelItem[],
-    globalCallbacks: null | readonly FortuneWheelCallback[] = null,
+    globalCallback: null | FortuneWheelCallback = null,
     stripNaked: boolean = true,
 ): void {
     if (!Array.isArray(itemList)) {
         throw `Invalid "itemList" type: ${typeof itemList}`;
     }
-    if (globalCallbacks != null && !Array.isArray(globalCallbacks)) {
-        throw `Invalid "globalCallbacks" type: ${typeof itemList}`;
-    }
 
     if (stripNaked) {
         CharacterNaked(Player);
     }
-    for (const {Name, Group, Equip, Craft, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
+    for (const {Name, Group, Equip, Craft, ItemCallback} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
         const equip = (typeof Equip === "function") ? Equip : true;
@@ -147,11 +144,11 @@ function fortuneWheelEquip(
         InventoryCraft(Player, Player, Group, Craft, false);
 
         // Fire up any of the provided item-specific dynamic callbacks
-        if (ItemCallbacks != null) {
-            Object.values(ItemCallbacks).forEach(next => next(newItem));
+        if (typeof ItemCallback === "function") {
+            ItemCallback(newItem);
         }
-        if (globalCallbacks != null) {
-            globalCallbacks.forEach(next => next(newItem));
+        if (typeof globalCallback === "function") {
+            globalCallback(newItem);
         }
     }
     CharacterRefresh(Player, true, false);
@@ -221,25 +218,19 @@ function generateItemSets(): FortuneWheelItemSets {
             {
                 Name: "ReverseBunnySuit",
                 Group: "Suit",
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 1]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 1]),
             },
             {
                 Name: "Catsuit",
                 Group: "SuitLower",
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 1]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 1]),
             },
             {
                 Name: "FaceVeil",
                 Group: "Mask",
-                ItemCallbacks: {
-                    Color: (item) => {
-                        item.Color = "#000";
-                        copyHairColor(item, [1]);
-                    },
+                ItemCallback: (item) => {
+                    item.Color = "#000";
+                    copyHairColor(item, [1]);
                 },
             },
             {
@@ -250,9 +241,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Mittens",
                     Type: null,
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 1]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 1]),
             },
             {
                 Name: "InteractiveVRHeadset",
@@ -262,9 +251,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Headset",
                     Type: "b3f3g1",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0]),
             },
             {
                 Name: "LargeDildo",
@@ -293,9 +280,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Description: "Keeping your cries muffled",
                     Type: "n1h0s3",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [3]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [3]),
             },
             {
                 Name: "FuturisticVibrator",
@@ -316,9 +301,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Description: "No escape and no Orgasms",
                     Type: "c0i2o1s0",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 2, 4, 5]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 2, 4, 5]),
             },
             {
                 Name: "BonedNeckCorset",
@@ -329,11 +312,9 @@ function generateItemSets(): FortuneWheelItemSets {
                     Type: "Ring",
                     Color: "#222222,#888888,#AA2121,#AA2121,#888888",
                 },
-                ItemCallbacks: {
-                    Color: (item) => {
-                        item.Color = ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"];
-                        copyHairColor(item, [2, 3]);
-                    },
+                ItemCallback: (item) => {
+                    item.Color = ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"];
+                    copyHairColor(item, [2, 3]);
                 },
             },
             {
@@ -345,9 +326,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Description: "To keep a PSO on their knees",
                     OverridePriority: 7,
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0]),
             },
             {
                 Name: "StrictLeatherPetCrawler",
@@ -378,9 +357,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Type: null,
                     OverridePriority: 45,
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 1, 2]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 1, 2]),
             },
             {
                 Name: "FuturisticEarphones",
@@ -390,11 +367,9 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Earphones",
                     Type: null,
                 },
-                ItemCallbacks: {
-                    Color: (item) => {
-                        item.Color = ["#0F0F0F", "Default", "Default"];
-                        copyHairColor(item, [1]);
-                    },
+                ItemCallback: (item) => {
+                    item.Color = ["#0F0F0F", "Default", "Default"];
+                    copyHairColor(item, [1]);
                 },
             },
             {
@@ -406,9 +381,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Description: "Never to escape",
                     Type: null,
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0]),
             },
             {
                 Name: "RoundPiercing",
@@ -418,9 +391,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Piercings",
                     Type: "Chain",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [0, 1, 2]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [0, 1, 2]),
             },
             {
                 Name: "CollarAutoShockUnit",
@@ -439,9 +410,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Straps",
                     Description: "To keep a PSO on their knees",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [2]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [2]),
             },
             {
                 Name: "DroneMask",
@@ -451,9 +420,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Mask",
                     Type: "m0e0p1g0s1h2j0",
                 },
-                ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [2]),
-                },
+                ItemCallback: (item) => copyHairColor(item, [2]),
             },
         ],
     };
@@ -495,7 +462,7 @@ function generateNewOptions(
             Description: "PSO bondage for 5 minutes",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipTimerLock(item, 5)],
+                (item) => equipTimerLock(item, 5),
             ),
             Default: true,
         },
@@ -503,7 +470,7 @@ function generateNewOptions(
             Description: "PSO bondage for 15 minutes",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipTimerLock(item, 15)],
+                (item) => equipTimerLock(item, 15),
             ),
             Default: true,
         },
@@ -511,7 +478,7 @@ function generateNewOptions(
             Description: "PSO bondage for 60 minutes",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipTimerLock(item, 60)],
+                (item) => equipTimerLock(item, 60),
             ),
             Default: true,
         },
@@ -519,7 +486,7 @@ function generateNewOptions(
             Description: "PSO bondage for 4 hours",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipTimerLock(item, 240)],
+                (item) => equipTimerLock(item, 240),
             ),
             Default: false,
         },
@@ -527,7 +494,7 @@ function generateNewOptions(
             Description: "PSO bondage",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipLock(item, "ExclusivePadlock")],
+                (item) => equipLock(item, "ExclusivePadlock"),
             ),
             Default: true,
         },
@@ -535,7 +502,7 @@ function generateNewOptions(
             Description: "High security PSO bondage",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                [(item) => equipHighSecLock(item)],
+                (item) => equipHighSecLock(item),
             ),
             Default: false,
         },
