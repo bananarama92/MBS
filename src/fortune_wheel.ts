@@ -391,7 +391,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Type: "Chain",
                 },
                 ItemCallback: (item) => {
-                    item.Color = ["Default", "#E781B1", "#E781B1"];
+                    item.Color = ["#000000", "Default", "Default"];
                     copyHairColor(item, [1, 2]);
                 },
             },
