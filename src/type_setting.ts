@@ -44,6 +44,7 @@ const itemSetTypeDict = Object.freeze({
         ) {
             option = firstOption;
         }
+        console.log(type, item, option);
 
         // Apply the item option
         item.Property = firstOption.Property || {};
