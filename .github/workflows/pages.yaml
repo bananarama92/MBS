@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - devel
   release:
     types: [published]
 
@@ -24,20 +25,40 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: ${{ github.ref_name }}
-      url: ${{ steps.deployment.outputs.page_url }}${{ github.ref_name }}
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch:
+          - main
+          - devel
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ matrix.branch }}
       - run: npm install
       - run: npm run build
       - run: npm run typecheck
       - run: npm run lint
       - run: |
-          mkdir ./dist/"${{ github.ref_name }}"
-          mv ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ github.ref_name }}"/
+          mkdir ./dist/"${{ matrix.branch }}"
+          mv ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: ./dist
+  deploy:
+    needs: [build]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
