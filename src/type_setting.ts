@@ -42,6 +42,7 @@ const itemSetTypeDict = Object.freeze({
             CommonCallFunctionByName(`InventoryItem${key}Validate`, Player, item, option, firstOption)
             || InventoryBlockedOrLimited(Player, item, type)
         ) {
+            console.log("uhoh", option, item, type);
             option = firstOption;
         }
 
