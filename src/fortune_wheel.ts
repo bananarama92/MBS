@@ -189,23 +189,26 @@ function copyHairColor(item: Item, indices: number[]): void {
     }
 
     // Ensure that the item's color is stored as an array
+    let color: string[];
     if (typeof item.Color === "string") {
-        item.Color = [item.Color];
+        item.Color = color = [item.Color];
         for (const _ of range(1, 1 + Math.max(...indices))) {
             item.Color.push("Default");
         }
     } else if (!Array.isArray(item.Color) || item.Color.length === 0) {
-        item.Color = [];
+        item.Color = color = [];
         for (const _ of range(0, 1 + Math.max(...indices))) {
             item.Color.push("Default");
         }
+    } else {
+        color = item.Color;
     }
 
     // Update the item's color with the hair color
     if (typeof hair.Color === "string") {
-        item.Color = hair.Color;
+        indices.forEach(i => color[i] = <string>hair.Color);
     } else if (Array.isArray(hair.Color) && hair.Color.length >= 1) {
-        item.Color = hair.Color[0];
+        indices.forEach(i => color[i] = (<string[]>hair.Color)[0]);
     } else {
         return;
     }

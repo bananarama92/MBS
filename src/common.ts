@@ -51,7 +51,7 @@ export function randomElement<T>(list: readonly T[]): T {
  * @returns the newly generated password
  */
 export function getRandomPassword(n: number): string {
-    if (n < 0) {
+    if (n < 0 || n > 8) {
         throw `Invalid "n" value: ${typeof n}`;
     }
 
