@@ -68,8 +68,7 @@ export function getRandomPassword(n: number): string {
  * @returns A 2-tuple with the major- and beta version
  */
 function parseVersion(version: string): [number, number] {
-    const pattern = /^(R)(\d+)(Beta(\d+))?$/;
-    const match = pattern.exec(version);
+    const match = GameVersionFormat.exec(version);
     if (match === null) {
         throw `Failed to match the passed version: ${version}`;
     }

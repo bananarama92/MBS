@@ -97,3 +97,4 @@ declare function InventoryGroupIsBlocked(
     GroupName?: AssetGroupName,
     Activity?: boolean,
 ): boolean;
+declare const GameVersionFormat: RegExp;
