@@ -2036,7 +2036,7 @@ interface ItemProperties extends ItemPropertiesBase, AssetDefinitionProperties, 
  * An object containing the extended item definition for an asset.
  * @template Archetype, Config
  */
-interface ExtendedItemAssetConfig<Archetype extends ExtendedArchetype, Config> {
+interface ExtendedItemAssetConfig<Archetype extends "modular" | "typed" | "vibrating" | "variableheight", Config> {
     /** The extended item archetype that this asset uses. */
     Archetype: Archetype;
     /** The specific configuration for the item (type will vary based on the item's archetype) */
@@ -2098,7 +2098,7 @@ interface ExtendedItemOption {
     /** Whether or not this option can be selected by the wearer */
     AllowSelfSelect?: boolean;
     /** If the option has a subscreen, this can set a particular archetype to use */
-    Archetype?: ExtendedArchetype;
+    Archetype?: "modular" | "typed" | "vibrating" | "variableheight";
     /** If the option has an archetype, sets the config to use */
     ArchetypeConfig?: TypedItemConfig | ModularItemConfig | VibratingItemConfig | VariableHeightConfig;
     /**
