@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy main and beta to Pages
+name: Deploy to Pages
 
 on:
   # Runs on pushes targeting main or beta
@@ -20,14 +20,14 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-  group: "pages"
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
   deploy:
     environment:
       name: ${{ github.ref_name }}
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}${{ github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,15 +36,8 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: |
-          case "${{ github.event_name }}" in
-            "release")
-              VERSION="${{ github.ref_name }}" ;;
-            *)
-              VERSION="dev0" ;;
-          esac
-          echo "$VERSION"
-          mkdir ./dist/"$VERSION"
-          mv ./dist/mbs.js ./dist/mbs.js.map ./dist/"$VERSION"/
+          mkdir ./dist/"${{ github.ref_name }}"
+          mv ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ github.ref_name }}"/
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
