@@ -3,7 +3,7 @@
 import bcModSdk from "bondage-club-mod-sdk";
 
 /** An array with all alpha-numerical characters. */
-const ALPHABET: readonly string[] = [
+const ALPHABET = Object.freeze([
     "A", "B", "C", "D",
     "E", "F", "G", "H",
     "I", "J", "K", "L",
@@ -11,7 +11,7 @@ const ALPHABET: readonly string[] = [
     "Q", "R", "S", "T",
     "U", "V", "W", "X",
     "Y", "Z",
-];
+]);
 
 /**
  * Return an object that produces a generator of integers from start (inclusive) to stop (exclusive) by step.

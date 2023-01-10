@@ -56,3 +56,44 @@ declare function CharacterAppearanceSetItem(
     Refresh?: boolean,
 ): void;
 declare let CraftingSlotMax: number;
+declare const ExtendedArchetype: {
+	MODULAR: "modular",
+	TYPED: "typed",
+	VIBRATING: "vibrating",
+	VARIABLEHEIGHT: "variableheight",
+};
+declare const TypedItemDataLookup: Record<string, TypedItemData>;
+declare const ModularItemDataLookup: Record<string, ModularItemData>;
+declare const VibratingItemDataLookup: Record<string, VibratingItemData>;
+declare const VibratorModeOptions: {
+    Standard: ExtendedItemOption[],
+    Advanced: (ExtendedItemOption | {
+        Name: string,
+        Property: {
+            Mode: VibratorMode,
+            Intensity: number | (() => number),
+            Effect: EffectName[] | ((Intensity: number) => EffectName[]),
+        },
+    })[]
+};
+declare function VibratorModeSetProperty(Item: Item, Property: any): void;
+declare const VibratorModeOff: ExtendedItemOption;
+declare function ModularItemParseCurrent(data: ModularItemData, type?: null | string): number[];
+declare function ModularItemMergeModuleValues(
+    data: ModularItemData,
+    moduleValues: number[],
+    BaselineProperty?: ItemProperties | null,
+): ItemProperties;
+declare const ItemVulvaFuturisticVibratorTriggers: string[];
+declare function InventoryAllow(
+    C: Character,
+    asset: Asset,
+    prerequisites?: string | string[],
+    setDialog?: boolean,
+): string;
+declare function CommonCallFunctionByName(FunctionName: string, ...args: any): any;
+declare function InventoryGroupIsBlocked(
+    C: Character,
+    GroupName?: AssetGroupName,
+    Activity?: boolean,
+): boolean;
