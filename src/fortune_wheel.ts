@@ -534,7 +534,16 @@ if (BC_VERSION >= <[number, number]>[88, 1]) {
         }
     });
 
-    MBS_MOD_API.hookFunction("WheelFortuneDraw", 0, (args, next) => {
+    MBS_MOD_API.hookFunction("WheelFortuneLoad", 0, (args, next) => {
+        if (TextScreenCache != null) {
+            for (const item of Object.values(WHEEL_ITEMS_NEW)) {
+                TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+            }
+        }
+        return next(args);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
         if (TextScreenCache != null) {
             for (const item of Object.values(WHEEL_ITEMS_NEW)) {
                 TextScreenCache.cache[`Option${item.ID}`] = item.Description;
