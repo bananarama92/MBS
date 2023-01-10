@@ -129,7 +129,7 @@ function fortuneWheelEquip(
             || !(oldItem == null || InventoryGetLock(oldItem) == null)
             || InventoryBlockedOrLimited(Player, { Asset: asset })
             || !InventoryAllow(Player, asset, asset.Prerequisite, false)
-            // || InventoryGroupIsBlocked(Player, Group, false)
+            || InventoryGroupIsBlocked(Player, Group, false)
         ) {
             continue;
         }
