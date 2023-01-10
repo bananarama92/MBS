@@ -21,7 +21,7 @@ interface FortuneWheelItemBase {
 }
 
 interface FortuneWheelItem extends FortuneWheelItemBase {
-    Craft: CraftingItem,
+    Craft?: CraftingItem,
 }
 
 type FortuneWheelNames = "leash_candy";

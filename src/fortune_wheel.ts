@@ -1,6 +1,7 @@
 "use strict";
 
 import { MBS_MOD_API, BC_VERSION, range, randomElement, getRandomPassword } from "common";
+import { itemSetType } from "type_setting";
 
 /**
  * Generate a list of unique length-1 UTF16 characters.
@@ -122,23 +123,27 @@ function fortuneWheelEquip(
     for (const {Name, Group, Equip, Craft, ItemCallbacks} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
+        const equip = (typeof Equip === "function") ? Equip : true;
 
         // Equip the item if possible; avoid refreshes as much as possible until all items are
         if (
-            (typeof Equip === "function" && !Equip())
+            !equip
             || asset == null
-            || InventoryBlockedOrLimited(Player, {Asset: asset})
             || !(oldItem == null || InventoryGetLock(oldItem) == null)
+            || InventoryBlockedOrLimited(Player, { Asset: asset })
+            || !InventoryAllow(Player, asset, asset.Prerequisite, false)
+            || InventoryGroupIsBlocked(Player, Group, false)
         ) {
             continue;
         }
+
         CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.ID, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
-            Player.FocusGroup = null;
             continue;
         }
         newItem.Craft = Craft;
+        itemSetType(newItem, (Craft == null) ? null : Craft.Type);
         InventoryCraft(Player, Player, Group, Craft, false);
 
         // Fire up any of the provided item-specific dynamic callbacks
@@ -154,7 +159,7 @@ function fortuneWheelEquip(
 }
 
 /** A list of all valid wheel of fortune colors. */
-const FORTUNE_WHEEL_COLORS: readonly string[] = [
+const FORTUNE_WHEEL_COLORS = Object.freeze([
     "Blue",
     "Gold",
     "Gray",
@@ -163,7 +168,7 @@ const FORTUNE_WHEEL_COLORS: readonly string[] = [
     "Purple",
     "Red",
     "Yellow",
-];
+]);
 
 /**
  * Copy the player's hair color the to passed item.
@@ -440,6 +445,8 @@ function generateItemSets(): FortuneWheelItemSets {
             }
             itemSet[i] = Object.freeze(item);
         }
+        // @ts-ignore
+        ret[setName] = Object.freeze(itemSet);
     }
     return <FortuneWheelItemSets>ret;
 }

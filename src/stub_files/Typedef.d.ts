@@ -59,8 +59,6 @@ type RectTuple = [number, number, number, number];
 //#endregion
 
 //#region Enums
-type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight";
-
 type TypedItemChatSetting = "toOnly" | "fromTo" | "silent";
 type ModularItemChatSetting = "perModule" | "perOption";
 
@@ -1015,7 +1013,7 @@ interface Asset {
     FixedPosition: boolean;
     Layer: AssetLayer[];
     ColorableLayerCount: number;
-    Archetype?: string;
+    Archetype?: "typed" | "modular" | "vibrating";
     Attribute: AssetAttribute[];
     PreviewIcons: InventoryIcon[];
     Tint: TintDefinition[];
