@@ -39,10 +39,9 @@ const itemSetTypeDict = Object.freeze({
         if (option === undefined || firstOption === undefined) {
             throw `${key}: Invalid Typed item type "${type}"`;
         } else if (
-            !CommonCallFunctionByName(`InventoryItem${key}Validate`, Player, item, option, firstOption)
+            CommonCallFunctionByName(`InventoryItem${key}Validate`, Player, item, option, firstOption)
             || InventoryBlockedOrLimited(Player, item, type)
         ) {
-            console.log("uhoh", option, item);
             option = firstOption;
         }
 
