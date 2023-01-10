@@ -434,7 +434,7 @@ function generateItemSets(): FortuneWheelItemSets {
         ],
     };
 
-    for (const [setName, itemSet] of Object.entries(ret)) {
+    for (const [setName, itemSet] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
         for (const [i, item] of itemSet.entries()) {
             if (item.Craft != null) {
                 item.Craft.Item = item.Name;
@@ -445,8 +445,7 @@ function generateItemSets(): FortuneWheelItemSets {
             }
             itemSet[i] = Object.freeze(item);
         }
-        // @ts-ignore
-        ret[setName] = Object.freeze(itemSet);
+        ret[setName] = <FortuneWheelItemBase[]>Object.freeze(itemSet);
     }
     return <FortuneWheelItemSets>ret;
 }

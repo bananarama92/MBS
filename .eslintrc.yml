@@ -24,3 +24,4 @@ rules:
   linebreak-style: [error, unix]
   "@typescript-eslint/no-unused-vars": [error, { varsIgnorePattern: "_" }]
   "@typescript-eslint/no-inferrable-types": off
+  "@typescript-eslint/no-explicit-any": off

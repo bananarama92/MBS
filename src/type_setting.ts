@@ -34,7 +34,7 @@ const itemSetTypeDict = Object.freeze({
         }
 
         // Find and validate the item option
-        let firstOption = data.options.find(i => i.Property && i.Property.Type === null);
+        const firstOption = data.options.find(i => i.Property && i.Property.Type === null);
         let option = data.options.find(i => i.Property && i.Property.Type === type);
         if (option === undefined || firstOption === undefined) {
             throw `${key}: Invalid Typed item type "${type}"`;
@@ -52,7 +52,7 @@ const itemSetTypeDict = Object.freeze({
         }
     },
     [ExtendedArchetype.VIBRATING]: (item: Item, type: string | null): void => {
-         // Find the item option
+        // Find the item option
         let isAdvanced = true;
         let option = VibratorModeOptions.Advanced.find((o) => o.Name === type);
         if (option === undefined) {
@@ -63,7 +63,7 @@ const itemSetTypeDict = Object.freeze({
             throw `${item.Asset.Group.Name}${item.Asset.Name}: Invalid Vibrating item type "${type}"`;
         }
 
-         // Validate and apply the item option
+        // Validate and apply the item option
         if ((isAdvanced && Player.ArousalSettings && Player.ArousalSettings.DisableAdvancedVibes)) {
             VibratorModeSetProperty(item, VibratorModeOff);
         } else {
@@ -71,7 +71,7 @@ const itemSetTypeDict = Object.freeze({
         }
     },
     [ExtendedArchetype.MODULAR]: (item: Item, type: string | null): void => {
-         // Find the item data
+        // Find the item data
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = ModularItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
         if (data === undefined) {
@@ -82,7 +82,7 @@ const itemSetTypeDict = Object.freeze({
             throw `${key}: Invalid Modular item type "${type}"`;
         }
 
-         // Validate and apply the item option
+        // Validate and apply the item option
         const currentModuleValues = ModularItemParseCurrent(data, type);
         data.modules.forEach((module, i) => {
             const option = module.Options[currentModuleValues[i]];
@@ -97,7 +97,7 @@ const itemSetTypeDict = Object.freeze({
         });
         item.Property = ModularItemMergeModuleValues(data, currentModuleValues, data.BaselineProperty);
     },
-})
+});
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
 function setTypeNoArch(item: Item, type: null | string): void {
