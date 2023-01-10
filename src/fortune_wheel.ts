@@ -329,6 +329,12 @@ function generateItemSets(): FortuneWheelItemSets {
                     Type: "Ring",
                     Color: "#222222,#888888,#AA2121,#AA2121,#888888",
                 },
+                ItemCallbacks: {
+                    Color: (item) => {
+                        item.Color = ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"];
+                        copyHairColor(item, [2, 3]);
+                    },
+                },
             },
             {
                 Name: "CollarChainShort",
@@ -385,7 +391,10 @@ function generateItemSets(): FortuneWheelItemSets {
                     Type: null,
                 },
                 ItemCallbacks: {
-                    Color: (item) => copyHairColor(item, [1]),
+                    Color: (item) => {
+                        item.Color = ["#0F0F0F", "Default", "Default"];
+                        copyHairColor(item, [1]);
+                    },
                 },
             },
             {
@@ -419,7 +428,19 @@ function generateItemSets(): FortuneWheelItemSets {
                 Craft: {
                     Property: "Secure",
                     Name: "Permanent PSO Shock Unit",
-                    Type: "s0y0",
+                    Type: "s2y0",
+                },
+            },
+            {
+                Name: "FrogtieStraps",
+                Group: "ItemLegs",
+                Craft: {
+                    Property: "Secure",
+                    Name: "Permanent PSO Straps",
+                    Description: "To keep a PSO on their knees",
+                },
+                ItemCallbacks: {
+                    Color: (item) => copyHairColor(item, [2]),
                 },
             },
             {
@@ -428,7 +449,7 @@ function generateItemSets(): FortuneWheelItemSets {
                 Craft: {
                     Property: "Thin",
                     Name: "Permanent PSO Mask",
-                    Type: "m0e0p1g0s0h2j0",
+                    Type: "m0e0p1g0s1h2j0",
                 },
                 ItemCallbacks: {
                     Color: (item) => copyHairColor(item, [2]),
