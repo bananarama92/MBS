@@ -99,3 +99,4 @@ declare function InventoryGroupIsBlocked(
 ): boolean;
 declare const GameVersionFormat: RegExp;
 declare function CharacterLoadCanvas(C: Character): void;
+declare function InventoryItemHasEffect(Item: Item, Effect: EffectName, CheckProperties?: boolean): boolean;
