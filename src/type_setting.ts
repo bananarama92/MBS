@@ -46,7 +46,7 @@ const itemSetTypeDict = Object.freeze({
         }
 
         // Apply the item option
-        item.Property = firstOption.Property || {};
+        item.Property = Object.assign({}, option.Property || {});
         if (data.BaselineProperty) {
             item.Property = Object.assign(item.Property, data.BaselineProperty);
         }
