@@ -139,7 +139,7 @@ function fortuneWheelEquip(
         if (newItem == null) {
             continue;
         }
-        newItem.Craft = Craft;
+        newItem.Craft = Object.assign({}, Craft);
         itemSetType(newItem, (Craft == null) ? null : Craft.Type);
         InventoryCraft(Player, Player, Group, Craft, false);
 
@@ -504,7 +504,12 @@ function generateNewOptions(
             Description: "High security PSO bondage",
             Script: () => fortuneWheelEquip(
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
-                (item) => equipHighSecLock(item),
+                (item) => {
+                    if (InventoryDoesItemAllowLock(item) && item.Craft) {
+                        item.Craft.Property = "Puzzling";
+                    }
+                    equipHighSecLock(item);
+                },
             ),
             Default: false,
         },
