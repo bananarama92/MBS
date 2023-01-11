@@ -95,7 +95,7 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     ) {
         return false;
     }
-    InventoryLock(Player, item, { Asset: lock }, Player.ID, false);
+    InventoryLock(Player, item, { Asset: lock }, Player.MemberNumber, false);
     return true;
 }
 
@@ -164,7 +164,7 @@ function fortuneWheelEquip(
         }
 
         // Equip the item while avoiding refreshes as much as possible until all items are
-        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.ID, false);
+        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.MemberNumber, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
             continue;
