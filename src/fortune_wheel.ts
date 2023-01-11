@@ -101,15 +101,19 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
 
 /** Strip the character of all clothes while always ignoring any and all cosplay items. */
 function playerNakedNoCosplay(): void {
-    Player.Appearance = Player.Appearance.filter(item => {
-        const asset = item.Asset;
-        return (
-            asset.Group.Category !== "Appearance"
-            || asset.Group.AllowNone
-            || asset.BodyCosplay
-            || asset.Group.BodyCosplay
-        );
-    });
+    const appearance = Player.Appearance;
+    for (let i = appearance.length - 1; i >= 0; i--) {
+        const asset = appearance[i].Asset;
+        if (
+            asset.Group.AllowNone
+            && asset.Group.Category === "Appearance"
+            && !asset.Group.BodyCosplay
+            && !asset.BodyCosplay
+        ) {
+            appearance.splice(i, 1);
+        }
+    }
+    CharacterLoadCanvas(Player);
 }
 
 /**

@@ -98,3 +98,4 @@ declare function InventoryGroupIsBlocked(
     Activity?: boolean,
 ): boolean;
 declare const GameVersionFormat: RegExp;
+declare function CharacterLoadCanvas(C: Character): void;
