@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         MBS - Maid's Bondage Scripts
-// @namespace    MBS
+// @name         MBS_dev - Maid's Bondage Scripts Development Version
+// @namespace    MBS_dev
 // @version      0.1.10.dev0
-// @description  Loader of Bananarama92's "Maid's Bondage Scripts" mod
+// @description  Loader of Bananarama92's "Maid's Bondage Scripts" mod (dev version)
 // @author       Bananarama92
 // @include      /^https:\/\/(www\.)?bondageprojects\.elementfx\.com\/R\d+\/(BondageClub|\d+)(\/((index|\d+)\.html)?)?$/
 // @include      /^https:\/\/(www\.)?bondage-europe\.com\/R\d+\/(BondageClub|\d+)(\/((index|\d+)\.html)?)?$/
