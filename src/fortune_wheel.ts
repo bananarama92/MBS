@@ -114,11 +114,13 @@ function playerNakedNoCosplay(): void {
 
 /**
  * Equip the player with all items from the passed fortune wheel item list.
+ * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
  * @param globalCallbacks A list of callbacks (or `null`) that will be applied to all items after they're equiped
  * @param stripNaked Whether all appearance items should be removed from the player
  */
 function fortuneWheelEquip(
+    name: string,
     itemList: readonly FortuneWheelItem[],
     globalCallback: null | FortuneWheelCallback = null,
     stripNaked: boolean = true,
@@ -130,23 +132,34 @@ function fortuneWheelEquip(
     if (stripNaked) {
         playerNakedNoCosplay();
     }
+
+    const equipFailureRecord: Record<string, string[]> = {};
     for (const {Name, Group, Equip, Craft, ItemCallback} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
         const equip = (typeof Equip === "function") ? Equip : true;
 
-        // Equip the item if possible; avoid refreshes as much as possible until all items are
-        if (
-            !equip
-            || asset == null
-            || !(oldItem == null || InventoryGetLock(oldItem) == null)
-            || InventoryBlockedOrLimited(Player, { Asset: asset })
-            || !InventoryAllow(Player, asset, asset.Prerequisite, false)
-            || InventoryGroupIsBlocked(Player, Group, false)
-        ) {
+        // Check whether the item can actually be equiped
+        if (asset != null) {
+            const equipChecks = {
+                "Equip callback": !equip,
+                "Locked item equiped": !(oldItem == null || InventoryGetLock(oldItem) == null),
+                "InventoryBlockedOrLimited": InventoryBlockedOrLimited(Player, { Asset: asset }),
+                "InventoryAllow": !InventoryAllow(Player, asset, asset.Prerequisite, false),
+                "InventoryGroupIsBlocked": InventoryGroupIsBlocked(Player, Group, false),
+            };
+
+            const equipFailure = Object.entries(equipChecks).filter((tup) => tup[1]);
+            if (equipFailure.length !== 0) {
+                equipFailureRecord[asset.Description] = equipFailure.map((tup) => tup[0]);
+                continue;
+            }
+        } else {
+            equipFailureRecord[Name] = ["Unknown asset"];
             continue;
         }
 
+        // Equip the item while avoiding refreshes as much as possible until all items are
         CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.ID, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
@@ -166,6 +179,10 @@ function fortuneWheelEquip(
     }
     CharacterRefresh(Player, true, false);
     ChatRoomCharacterUpdate(Player);
+
+    if (Object.values(equipFailureRecord).length) {
+        console.log(`MBS: Failed to equip one or more "${name}" wheel of fortune items`, equipFailureRecord);
+    }
 }
 
 /** A list of all valid wheel of fortune colors. */
@@ -476,6 +493,7 @@ function generateNewOptions(
         leash_candy_5_min: {
             Description: "PSO bondage for 5 minutes",
             Script: () => fortuneWheelEquip(
+                "PSO bondage for 5 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => equipTimerLock(item, 5),
             ),
@@ -484,6 +502,7 @@ function generateNewOptions(
         leash_candy_15_min: {
             Description: "PSO bondage for 15 minutes",
             Script: () => fortuneWheelEquip(
+                "PSO bondage for 15 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => equipTimerLock(item, 15),
             ),
@@ -492,6 +511,7 @@ function generateNewOptions(
         leash_candy_60_min: {
             Description: "PSO bondage for 60 minutes",
             Script: () => fortuneWheelEquip(
+                "PSO bondage for 60 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => equipTimerLock(item, 60),
             ),
@@ -500,6 +520,7 @@ function generateNewOptions(
         leash_candy_240_min: {
             Description: "PSO bondage for 4 hours",
             Script: () => fortuneWheelEquip(
+                "PSO bondage for 4 hours",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => equipTimerLock(item, 240),
             ),
@@ -508,6 +529,7 @@ function generateNewOptions(
         leash_candy_exclusive: {
             Description: "PSO bondage",
             Script: () => fortuneWheelEquip(
+                "PSO bondage",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => equipLock(item, "ExclusivePadlock"),
             ),
@@ -516,6 +538,7 @@ function generateNewOptions(
         leash_candy_hisec: {
             Description: "High security PSO bondage",
             Script: () => fortuneWheelEquip(
+                "High security PSO bondage",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
                 (item) => {
                     if (InventoryDoesItemAllowLock(item) && item.Craft) {
