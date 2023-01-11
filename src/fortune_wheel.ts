@@ -99,6 +99,19 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     return true;
 }
 
+/** Strip the character of all clothes while always ignoring any and all cosplay items. */
+function playerNakedNoCosplay(): void {
+    Player.Appearance = Player.Appearance.filter(item => {
+        const asset = item.Asset;
+        return (
+            asset.Group.Category !== "Appearance"
+            || asset.Group.AllowNone
+            || asset.BodyCosplay
+            || asset.Group.BodyCosplay
+        );
+    });
+}
+
 /**
  * Equip the player with all items from the passed fortune wheel item list.
  * @param itemList The items in question
@@ -115,7 +128,7 @@ function fortuneWheelEquip(
     }
 
     if (stripNaked) {
-        CharacterNaked(Player);
+        playerNakedNoCosplay();
     }
     for (const {Name, Group, Equip, Craft, ItemCallback} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
