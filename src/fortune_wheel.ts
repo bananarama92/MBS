@@ -388,7 +388,7 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Harness",
                     Description: "Special harness that constantly shrinks....",
                     Type: null,
-                    OverridePriority: 45,
+                    OverridePriority: 23,
                 },
                 ItemCallback: (item) => copyHairColor(item, [0, 1, 2]),
             },
