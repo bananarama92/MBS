@@ -99,21 +99,60 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     return true;
 }
 
-/** Strip the character of all clothes while always ignoring any and all cosplay items. */
-function playerNakedNoCosplay(): void {
+/**
+ * An enum with various strip levels for {@link playerStrip}.
+ * All items up to and including the specified levels will be removed.
+ */
+const STRIP_LEVEL = Object.freeze({
+    /** Do not strip any items */
+    NONE: 0,
+    /** Strip all clothes */
+    CLOTHES: 1,
+    /** Strip all clothes and underwear */
+    UNDERWEAR: 2,
+    /** Strip all clothes, underwear and cosplay items (if not blocked) */
+    ALL: 3,
+});
+
+/**
+ * Strip the character of all clothes while always ignoring any and all cosplay items.
+ * @param stripLevel An integer denoting which clothes should be removed; see {@link STRIP_LEVEL}
+ */
+function playerStrip(stripLevel: 0 | 1 | 2 | 3): void {
+    let levelCondition: (asset: Asset) => boolean;
+    switch (stripLevel) {
+        case STRIP_LEVEL.NONE: {
+            return;
+        }
+        case STRIP_LEVEL.CLOTHES: {
+            levelCondition = (asset) => (asset.BodyCosplay || asset.Group.Underwear);
+            break;
+        }
+        case STRIP_LEVEL.UNDERWEAR: {
+            levelCondition = (asset) => (asset.BodyCosplay);
+            break;
+        }
+        case STRIP_LEVEL.ALL: {
+            const blockBodyCosplay = (Player.OnlineSharedSettings && Player.OnlineSharedSettings.BlockBodyCosplay) || false;
+            levelCondition = (asset) => (blockBodyCosplay ? asset.BodyCosplay : false);
+            break;
+        }
+        default: {
+            throw `Invalid "level" value: ${stripLevel}`;
+        }
+    }
+
     const appearance = Player.Appearance;
     for (let i = appearance.length - 1; i >= 0; i--) {
         const asset = appearance[i].Asset;
         if (
             asset.Group.AllowNone
             && asset.Group.Category === "Appearance"
-            && !asset.Group.BodyCosplay
-            && !asset.BodyCosplay
+            && !levelCondition(asset)
         ) {
             appearance.splice(i, 1);
         }
     }
-    CharacterLoadCanvas(Player);
 }
 
 /**
@@ -121,21 +160,18 @@ function playerNakedNoCosplay(): void {
  * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
  * @param globalCallbacks A list of callbacks (or `null`) that will be applied to all items after they're equiped
- * @param stripNaked Whether all appearance items should be removed from the player
+ * @param stripLevel An integer denoting which clothes should be removed; see {@link STRIP_LEVEL}
  */
 function fortuneWheelEquip(
     name: string,
     itemList: readonly FortuneWheelItem[],
+    stripLevel: 0 | 1 | 2 | 3,
     globalCallback: null | FortuneWheelCallback = null,
-    stripNaked: boolean = true,
 ): void {
     if (!Array.isArray(itemList)) {
         throw `Invalid "itemList" type: ${typeof itemList}`;
     }
-
-    if (stripNaked) {
-        playerNakedNoCosplay();
-    }
+    playerStrip(stripLevel);
 
     const equipFailureRecord: Record<string, string[]> = {};
     for (const {Name, Group, Equip, Craft, ItemCallback} of <readonly FortuneWheelItem[]>itemList) {
@@ -503,6 +539,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 5 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 5),
             ),
             Default: true,
@@ -512,6 +549,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 15 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 15),
             ),
             Default: true,
@@ -521,6 +559,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 60 minutes",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 60),
             ),
             Default: true,
@@ -530,6 +569,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 4 hours",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 240),
             ),
             Default: false,
@@ -539,6 +579,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "PSO bondage",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => equipLock(item, "ExclusivePadlock"),
             ),
             Default: true,
@@ -548,6 +589,7 @@ function generateNewOptions(
             Script: () => fortuneWheelEquip(
                 "High security PSO bondage",
                 FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                STRIP_LEVEL.UNDERWEAR,
                 (item) => {
                     if (InventoryDoesItemAllowLock(item) && item.Craft) {
                         item.Craft.Property = "Puzzling";
