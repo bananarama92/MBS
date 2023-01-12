@@ -147,7 +147,11 @@ function fortuneWheelEquip(
         if (asset != null) {
             const equipChecks = {
                 "Equip callback": !equip,
-                "Locked item equiped": !(oldItem == null || !InventoryItemHasEffect(oldItem, "Lock")),
+                "Locked item equiped": !(
+                    oldItem == null
+                    || !InventoryItemHasEffect(oldItem, "Lock")
+                    || (oldItem.Craft && oldItem.Craft.Property === "Decoy")
+                ),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(Player, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(Player, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(Player, Group, false),
