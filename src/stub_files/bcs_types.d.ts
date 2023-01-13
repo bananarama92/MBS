@@ -17,6 +17,8 @@ interface FortuneWheelItemBase {
     Name: string,
     /** The group of the item */
     Group: AssetGroupName,
+    /** The optional color of the item */
+    Color?: readonly string[],
     /** An optional callback whose output denotes whether the item should be equiped */
     Equip?: () => boolean,
     /** Optional crafted item data */

@@ -174,7 +174,7 @@ function fortuneWheelEquip(
     playerStrip(stripLevel);
 
     const equipFailureRecord: Record<string, string[]> = {};
-    for (const {Name, Group, Equip, Craft, ItemCallback} of <readonly FortuneWheelItem[]>itemList) {
+    for (const {Name, Group, Equip, Craft, ItemCallback, Color} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
         const equip = (typeof Equip === "function") ? Equip : true;
@@ -204,14 +204,14 @@ function fortuneWheelEquip(
         }
 
         // Equip the item while avoiding refreshes as much as possible until all items are
-        CharacterAppearanceSetItem(Player, Group, asset, asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.MemberNumber, false);
+        CharacterAppearanceSetItem(Player, Group, asset, Color || asset.DefaultColor, SkillGetWithRatio("Bondage"), Player.MemberNumber, false);
         const newItem = InventoryGet(Player, Group);
         if (newItem == null) {
             continue;
         }
         newItem.Craft = Object.assign({}, Craft);
         itemSetType(newItem, (Craft == null) ? null : Craft.Type);
-        InventoryCraft(Player, Player, Group, Craft, false);
+        InventoryCraft(Player, Player, Group, Craft, false, false);
 
         // Fire up any of the provided item-specific dynamic callbacks
         if (typeof ItemCallback === "function") {
@@ -302,10 +302,8 @@ function generateItemSets(): FortuneWheelItemSets {
             {
                 Name: "FaceVeil",
                 Group: "Mask",
-                ItemCallback: (item) => {
-                    item.Color = "#000";
-                    copyHairColor(item, [1]);
-                },
+                Color: ["#000", "Default"],
+                ItemCallback: (item) => copyHairColor(item, [1]),
             },
             {
                 Name: "FuturisticMittens",
@@ -380,15 +378,13 @@ function generateItemSets(): FortuneWheelItemSets {
             {
                 Name: "BonedNeckCorset",
                 Group: "ItemNeck",
+                Color: ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"],
                 Craft: {
                     Property: "Secure",
                     Name: "Permanent PSO Collar",
                     Type: "Ring",
                 },
-                ItemCallback: (item) => {
-                    item.Color = ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"];
-                    copyHairColor(item, [2, 3]);
-                },
+                ItemCallback: (item) => copyHairColor(item, [2, 3]),
             },
             {
                 Name: "CollarChainShort",
@@ -440,10 +436,8 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Earphones",
                     Type: null,
                 },
-                ItemCallback: (item) => {
-                    item.Color = ["#0F0F0F", "Default", "Default"];
-                    copyHairColor(item, [1]);
-                },
+                Color: ["#0F0F0F", "Default", "Default"],
+                ItemCallback: (item) => copyHairColor(item, [1]),
             },
             {
                 Name: "CeilingChain",
@@ -464,10 +458,8 @@ function generateItemSets(): FortuneWheelItemSets {
                     Name: "Permanent PSO Piercings",
                     Type: "Chain",
                 },
-                ItemCallback: (item) => {
-                    item.Color = ["#000000", "Default", "Default"];
-                    copyHairColor(item, [1, 2]);
-                },
+                Color: ["#000000", "Default", "Default"],
+                ItemCallback: (item) => copyHairColor(item, [1, 2]),
             },
             {
                 Name: "CollarAutoShockUnit",
@@ -607,6 +599,9 @@ function generateItemSets(): FortuneWheelItemSets {
         for (const [i, item] of itemSet.entries()) {
             if (item.Craft != null) {
                 item.Craft.Item = item.Name;
+                item.Craft.Private = true;
+                item.Craft.Type = (item.Craft.Type === undefined) ? null : item.Craft.Type;
+                item.Craft.Color = Array.isArray(item.Color) ? item.Color.join(",") : item.Craft.Color;
                 const asset = AssetGet(Player.AssetFamily, item.Group, item.Name);
                 if (!CraftingValidate(<CraftingItem>item.Craft, asset, false)) {
                     throw `Failed to validate the ${setName}-${item.Group}${item.Name} crafting settings`;

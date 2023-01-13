@@ -50,7 +50,7 @@ declare function CharacterAppearanceSetItem(
     C: Character,
     Group: AssetGroupName,
     ItemAsset?: Asset,
-    NewColor?: ItemColor,
+    NewColor?: string | readonly string[],
     DifficultyFactor?: number,
     ItemMemberNumber?: number,
     Refresh?: boolean,
