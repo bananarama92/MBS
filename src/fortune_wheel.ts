@@ -95,7 +95,7 @@ function equipLock(item: Item, lockName: AssetLockType): boolean {
     ) {
         return false;
     }
-    InventoryLock(Player, item, { Asset: lock }, Player.MemberNumber, false);
+    InventoryLock(Player, item, { Asset: lock }, null, false);
     return true;
 }
 
