@@ -499,6 +499,108 @@ function generateItemSets(): FortuneWheelItemSets {
                 ItemCallback: (item) => copyHairColor(item, [2]),
             },
         ],
+        mummy: [
+            {
+                Name: "DuctTape",
+                Group: "ItemFeet",
+                Craft: {
+                    Property: "Secure",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                ItemCallback: (item) => {
+                    copyHairColor(item, [0]);
+                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const type = randomElement(allowType);
+                    itemSetType(item, type);
+                },
+            },
+            {
+                Name: "DuctTape",
+                Group: "ItemLegs",
+                Craft: {
+                    Property: "Secure",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                ItemCallback: (item) => {
+                    copyHairColor(item, [0]);
+                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const type = randomElement(allowType);
+                    itemSetType(item, type);
+                },
+            },
+            {
+                Name: "DuctTape",
+                Group: "ItemHands",
+                Craft: {
+                    Property: "Secure",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                ItemCallback: (item) => copyHairColor(item, [0]),
+            },
+            {
+                Name: "DuctTape",
+                Group: "ItemArms",
+                Craft: {
+                    Property: "Secure",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                ItemCallback: (item) => {
+                    copyHairColor(item, [0]);
+                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const type = randomElement(allowType);
+                    itemSetType(item, type);
+                },
+            },
+            {
+                Name: "LargeDildo",
+                Group: "ItemMouth",
+                Craft: {
+                    Property: "Large",
+                    Name: "Rubber Mouth Sealant",
+                    Description: "A rubber mass molded to shape of your mouth",
+                },
+            },
+            {
+                Name: "DuctTape",
+                Group: "ItemMouth2",
+                Craft: {
+                    Property: "Large",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                ItemCallback: (item) => {
+                    copyHairColor(item, [0]);
+                    const type = randomElement(["Full", "Double", "Cover"]);
+                    itemSetType(item, type);
+                },
+            },
+            {
+                Name: "DuctTape",
+                Group: "ItemMouth3",
+                Craft: {
+                    Property: "Large",
+                    Name: "Mummy Wrappings",
+                    Description: "A bundle of resilient cloth wrappings",
+                    Type: null,
+                },
+                Equip: () => (Math.random() > 0.5),
+                ItemCallback: (item) => {
+                    copyHairColor(item, [0]);
+                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const type = randomElement(allowType);
+                    itemSetType(item, type);
+                },
+            },
+        ],
     };
 
     for (const [setName, itemSet] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
@@ -598,6 +700,15 @@ function generateNewOptions(
                 },
             ),
             Default: false,
+        },
+        mummy: {
+            Description: "Mummification",
+            Script: () => fortuneWheelEquip(
+                "Mummification",
+                FORTUNATE_WHEEL_ITEM_SETS.mummy,
+                STRIP_LEVEL.CLOTHES,
+            ),
+            Default: true,
         },
     };
 
