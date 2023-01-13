@@ -711,9 +711,10 @@ function generateItemSets(): FortuneWheelItemSets {
                 item.Craft.Type = (item.Craft.Type === undefined) ? null : item.Craft.Type;
                 item.Craft.Color = Array.isArray(item.Color) ? item.Color.join(",") : item.Craft.Color;
                 const asset = AssetGet(Player.AssetFamily, item.Group, item.Name);
-                if (!CraftingValidate(<CraftingItem>item.Craft, asset, false)) {
-                    throw `Failed to validate the ${setName}-${item.Group}${item.Name} crafting settings`;
+                if (asset == null) {
+                    throw `Invalid ${setName} item: ${item.Group}${item.Name}`;
                 }
+                CraftingValidate(<CraftingItem>item.Craft, asset, false);
             }
             itemSet[i] = Object.freeze(item);
         }
