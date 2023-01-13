@@ -13,7 +13,7 @@
         "noEmit": true,
         "experimentalDecorators": true,
         "noImplicitReturns": true,
-        "noUnusedLocals": false,
+        "noUnusedLocals": true,
         "esModuleInterop": true,
         "resolveJsonModule": true
     },

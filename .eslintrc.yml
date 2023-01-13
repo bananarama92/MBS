@@ -7,8 +7,6 @@ extends: [
 ]
 plugins: ["@typescript-eslint"]
 ignorePatterns: [
-  "src/stub_files/Female3DCG_Types.d.ts",
-  "src/stub_files/Typedef.d.ts",
   "dist/",
 ]
 overrides: []
@@ -22,7 +20,7 @@ rules:
   semi: [error, always]
   comma-dangle: [error, always-multiline]
   linebreak-style: [error, unix]
-  "@typescript-eslint/no-unused-vars": [error, { varsIgnorePattern: "_" }]
+  "@typescript-eslint/no-unused-vars": [error, { varsIgnorePattern: "_", argsIgnorePattern: "_" }]
   "@typescript-eslint/no-inferrable-types": off
   "@typescript-eslint/no-explicit-any": off
   "@typescript-eslint/ban-ts-comment": off

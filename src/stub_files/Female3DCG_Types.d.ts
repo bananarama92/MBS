@@ -2,7 +2,7 @@ interface AssetGroupDefinition {
     Asset: (AssetDefinition | string)[];
     Group: AssetGroupName;
     ParentGroup?: string;
-    Category?: 'Appearance' | 'Item' | 'Script';
+    Category?: "Appearance" | "Item" | "Script";
     /** Whether the group should have an asset selected at random at character creation. */
     Default?: boolean;
     IsRestraint?: boolean;
@@ -230,7 +230,6 @@ interface AssetDefinition {
     DynamicDescription?: (C: Character) => string;
     DynamicPreviewImage?: (C: Character) => string;
     DynamicAllowInventoryAdd?: (C: Character) => boolean;
-    DynamicExpressionTrigger?: (C: Character) => ExpressionTrigger[] | null | undefined;
     DynamicName?: (C: Character) => string;
 
     /** The real group name used when building the file paths for the asset's layers */
@@ -313,6 +312,15 @@ interface AssetDefinition {
 
     /** A list of prerequisite checks that must pass for the group's expressions to be selectable */
     ExpressionPrerequisite?: string[];
+
+    /** A record with the maximum length for each text-based properties with an input field. */
+    TextMaxLength?: null | Partial<Record<PropertyTextNames, number>>;
+
+    /**
+     * The font used for dynamically drawing text.
+     * Requires {@link AssetDefinition.DynamicAfterDraw} to be set.
+     */
+    TextFont?: null | string;
 }
 
 interface AssetLayerDefinition {

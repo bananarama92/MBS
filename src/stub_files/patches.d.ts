@@ -41,3 +41,6 @@ declare class AccountUpdater {
     SyncToServer(): void;
     QueueData(Data: object, Force?: boolean): void;
 }
+
+type Asset = Readonly<_Asset>;
+type AssetGroup = Readonly<_AssetGroup>;

@@ -6,7 +6,7 @@ interface String {
 
 declare function parseInt(s: string | number, radix?: number): number;
 
-type MemoizedFunction<T extends Function> = T & {
+type MemoizedFunction<T extends (...args: any) => any> = T & {
     /** Clears the cache of the memoized function */
     clearCache(): void;
 };
@@ -59,6 +59,8 @@ type RectTuple = [number, number, number, number];
 //#endregion
 
 //#region Enums
+type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight";
+
 type TypedItemChatSetting = "toOnly" | "fromTo" | "silent";
 type ModularItemChatSetting = "perModule" | "perOption";
 
@@ -214,37 +216,37 @@ type EffectName =
     ;
 
 type AssetGroupItemName =
-    'ItemAddon' | 'ItemArms' | 'ItemBoots' | 'ItemBreast' | 'ItemButt' |
-    'ItemDevices' | 'ItemEars' | 'ItemFeet' | 'ItemHands' | 'ItemHead' |
-    'ItemHood' | 'ItemLegs' | 'ItemMisc' | 'ItemMouth' | 'ItemMouth2' |
-    'ItemMouth3' | 'ItemNeck' | 'ItemNeckAccessories' | 'ItemNeckRestraints' |
-    'ItemNipples' | 'ItemNipplesPiercings' | 'ItemNose' | 'ItemPelvis' |
-    'ItemTorso' | 'ItemTorso2'| 'ItemVulva' | 'ItemVulvaPiercings' |
-    'ItemHandheld' | 'ItemScript' |
+    "ItemAddon" | "ItemArms" | "ItemBoots" | "ItemBreast" | "ItemButt" |
+    "ItemDevices" | "ItemEars" | "ItemFeet" | "ItemHands" | "ItemHead" |
+    "ItemHood" | "ItemLegs" | "ItemMisc" | "ItemMouth" | "ItemMouth2" |
+    "ItemMouth3" | "ItemNeck" | "ItemNeckAccessories" | "ItemNeckRestraints" |
+    "ItemNipples" | "ItemNipplesPiercings" | "ItemNose" | "ItemPelvis" |
+    "ItemTorso" | "ItemTorso2"| "ItemVulva" | "ItemVulvaPiercings" |
+    "ItemHandheld" | "ItemScript" |
 
-    'ItemHidden' /* TODO: investigate, not a real group */
+    "ItemHidden" /* TODO: investigate, not a real group */
     ;
 
 type AssetGroupBodyName =
-    'Blush' | 'BodyLower' | 'BodyUpper' | 'Bra' | 'Bracelet' | 'Cloth' |
-    'ClothAccessory' | 'ClothLower' | 'Corset' | 'Emoticon' | 'Eyebrows' |
-    'Eyes' | 'Eyes2' | 'Fluids' | 'Garters' | 'Glasses' | 'Gloves' |
-    'HairAccessory1' | 'HairAccessory2' | 'HairAccessory3' | 'HairBack' |
-    'HairFront' | 'FacialHair' | 'Hands' | 'Hat' | 'Head' | 'Height' | 'LeftAnklet' | 'LeftHand' | 'Mask' |
-    'Mouth' | 'Necklace' | 'Nipples' | 'Panties' | 'Pussy' | 'Pronouns' | 'RightAnklet' | 'RightHand' |
-    'Shoes' | 'Socks' | 'Suit' | 'SuitLower' | 'TailStraps' | 'Wings'
+    "Blush" | "BodyLower" | "BodyUpper" | "Bra" | "Bracelet" | "Cloth" |
+    "ClothAccessory" | "ClothLower" | "Corset" | "Emoticon" | "Eyebrows" |
+    "Eyes" | "Eyes2" | "Fluids" | "Garters" | "Glasses" | "Gloves" |
+    "HairAccessory1" | "HairAccessory2" | "HairAccessory3" | "HairBack" |
+    "HairFront" | "FacialHair" | "Hands" | "Hat" | "Head" | "Height" | "LeftAnklet" | "LeftHand" | "Mask" |
+    "Mouth" | "Necklace" | "Nipples" | "Panties" | "Pussy" | "Pronouns" | "RightAnklet" | "RightHand" |
+    "Shoes" | "Socks" | "Suit" | "SuitLower" | "TailStraps" | "Wings"
     ;
 
 type AssetGroupName = AssetGroupBodyName | AssetGroupItemName;
 
 type AssetPoseName =
-    'AllFours' | 'BackBoxTie' | 'BackCuffs' | 'BackElbowTouch' | 'BaseLower' |
-    'BaseUpper' | 'Hogtied' | 'Horse' | 'Kneel' | 'KneelingSpread' | 'LegsClosed' |
-    'LegsOpen' | 'OverTheHead' | 'Spread' | 'Suspension' | 'SuspensionHogtied' |
-    'TapedHands' | 'Yoked' |
+    "AllFours" | "BackBoxTie" | "BackCuffs" | "BackElbowTouch" | "BaseLower" |
+    "BaseUpper" | "Hogtied" | "Horse" | "Kneel" | "KneelingSpread" | "LegsClosed" |
+    "LegsOpen" | "OverTheHead" | "Spread" | "Suspension" | "SuspensionHogtied" |
+    "TapedHands" | "Yoked" |
 
     /* FIXME: Those are pose categories */
-    'BodyUpper' | 'BodyLower'
+    "BodyUpper" | "BodyLower"
     ;
 
 type AssetLockType =
@@ -767,13 +769,13 @@ interface IFriendListBeepLogMessage {
 
 type IAssetFamily = "Female3DCG";
 
-interface AssetGroup {
+interface _AssetGroup {
     Family: IAssetFamily;
     Name: AssetGroupName;
     Description: string;
     Asset: Asset[];
     ParentGroupName: string;
-    Category: 'Appearance' | 'Item' | 'Script';
+    Category: "Appearance" | "Item" | "Script";
     IsDefault: boolean;
     IsRestraint: boolean;
     AllowNone: boolean;
@@ -909,7 +911,7 @@ interface ExpressionTrigger {
  *
  * See AssetDefinition in Female3DCG.d.ts for documentation.
  */
-interface Asset {
+interface _Asset {
     Name: string;
     Description: string;
     Group: AssetGroup;
@@ -990,7 +992,6 @@ interface Asset {
     DynamicDescription: (C: Character) => string;
     DynamicPreviewImage: (C: Character) => string;
     DynamicAllowInventoryAdd: (C: Character) => boolean;
-    DynamicExpressionTrigger: (C: Character) => ExpressionTrigger[] | null | undefined;
     DynamicName: (C: Character) => string;
     DynamicGroupName: AssetGroupName;
     DynamicActivity: (C: Character) => string | null | undefined;
@@ -1013,23 +1014,25 @@ interface Asset {
     FixedPosition: boolean;
     Layer: AssetLayer[];
     ColorableLayerCount: number;
-    Archetype?: "typed" | "modular" | "vibrating";
+    Archetype?: ExtendedArchetype;
     Attribute: AssetAttribute[];
     PreviewIcons: InventoryIcon[];
     Tint: TintDefinition[];
     AllowTint: boolean;
     DefaultTint?: string;
-    Gender?: 'F' | 'M';
+    Gender?: "F" | "M";
     CraftGroup: string;
     ColorSuffix: Record<string, string>;
     ExpressionPrerequisite?: string[];
+    TextMaxLength: null | Partial<Record<PropertyTextNames, number>>;
+    TextFont: null | string;
 }
 
 //#endregion
 
 /** An ItemBundle is a minified version of the normal Item */
 interface ItemBundle {
-    Group: string;
+    Group: AssetGroupName;
     Name: string;
     Difficulty?: number;
     Color?: ItemColor;
@@ -1042,7 +1045,7 @@ type AppearanceBundle = ItemBundle[];
 
 interface Pose {
     Name: string;
-    Category?: 'BodyUpper' | 'BodyLower' | 'BodyFull';
+    Category?: "BodyUpper" | "BodyLower" | "BodyFull";
     AllowMenu?: true;
     /** Only show in menu if an asset supports it */
     AllowMenuTransient?: true;
@@ -1363,7 +1366,7 @@ interface Character {
     LabelColor?: any;
     Creation?: any;
     Description?: any;
-    OnlineSharedSettings?: {
+    OnlineSharedSettings: Partial<{
         AllowFullWardrobeAccess: boolean;
         BlockBodyCosplay: boolean;
         AllowPlayerLeashing: boolean;
@@ -1371,8 +1374,21 @@ interface Character {
         GameVersion: string;
         ItemsAffectExpressions: boolean;
         ScriptPermissions: ScriptPermissions;
-        LuckyWheel: string;
-    };
+        WheelFortune: string;
+        MBS: {
+            Version: string,
+            FortuneWheelSets: (null | {
+                name: string,
+                itemList: readonly FortuneWheelItem[],
+                stripLevel: StripLevel,
+                equipLevel: StripLevel,
+                flags: FortuneWheelFlags[],
+                custom: boolean,
+                hidden: boolean,
+                preRunCallback: FortuneWheelPreRunCallback | null,
+            })[],
+        },
+    }>;
     Game?: {
         LARP?: GameLARPParameters,
         MagicBattle?: GameMagicBattleParameters,
@@ -1687,10 +1703,10 @@ interface NPCTrait {
 
 /** A struct-type that maps archetypes to their respective extended item data.  */
 interface ExtendedDataLookupStruct {
-    "typed": TypedItemData;
-    "modular": ModularItemData;
-    "vibrating": VibratingItemData;
-    "variable_height": VariableHeightData;
+    [ExtendedArchetype.TYPED]: TypedItemData;
+    [ExtendedArchetype.MODULAR]: ModularItemData;
+    [ExtendedArchetype.VIBRATING]: VibratingItemData;
+    [ExtendedArchetype.VARIABLEHEIGHT]: VariableHeightData;
 }
 
 interface AssetOverrideHeight {
@@ -2034,7 +2050,7 @@ interface ItemProperties extends ItemPropertiesBase, AssetDefinitionProperties, 
  * An object containing the extended item definition for an asset.
  * @template Archetype, Config
  */
-interface ExtendedItemAssetConfig<Archetype extends "modular" | "typed" | "vibrating" | "variableheight", Config> {
+interface ExtendedItemAssetConfig<Archetype extends ExtendedArchetype, Config> {
     /** The extended item archetype that this asset uses. */
     Archetype: Archetype;
     /** The specific configuration for the item (type will vary based on the item's archetype) */
@@ -2096,7 +2112,7 @@ interface ExtendedItemOption {
     /** Whether or not this option can be selected by the wearer */
     AllowSelfSelect?: boolean;
     /** If the option has a subscreen, this can set a particular archetype to use */
-    Archetype?: "modular" | "typed" | "vibrating" | "variableheight";
+    Archetype?: ExtendedArchetype;
     /** If the option has an archetype, sets the config to use */
     ArchetypeConfig?: TypedItemConfig | ModularItemConfig | VibratingItemConfig | VariableHeightConfig;
     /**
@@ -2345,6 +2361,8 @@ interface ModularItemOptionBase {
     Name?: string;
     /** A unique (automatically assigned) identifier of the struct type */
     OptionType?: "ModularItemOption";
+    /** Trigger this expression when changing to this option */
+    Expression?: ExpressionTrigger[];
 }
 
 /** An object describing a single option within a module for a modular item. */
@@ -2691,6 +2709,17 @@ type VibratingItemAssetConfig = ExtendedItemAssetConfig<"vibrating", VibratingIt
 interface VibratingItemConfig {
     /** The list of vibrator mode sets that are available on this item */
     Options?: VibratorModeSet[];
+    /**
+     * A record containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
+     * and parameters passed on to them. If undefined, these are ignored.
+     * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
+     */
+    ScriptHooks?: {
+        Load?: (next: () => void) => void;
+        Click?: (next: () => void) => void;
+        Draw?: (next: () => void) => void;
+        Exit?: () => void;
+    };
 }
 
 interface VibratingItemData {
@@ -2704,6 +2733,17 @@ interface VibratingItemData {
     functionPrefix: string;
     /** The common prefix used for all dynamic asset hook functions for the asset */
     dynamicAssetsFunctionPrefix: string;
+    /**
+     * A record containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
+     * and parameters passed on to them. If undefined, these are ignored.
+     * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
+     */
+    scriptHooks: {
+        load?: (next: () => void) => void;
+        click?: (next: () => void) => void;
+        draw?: (next: () => void) => void;
+        exit?: () => void;
+    };
 }
 
 /**
@@ -2738,9 +2778,9 @@ interface VariableHeightConfig {
      */
     ChatTags?: CommonChatTags[];
     /** The function that handles finding the current variable height setting */
-    GetHeightFunction?: Function;
+    GetHeightFunction?: (...args: any) => any;
     /** The function that handles applying the height setting to the character */
-    SetHeightFunction?: Function;
+    SetHeightFunction?: (...args: any) => any;
     /** The default properties for the item, if not provided from an extended item option */
     Property?: ItemProperties;
 }
@@ -2802,9 +2842,9 @@ interface VariableHeightData {
      */
     chatTags: CommonChatTags[];
     /** The function that handles finding the current variable height setting */
-    getHeight: Function;
+    getHeight: (...args: any) => any;
     /** The function that handles applying the height setting to the character */
-    setHeight: Function;
+    setHeight: (...args: any) => any;
     /** The list of extended item options the current option was selected from, if applicable */
     parentOptions: ExtendedItemOption[];
 }
@@ -2817,9 +2857,9 @@ interface ICommand {
     Tag: string;
     Description?: string;
     Reference?: string;
-    Action?: (this: Optional<ICommand, 'Tag'>, args: string, msg: string, parsed: string[]) => void
-    Prerequisite?: (this: Optional<ICommand, 'Tag'>) => boolean;
-    AutoComplete?: (this: Optional<ICommand, 'Tag'>, parsed: string[], low: string, msg: string) => void;
+    Action?: (this: Optional<ICommand, "Tag">, args: string, msg: string, parsed: string[]) => void
+    Prerequisite?: (this: Optional<ICommand, "Tag">) => boolean;
+    AutoComplete?: (this: Optional<ICommand, "Tag">, parsed: string[], low: string, msg: string) => void;
     Clear?: false;
 }
 
@@ -2997,11 +3037,11 @@ interface CommonDrawCallbacks {
      */
     clearRectBlink: ClearRectCallback;
     /**
-     * Function used to draw a canvas on top of the normal canvas
+     * (...args: any) => any used to draw a canvas on top of the normal canvas
      */
     drawCanvas: DrawCanvasCallback;
     /**
-     * Function used to draw a canvas on top of the blink canvas
+     * (...args: any) => any used to draw a canvas on top of the blink canvas
      */
     drawCanvasBlink: DrawCanvasCallback;
     /**
@@ -3249,3 +3289,31 @@ interface ItemColorStateType {
 }
 
 //#end region
+
+// #region property
+
+// NOTE: Use the intersection operator to enforce that the it remains a `keyof ItemProperties` subtype
+/** Property keys of {@link ItemProperties} with text input fields */
+type PropertyTextNames = keyof ItemProperties & (
+    "Text" | "Text2" | "Text3"
+);
+
+/**
+ * A callback signature for handling (throttled) text changes.
+ * @param {Character} C - The character being modified
+ * @param {Item} item - The item being modified
+ * @param {PropertyTextNames} PropName - The property wherein the updated text should be stored
+ * @param {string} Text - The new text to be assigned to the item
+ * @returns {void} Nothing
+ */
+type PropertyTextEventListener = (
+    C: Character,
+    Item: Item,
+    PropName: PropertyTextNames,
+    Text: string,
+) => void;
+
+/** A record type with custom event listeners for one or more text input fields. */
+type PropertyTextEventListenerRecord = Partial<Record<PropertyTextNames, PropertyTextEventListener>>;
+
+// #end region

@@ -1,11 +1,22 @@
+/** Function for setting the types of extended items. */
+
 "use strict";
+
+/** Return a deep copy of the passed object. */
+function deepCopy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 /**
  * Load and assign the type to the passed item without refreshing.
  * @param item The Item in question
+ * @param character The player or simple character
  * @param type The item's type
  */
-export function itemSetType(item: Item, type: null | string): void {
+export function itemSetType(item: Item, character: Character, type: null | string): void {
+    if (typeof character !== "object" || !(character.IsPlayer() || character.IsSimple())) {
+        throw `Invalid "character": ${character?.AccountName}`;
+    }
     if (typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     }
@@ -17,15 +28,27 @@ export function itemSetType(item: Item, type: null | string): void {
 
     if (asset.Archetype) {
         const setType = itemSetTypeDict[asset.Archetype];
-        return setType(item, type);
+        return setType(item, character, type);
     } else {
-        return setTypeNoArch(item, type);
+        return setTypeNoArch(item, character, type);
     }
+}
+
+/**
+ * Construct a baseline property object for the passed object and given type.
+ * @param item The Item in question
+ * @param character The player or simple character
+ * @param type The item's type
+ */
+export function getBaselineProperty(asset: Asset, character: Character, type: null | string): ItemProperties {
+    const item: Item = { Asset: asset };
+    itemSetType(item, character, type);
+    return item.Property ?? {};
 }
 
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
 const itemSetTypeDict = Object.freeze({
-    [ExtendedArchetype.TYPED]: (item: Item, type: string | null): void => {
+    [ExtendedArchetype.TYPED]: (item: Item, character: Character, type: string | null): void => {
         // Grab the item data
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
@@ -34,24 +57,25 @@ const itemSetTypeDict = Object.freeze({
         }
 
         // Find and validate the item option
-        const firstOption = data.options.find(i => i.Property && i.Property.Type === null);
+        const firstOption = <ExtendedItemOption>data.options.find(i => i.Property && i.Property.Type === null);
         let option = data.options.find(i => i.Property && i.Property.Type === type);
-        if (option === undefined || firstOption === undefined) {
-            throw `${key}: Invalid Typed item type "${type}"`;
+        if (option === undefined) {
+            console.warn(`MBS: ${item.Asset.Group.Name}${item.Asset.Name}: Invalid Typed item type "${type}"`);
+            option = firstOption;
         } else if (
-            CommonCallFunctionByName(`InventoryItem${key}Validate`, Player, item, option, firstOption)
-            || InventoryBlockedOrLimited(Player, item, type)
+            CommonCallFunctionByName(`InventoryItem${key}Validate`, character, item, option, firstOption)
+            || InventoryBlockedOrLimited(character, item, type)
         ) {
             option = firstOption;
         }
 
         // Apply the item option
-        item.Property = Object.assign({}, option.Property || {});
+        item.Property = option.Property ? deepCopy(option.Property) : {};
         if (data.BaselineProperty) {
-            item.Property = Object.assign(item.Property, data.BaselineProperty);
+            Object.assign(item.Property, deepCopy(data.BaselineProperty));
         }
     },
-    [ExtendedArchetype.VIBRATING]: (item: Item, type: string | null): void => {
+    [ExtendedArchetype.VIBRATING]: (item: Item, character: Character, type: string | null): void => {
         // Find the item option
         let isAdvanced = true;
         let option = VibratorModeOptions.Advanced.find((o) => o.Name === type);
@@ -59,18 +83,17 @@ const itemSetTypeDict = Object.freeze({
             isAdvanced = false;
             option = VibratorModeOptions.Standard.find((o) => o.Name === type);
         }
-        if (option === undefined) {
-            throw `${item.Asset.Group.Name}${item.Asset.Name}: Invalid Vibrating item type "${type}"`;
-        }
 
         // Validate and apply the item option
-        if ((isAdvanced && Player.ArousalSettings && Player.ArousalSettings.DisableAdvancedVibes)) {
+        if (type === null || (isAdvanced && character.ArousalSettings?.DisableAdvancedVibes)) {
+            VibratorModeSetProperty(item, VibratorModeOff);
+        } else if (option === undefined) {
             VibratorModeSetProperty(item, VibratorModeOff);
         } else {
             VibratorModeSetProperty(item, option.Property);
         }
     },
-    [ExtendedArchetype.MODULAR]: (item: Item, type: string | null): void => {
+    [ExtendedArchetype.MODULAR]: (item: Item, character: Character, type: string | null): void => {
         // Find the item data
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = ModularItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
@@ -78,8 +101,9 @@ const itemSetTypeDict = Object.freeze({
             throw `${key}: Item absent from Modular item lookup table`;
         }
 
-        if (!(<string[]>item.Asset.AllowType).includes(<string>type)) {
-            throw `${key}: Invalid Modular item type "${type}"`;
+        if (type !== null && !(item.Asset.AllowType ?? []).includes(type)) {
+            console.warn(`MBS: ${item.Asset.Group.Name}${item.Asset.Name}: Invalid Modular item type "${type}"`);
+            type = null;
         }
 
         // Validate and apply the item option
@@ -89,18 +113,19 @@ const itemSetTypeDict = Object.freeze({
             const firstOption = module.Options[0];
             if (
                 option === undefined
-                || CommonCallFunctionByName(`InventoryItem${key}Validate`, Player, item, option, firstOption)
-                || InventoryBlockedOrLimited(Player, item, `${module.Key}${currentModuleValues[i]}`)
+                || CommonCallFunctionByName(`InventoryItem${key}Validate`, character, item, option, firstOption)
+                || InventoryBlockedOrLimited(character, item, `${module.Key}${currentModuleValues[i]}`)
             ) {
                 currentModuleValues[i] = 0;
             }
         });
         item.Property = ModularItemMergeModuleValues(data, currentModuleValues, data.BaselineProperty);
     },
+    [ExtendedArchetype.VARIABLEHEIGHT]: () => { return; },
 });
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
-function setTypeNoArch(item: Item, type: null | string): void {
+function setTypeNoArch(item: Item, character: Character, type: null | string): void {
     if (!Array.isArray(item.Asset.AllowType)) {
         return;
     }
@@ -109,7 +134,7 @@ function setTypeNoArch(item: Item, type: null | string): void {
     }
 
     if (item.Asset.Name === "FuturisticVibrator") {
-        itemSetTypeDict[ExtendedArchetype.VIBRATING](item, type);
+        itemSetTypeDict[ExtendedArchetype.VIBRATING](item, character, type);
         (<ItemProperties>item.Property).TriggerValues = ItemVulvaFuturisticVibratorTriggers.join("");
     } else {
         console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsuported non-archetypical item, aborting type-setting`);

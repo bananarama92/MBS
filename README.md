@@ -6,6 +6,8 @@ A repo with a number of Bondage Club-related additions, including:
   * Bondage maids
   * Wrapped up mummies
   * Petrified statue
+* The ability to create custom wheel of fortune outfits that can be used by you and anyone else using MBS:
+![image](docs/config_button.png)
 
 ## Installation
 This addon can either be installed using Tampermonkey by clicking on the [src/loader.user.js](https://github.com/bananarama92/MBS/raw/main/src/loader.user.js) link or, alternatively, by passing assigning (and activating) the following link to a bookmark or directly using it in the address bar:

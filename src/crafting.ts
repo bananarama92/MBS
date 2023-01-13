@@ -1,6 +1,8 @@
+/** Main module for managing all crafting-related additions */
+
 "use strict";
 
-import { MBS_MOD_API, range, waitFor } from "common";
+import { MBS_MOD_API, range, waitFor, settingsMBSLoaded } from "common";
 import { pushMBSSettings } from "settings";
 
 const CRAFTING_SLOT_MAX_ORIGINAL = 40;
@@ -27,12 +29,12 @@ function craftingSerialize(items?: null | readonly (null | CraftingItem)[]): str
     }).join("§");
 }
 
-waitFor(() => CraftingSlotMax != undefined).then(() => {
+waitFor(() => CraftingSlotMax !== undefined).then(() => {
     CraftingSlotMax = 100;
     console.log(`MBS: Initializing crafting module (BC ${GameVersion})`);
 });
 
-waitFor(() => Player?.OnlineSettings?.MBS != undefined).then(() => {
+waitFor(settingsMBSLoaded).then(() => {
     console.log(`MBS: Initializing crafting hooks (BC ${GameVersion})`);
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
