@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MBS_dev - Maid's Bondage Scripts Development Version
 // @namespace    MBS_dev
-// @version      0.1.13.dev0
+// @version      0.1.14.dev0
 // @description  Loader of Bananarama92's "Maid's Bondage Scripts" mod (dev version)
 // @author       Bananarama92
 // @include      /^https:\/\/(www\.)?bondageprojects\.elementfx\.com\/R\d+\/(BondageClub|\d+)(\/((index|\d+)\.html)?)?$/
