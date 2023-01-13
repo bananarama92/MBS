@@ -31,7 +31,7 @@ interface FortuneWheelItem extends FortuneWheelItemBase {
     Craft?: CraftingItem,
 }
 
-type FortuneWheelNames = "leash_candy" | "mummy";
+type FortuneWheelNames = "leash_candy" | "mummy" | "maid";
 type FortuneWheelItemSets = Readonly<Record<FortuneWheelNames, Readonly<FortuneWheelItem>[]>>;
 type FortuneWheelOptions = Record<string, Readonly<FortuneWheelOption>>;
 type FortuneWheelCallback = (item: Item) => void;

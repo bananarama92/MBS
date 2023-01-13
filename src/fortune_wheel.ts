@@ -593,6 +593,114 @@ function generateItemSets(): FortuneWheelItemSets {
                 },
             },
         ],
+        maid: [
+            {
+                Name: "LaceBands",
+                Group: "Bracelet",
+                Color: ["#aaaaaa", "#151515"],
+            },
+            {
+                Name: "MaidOutfit2",
+                Group: "Cloth",
+                Color: ["#0C0C0C", "#919194", "#9C9C9F"],
+            },
+            {
+                Name: "CatsuitCollar",
+                Group: "ClothAccessory",
+                Color: ["#131313"],
+            },
+            {
+                Name: "MaidHairband1",
+                Group: "Hat",
+                Color: ["#979797"],
+            },
+            {
+                Name: "Socks6",
+                Group: "Socks",
+                Color: ["#0D0D0D", "#919194"],
+            },
+            {
+                Name: "HeartTop",
+                Group: "Bra",
+                Color: ["#131313"],
+            },
+            {
+                Name: "MaidCollar",
+                Group: "ItemNeck",
+                Color: ["#DCDCDC", "#1B1B1B", "Default"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Maid Collar",
+                    Description: "A tight fitting yet comfortable collar",
+                },
+            },
+            {
+                Name: "FuturisticMittens",
+                Group: "ItemHands",
+                Color:  ["#FFFFFF", "#FFFFFF", "#2E2E2E", "#050505"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Maid Mittens",
+                    Description: "For keeping a maid out of trouble",
+                    Type: null,
+                },
+            },
+            {
+                Name: "FuturisticHeels2",
+                Group: "ItemBoots",
+                Color:  ["#101010", "#101010", "Default", "#F1FAFF", "#898989", "#898989", "#898989"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Maid Heels",
+                    Type: "Matte",
+                    Description: "For keeping a maid on their toes",
+                },
+            },
+            {
+                Name: "WiredEgg",
+                Group: "ItemVulva",
+                Color:  ["Default", "#141414"],
+                Craft: {
+                    Property: "Arousing",
+                    Name: "Maid Teaser",
+                    Description: "A little reminder to keep a maid on edge",
+                    Type: "Low",
+                    OverridePriority: 21,
+                },
+            },
+            {
+                Name: "StraitLeotard",
+                Group: "ItemArms",
+                Color:  ["#FFFFFF", "#1A1A1A", "#FFFFFF"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Maid Jacket",
+                    Description: "For keeping a maid out of trouble",
+                    Type: "cl1co1np0vp0",
+                },
+            },
+            {
+                Name: "LeatherAnkleCuffs",
+                Group: "ItemFeet",
+                Color:  ["#969696", "#191919", "#969696"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Maid Cuffs",
+                    Description: "For keeping a maid out of trouble",
+                    Type: null,
+                },
+            },
+            {
+                Name: "BallGag",
+                Group: "ItemMouth",
+                Craft: {
+                    Property: "Large",
+                    Name: "Maid Silencer",
+                    Description: "Silence is golden",
+                    Type: "Tight",
+                },
+            },
+        ],
     };
 
     for (const [setName, itemSet] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
@@ -702,6 +810,56 @@ function generateNewOptions(
                 "Mummification",
                 FORTUNATE_WHEEL_ITEM_SETS.mummy,
                 STRIP_LEVEL.CLOTHES,
+            ),
+            Default: true,
+        },
+        maid_5_min: {
+            Description: "Bondage maid for 5 minutes",
+            Script: () => fortuneWheelEquip(
+                "Bondage maid for 5 minutes",
+                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 5),
+            ),
+            Default: true,
+        },
+        maid_15_min: {
+            Description: "Bondage maid for 15 minutes",
+            Script: () => fortuneWheelEquip(
+                "Bondage maid for 15 minutes",
+                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 15),
+            ),
+            Default: true,
+        },
+        maid_60_min: {
+            Description: "Bondage maid for 60 minutes",
+            Script: () => fortuneWheelEquip(
+                "Bondage maid for 60 minutes",
+                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 60),
+            ),
+            Default: true,
+        },
+        maid_240_min: {
+            Description: "Bondage maid for 4 hours",
+            Script: () => fortuneWheelEquip(
+                "Bondage maid for 4 hours",
+                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 240),
+            ),
+            Default: false,
+        },
+        maid_exclusive: {
+            Description: "Bondage maid",
+            Script: () => fortuneWheelEquip(
+                "Bondage maid",
+                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipLock(item, "ExclusivePadlock"),
             ),
             Default: true,
         },
