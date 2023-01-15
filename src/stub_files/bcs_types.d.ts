@@ -35,3 +35,10 @@ type FortuneWheelNames = "leash_candy" | "mummy" | "maid";
 type FortuneWheelItemSets = Record<FortuneWheelNames, Readonly<FortuneWheelItem>[]>;
 type FortuneWheelOptions = Record<string, Readonly<FortuneWheelOption>>;
 type FortuneWheelCallback = (item: Item) => void;
+
+interface MBSSettings {
+    /** The MBS version */
+    readonly Version: string,
+    /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
+    CraftingCache: string,
+}

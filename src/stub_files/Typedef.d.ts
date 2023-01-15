@@ -1391,7 +1391,7 @@ interface Character {
     Rule?: LogRecord[];
     Status?: string | null;
     StatusTimer?: number;
-    Crafting?: CraftingItem[];
+    Crafting?: (null | CraftingItem)[];
 }
 
 type NPCArchetype =

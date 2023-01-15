@@ -32,3 +32,12 @@ declare class TextCache {
     translate(lines: string[][]): Promise<string[][]>;
     buildTranslations(lines: string[][], translations: string[]): string[][];
 }
+
+declare class AccountUpdater {
+    constructor();
+    Queue: Map<string, object>;
+    Timeout: number | null;
+    Start: number;
+    SyncToServer(): void;
+    QueueData(Data: object, Force?: boolean): void;
+}

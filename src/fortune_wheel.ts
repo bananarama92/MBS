@@ -881,7 +881,7 @@ let FORTUNATE_WHEEL_ITEM_SETS: Readonly<FortuneWheelItemSets>;
 let WHEEL_ITEMS_NEW: Readonly<FortuneWheelOptions>;
 
 // Requires BC R88Beta1 or higher
-waitFor(() => WheelFortuneDefault != null).then(() => {
+waitFor(() => WheelFortuneDefault != undefined).then(() => {
     const BC_VERSION = parseVersion(GameVersion);
     const BC_88BETA1: [88, 1] = [88, 1];
 

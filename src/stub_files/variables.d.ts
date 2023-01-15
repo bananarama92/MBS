@@ -2,7 +2,7 @@ declare const Character: readonly Character[];
 declare const GameVersion: string;
 declare const WheelFortuneOption: FortuneWheelOptionBase[];
 declare let WheelFortuneDefault: string;
-declare const Player: Character;
+declare const Player: PlayerCharacter & { MBSSettings: MBSSettings, OnlineSettings: { MBS: string } };
 declare function CharacterNaked(C: Character): void;
 declare function AssetGet(Family: string, Group: AssetGroupName, Name: string): null | Asset;
 declare function InventoryBlockedOrLimited(C: Character, Item: Item, ItemType?: null | string): boolean;
@@ -38,7 +38,7 @@ declare function InventoryLock(
 declare function InventoryDoesItemAllowLock(item: Item): boolean;
 declare const CurrentTime: number;
 declare function CraftingValidate(
-    Craft: CraftingItem,
+    Craft: null | CraftingItem,
     Asset?: Asset | null,
     Warn?: boolean,
 ): CraftingStatusType;
@@ -100,3 +100,9 @@ declare function InventoryGroupIsBlocked(
 declare const GameVersionFormat: RegExp;
 declare function CharacterLoadCanvas(C: Character): void;
 declare function InventoryItemHasEffect(Item: Item, Effect: EffectName, CheckProperties?: boolean): boolean;
+declare const ServerAccountUpdate: AccountUpdater;
+declare function ServerSend(Message: string, Data: object): void;
+declare function CraftingLoadServer(Packet: string): void;
+declare const CraftingStatusType: { OK: 2, ERROR: 1, CRITICAL_ERROR: 0 };
+declare function CraftingDecompressServerData(Data: string | (null | CraftingItem)[]): (null | CraftingItem)[];
+declare function CraftingSaveServer(): void;
