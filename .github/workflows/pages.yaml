@@ -43,7 +43,7 @@ jobs:
       - run: npm run lint
       - run: |
           mkdir ./dist/"${{ matrix.branch }}"
-          mv ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
+          mv ./src/loader.user.js ./src/dev_loader.user.js ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
       - uses: actions/upload-artifact@v3
         with:
           name: artifact
