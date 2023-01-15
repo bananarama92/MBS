@@ -230,7 +230,7 @@ function fortuneWheelEquip(
 }
 
 /** A list of all valid wheel of fortune colors. */
-const FORTUNE_WHEEL_COLORS = Object.freeze([
+const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([
     "Blue",
     "Gold",
     "Gray",

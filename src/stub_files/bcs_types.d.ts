@@ -1,14 +1,22 @@
 interface FortuneWheelOptionBase {
+    /** A single-character UTF16 string with the option's ID */
     ID: string,
-    Color: string,
+    /** The color of the option button */
+    Color: FortuneWheelColor,
+    /** An optional script that will be executed whenever the option is picked */
     Script?: () => void,
+    /** An optional description of the option */
     Description?: string,
+    /** Whether the option should be enabled by default */
     Default?: boolean,
 }
 
 interface FortuneWheelOption extends FortuneWheelOptionBase{
+    /** An script that will be executed whenever the option is picked */
     Script: () => void,
+    /** An description of the option */
     Description: string,
+    /** Whether the option should be enabled by default */
     Default: boolean,
 }
 
@@ -28,6 +36,7 @@ interface FortuneWheelItemBase {
 }
 
 interface FortuneWheelItem extends FortuneWheelItemBase {
+    /** Optional crafted item data */
     Craft?: CraftingItem,
 }
 
@@ -35,6 +44,7 @@ type FortuneWheelNames = "leash_candy" | "mummy" | "maid";
 type FortuneWheelItemSets = Record<FortuneWheelNames, Readonly<FortuneWheelItem>[]>;
 type FortuneWheelOptions = Record<string, Readonly<FortuneWheelOption>>;
 type FortuneWheelCallback = (item: Item) => void;
+type FortuneWheelColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple" | "Red" | "Yellow";
 
 interface MBSSettings {
     /** The MBS version */
