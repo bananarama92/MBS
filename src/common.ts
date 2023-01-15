@@ -67,7 +67,7 @@ export function getRandomPassword(n: number): string {
  * @param version The to-be parsed version
  * @returns A 2-tuple with the major- and beta version
  */
-function parseVersion(version: string): [number, number] {
+export function parseVersion(version: string): [number, number] {
     const match = GameVersionFormat.exec(version);
     if (match === null) {
         throw `Failed to match the passed version: ${version}`;
@@ -78,11 +78,13 @@ function parseVersion(version: string): [number, number] {
     ];
 }
 
-/**
- * The BC version as a 2-tuple with the major- and beta-version.
- * The beta version is set to `Inifinity` for full releases.
- */
-export const BC_VERSION: readonly [number, number] = parseVersion(GameVersion);
+/** Wait for the passed precidate to evaluate to `true`. */
+export async function waitFor(predicate: () => boolean): Promise<boolean> {
+    while (!predicate()) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    return true;
+}
 
 /** Return a record with the BC versions of all players. */
 export function getVersions(): Record<string, string> {

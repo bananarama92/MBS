@@ -1,6 +1,6 @@
 "use strict";
 
-import { MBS_MOD_API, BC_VERSION, range, randomElement, getRandomPassword } from "common";
+import { MBS_MOD_API, parseVersion, range, randomElement, getRandomPassword, waitFor } from "common";
 import { itemSetType } from "type_setting";
 
 /**
@@ -723,15 +723,13 @@ function generateItemSets(): FortuneWheelItemSets {
     return <FortuneWheelItemSets>ret;
 }
 
-/** A read-only record with all new MBS fortune wheel item sets. */
-const FORTUNATE_WHEEL_ITEM_SETS = Object.freeze(generateItemSets());
-
 /**
  * Return a record with all new MBS fortune wheel options.
  * @param idExclude A list of {@link FortuneWheelOption.ID} values already present in {@link WheelFortuneOption}
  * @param colors A list of colors whose entries will be used at random
  */
 function generateNewOptions(
+    item_sets: FortuneWheelItemSets,
     idExclude: null | readonly string[] = null,
     colors: readonly string[] = FORTUNE_WHEEL_COLORS,
 ): FortuneWheelOptions {
@@ -744,7 +742,7 @@ function generateNewOptions(
             Description: "PSO bondage for 5 minutes",
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 5 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 5),
             ),
@@ -754,7 +752,7 @@ function generateNewOptions(
             Description: "PSO bondage for 15 minutes",
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 15 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 15),
             ),
@@ -764,7 +762,7 @@ function generateNewOptions(
             Description: "PSO bondage for 60 minutes",
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 60 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 60),
             ),
@@ -774,7 +772,7 @@ function generateNewOptions(
             Description: "PSO bondage for 4 hours",
             Script: () => fortuneWheelEquip(
                 "PSO bondage for 4 hours",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 240),
             ),
@@ -784,7 +782,7 @@ function generateNewOptions(
             Description: "PSO bondage",
             Script: () => fortuneWheelEquip(
                 "PSO bondage",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipLock(item, "ExclusivePadlock"),
             ),
@@ -794,7 +792,7 @@ function generateNewOptions(
             Description: "High security PSO bondage",
             Script: () => fortuneWheelEquip(
                 "High security PSO bondage",
-                FORTUNATE_WHEEL_ITEM_SETS.leash_candy,
+                item_sets.leash_candy,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => {
                     if (InventoryDoesItemAllowLock(item) && item.Craft) {
@@ -809,7 +807,7 @@ function generateNewOptions(
             Description: "Mummification",
             Script: () => fortuneWheelEquip(
                 "Mummification",
-                FORTUNATE_WHEEL_ITEM_SETS.mummy,
+                item_sets.mummy,
                 STRIP_LEVEL.CLOTHES,
             ),
             Default: true,
@@ -818,7 +816,7 @@ function generateNewOptions(
             Description: "Bondage maid for 5 minutes",
             Script: () => fortuneWheelEquip(
                 "Bondage maid for 5 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                item_sets.maid,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 5),
             ),
@@ -828,7 +826,7 @@ function generateNewOptions(
             Description: "Bondage maid for 15 minutes",
             Script: () => fortuneWheelEquip(
                 "Bondage maid for 15 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                item_sets.maid,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 15),
             ),
@@ -838,7 +836,7 @@ function generateNewOptions(
             Description: "Bondage maid for 60 minutes",
             Script: () => fortuneWheelEquip(
                 "Bondage maid for 60 minutes",
-                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                item_sets.maid,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 60),
             ),
@@ -848,7 +846,7 @@ function generateNewOptions(
             Description: "Bondage maid for 4 hours",
             Script: () => fortuneWheelEquip(
                 "Bondage maid for 4 hours",
-                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                item_sets.maid,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipTimerLock(item, 240),
             ),
@@ -858,7 +856,7 @@ function generateNewOptions(
             Description: "Bondage maid",
             Script: () => fortuneWheelEquip(
                 "Bondage maid",
-                FORTUNATE_WHEEL_ITEM_SETS.maid,
+                item_sets.maid,
                 STRIP_LEVEL.UNDERWEAR,
                 (item) => equipLock(item, "ExclusivePadlock"),
             ),
@@ -876,37 +874,52 @@ function generateNewOptions(
     return <FortuneWheelOptions>ret;
 }
 
+/** A read-only record with all new MBS fortune wheel item sets. */
+let FORTUNATE_WHEEL_ITEM_SETS: Readonly<FortuneWheelItemSets>;
+
+/** A read-only record with all new MBS fortune wheel options. */
+let WHEEL_ITEMS_NEW: Readonly<FortuneWheelOptions>;
+
 // Requires BC R88Beta1 or higher
-if (BC_VERSION >= <[number, number]>[88, 1]) {
-    console.log(`MBS: Initializing wheel of fortune additions (BC ${GameVersion})`);
+waitFor(() => WheelFortuneDefault != null).then(() => {
+    const BC_VERSION = parseVersion(GameVersion);
+    const BC_88BETA1: [88, 1] = [88, 1];
 
-    /** A read-only record with all new MBS fortune wheel options. */
-    const WHEEL_ITEMS_NEW = Object.freeze(generateNewOptions(WheelFortuneOption.map(i => i.ID)));
+    if (BC_VERSION >= BC_88BETA1) {
+        console.log(`MBS: Initializing wheel of fortune module (BC ${GameVersion})`);
 
-    Object.values(WHEEL_ITEMS_NEW).forEach((item) => {
-        WheelFortuneOption.push(item);
-        if (item.Default) {
-            WheelFortuneDefault += item.ID;
-        }
-    });
+        FORTUNATE_WHEEL_ITEM_SETS = Object.freeze(generateItemSets());
+        WHEEL_ITEMS_NEW = Object.freeze(generateNewOptions(
+            FORTUNATE_WHEEL_ITEM_SETS,
+            WheelFortuneOption.map(i => i.ID),
+        ));
 
-    MBS_MOD_API.hookFunction("WheelFortuneLoad", 0, (args, next) => {
-        if (TextScreenCache != null) {
-            for (const item of Object.values(WHEEL_ITEMS_NEW)) {
-                TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+        Object.values(WHEEL_ITEMS_NEW).forEach((item) => {
+            WheelFortuneOption.push(item);
+            if (item.Default) {
+                WheelFortuneDefault += item.ID;
             }
-        }
-        return next(args);
-    });
+        });
 
-    MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
-        if (TextScreenCache != null) {
-            for (const item of Object.values(WHEEL_ITEMS_NEW)) {
-                TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+        MBS_MOD_API.hookFunction("WheelFortuneLoad", 0, (args, next) => {
+            if (TextScreenCache != null) {
+                for (const item of Object.values(WHEEL_ITEMS_NEW)) {
+                    TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+                }
             }
-        }
-        return next(args);
-    });
-} else {
-    console.log(`MBS: Aborting initializion of wheel of fortune additions (BC ${GameVersion})`);
-}
+            return next(args);
+        });
+
+        MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
+            if (TextScreenCache != null) {
+                for (const item of Object.values(WHEEL_ITEMS_NEW)) {
+                    TextScreenCache.cache[`Option${item.ID}`] = item.Description;
+                }
+            }
+            return next(args);
+        });
+    } else {
+        console.log(`MBS: Failed to initialize the wheel of fortune module (BC ${GameVersion})`);
+    }
+});
+
