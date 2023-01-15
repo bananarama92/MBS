@@ -607,7 +607,7 @@ function generateItemSets(): FortuneWheelItemSets {
             {
                 Name: "CatsuitCollar",
                 Group: "ClothAccessory",
-                Color: ["#131313"],
+                Color: ["#0E0E0E"],
             },
             {
                 Name: "MaidHairband1",
@@ -622,7 +622,13 @@ function generateItemSets(): FortuneWheelItemSets {
             {
                 Name: "HeartTop",
                 Group: "Bra",
-                Color: ["#131313"],
+                Color: ["#0E0E0E"],
+            },
+            {
+                Name: "FuturisticHeels2",
+                Group: "Shoes",
+                Color:  ["#101010", "Default", "#F1FAFF", "#898989", "#898989"],
+                ItemCallback: (item) => itemSetType(item, "Matte"),
             },
             {
                 Name: "MaidCollar",
