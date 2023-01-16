@@ -133,7 +133,7 @@ function playerStrip(stripLevel: 0 | 1 | 2 | 3): void {
             break;
         }
         case STRIP_LEVEL.ALL: {
-            const blockBodyCosplay = (Player.OnlineSharedSettings && Player.OnlineSharedSettings.BlockBodyCosplay) || false;
+            const blockBodyCosplay = Player.OnlineSharedSettings?.BlockBodyCosplay || false;
             levelCondition = (asset) => (blockBodyCosplay ? asset.BodyCosplay : false);
             break;
         }
@@ -159,19 +159,25 @@ function playerStrip(stripLevel: 0 | 1 | 2 | 3): void {
  * Equip the player with all items from the passed fortune wheel item list.
  * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
- * @param globalCallbacks A list of callbacks (or `null`) that will be applied to all items after they're equiped
  * @param stripLevel An integer denoting which clothes should be removed; see {@link STRIP_LEVEL}
+ * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equiped
+ * @param preRunCallback A callback (or `null`) executed before equiping any items from `itemList`
  */
 function fortuneWheelEquip(
     name: string,
     itemList: readonly FortuneWheelItem[],
     stripLevel: 0 | 1 | 2 | 3,
     globalCallback: null | FortuneWheelCallback = null,
+    preRunCallback: null | ((itemList: readonly FortuneWheelItem[]) => readonly FortuneWheelItem[]) = null,
 ): void {
     if (!Array.isArray(itemList)) {
         throw `Invalid "itemList" type: ${typeof itemList}`;
     }
     playerStrip(stripLevel);
+
+    if (typeof preRunCallback === "function") {
+        itemList = preRunCallback(itemList);
+    }
 
     const equipFailureRecord: Record<string, string[]> = {};
     for (const {Name, Group, Equip, Craft, ItemCallback, Color} of <readonly FortuneWheelItem[]>itemList) {
@@ -186,7 +192,7 @@ function fortuneWheelEquip(
                 "Locked item equiped": !(
                     oldItem == null
                     || !InventoryItemHasEffect(oldItem, "Lock")
-                    || (oldItem.Craft && oldItem.Craft.Property === "Decoy")
+                    || oldItem.Craft?.Property === "Decoy"
                 ),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(Player, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(Player, asset, asset.Prerequisite, false),
@@ -210,7 +216,7 @@ function fortuneWheelEquip(
             continue;
         }
         newItem.Craft = Object.assign({}, Craft);
-        itemSetType(newItem, (Craft == null) ? null : Craft.Type);
+        itemSetType(newItem, Craft?.Type || null);
         InventoryCraft(Player, Player, Group, Craft, false, false);
 
         // Fire up any of the provided item-specific dynamic callbacks
@@ -280,9 +286,54 @@ function copyHairColor(item: Item, indices: number[]): void {
         indices.forEach(i => color[i] = <string>hair.Color);
     } else if (Array.isArray(hair.Color) && hair.Color.length >= 1) {
         indices.forEach(i => color[i] = (<string[]>hair.Color)[0]);
-    } else {
-        return;
     }
+}
+
+/**
+ * Color all items in the passed groups with the specified color.
+ * @param groupNames The to-be collored groups
+ * @param color The color
+ */
+function colorItems(groupNames: readonly AssetGroupName[], color: string): void {
+    if (!Array.isArray(<readonly AssetGroupName[]>groupNames)) {
+        throw `Invalid "groupNames" type: ${typeof groupNames}`;
+    }
+    if (typeof color !== "string") {
+        throw `Invalid "color" type: ${typeof groupNames}`;
+    }
+
+    groupNames.forEach(name => {
+        const item = InventoryGet(Player, name);
+        if (item == null) {
+            return;
+        }
+
+        item.Color = [];
+        for (const _ of range(0, item.Asset.ColorableLayerCount)) {
+            item.Color.push(color);
+        }
+    });
+}
+
+function statueCopyColors<T>(itemList: T): T {
+    if (!Player.OnlineSharedSettings?.BlockBodyCosplay) {
+        const groupNames: AssetGroupName[] = [
+            "HairAccessory1",
+            "HairAccessory2",
+            "HairAccessory3",
+            "HairBack",
+            "HairFront",
+            "BodyUpper",
+            "BodyLower",
+            "Wings",
+            "TailStraps",
+            "Nipples",
+            "Blush",
+            "Mouth",
+        ];
+        colorItems(groupNames, "#484747");
+    }
+    return itemList;
 }
 
 /** Return a record with all new MBS fortune wheel item sets. */
@@ -707,6 +758,121 @@ function generateItemSets(): FortuneWheelItemSets {
                 },
             },
         ],
+        // Use the catsuit rather than coloring the body when cosplay items are blocked
+        statue: [
+            {
+                Name: "ReverseBunnySuit",
+                Group: "SuitLower",
+                Color: ["#1B1B1B"],
+                Equip: () => !(Player.OnlineSharedSettings?.BlockBodyCosplay || false),
+            },
+            {
+                Name: "SeamlessCatsuit",
+                Group: "SuitLower",
+                Color: ["#484747"],
+                Equip: () => Player.OnlineSharedSettings?.BlockBodyCosplay || false,
+            },
+            {
+                Name: "SeamlessCatsuit",
+                Group: "Suit",
+                Color: ["#484747"],
+                Equip: () => Player.OnlineSharedSettings?.BlockBodyCosplay || false,
+            },
+            {
+                Name: "ReverseBunnySuit",
+                Group: "Cloth",
+                Color: ["#1B1B1B", "#1B1B1B"],
+            },
+            {
+                Name: "BondageSkirt",
+                Group: "ClothLower",
+                Color: ["#484747", "#333333", "#333333"],
+            },
+            {
+                Name: "CatsuitCollar",
+                Group: "ClothAccessory",
+                Color: ["#484747"],
+            },
+            {
+                Name: "HighCollar",
+                Group: "ItemNeck",
+                Color: ["#363636", "#717171"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Statue Neck",
+                    Type: "e0m3b0br0op0ms0",
+                },
+            },
+            {
+                Name: "LargeDildo",
+                Group: "ItemMouth",
+                Color: ["#333333"],
+                Craft: {
+                    Property: "Large",
+                    Name: "Mouth Sealant",
+                    OverridePriority: 27,
+                },
+            },
+            {
+                Name: "LatexPostureCollar",
+                Group: "ItemMouth2",
+                Color: ["Default"],
+                Craft: {
+                    Property: "Large",
+                    Name: "Mouth Sealant",
+                    OverridePriority: 28,
+                },
+            },
+            {
+                Name: "LatexBallMuzzleGag",
+                Group: "ItemMouth3",
+                Color: ["#A1A1A1"],
+                Craft: {
+                    Property: "Large",
+                    Name: "Mouth Sealant",
+                },
+            },
+            {
+                Name: "KirugumiMask",
+                Group: "ItemHood",
+                Color: ["#484747", "#484747", "#484747", "#484747"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Statue's Visage",
+                    Type: "e0m3b0br0op0ms0",
+                },
+            },
+            {
+                Name: "MonoHeel",
+                Group: "ItemBoots",
+                Color: ["#737070", "#737070", "#101010"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Statue Base",
+                    Type: null,
+                },
+            },
+            {
+                Name: "FuturisticMittens",
+                Group: "ItemHands",
+                Color:  ["#767676", "#5F5F5F", "#3C3C3C", "#4F4F4F"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Statue Hands",
+                    Type: null,
+                },
+            },
+            {
+                Name: "SmoothLeatherArmbinder1",
+                Group: "ItemArms",
+                Color: ["#191919", "#3D3D3D", "#191919", "#191919", "#191919"],
+                Craft: {
+                    Property: "Secure",
+                    Name: "Statue Arms",
+                    Type: "b1s3",
+                },
+            },
+        ],
     };
 
     for (const [setName, itemSet] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
@@ -868,6 +1034,61 @@ function generateNewOptions(
             ),
             Default: true,
         },
+        statue_5_min: {
+            Description: "Petrification for 5 minutes",
+            Script: () => fortuneWheelEquip(
+                "Petrification for 5 minutes",
+                item_sets.statue,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 5),
+                statueCopyColors,
+            ),
+            Default: true,
+        },
+        statue_15_min: {
+            Description: "Petrification for 15 minutes",
+            Script: () => fortuneWheelEquip(
+                "Petrification for 15 minutes",
+                item_sets.statue,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 15),
+                statueCopyColors,
+            ),
+            Default: true,
+        },
+        statue_60_min: {
+            Description: "Petrification for 60 minutes",
+            Script: () => fortuneWheelEquip(
+                "Petrification for 60 minutes",
+                item_sets.statue,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 60),
+                statueCopyColors,
+            ),
+            Default: true,
+        },
+        statue_240_min: {
+            Description: "Petrification for 4 hours",
+            Script: () => fortuneWheelEquip(
+                "Petrification for 4 hours",
+                item_sets.statue,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipTimerLock(item, 240),
+                statueCopyColors,
+            ),
+            Default: false,
+        },
+        statue_exclusive: {
+            Description: "Petrification",
+            Script: () => fortuneWheelEquip(
+                "Petrification",
+                item_sets.statue,
+                STRIP_LEVEL.UNDERWEAR,
+                (item) => equipLock(item, "ExclusivePadlock"),
+                statueCopyColors,
+            ),
+            Default: true,
+        },
     };
 
     const entries = Object.entries(ret);
@@ -928,4 +1149,3 @@ waitFor(() => WheelFortuneDefault != undefined).then(() => {
         console.log(`MBS: Failed to initialize the wheel of fortune module (BC ${GameVersion})`);
     }
 });
-
