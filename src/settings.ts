@@ -4,14 +4,10 @@ import { waitFor, MBS_VERSION } from "common";
 
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
-    if (typeof Player.MBSSettings != "object") {
-        if (Player.MBSSettings === undefined) {
-            Player.MBSSettings = JSON.parse(
-                LZString.decompressFromBase64(Player.OnlineSettings.MBS) || "",
-            );
-        } else {
-            Player.MBSSettings = <MBSSettings>{};
-        }
+    if (typeof Player.MBSSettings !== "object") {
+        const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS || "");
+        const settings = (data == null) ? {} : JSON.parse(data);
+        Player.MBSSettings = (typeof settings === "object") ? settings : {};
     }
 
     // @ts-ignore
