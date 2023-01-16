@@ -183,7 +183,7 @@ function fortuneWheelEquip(
     for (const {Name, Group, Equip, Craft, ItemCallback, Color} of <readonly FortuneWheelItem[]>itemList) {
         const asset = AssetGet(Player.AssetFamily, Group, Name);
         const oldItem = InventoryGet(Player, Group);
-        const equip = (typeof Equip === "function") ? Equip : true;
+        const equip = (typeof Equip === "function") ? Equip() : true;
 
         // Check whether the item can actually be equiped
         if (asset != null) {
