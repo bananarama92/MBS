@@ -156,6 +156,21 @@ function playerStrip(stripLevel: 0 | 1 | 2 | 3): void {
 }
 
 /**
+ * Return whether the player can unlock the item in question.
+ * @param item The item in question
+ */
+function canUnlock(item: Item): boolean {
+    const lock = InventoryGetLock(item)?.Asset;
+    if (!InventoryItemHasEffect(item, "Lock")) {
+        return true;
+    } else if (item.Craft?.Property === "Decoy") {
+        // Always disallow the removal of owner-/lovers locked items, even when decoy restraints are used
+        return lock === undefined ? false : (!lock.OwnerOnly && !lock.LoverOnly);
+    }
+    return false;
+}
+
+/**
  * Equip the player with all items from the passed fortune wheel item list.
  * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
@@ -189,11 +204,7 @@ function fortuneWheelEquip(
         if (asset != null) {
             const equipChecks = {
                 "Equip callback": !equip,
-                "Locked item equiped": !(
-                    oldItem == null
-                    || !InventoryItemHasEffect(oldItem, "Lock")
-                    || oldItem.Craft?.Property === "Decoy"
-                ),
+                "Locked item equiped": !(oldItem == null || canUnlock(oldItem)),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(Player, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(Player, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(Player, Group, false),
