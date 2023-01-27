@@ -14,7 +14,7 @@ import {
 } from "common";
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
-import { StripLevel } from "equiper";
+import { StripLevel } from "equipper";
 
 /**
  * Copy the player's hair color the to passed item.
@@ -60,7 +60,7 @@ function copyHairColor(item: Item, indices: readonly number[]): void {
 
 /**
  * Color all items in the passed groups with the specified color.
- * @param groupNames The to-be collored groups
+ * @param groupNames The to-be colored groups
  * @param color The color
  */
 function colorItems(groupNames: readonly AssetGroupName[], color: string): void {

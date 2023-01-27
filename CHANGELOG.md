@@ -21,7 +21,7 @@
 * Minor adjustments to the bondage maid outfit color and boots
 
 ## v0.1.15
-* Do net set the member number for locks as this will cause the player to see its password
+* Do not set the member number for locks as this will cause the player to see its password
 * Do not let the crafting check raise if the user does not own an item
 * Only load MBS after BC is properly loaded
 

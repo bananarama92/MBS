@@ -137,6 +137,6 @@ function setTypeNoArch(item: Item, character: Character, type: null | string): v
         itemSetTypeDict[ExtendedArchetype.VIBRATING](item, character, type);
         (<ItemProperties>item.Property).TriggerValues = ItemVulvaFuturisticVibratorTriggers.join("");
     } else {
-        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsuported non-archetypical item, aborting type-setting`);
+        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
     }
 }

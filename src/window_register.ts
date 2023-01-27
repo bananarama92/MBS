@@ -21,7 +21,7 @@ import {
 
 import * as common from "common";
 import * as crafting from "crafting";
-import * as equiper from "equiper";
+import * as equipper from "equipper";
 import * as fortune_wheel_customize from "fortune_wheel_customize";
 import * as fortune_wheel_select from "fortune_wheel_select";
 import * as fortune_wheel from "fortune_wheel";
@@ -32,7 +32,7 @@ waitFor(settingsMBSLoaded).then(() => {
     const exportMBS = Object.freeze({
         common: Object.freeze(common),
         crafting: Object.freeze(crafting),
-        equiper: Object.freeze(equiper),
+        equipper: Object.freeze(equipper),
         fortune_wheel_customize: Object.freeze(fortune_wheel_customize),
         fortune_wheel_select: Object.freeze(fortune_wheel_select),
         fortune_wheel: Object.freeze(fortune_wheel),

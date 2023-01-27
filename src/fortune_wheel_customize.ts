@@ -9,12 +9,12 @@ import {
     FORTUNE_WHEEL_FLAGS,
     setScreenNoText,
 } from "common";
-import { fortuneWheelEquip, StripLevel, getStripCondition } from "equiper";
+import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
 
 /** The background for the MBS wheel of fortune customization screen. */
 export const MBSFortuneWheelBackground = "Sheet";
 
-/** Customization releated variables */
+/** Customization related variables */
 export const MBSCustomize: {
     /** The selected item index within {@link MBSSettings.FortuneWheelSets} */
     selectedIndex: number,

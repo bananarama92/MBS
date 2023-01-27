@@ -5,7 +5,7 @@
 import bcModSdk from "bondage-club-mod-sdk";
 import { pushMBSSettings } from "settings";
 import { fromItemBundle } from "item_bundle";
-import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equiper";
+import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
 
 /** The maximum number of custom user-specified wheel of fortune item sets. */
 export const FORTUNE_WHEEL_MAX_SETS = 14;
@@ -73,7 +73,7 @@ export function equipHighSecLock(item: Item, character: Character): void {
  * Note that no lock-specific {@link Item.Property} values are set on the item.
  * @param item The item in question
  * @param lockName The to-be attached lock
- * @returns whether the lock was equiped or not
+ * @returns whether the lock was equipped or not
  */
 export function equipLock(item: Item, lockName: AssetLockType, character: Character): boolean {
     if (typeof item !== "object") {
@@ -163,7 +163,7 @@ export function parseVersion(version: string): [number, number] {
     ];
 }
 
-/** Wait for the passed precidate to evaluate to `true`. */
+/** Wait for the passed predicate to evaluate to `true`. */
 export async function waitFor(predicate: () => boolean): Promise<boolean> {
     while (!predicate()) {
         await new Promise((resolve) => setTimeout(resolve, 10));
@@ -212,7 +212,7 @@ export class LoopIterator<T> {
     get list() { return this.#list; }
 
     /**
-     * Initalize the instance
+     * Initialize the instance
      * @param list The to-be iterated array
      * @param start The starting position within the array
      */
@@ -334,14 +334,14 @@ const FLAGS_CALLBACKS: Record<FortuneWheelFlags, FortuneWheelCallback> = {
 export class WheelFortuneSelectedItemSet {
     /** The name of custom option */
     name: null | string = null;
-    /** The to-be equiped items */
+    /** The to-be equipped items */
     itemList: null | readonly FortuneWheelItem[] = null;
     /** Which flavors of {@link FortuneWheelOption} should be created */
     flags: Set<FortuneWheelFlags> = new Set();
     /** The cached base64 outfit code */
     outfitCache: null | string = null;
 
-    /** An (inifinite) iterator with all available {@link this.stripLevel} values */
+    /** An (infinite) iterator with all available {@link this.stripLevel} values */
     readonly stripIter: LoopIterator<StripLevel>;
     /** Get or set which items should be removed from the user */
     get stripLevel(): StripLevel { return this.stripIter.value; }
@@ -350,9 +350,9 @@ export class WheelFortuneSelectedItemSet {
         this.stripIter.setPosition(index);
     }
 
-    /** An (inifinite) iterator with all available {@link this.equipLevel} values */
+    /** An (infinite) iterator with all available {@link this.equipLevel} values */
     readonly equipIter: LoopIterator<StripLevel>;
-    /** Which from the to-be equiped outfit should be actually equiped */
+    /** Which from the to-be equipped outfit should be actually equipped */
     get equipLevel(): StripLevel { return this.equipIter.value; }
     set equipLevel(level: StripLevel) {
         const index = this.equipIter.list.indexOf(level);
@@ -393,7 +393,7 @@ export class WheelFortuneSelectedItemSet {
 
     /**
      * Update this instance with settings from the provided item set.
-     * @param preRunCallback /** An optional callback for {@link fortuneWheelEquip} that will executed before equiping any items from itemList
+     * @param preRunCallback /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
      */
     writeItemSet(
         hidden: boolean = false,
@@ -513,29 +513,29 @@ type WheelFortuneItemSetKwargTypesParsed = Required<WheelFortuneItemSetKwargType
 export class WheelFortuneItemSet {
     /** The name of custom option */
     readonly name: string;
-    /** The to-be equiped items */
+    /** The to-be equipped items */
     readonly itemList: readonly FortuneWheelItem[];
     /** Which items should be removed from the user */
     readonly stripLevel: StripLevel;
-    /** Which from the to-be equiped outfit should be actually equiped */
+    /** Which from the to-be equipped outfit should be actually equipped */
     readonly equipLevel: StripLevel;
     /** Which flavors of {@link FortuneWheelOption} should be created */
     readonly flags: Readonly<Set<FortuneWheelFlags>>;
     /** Whether this concerns a custom user-created item set */
     readonly custom: boolean;
-    /** An optional callback for {@link fortuneWheelEquip} that will executed before equiping any items from itemList */
+    /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
     /** The character ID of the item option's owner when or `null` for non-custom items */
     readonly ownerID: null | number;
     /** The registered options corresponding to this item set (if any) */
     #children: null | readonly FortuneWheelOption[] = null;
-    /** Whether the itemset is meant to be hidden */
+    /** Whether the item set is meant to be hidden */
     #hidden: boolean = true;
 
     /** Get the registered options corresponding to this item set (if any) */
     get children(): null | readonly FortuneWheelOption[] {  return this.#children; }
 
-    /** Get or set whether the itemset is meant to be hidden */
+    /** Get or set whether the item set is meant to be hidden */
     get hidden(): boolean {  return this.#hidden; }
     set hidden(value: boolean) {
         if (value === true) {
@@ -641,8 +641,8 @@ export class WheelFortuneItemSet {
     }
 
     /**
-     * Factorty method for generating {@link FortuneWheelOption.Script} callbacks.
-     * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equiped
+     * Factory method for generating {@link FortuneWheelOption.Script} callbacks.
+     * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
      * @returns A valid {@link FortuneWheelOption.Script} callback
      */
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): () => void {
@@ -763,7 +763,7 @@ export class WheelFortuneItemSet {
         return toStringTemplate(typeof this, this.valueOf());
     }
 
-    /** Return a (JSON-safeish) object representation of this instance. */
+    /** Return a (JSON safe-ish) object representation of this instance. */
     valueOf() {
         return {
             name: this.name,

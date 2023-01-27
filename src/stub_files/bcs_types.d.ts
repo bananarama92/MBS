@@ -42,11 +42,11 @@ interface FortuneWheelItemBase {
     Group: AssetGroupName,
     /** The optional color of the item */
     Color?: readonly string[],
-    /** An optional callback whose output denotes whether the item should be equiped */
+    /** An optional callback whose output denotes whether the item should be equipped */
     Equip?: () => boolean,
     /** Optional crafted item data */
     Craft?: Partial<CraftingItem>,
-    /** An optional callback for post-processing the item after it's equiped and its type is set */
+    /** An optional callback for post-processing the item after it's equipped and its type is set */
     ItemCallback?: FortuneWheelCallback;
     /** Whether this is a custom user-specified item set */
     Custom?: boolean,

@@ -134,7 +134,7 @@ export function toItemBundle(items: readonly FortuneWheelItem[], character: Char
     return items.map(({ Group, Name, Color, Craft, Type, Property }) => {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         if (asset == null) {
-            throw `Unkown asset: ${Group}${Name}`;
+            throw `Unknown asset: ${Group}${Name}`;
         }
         return {
             Group: Group,

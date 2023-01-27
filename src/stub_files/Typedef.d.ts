@@ -3213,7 +3213,7 @@ interface CraftingItemSelected {
     Asset: Asset | null;
     /** The crafted item propery. */
     Property: CraftingPropertyType;
-    /** The lock as equiped on the item or, if absent, `null`. */
+    /** The lock as equipped on the item or, if absent, `null`. */
     Lock: Asset | null;
     /** Whether the crafted item should be private or not. */
     Private: boolean;

@@ -1,4 +1,4 @@
-/** Module related to the equiping and removing of wheel of fortune items. */
+/** Module related to the equipping and removing of wheel of fortune items. */
 
 "use strict";
 
@@ -27,7 +27,7 @@ export const StripLevel = Object.freeze({
 const MBSDummy = CharacterLoadSimple("MBSDummy");
 
 /**
- * Return that a callable that returns whether the passed asset satisifies the specified strip {@link StripLevel}
+ * Return that a callable that returns whether the passed asset satisfies the specified strip {@link StripLevel}
  * @param stripLevel The desired strip level
  * @param character The affected character
  */
@@ -120,7 +120,7 @@ function itemsArgSortDFS(graph: Readonly<Map<AssetGroupName, Node>>, node?: Node
  * Construct a record that maps group names to sorting priorities in a manner to minimize group slot-blocking.
  * Only groups belonging to the `Item` category will be included.
  * @param itemList The list of items for whom a sorting priority will be created.
- * @param character The intended to-be equiped character.
+ * @param character The intended to-be equipped character.
  */
 export function itemsArgSort(
     itemList: readonly SimpleItem[],
@@ -130,7 +130,7 @@ export function itemsArgSort(
         throw `Invalid "itemList" type: ${typeof itemList}`;
     }
 
-    // Map all equiped item groups to the groups that they block
+    // Map all equipped item groups to the groups that they block
     const graph: Map<AssetGroupName, Node> = new Map();
     for (const { Group, Name, Type } of itemList) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
@@ -162,7 +162,7 @@ export function itemsArgSort(
 /**
  * Sort and return the passed itemlist in a manner to minimize group slot blocking.
  * @param itemList The to-be sorted item list. Note that the list is modified inplace.
- * @param character The intended to=be equiped character.
+ * @param character The intended to=be equipped character.
  * Defaults to a simple character without any blacklisted or limited items/options.
  */
 export function fortuneItemsSort(
@@ -193,8 +193,8 @@ function canUnlock(item: Item): boolean {
  * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
  * @param stripLevel An integer denoting which clothes should be removed; see {@link StripLevel}
- * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equiped
- * @param preRunCallback A callback (or `null`) executed before equiping any items from `itemList`
+ * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
+ * @param preRunCallback A callback (or `null`) executed before equipping any items from `itemList`
  * @param character The relevant player- or NPC-character
  */
 export function fortuneWheelEquip(
@@ -214,7 +214,7 @@ export function fortuneWheelEquip(
         itemList = preRunCallback(itemList, character);
     }
 
-    // First pass: remove any old restraints occupying the to-be equiped slots
+    // First pass: remove any old restraints occupying the to-be equipped slots
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
     for (const {Name, Group, Equip} of itemList) {
@@ -222,7 +222,7 @@ export function fortuneWheelEquip(
         const oldItem = InventoryGet(character, Group);
         const equip = typeof Equip === "function" ? Equip() : true;
 
-        // Check whether the item can actually be equiped
+        // Check whether the item can actually be equipped
         if (asset == null) {
             equipFailureRecord[Name] = ["Unknown asset"];
             continue;
@@ -233,7 +233,7 @@ export function fortuneWheelEquip(
             continue;
         } else {
             const equipChecks = {
-                "Locked item equiped": !canUnlock(oldItem),
+                "Locked item equipped": !canUnlock(oldItem),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(character, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, Group, false),
