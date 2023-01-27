@@ -9,16 +9,70 @@ import {
     WheelFortuneItemSet,
     settingsLoaded,
     FORTUNE_WHEEL_MAX_SETS,
+    Version,
 } from "common";
+
+/** Check whether MBS has just been upgraded for the user in question. */
+function detectUpgrade(versionString?: string): versionString is string {
+    if (versionString === undefined) {
+        console.log("MBS: Detecting first-time MBS initialization");
+        return false;
+    }
+
+    const newVersion = Version.fromVersion(MBS_VERSION);
+    let oldVersion: Version;
+    try {
+        oldVersion = Version.fromVersion(versionString);
+    } catch (error) {
+        console.warn(`MBS: Failed to parse previous MBS version: ${versionString}`);
+        return false;
+    }
+
+    if (newVersion.greater(oldVersion)) {
+        console.log(`MBS: Upgrading MBS from ${versionString} to ${MBS_VERSION}`);
+        return true;
+    } else if (newVersion.lesser(oldVersion)) {
+        console.warn(`MBS: Downgrading MBS from ${versionString} to ${MBS_VERSION}`);
+        return false;
+    } else {
+        return false;
+    }
+}
+
+/** Construct a git tag and a tag for the `changelog.md` file given the current MBS version. */
+function getGitTags(): [gitTag: string, mdTag: string] {
+    const version = Version.fromVersion(MBS_VERSION);
+    const mdTag = `#v${version.major}${version.minor}${version.micro}`;
+    return version.beta ? ["blob/devel", ""] : ["blob/main", mdTag];
+}
+
+/** Show the MBS changelog to the player */
+function showChangelog(): void {
+    const mbs_tags = getGitTags();
+    const message = `New MBS version detected: ${MBS_VERSION}
+
+See below for the updated changelog:
+https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
+    ServerAccountBeep({
+        MemberNumber: Player.MemberNumber,
+        MemberName: "MBS",
+        ChatRoomName: "MBS Changelog",
+        Private: true,
+        Message: message,
+        ChatRoomSpace: "",
+    });
+}
 
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
     Player.MBSSettings = <MBSSettings>{ Version: MBS_VERSION };
     const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS || "");
-    const s = (data == null) ? null : JSON.parse(data);
-    if (typeof s === "object") {
-        Object.assign(Player.MBSSettings, s, { Version: MBS_VERSION });
+    let s: Partial<MBSSettings> = (data == null) ? null : JSON.parse(data);
+    s = (typeof s === "object") ? s : {};
+    if (detectUpgrade(s.Version)) {
+        showChangelog();
     }
+    Object.assign(Player.MBSSettings, s, { Version: MBS_VERSION });
 
     if (typeof Player.MBSSettings.CraftingCache !== "string") {
         Player.MBSSettings.CraftingCache = "";

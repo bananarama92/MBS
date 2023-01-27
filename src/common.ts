@@ -33,6 +33,9 @@ export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze(
     "Yellow",
 ]);
 
+/** Regular expression for the MBS version */
+const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.dev0)?$/;
+
 /**
  * Attach and set a timer lock to the passed item for the specified duration.
  * @param item The item in question
@@ -163,10 +166,14 @@ export function parseVersion(version: string): [number, number] {
     ];
 }
 
-/** Wait for the passed predicate to evaluate to `true`. */
-export async function waitFor(predicate: () => boolean): Promise<boolean> {
+/**
+ * Wait for the passed predicate to evaluate to `true`.
+ * @param predicate A predicate
+ * @param timeout The timeout in miliseconds for when the predicate fails
+ */
+export async function waitFor(predicate: () => boolean, timeout: number = 10): Promise<boolean> {
     while (!predicate()) {
-        await new Promise((resolve) => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, timeout));
     }
     return true;
 }
@@ -870,4 +877,117 @@ export function setScreenNoText(NewScreen: string): void {
 /** Return a deep copy of the passed object. */
 export function deepCopy<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));
+}
+
+/** A class for representing semantic versions */
+export class Version {
+    /** The major semantic version */
+    readonly major: number;
+    /** The minor semantic version */
+    readonly minor: number;
+    /** The micro semantic version */
+    readonly micro: number;
+    /** Whether this concerns a beta version or not */
+    readonly beta: boolean;
+
+    constructor(major: number = 0, minor: number = 0, micro: number = 0, beta: boolean = false) {
+        if (!Number.isInteger(major)) {
+            throw `Invalid "major" type: ${typeof major}`;
+        }
+        if (!Number.isInteger(minor)) {
+            throw `Invalid "minor" type: ${typeof minor}`;
+        }
+        if (!Number.isInteger(micro)) {
+            throw `Invalid "micro" type: ${typeof micro}`;
+        }
+        if (typeof beta !== "boolean") {
+            throw `Invalid "beta" type: ${typeof beta}`;
+        }
+        this.major = major;
+        this.minor = minor;
+        this.micro = micro;
+        this.beta = beta;
+        Object.freeze(this);
+    }
+
+    /** Check whether two versions are equal */
+    equal(other: Version): boolean {
+        if (!(other instanceof Version)) {
+            return false;
+        }
+        return (
+            this.major === other.major
+            && this.minor === other.micro
+            && this.micro === other.micro
+            && this.beta === other.beta
+        );
+    }
+
+    /** Check whether this version is greater than the other */
+    greater(other: Version): boolean {
+        if (!(other instanceof Version)) {
+            return false;
+        }
+        const attrList = [
+            [this.major, other.major],
+            [this.minor, other.minor],
+            [this.micro, other.micro],
+            [this.beta, other.beta],
+        ];
+        for (const [thisAttr, otherAttr] of attrList) {
+            if (thisAttr > otherAttr) {
+                return true;
+            } else if (thisAttr < otherAttr) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /** Check whether this version is lesser than the other */
+    lesser(other: Version): boolean {
+        if (!(other instanceof Version)) {
+            return false;
+        }
+        return other.greater(this);
+    }
+
+    /** Check whether this version is greater than or equal to the other */
+    greaterOrEqual(other: Version): boolean {
+        return this.equal(other) || this.greater(other);
+    }
+
+    /** Check whether this version is lesser than or equal to the other */
+    lesserOrEqual(other: Version): boolean {
+        return this.equal(other) || this.lesser(other);
+    }
+
+    /** Construct a new instance from the passed version string */
+    static fromVersion(version: string): Version {
+        const match = MBS_VERSION_PATTERN.exec(version);
+        if (match === null) {
+            throw `Invalid "version": ${version}`;
+        }
+        return new Version(
+            Number(match[2]),
+            Number(match[3]),
+            Number(match[4]),
+            (match[5] !== undefined),
+        );
+    }
+
+    /** Return a string representation of this instance. */
+    toString(): string {
+        return toStringTemplate(typeof this, this.valueOf());
+    }
+
+    /** Return an object representation of this instance. */
+    valueOf() {
+        return {
+            major: this.major,
+            minor: this.minor,
+            micro: this.micro,
+            beta: this.beta,
+        };
+    }
 }

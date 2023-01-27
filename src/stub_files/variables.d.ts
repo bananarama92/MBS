@@ -162,3 +162,14 @@ declare let ItemDevicesLuckyWheelMinTexts: number;
 declare let ItemDevicesLuckyWheelMaxTexts: number;
 declare let ItemDevicesLuckyWheelMaxTextLength: number;
 declare function InventoryRemove(C: Character, AssetGroup: AssetGroupName, Refresh?: boolean): void;
+declare function ChatRoomCurrentTime(): string;
+declare function ElementIsScrolledToEnd(ID: string): boolean;
+declare function ElementScrollToEnd(ID: string): void;
+declare function ServerAccountBeep(data: {
+	MemberNumber?: number; /* undefined for NPCs */
+	MemberName: string;
+	ChatRoomName?: string;
+	Private: boolean;
+	ChatRoomSpace?: string;
+	Message?: string;
+}): void;
