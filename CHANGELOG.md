@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v0.2.2
+* Allow the viewing other people's wheel of fortune item set config
+* Create a dedicated MBS changelog file
+* Report the changelog whenever the MBS version is incremented
+
 ## v0.2.1
 * Fix the first-time initialization of the MBS wheel of fortune settings
 
