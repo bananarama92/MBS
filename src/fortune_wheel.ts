@@ -852,18 +852,15 @@ waitFor(settingsMBSLoaded).then(() => {
 
         MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
             next(args);
-            const enabled = (WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
+            const enabled = WheelFortuneVelocity === 0;
             const color = enabled ? "White" : "Silver";
-            const description = enabled ? "MBS: Configure custom options" : "MBS: Cannot configure other player's options";
+            const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+            const description = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${name}'s option config`;
             DrawButton(1655, 25, 90, 90, "", color, "Icons/Crafting.png", description, !enabled);
         });
 
         MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
-            if (
-                WheelFortuneVelocity === 0
-                && MouseIn(1655, 25, 90, 90)
-                && WheelFortuneCharacter?.IsPlayer()
-            ) {
+            if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
                 return setScreenNoText("MBSFortuneWheelSelect");
             } else {
                 return next(args);

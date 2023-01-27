@@ -17,24 +17,28 @@ const SPACING = Object.freeze({
 /** The background for the MBS wheel of fortune selection screen. */
 export const MBSFortuneWheelSelectBackground = "Sheet";
 
-/** Load the selection screen. */
-export function MBSFortuneWheelSelectLoad(): void {
-    if (!WheelFortuneCharacter?.IsPlayer()) {
-        MBSFortuneWheelSelectExit();
-    }
-}
-
 /** Draw the selection screen. */
 export function MBSFortuneWheelSelectRun(): void {
-    DrawText("Select custom wheel of fortune item set", 1000, 105, "Black");
+    const isPlayer = WheelFortuneCharacter?.IsPlayer();
+    let header = "Select custom wheel of fortune item set";
+    if (!isPlayer) {
+        const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+        header = `Select ${name}'s custom wheel of fortune item set`;
+    }
+    DrawText(header, 1000, 105, "Black");
     DrawButton(1830, 60, 90, 90, "", "White", "Icons/Exit.png", "Exit");
 
     const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
     Player.MBSSettings.FortuneWheelSets.forEach((itemSet, i) => {
         const y = START.Y + (i % i_per_row) * SPACING.Y;
         const dx = (i_per_row > i) ? 0 : SPACING.X;
-        DrawCheckbox(START.X + dx, y, 64, 64, "", !(itemSet?.hidden ?? true), itemSet === null);
-        DrawButton(START.X + 100 + dx, y, 600, 64, `${i}: ${itemSet?.name ?? "Empty"}`, "White");
+        const checkboxDisabled = !isPlayer ? true : itemSet === null;
+        const buttonDisabled = !isPlayer && itemSet === null;
+        DrawCheckbox(START.X + dx, y, 64, 64, "", !(itemSet?.hidden ?? true), checkboxDisabled);
+        DrawButton(
+            START.X + 100 + dx, y, 600, 64, `${i}: ${itemSet?.name ?? "Empty"}`,
+            buttonDisabled ? "Gray" : "White", "", "", buttonDisabled,
+        );
     });
 }
 
@@ -44,14 +48,16 @@ export function MBSFortuneWheelSelectClick(): void {
         MBSFortuneWheelSelectExit();
     }
 
+    const isPlayer = WheelFortuneCharacter?.IsPlayer();
     const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
     for (const [i, itemSet] of Player.MBSSettings.FortuneWheelSets.entries()) {
         const y = START.Y + (i % i_per_row) * SPACING.Y;
         const dx = (i_per_row > i) ? 0 : SPACING.X;
-        if (MouseIn(START.X + dx, y, 64, 64) && itemSet !== null) {
+        const buttonDisabled = !isPlayer && itemSet === null;
+        if (MouseIn(START.X + dx, y, 64, 64) && itemSet !== null && isPlayer) {
             itemSet.hidden = !itemSet.hidden;
             return;
-        } else if (MouseIn(START.X + 100 + dx, y, 600, 64)) {
+        } else if (MouseIn(START.X + 100 + dx, y, 600, 64) && !buttonDisabled) {
             MBSCustomize.selectedIndex = i;
             setScreenNoText("MBSFortuneWheel");
             return;

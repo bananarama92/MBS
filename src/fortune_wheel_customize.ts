@@ -77,9 +77,6 @@ function reloadPreviewAppearance(): void {
 
 /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
 export function MBSFortuneWheelLoad(): void {
-    if (!WheelFortuneCharacter?.IsPlayer()) {
-        return MBSFortuneWheelExit();
-    }
     if (MBSCustomize.preview === null) {
         MBSCustomize.preview = CharacterLoadSimple(`MBSFortuneWheelPreview-${Player.MemberNumber}`);
     }
@@ -87,6 +84,10 @@ export function MBSFortuneWheelLoad(): void {
     // Unhide all input elements
     const nameElement = getTextInputElement("name", itemSettings, "Name", [1100, 300, 700, 64], "", 70);
     const outfitElement = getTextInputElement("outfitCache", itemSettings, "Outfit code", [1150, 450, 700, 64]);
+    if (!WheelFortuneCharacter?.IsPlayer()) {
+        nameElement.setAttribute("disabled", true);
+        outfitElement.setAttribute("disabled", true);
+    }
 
     // Load the settings
     const itemSet = Player.MBSSettings.FortuneWheelSets[MBSCustomize.selectedIndex];
@@ -106,8 +107,14 @@ export function MBSFortuneWheelLoad(): void {
 
 /** Draw the customization screen. */
 export function MBSFortuneWheelRun(): void {
-    DrawText("Customize wheel of fortune item set", 1000, 105, "Black");
-    DrawButton(75, 60, 90, 90, "", "White", "Icons/Trash.png", "Delete");
+    const isPlayer = WheelFortuneCharacter?.IsPlayer();
+    let header = "Customize wheel of fortune item set";
+    if (!isPlayer) {
+        const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+        header = `View ${name}'s wheel of fortune item set customization`;
+    }
+    DrawText(header, 1000, 105, "Black");
+    DrawButton(75, 60, 90, 90, "", isPlayer ? "White" : "Gray", "Icons/Trash.png", "Delete", !isPlayer);
     DrawButton(1830, 60, 90, 90, "", "White", "Icons/Exit.png", "Exit");
     DrawButton(1720, 60, 90, 90, "", "White", "Icons/Cancel.png", "Cancel");
 
@@ -122,6 +129,9 @@ export function MBSFortuneWheelRun(): void {
         acceptDisabled = true;
         acceptColor = "Gray";
         acceptDescription += ": Missing outfit";
+    } else if (!isPlayer) {
+        acceptDisabled = true;
+        acceptColor = "Gray";
     }
     DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
 
@@ -129,9 +139,9 @@ export function MBSFortuneWheelRun(): void {
         DrawCharacter(MBSCustomize.preview, 300, 100, 0.85, false);
     }
 
-    const parseDisabled = itemSettings.outfitCache === null;
+    const parseDisabled = itemSettings.outfitCache === null || !isPlayer;
     const parseColor = parseDisabled ? "Gray" : "White";
-    const parseDescription = parseDisabled ? "Missing outfit code" : "Parse the outfit code";
+    const parseDescription = itemSettings.outfitCache === null ? "Missing outfit code" : "Parse the outfit code";
     DrawButton(1500, 375, 225, 64, "Parse", parseColor, undefined, parseDescription, parseDisabled);
     ElementPosition("MBSname", 1100, 300, 700, 64);
     ElementPosition("MBSoutfitCache", 1100, 400, 700, 64);
@@ -139,10 +149,12 @@ export function MBSFortuneWheelRun(): void {
     DrawBackNextButton(750, 550, 350, 64, STRIP_MAPPING[itemSettings.stripLevel], "White", "",
         () => STRIP_MAPPING[itemSettings.stripIter.previous(false)],
         () => STRIP_MAPPING[itemSettings.stripIter.next(false)],
+        !isPlayer,
     );
     DrawBackNextButton(750, 700, 350, 64, STRIP_MAPPING[itemSettings.equipLevel], "White", "",
         () => STRIP_MAPPING[itemSettings.equipIter.previous(false)],
         () => STRIP_MAPPING[itemSettings.equipIter.next(false)],
+        !isPlayer,
     );
 
     MainCanvas.textAlign = "left";
@@ -153,56 +165,121 @@ export function MBSFortuneWheelRun(): void {
         const y = 550 + (i % 3) * 100;
         const x = (i < 3) ? 1200 : 1500;
         DrawText(flag, x + 75, y + 32, "Black");
-        DrawCheckbox(x, y, 64, 64, "", itemSettings.flags.has(flag));
+        DrawCheckbox(x, y, 64, 64, "", itemSettings.flags.has(flag), !isPlayer);
     });
     MainCanvas.textAlign = "center";
 }
 
 /** Map button coordinates to their respective callback. */
-const CLICK_MAP: Map<[X: number, Y: number, W: number, H: number], () => void> = new Map([
-    [[75, 60, 90, 90], () => MBSFortuneWheelExit(false, ExitAction.DELETE)],
-    [[1830, 60, 90, 90], () => MBSFortuneWheelExit(true, ExitAction.NONE)],
-    [[1720, 60, 90, 90], () => MBSFortuneWheelExit(false, ExitAction.NONE)],
-    [[1610, 60, 90, 90], () => {
-        if (itemSettings.isValidName(MBSCustomize.selectedIndex) && itemSettings.itemList !== null) {
-            MBSFortuneWheelExit(false, ExitAction.SAVE);
-        }
-    }],
-    [[1500, 375, 225, 64], () => {
-        if (itemSettings.loadFromBase64()) {
-            reloadPreviewAppearance();
-        }
-    }],
-    [[750, 550, 175, 64], () => {
-        itemSettings.stripIter.previous();
-        reloadPreviewAppearance();
-    }],
-    [[925, 550, 175, 64], () => {
-        itemSettings.stripIter.next();
-        reloadPreviewAppearance();
-    }],
-    [[750, 700, 175, 64], () => {
-        itemSettings.equipIter.previous();
-        reloadPreviewAppearance();
-    }],
-    [[925, 700, 175, 64], () => {
-        itemSettings.equipIter.next();
-        reloadPreviewAppearance();
-    }],
+const CLICK_MAP: Map<
+    [X: number, Y: number, W: number, H: number],
+    { callback: () => void, requiresPlayer: boolean }
+> = new Map([
+    [
+        [75, 60, 90, 90],
+        {
+            callback: () => MBSFortuneWheelExit(false, ExitAction.DELETE),
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [1830, 60, 90, 90],
+        {
+            callback: () => MBSFortuneWheelExit(true, ExitAction.NONE),
+            requiresPlayer: false,
+        },
+    ],
+    [
+        [1720, 60, 90, 90],
+        {
+            callback: () => MBSFortuneWheelExit(false, ExitAction.NONE),
+            requiresPlayer: false,
+        },
+    ],
+    [
+        [1610, 60, 90, 90],
+        {
+            callback: () => {
+                if (itemSettings.isValidName(MBSCustomize.selectedIndex) && itemSettings.itemList !== null) {
+                    MBSFortuneWheelExit(false, ExitAction.SAVE);
+                }
+            },
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [1500, 375, 225, 64],
+        {
+            callback: () => {
+                if (itemSettings.loadFromBase64()) {
+                    reloadPreviewAppearance();
+                }
+            },
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [750, 550, 175, 64],
+        {
+            callback: () => {
+                itemSettings.stripIter.previous();
+                reloadPreviewAppearance();
+            },
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [925, 550, 175, 64],
+        {
+            callback: () => {
+                itemSettings.stripIter.next();
+                reloadPreviewAppearance();
+            },
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [750, 700, 175, 64],
+        {
+            callback: () => {
+                itemSettings.equipIter.previous();
+                reloadPreviewAppearance();
+            },
+            requiresPlayer: true,
+        },
+    ],
+    [
+        [925, 700, 175, 64],
+        {
+            callback: () => {
+                itemSettings.equipIter.next();
+                reloadPreviewAppearance();
+            },
+            requiresPlayer: true,
+        },
+    ],
 ]);
 FORTUNE_WHEEL_FLAGS.forEach((flag, i) => {
     const y = 550 + (i % 3) * 100;
     const x = (i < 3) ? 1200 : 1500;
-    CLICK_MAP.set([x, y, 64, 64], () => {
-        const flags = itemSettings.flags;
-        flags.has(flag) ? flags.delete(flag) : flags.add(flag);
-    });
+    CLICK_MAP.set(
+        [x, y, 64, 64],
+        {
+            callback: () => {
+                const flags = itemSettings.flags;
+                flags.has(flag) ? flags.delete(flag) : flags.add(flag);
+            },
+            requiresPlayer: true,
+        },
+    );
 });
 
 /** Handle clicks within the customization screen. */
 export function MBSFortuneWheelClick(): void {
-    for (const [args, callback] of CLICK_MAP) {
-        if (MouseIn(...args)) {
+    const isPlayer = WheelFortuneCharacter?.IsPlayer();
+    for (const [args, { callback, requiresPlayer }] of CLICK_MAP) {
+        const canClick = isPlayer ? true : !requiresPlayer;
+        if (MouseIn(...args) && canClick) {
             callback();
         }
     }
@@ -216,6 +293,10 @@ export function MBSFortuneWheelClick(): void {
 export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction = ExitAction.NONE): void {
     ElementRemove("MBSname");
     ElementRemove("MBSoutfitCache");
+
+    if (!WheelFortuneCharacter?.IsPlayer()) {
+        action = ExitAction.NONE;
+    }
 
     const settings = Player.MBSSettings.FortuneWheelSets;
     switch (action) {

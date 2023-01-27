@@ -14,7 +14,6 @@ import {
 
 import {
     MBSFortuneWheelSelectBackground,
-    MBSFortuneWheelSelectLoad,
     MBSFortuneWheelSelectRun,
     MBSFortuneWheelSelectClick,
     MBSFortuneWheelSelectExit,
@@ -47,7 +46,6 @@ waitFor(settingsMBSLoaded).then(() => {
         MBSFortuneWheelClick: MBSFortuneWheelClick,
         MBSFortuneWheelExit: MBSFortuneWheelExit,
         MBSFortuneWheelSelectBackground: MBSFortuneWheelSelectBackground,
-        MBSFortuneWheelSelectLoad: MBSFortuneWheelSelectLoad,
         MBSFortuneWheelSelectRun: MBSFortuneWheelSelectRun,
         MBSFortuneWheelSelectClick: MBSFortuneWheelSelectClick,
         MBSFortuneWheelSelectExit: MBSFortuneWheelSelectExit,

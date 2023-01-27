@@ -41,7 +41,7 @@ interface HTMLImageElement {
 }
 
 interface HTMLElement {
-    setAttribute(qualifiedName: string, value: string | number): void;
+    setAttribute(qualifiedName: string, value: string | number | boolean): void;
 }
 
 interface RGBColor {
