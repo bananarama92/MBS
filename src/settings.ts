@@ -27,29 +27,27 @@ function initMBSSettings(): void {
     let fortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
     if (!Array.isArray(fortuneWheelSets)) {
         fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).map(() => null);
-    } else {
-        // Trim the array or pad with `null` if required
-        if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
-            fortuneWheelSets = fortuneWheelSets.slice(0, FORTUNE_WHEEL_MAX_SETS);
-        } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
-            for (const _ of range(fortuneWheelSets.length, FORTUNE_WHEEL_MAX_SETS)) {
-                fortuneWheelSets.push(null);
-            }
+    }
+    if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
+        fortuneWheelSets = fortuneWheelSets.slice(0, FORTUNE_WHEEL_MAX_SETS);
+    } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
+        for (const _ of range(fortuneWheelSets.length, FORTUNE_WHEEL_MAX_SETS)) {
+            fortuneWheelSets.push(null);
         }
-        fortuneWheelSets.forEach((itemSet, i, array) => {
-            if (itemSet !== null) {
-                try {
-                    array[i] = WheelFortuneItemSet.fromObject(itemSet);
-                    array[i]?.registerOptions(false);
-                } catch (ex) {
-                    console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
-                    array[i] = null;
-                }
-            } else {
+    }
+    fortuneWheelSets.forEach((itemSet, i, array) => {
+        if (itemSet !== null) {
+            try {
+                array[i] = WheelFortuneItemSet.fromObject(itemSet);
+                array[i]?.registerOptions(false);
+            } catch (ex) {
+                console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
                 array[i] = null;
             }
-        });
-    }
+        } else {
+            array[i] = null;
+        }
+    });
     Player.MBSSettings.FortuneWheelSets = Object.seal(fortuneWheelSets);
     Player.MBSSettings = Object.seal(Player.MBSSettings);
 }
