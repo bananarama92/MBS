@@ -822,7 +822,7 @@ waitFor(settingsMBSLoaded).then(() => {
         }
         pushMBSSettings();
 
-        MBS_MOD_API.hookFunction("WheelFortuneLoad", 0, (args, next) => {
+        MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
             loadFortuneWheel();
             if (TextScreenCache != null) {
                 for (const option of WheelFortuneOption) {
@@ -834,7 +834,7 @@ waitFor(settingsMBSLoaded).then(() => {
             return next(args);
         });
 
-        MBS_MOD_API.hookFunction("WheelFortuneExit", 0, (args, next) => {
+        MBS_MOD_API.hookFunction("WheelFortuneExit", 11, (args, next) => {
             exitFortuneWheel();
             return next(args);
         });
