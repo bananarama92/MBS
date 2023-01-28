@@ -192,7 +192,7 @@ export function settingsMBSLoaded(): boolean {
 }
 
 /** The MBS version. */
-export const MBS_VERSION = "0.2.2";
+export const MBS_VERSION = "0.2.3";
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({

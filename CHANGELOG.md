@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.2.3
+* Ensure that crafting ID lists are joined via empty strings rather than commas
+
 ## v0.2.2
 * Allow the viewing other people's wheel of fortune item set config
 * Create a dedicated MBS changelog file
