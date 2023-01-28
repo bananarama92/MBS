@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v0.3.0
+* Expand the list of padlocks that MBS can (potentially) remove, including support for BCX's `block_keyuse_self` rule
+* Switch from LGPL3 to GPL3
+* Up the priority of the `WheelFortuneLoad` and `WheelFortuneExit` hooks
+* Try to unequip blocking restraints, even if their group does not intersect with the to-be equiped item set
+* Fix the wheel of fortune item set preview using the incorrect item set list when viewing other players
+* Fix the petrifcation wheel of fortune option occasionally failing to properly color the skin
+
 ## v0.2.3
 * Ensure that crafting ID lists are joined via empty strings rather than commas
 
