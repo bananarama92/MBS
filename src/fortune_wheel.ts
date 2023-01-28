@@ -816,7 +816,7 @@ waitFor(settingsMBSLoaded).then(() => {
         FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
         WheelFortuneOption.sort(o => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false));
         FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
-        FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneOption.filter(o => !o.Custom).map(o => o.ID).join();
+        FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneOption.filter(o => !o.Custom).map(o => o.ID).join("");
         if (Player.OnlineSharedSettings.WheelFortune != null) {
             Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
         }

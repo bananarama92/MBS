@@ -757,9 +757,9 @@ export class WheelFortuneItemSet {
         }
 
         if (push && IDs.size !== 0) {
-            WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.has(i)).join();
+            WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.has(i)).join("");
             if (typeof Player.OnlineSharedSettings.WheelFortune === "string") {
-                Player.OnlineSharedSettings.WheelFortune = Array.from(Player.OnlineSharedSettings.WheelFortune).filter(i => !IDs.has(i)).join();
+                Player.OnlineSharedSettings.WheelFortune = Array.from(Player.OnlineSharedSettings.WheelFortune).filter(i => !IDs.has(i)).join("");
             }
             pushMBSSettings();
         }
