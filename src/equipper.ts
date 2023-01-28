@@ -86,7 +86,12 @@ export function characterStrip(stripLevel: StripLevel, character: Character): vo
 }
 
 /** Sorting graph node as used in {@link itemsArgSort}. */
-type Node = { readonly block: Readonly<Set<AssetGroupItemName>>, priority?: number };
+type Node = {
+    readonly block: Readonly<Set<AssetGroupItemName>>,
+    readonly superSet: boolean,
+    priority?: number,
+    blocksSubSet?: boolean,
+};
 
 /** A minimalistic (extended) item representation as used in {@link itemsArgSort}. */
 type SimpleItem = Readonly<{ Name: string, Group: AssetGroupName, Type?: string | null }>;
@@ -96,67 +101,85 @@ type SimpleItem = Readonly<{ Name: string, Group: AssetGroupName, Type?: string 
  * Note that the node (and graph by extension) are modified inplace.
  * @param graph A graph mapping group names to the asset's blocked groups and its (to-be assigned) sorting priority
  * @param node A node within `graph`
- * @returns The priority of the current `node`
+ * @returns A 2-tuple with the priority of the current `node` and whether a superset item blocks one or more subset items
  */
-function itemsArgSortDFS(graph: Readonly<Map<AssetGroupName, Node>>, node?: Node): number {
+function itemsArgSortDFS(
+    graph: Readonly<Map<AssetGroupName, Node>>,
+    node?: Node,
+): [priority: number, blocksSubSet: boolean] {
     if (node === undefined) {
-        return -1;
-    } else if (node.priority !== undefined) {
-        return node.priority;
+        return [-1, false];
+    } else if (node.priority !== undefined && node.blocksSubSet !== undefined) {
+        return [node.priority, node.blocksSubSet];
     } else if (node.block.size === 0) {
         node.priority = 0;
-        return node.priority;
+        node.blocksSubSet = false;
+        return [node.priority, node.blocksSubSet];
     } else {
-        const priorities = [];
+        const data: [priority: number, blocksSubSet: boolean][] = [];
         for (const group of node.block) {
-            priorities.push(itemsArgSortDFS(graph, graph.get(group)));
+            data.push(itemsArgSortDFS(graph, graph.get(group)));
         }
-        node.priority = 1 + Math.max(...priorities);
-        return node.priority;
+        node.priority = 1 + Math.max(...data.map(i => i[0]));
+        node.blocksSubSet = node.superSet && data.some(i => i[1]);
+        return [node.priority, node.blocksSubSet];
     }
 }
 
 /**
- * Construct a record that maps group names to sorting priorities in a manner to minimize group slot-blocking.
+ * Construct a graph that maps group names to, among others, sorting priorities in a manner to minimize group slot-blocking.
  * Only groups belonging to the `Item` category will be included.
  * @param itemList The list of items for whom a sorting priority will be created.
  * @param character The intended to-be equipped character.
+ * @param itemSuperList
  */
 export function itemsArgSort(
     itemList: readonly SimpleItem[],
     character: Character,
-): Partial<Record<AssetGroupName, number>> {
+    itemSuperList: readonly SimpleItem[] = [],
+): Map<AssetGroupName, Node> {
     if (!Array.isArray(<readonly SimpleItem[]>itemList)) {
         throw `Invalid "itemList" type: ${typeof itemList}`;
     }
 
     // Map all equipped item groups to the groups that they block
     const graph: Map<AssetGroupName, Node> = new Map();
-    for (const { Group, Name, Type } of itemList) {
-        const asset = AssetGet(character.AssetFamily, Group, Name);
-        if (asset == null) {
-            throw `Unknown asset: ${Group}${Name}`;
-        } else if (asset.Group.Category !== "Item") {
-            continue;
+    [itemList, itemSuperList].forEach((list, i) => {
+        for (const { Group, Name, Type } of list) {
+            if (graph.has(Group)) {
+                continue;
+            }
+            const asset = AssetGet(character.AssetFamily, Group, Name);
+            if (asset == null) {
+                throw `Unknown asset: ${Group}${Name}`;
+            } else if (asset.Group.Category !== "Item") {
+                continue;
+            }
+            const property = getBaselineProperty(asset, character, Type ?? null);
+            const node = <Node>{
+                superSet: i === 1,
+                block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
+            };
+            graph.set(Group, node);
         }
-        const property = getBaselineProperty(asset, character, Type ?? null);
-        const node = <Node>{
-            block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
-        };
-        graph.set(Group, node);
-    }
+    });
+
 
     // Traverse the graph, assign priorities and use them for sorting
     for (const [_, node] of graph) {
         itemsArgSortDFS(graph, node);
     }
+    return graph;
+}
 
-    // Collect and return all sorting priorities
-    const sortRecord: Partial<Record<AssetGroupName, number>> = {};
-    for (const [group, node] of graph) {
-        sortRecord[group] = node.priority;
-    }
-    return sortRecord;
+/** For a given character, find all (mutually exclusive) items in `currentItems` that block `newItems` */
+export function getBlockSuperset<T extends SimpleItem>(
+    newItems: readonly SimpleItem[],
+    currentItems: readonly T[],
+    character: Character,
+): T[] {
+    const graph = itemsArgSort(newItems, character, currentItems);
+    return currentItems.filter(item => graph.get(item.Group)?.blocksSubSet);
 }
 
 /**
@@ -170,7 +193,7 @@ export function fortuneItemsSort(
     character: Character = MBSDummy,
 ): FortuneWheelItem[] {
     const sortRecord = itemsArgSort(itemList, character);
-    return itemList.sort(item => sortRecord[item.Group] ?? Infinity);
+    return itemList.sort(item => sortRecord.get(item.Group)?.priority ?? Infinity);
 }
 
 /** A {@link canUnlock} cache for keeping track of whether a character has keys for specific lock types. */
@@ -254,11 +277,19 @@ export function fortuneWheelEquip(
         itemList = preRunCallback(itemList, character);
     }
 
-    // First pass: remove any old restraints occupying the to-be equipped slots
+    const blockingItems = getBlockSuperset(
+        itemList,
+        character.Appearance.map(i => {
+            return { Group: i.Asset.Group.Name, Name: i.Asset.Name, Type: i.Property?.Type };
+        }),
+        character,
+    );
+
+    // First pass: remove any old restraints occupying or otherwise blocking the to-be equipped slots
     keyCache.clear();
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
-    for (const {Name, Group, Equip} of itemList) {
+    for (const {Name, Group, Equip} of <FortuneWheelItem[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
         const equip = typeof Equip === "function" ? Equip() : true;
