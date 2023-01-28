@@ -4,7 +4,7 @@
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { deepCopy } from "common";
+import { deepCopy, BCX_MOD_API } from "common";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
@@ -173,19 +173,59 @@ export function fortuneItemsSort(
     return itemList.sort(item => sortRecord[item.Group] ?? Infinity);
 }
 
+/** A {@link canUnlock} cache for keeping track of whether a character has keys for specific lock types. */
+const keyCache: Map<AssetLockType, boolean> = new Map();
+
 /**
- * Return whether the player can unlock the item in question.
+ * Return whether the character can unlock the item in question.
  * @param item The item in question
+ * @param character The character
  */
-function canUnlock(item: Item): boolean {
-    const lock = InventoryGetLock(item)?.Asset;
+function canUnlock(item: Item, character: Character): boolean {
+    const lock = InventoryGetLock(item);
     if (!InventoryItemHasEffect(item, "Lock")) {
         return true;
     } else if (item.Craft?.Property === "Decoy") {
-        // Always disallow the removal of owner-/lovers locked items, even when decoy restraints are used
-        return lock === undefined ? false : (!lock.OwnerOnly && !lock.LoverOnly);
+        // Always disallow the removal of owner-/lovers exclusive items, even when decoy restraints are used
+        if (lock == null) {
+            return false;
+        }
+        return !(lock.Asset.OwnerOnly || lock.Asset.LoverOnly || item.Asset.OwnerOnly || item.Asset.LoverOnly);
     }
-    return false;
+
+    const ruleState = BCX_MOD_API.getRuleState("block_keyuse_self");
+    const blockKeyUse = (character.IsPlayer() && ruleState?.inEffect && ruleState?.isEnforced);
+    switch (lock?.Asset?.Name) {
+        case "SafewordPadlock":
+            return true;
+        case "MetalPadlock":
+        case "MistressPadlock":
+        case "MistressTimerPadlock":
+        case "PandoraPadlock":{
+            if (blockKeyUse || LogQuery("KeyDeposit", "Cell")) {
+                return false;
+            }
+            let hasKey = keyCache.get("MetalPadlock");
+            if (hasKey === undefined) {
+                hasKey = character.Inventory.some(item => item.Asset.Name === `${lock.Asset.Name}Key`);
+                keyCache.set("MetalPadlock", hasKey);
+            }
+            return hasKey;
+        }
+        case "TimerPasswordPadlock":
+        case "PasswordPadlock":
+        case "CombinationPadlock": {
+            const memberID = Number(item.Property?.LockMemberNumber);
+            return memberID === character.MemberNumber;
+        }
+        case "HighSecurityPadlock": {
+            const memberIDs = item?.Property?.MemberNumberListKeys ?? "";
+            const memberIDList = memberIDs.split(",").map(Number);
+            return blockKeyUse ? false : memberIDList.includes(<number>character.MemberNumber);
+        }
+        default:
+            return false;
+    }
 }
 
 /**
@@ -215,6 +255,7 @@ export function fortuneWheelEquip(
     }
 
     // First pass: remove any old restraints occupying the to-be equipped slots
+    keyCache.clear();
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
     for (const {Name, Group, Equip} of itemList) {
@@ -233,7 +274,7 @@ export function fortuneWheelEquip(
             continue;
         } else {
             const equipChecks = {
-                "Locked item equipped": !canUnlock(oldItem),
+                "Locked item equipped": !canUnlock(oldItem, character),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(character, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, Group, false),

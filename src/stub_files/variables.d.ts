@@ -173,3 +173,4 @@ declare function ServerAccountBeep(data: {
 	ChatRoomSpace?: string;
 	Message?: string;
 }): void;
+declare function LogQuery(QueryLogName: string, QueryLogGroup: string): boolean;

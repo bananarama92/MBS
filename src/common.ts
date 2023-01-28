@@ -202,6 +202,26 @@ export const MBS_MOD_API = bcModSdk.registerMod({
     version: MBS_VERSION,
 });
 
+/** A proxy for lazily accessing the BCX mod API. */
+class ModAPIProxy implements BCX_ModAPI {
+    /** The lazily loaded BCX mod API */
+    #api: null | BCX_ModAPI = null;
+
+    /** Name of the mod this API was requested for */
+    get modName(): string { return "MBS"; }
+
+    /** Returns state handler for a rule or `null` for unknown rule */
+    getRuleState(rule: BCX_Rule): BCX_RuleStateAPI<BCX_Rule> | null {
+        if (this.#api === null && bcx !== undefined) {
+            this.#api = bcx.getModApi("MBS");
+        }
+        return this.#api?.getRuleState(rule) ?? null;
+    }
+}
+
+/** A lazily-loaded version of the BCX mod API */
+export const BCX_MOD_API = new ModAPIProxy();
+
 /** Helper function for creating {@link Object.prototype.toString} methods. */
 export function toStringTemplate(typeName: string, obj: object): string {
     let ret = `${typeName}(`;
