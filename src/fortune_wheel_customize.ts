@@ -10,17 +10,10 @@ import {
     setScreenNoText,
 } from "common";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
+import { MBSSelect, MBSCustomize } from "fortune_wheel";
 
 /** The background for the MBS wheel of fortune customization screen. */
 export const MBSFortuneWheelBackground = "Sheet";
-
-/** Customization related variables */
-export const MBSCustomize: {
-    /** The selected item index within {@link MBSSettings.FortuneWheelSets} */
-    selectedIndex: number,
-    /** The preview character */
-    preview: null | Character,
-} = Object.seal({ selectedIndex: 0, preview: null });
 
 /** Various exit-related actions for {@link MBSFortuneWheelExit}. */
 const ExitAction = Object.freeze({
@@ -46,7 +39,9 @@ const STRIP_MAPPING = Object.freeze({
 
 /** Reload the appearance of the {@link MBSCustomize.preview} character based on the current {@link itemSettings}. */
 function reloadPreviewAppearance(): void {
-    if (MBSCustomize.preview === null) {
+    if (MBSSelect.currentFortuneWheelSets === null) {
+        return MBSFortuneWheelExit();
+    } else if (MBSCustomize.preview === null) {
         MBSCustomize.preview = CharacterLoadSimple("MBSCustomize.preview");
     }
 
@@ -77,6 +72,9 @@ function reloadPreviewAppearance(): void {
 
 /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
 export function MBSFortuneWheelLoad(): void {
+    if (MBSSelect.currentFortuneWheelSets === null) {
+        return MBSFortuneWheelExit();
+    }
     if (MBSCustomize.preview === null) {
         MBSCustomize.preview = CharacterLoadSimple(`MBSFortuneWheelPreview-${Player.MemberNumber}`);
     }
@@ -90,7 +88,7 @@ export function MBSFortuneWheelLoad(): void {
     }
 
     // Load the settings
-    const itemSet = Player.MBSSettings.FortuneWheelSets[MBSCustomize.selectedIndex];
+    const itemSet = MBSSelect.currentFortuneWheelSets[MBSCustomize.selectedIndex];
     if (itemSet !== null) {
         itemSettings.readItemSet(itemSet);
         nameElement.value = itemSet.name;

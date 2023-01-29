@@ -692,58 +692,45 @@ export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelOptionBase[];
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;
 
-/** A struct with backups player-specific wheel of fortune variables */
-const playerWheelVars: {
-    /** A {@link WheelFortuneOption} backup. */
-    options: null | FortuneWheelOptionBase[],
-    /** A {@link WheelFortuneDefault} backup. */
-    default: null | string,
-} = { options: null, default: null };
+/** Variables related to the `MBSFortuneWheel` screen */
+export const MBSCustomize: {
+    /** The selected item index within {@link MBSSettings.FortuneWheelSets} */
+    selectedIndex: number,
+    /** The preview character */
+    preview: null | Character,
+} = Object.seal({ selectedIndex: 0, preview: null });
+
+/** Variables related to the `MBSFortuneWheelSelect` screen */
+export const MBSSelect: {
+    currentFortuneWheelSets: null | readonly (null | import("common").WheelFortuneItemSet)[];
+} = Object.seal({
+    currentFortuneWheelSets: null,
+});
 
 /** Load the wheel of fortune options and defaults of the appropriate character. */
 function loadFortuneWheel(): void {
-    if (WheelFortuneCharacter?.IsPlayer() ?? true) {
-        return;
-    }
-
     const mbs = WheelFortuneCharacter?.OnlineSharedSettings?.MBS;
-    if (typeof mbs !== "object") {
-        return;
-    }
-
-    const fortuneWheelSets = mbs.FortuneWheelSets;
+    let fortuneWheelSets = typeof mbs === "object" ? mbs.FortuneWheelSets : [];
     if (!Array.isArray(fortuneWheelSets)) {
         console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item sets`);
-        return;
+        fortuneWheelSets = [];
     }
 
-    playerWheelVars.options = WheelFortuneOption;
-    playerWheelVars.default = WheelFortuneDefault;
     WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
-    fortuneWheelSets.forEach((protoItemSet, i) => {
+    MBSSelect.currentFortuneWheelSets = fortuneWheelSets.map((protoItemSet, i) => {
         if (protoItemSet === null) {
-            return;
+            return null;
         }
         try {
             const itemSet = WheelFortuneItemSet.fromObject(protoItemSet);
             itemSet.registerOptions(false);
+            return itemSet;
         } catch (error) {
             console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item set ${i}`, error);
+            return null;
         }
     });
-}
-
-/** Restore the player's own wheel of fortune options. */
-function exitFortuneWheel(): void {
-    if (playerWheelVars.options !== null) {
-        WheelFortuneOption = playerWheelVars.options;
-        playerWheelVars.options = null;
-    }
-    if (playerWheelVars.default !== null) {
-        WheelFortuneDefault = playerWheelVars.default;
-        playerWheelVars.default = null;
-    }
 }
 
 /**
@@ -831,11 +818,6 @@ waitFor(settingsMBSLoaded).then(() => {
                     }
                 }
             }
-            return next(args);
-        });
-
-        MBS_MOD_API.hookFunction("WheelFortuneExit", 11, (args, next) => {
-            exitFortuneWheel();
             return next(args);
         });
 

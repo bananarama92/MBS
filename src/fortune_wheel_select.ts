@@ -3,7 +3,7 @@
 "use strict";
 
 import { FORTUNE_WHEEL_MAX_SETS, setScreenNoText } from "common";
-import { MBSCustomize } from "fortune_wheel_customize";
+import { MBSCustomize, MBSSelect } from "fortune_wheel";
 
 const START = Object.freeze({
     X: 250,
@@ -17,8 +17,18 @@ const SPACING = Object.freeze({
 /** The background for the MBS wheel of fortune selection screen. */
 export const MBSFortuneWheelSelectBackground = "Sheet";
 
+export function MBSFortuneWheelSelectLoad(): void {
+    if (MBSSelect.currentFortuneWheelSets === null) {
+        return MBSFortuneWheelSelectExit();
+    }
+}
+
 /** Draw the selection screen. */
 export function MBSFortuneWheelSelectRun(): void {
+    if (MBSSelect.currentFortuneWheelSets === null) {
+        return;
+    }
+
     const isPlayer = WheelFortuneCharacter?.IsPlayer();
     let header = "Select custom wheel of fortune item set";
     if (!isPlayer) {
@@ -29,7 +39,7 @@ export function MBSFortuneWheelSelectRun(): void {
     DrawButton(1830, 60, 90, 90, "", "White", "Icons/Exit.png", "Exit");
 
     const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
-    Player.MBSSettings.FortuneWheelSets.forEach((itemSet, i) => {
+    MBSSelect.currentFortuneWheelSets.forEach((itemSet, i) => {
         const y = START.Y + (i % i_per_row) * SPACING.Y;
         const dx = (i_per_row > i) ? 0 : SPACING.X;
         const checkboxDisabled = !isPlayer ? true : itemSet === null;
@@ -44,13 +54,15 @@ export function MBSFortuneWheelSelectRun(): void {
 
 /** Handle clicks within the selection screen. */
 export function MBSFortuneWheelSelectClick(): void {
-    if (MouseIn(1830, 60, 90, 90)) {
-        MBSFortuneWheelSelectExit();
+    if (MBSSelect.currentFortuneWheelSets === null) {
+        return;
+    } else if (MouseIn(1830, 60, 90, 90)) {
+        return MBSFortuneWheelSelectExit();
     }
 
     const isPlayer = WheelFortuneCharacter?.IsPlayer();
     const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
-    for (const [i, itemSet] of Player.MBSSettings.FortuneWheelSets.entries()) {
+    for (const [i, itemSet] of MBSSelect.currentFortuneWheelSets.entries()) {
         const y = START.Y + (i % i_per_row) * SPACING.Y;
         const dx = (i_per_row > i) ? 0 : SPACING.X;
         const buttonDisabled = !isPlayer && itemSet === null;
