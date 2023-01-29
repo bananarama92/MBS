@@ -74,7 +74,7 @@ function colorItems(groupNames: readonly AssetGroupName[], color: string): void 
     for (const name of groupNames) {
         const item = InventoryGet(Player, name);
         if (item == null) {
-            return;
+            continue;
         }
 
         item.Color = [];
