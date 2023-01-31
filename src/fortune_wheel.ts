@@ -4,7 +4,6 @@
 
 import {
     MBS_MOD_API,
-    parseVersion,
     range,
     randomElement,
     waitFor,
@@ -753,102 +752,95 @@ function sanitizeWheelFortuneIDs(IDs: string): string {
 
 // Requires BC R88Beta1 or higher
 waitFor(settingsMBSLoaded).then(() => {
-    const BC_VERSION = parseVersion(GameVersion);
-    const BC_88BETA1: [88, 1] = [88, 1];
+    console.log("MBS: Initializing wheel of fortune module");
 
-    if (BC_VERSION >= BC_88BETA1) {
-        console.log(`MBS: Initializing wheel of fortune module (BC ${GameVersion})`);
-
-        // Load and register the default MBS item sets
-        FORTUNE_WHEEL_ITEMS = Object.freeze(generateItems());
-        FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
-            new WheelFortuneItemSet(
-                "PSO Bondage",
-                FORTUNE_WHEEL_ITEMS.leash_candy,
-                StripLevel.UNDERWEAR,
-                StripLevel.CLOTHES,
-                ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive", "High Security"],
-                false,
-                false,
-            ),
-            new WheelFortuneItemSet(
-                "Mummification",
-                FORTUNE_WHEEL_ITEMS.mummy,
-                StripLevel.CLOTHES,
-                StripLevel.UNDERWEAR,
-                ["Exclusive"],
-                false,
-                false,
-            ),
-            new WheelFortuneItemSet(
-                "Bondage Maid",
-                FORTUNE_WHEEL_ITEMS.maid,
-                StripLevel.UNDERWEAR,
-                StripLevel.UNDERWEAR,
-                ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
-                false,
-                false,
-            ),
-            new WheelFortuneItemSet(
-                "Petrification",
-                FORTUNE_WHEEL_ITEMS.statue,
-                StripLevel.UNDERWEAR,
-                StripLevel.UNDERWEAR,
-                ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
-                false,
-                false,
-                statueCopyColors,
-            ),
-        ]);
-        FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
-        WheelFortuneOption.sort(o => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false));
-        FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
-        FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneOption.filter(o => !o.Custom).map(o => o.ID).join("");
-        if (Player.OnlineSharedSettings.WheelFortune != null) {
-            Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
-        }
-        pushMBSSettings();
-
-        MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
-            loadFortuneWheel();
-            if (TextScreenCache != null) {
-                for (const option of WheelFortuneOption) {
-                    if (option.Description !== undefined) {
-                        TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
-                    }
-                }
-            }
-            return next(args);
-        });
-
-        MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
-            if (TextScreenCache != null) {
-                for (const option of WheelFortuneOption) {
-                    if (option.Description !== undefined) {
-                        TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
-                    }
-                }
-            }
-            return next(args);
-        });
-
-        MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
-            next(args);
-            const enabled = WheelFortuneVelocity === 0;
-            const color = enabled ? "White" : "Silver";
-            const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
-            const description = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${name}'s option config`;
-            DrawButton(1655, 25, 90, 90, "", color, "Icons/Crafting.png", description, !enabled);
-        });
-
-        MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
-            if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
-                return setScreenNoText("MBSFortuneWheelSelect");
-            } else {
-                return next(args);
-            }
-        });
-    } else {
-        console.log(`MBS: Failed to initialize the wheel of fortune module (BC ${GameVersion})`);
+    // Load and register the default MBS item sets
+    FORTUNE_WHEEL_ITEMS = Object.freeze(generateItems());
+    FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
+        new WheelFortuneItemSet(
+            "PSO Bondage",
+            FORTUNE_WHEEL_ITEMS.leash_candy,
+            StripLevel.UNDERWEAR,
+            StripLevel.CLOTHES,
+            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive", "High Security"],
+            false,
+            false,
+        ),
+        new WheelFortuneItemSet(
+            "Mummification",
+            FORTUNE_WHEEL_ITEMS.mummy,
+            StripLevel.CLOTHES,
+            StripLevel.UNDERWEAR,
+            ["Exclusive"],
+            false,
+            false,
+        ),
+        new WheelFortuneItemSet(
+            "Bondage Maid",
+            FORTUNE_WHEEL_ITEMS.maid,
+            StripLevel.UNDERWEAR,
+            StripLevel.UNDERWEAR,
+            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
+            false,
+            false,
+        ),
+        new WheelFortuneItemSet(
+            "Petrification",
+            FORTUNE_WHEEL_ITEMS.statue,
+            StripLevel.UNDERWEAR,
+            StripLevel.UNDERWEAR,
+            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
+            false,
+            false,
+            statueCopyColors,
+        ),
+    ]);
+    FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
+    WheelFortuneOption.sort(o => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false));
+    FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
+    FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneOption.filter(o => !o.Custom).map(o => o.ID).join("");
+    if (Player.OnlineSharedSettings.WheelFortune != null) {
+        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
     }
+    pushMBSSettings();
+
+    MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
+        loadFortuneWheel();
+        if (TextScreenCache != null) {
+            for (const option of WheelFortuneOption) {
+                if (option.Description !== undefined) {
+                    TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
+                }
+            }
+        }
+        return next(args);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
+        if (TextScreenCache != null) {
+            for (const option of WheelFortuneOption) {
+                if (option.Description !== undefined) {
+                    TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
+                }
+            }
+        }
+        return next(args);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
+        next(args);
+        const enabled = WheelFortuneVelocity === 0;
+        const color = enabled ? "White" : "Silver";
+        const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+        const description = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${name}'s option config`;
+        DrawButton(1655, 25, 90, 90, "", color, "Icons/Crafting.png", description, !enabled);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
+        if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
+            return setScreenNoText("MBSFortuneWheelSelect");
+        } else {
+            return next(args);
+        }
+    });
 });

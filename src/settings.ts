@@ -132,5 +132,5 @@ export function pushMBSSettings(push: boolean = true): void {
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
     pushMBSSettings(false);
-    console.log(`MBS: Initializing settings module (BC ${GameVersion})`);
+    console.log("MBS: Initializing settings module");
 });

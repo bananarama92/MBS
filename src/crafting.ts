@@ -31,11 +31,11 @@ function craftingSerialize(items?: null | readonly (null | CraftingItem)[]): str
 
 waitFor(() => CraftingSlotMax !== undefined).then(() => {
     CraftingSlotMax = 100;
-    console.log(`MBS: Initializing crafting module (BC ${GameVersion})`);
+    console.log("MBS: Initializing crafting module");
 });
 
 waitFor(settingsMBSLoaded).then(() => {
-    console.log(`MBS: Initializing crafting hooks (BC ${GameVersion})`);
+    console.log("MBS: Initializing crafting hooks");
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
