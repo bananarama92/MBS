@@ -106,24 +106,31 @@ function initMBSSettings(): void {
     Player.MBSSettings = Object.seal(Player.MBSSettings);
 }
 
-/** Update the shared settings and push all MBS settings to the server */
-export function pushMBSSettings(): void {
+/**
+ * Update the online (shared) settings and push all MBS settings to the server.
+ * @param push Whether to actually push to the server or to merely assign the online (shared) settings.
+ */
+export function pushMBSSettings(push: boolean = true): void {
     const settings = {
         ...Player.MBSSettings,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(i => i?.valueOf() ?? null),
     };
     Player.OnlineSettings.MBS = LZString.compressToBase64(JSON.stringify(settings));
-    ServerAccountUpdate.QueueData({ OnlineSettings: Player.OnlineSettings });
-
     Player.OnlineSharedSettings.MBS = Object.freeze({
         Version: MBS_VERSION,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(itemSet => itemSet?.hidden === false ? itemSet.valueOf() : null),
     });
-    ServerAccountUpdate.QueueData({ OnlineSharedSettings: Player.OnlineSharedSettings });
+
+    if (push) {
+        ServerAccountUpdate.QueueData({
+            OnlineSettings: Player.OnlineSettings,
+            OnlineSharedSettings: Player.OnlineSharedSettings,
+        });
+    }
 }
 
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
-    pushMBSSettings();
+    pushMBSSettings(false);
     console.log(`MBS: Initializing settings module (BC ${GameVersion})`);
 });
