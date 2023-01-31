@@ -74,6 +74,7 @@ function reloadPreviewAppearance(): void {
 /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
 export function MBSFortuneWheelLoad(): void {
     if (MBSSelect.currentFortuneWheelSets === null) {
+        console.warn("MBS: failed to load the current wheel of fortune item set");
         return MBSFortuneWheelExit();
     }
     if (MBSCustomize.preview === null) {

@@ -19,6 +19,7 @@ export const MBSFortuneWheelSelectBackground = "Sheet";
 
 export function MBSFortuneWheelSelectLoad(): void {
     if (MBSSelect.currentFortuneWheelSets === null) {
+        console.warn("MBS: failed to load the current wheel of fortune item sets");
         return MBSFortuneWheelSelectExit();
     }
 }
