@@ -10,6 +10,7 @@ import {
     WheelFortuneItemSet,
     setScreenNoText,
     settingsMBSLoaded,
+    FORTUNE_WHEEL_MAX_SETS,
 } from "common";
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
@@ -701,6 +702,7 @@ export const MBSCustomize: {
 
 /** Variables related to the `MBSFortuneWheelSelect` screen */
 export const MBSSelect: {
+    /** The custom MBS fortune wheel item sets of {@link WheelFortuneCharacter} */
     currentFortuneWheelSets: null | readonly (null | import("common").WheelFortuneItemSet)[];
 } = Object.seal({
     currentFortuneWheelSets: null,
@@ -709,10 +711,12 @@ export const MBSSelect: {
 /** Load the wheel of fortune options and defaults of the appropriate character. */
 function loadFortuneWheel(): void {
     const mbs = WheelFortuneCharacter?.OnlineSharedSettings?.MBS;
-    let fortuneWheelSets = typeof mbs === "object" ? mbs.FortuneWheelSets : [];
+    let fortuneWheelSets = mbs?.FortuneWheelSets;
     if (!Array.isArray(fortuneWheelSets)) {
-        console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item sets`);
-        fortuneWheelSets = [];
+        if (fortuneWheelSets !== undefined) {
+            console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item sets`);
+        }
+        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).map(() => null);
     }
 
     WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
