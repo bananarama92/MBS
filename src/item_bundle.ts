@@ -40,7 +40,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
  * @param properties The properties in question
  */
 function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProperties {
-    if (typeof properties !== "object") {
+    if (properties === null || typeof properties !== "object") {
         return {};
     }
     const ret: ItemProperties = {};
@@ -85,15 +85,15 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
                 }
             }
 
-            let color: undefined | readonly string[];
+            let color: undefined | readonly string[] = undefined;
             if (typeof item.Color === "string") {
                 color = [item.Color];
             } else if (Array.isArray(item.Color) && item.Color.every(i => typeof i === "string")) {
                 color = [...item.Color];
             }
 
-            let craft: undefined | CraftingItem;
-            if (typeof item.Craft === "object") {
+            let craft: undefined | CraftingItem = undefined;
+            if (item.Craft !== null && typeof item.Craft === "object") {
                 craft = { ...item.Craft, Type: null, OverridePriority: null, Lock: "" };
                 CraftingValidate(craft, asset, false);
             }

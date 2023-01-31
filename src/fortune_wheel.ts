@@ -22,7 +22,7 @@ import { StripLevel } from "equipper";
  * @param indices The indices of the {@link item.Color} array whose color will be updated
  */
 function copyHairColor(item: Item, indices: readonly number[]): void {
-    if (typeof item !== "object") {
+    if (item === null || typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     }
     if (!Array.isArray(indices)) {
@@ -660,7 +660,7 @@ function generateItems(): FortuneWheelItems {
             item.Property = {};
             item.Type = item.Type ?? null;
             const {Name, Group, Craft} = item;
-            if (typeof Craft === "object") {
+            if (Craft !== null && typeof Craft === "object") {
                 Craft.Item = Name;
                 Craft.Private = true;
                 Craft.Lock = "";

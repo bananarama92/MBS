@@ -68,7 +68,7 @@ function initMBSSettings(): void {
     Player.MBSSettings = <MBSSettings>{ Version: MBS_VERSION };
     const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS || "");
     let s: Partial<MBSSettings> = (data == null) ? null : JSON.parse(data);
-    s = (typeof s === "object") ? s : {};
+    s = (s !== null && typeof s === "object") ? s : {};
     if (detectUpgrade(s.Version)) {
         showChangelog();
     }

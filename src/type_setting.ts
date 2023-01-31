@@ -14,10 +14,14 @@ function deepCopy<T>(obj: T): T {
  * @param type The item's type
  */
 export function itemSetType(item: Item, character: Character, type: null | string): void {
-    if (typeof character !== "object" || !(character.IsPlayer() || character.IsSimple())) {
+    if (
+        character === null
+        || typeof character !== "object"
+        || !(character.IsPlayer() || character.IsSimple())
+    ) {
         throw `Invalid "character": ${character?.AccountName}`;
     }
-    if (typeof item !== "object") {
+    if (item === null || typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     }
 

@@ -79,7 +79,7 @@ export function equipHighSecLock(item: Item, character: Character): void {
  * @returns whether the lock was equipped or not
  */
 export function equipLock(item: Item, lockName: AssetLockType, character: Character): boolean {
-    if (typeof item !== "object") {
+    if (item === null || typeof item !== "object") {
         throw `Invalid "item" type: ${typeof item}`;
     } else if (typeof lockName !== "string") {
         throw `Invalid "lockName" type: ${typeof lockName}`;
