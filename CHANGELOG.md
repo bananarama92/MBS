@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v0.3.1
+* Minor improvements to the README documentation
+* Minor `pushMBSSettings` optimizations
+* Raise whenever an unsupported BC version is detected
+* Always check for `null` when performing `typeof ... "object"` checks
+
 ## v0.3.0
 * Expand the list of padlocks that MBS can (potentially) remove, including support for BCX's `block_keyuse_self` rule
 * Switch from LGPL3 to GPL3
