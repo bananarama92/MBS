@@ -11,6 +11,7 @@ import {
 } from "common";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
 import { MBSSelect, MBSCustomize } from "fortune_wheel";
+import { MBSFortuneWheelSelectExit } from "fortune_wheel_select";
 
 /** The background for the MBS wheel of fortune customization screen. */
 export const MBSFortuneWheelBackground = "Sheet";
@@ -319,7 +320,7 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
     }
 
     if (fullExit) {
-        CommonSetScreen("Minigame", "WheelFortune");
+        MBSFortuneWheelSelectExit();
     } else {
         setScreenNoText("MBSFortuneWheelSelect");
     }
