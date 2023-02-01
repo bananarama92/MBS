@@ -415,7 +415,7 @@ export class WheelFortuneSelectedItemSet {
         this.itemList = itemSet.itemList;
         this.stripLevel = itemSet.stripLevel;
         this.equipLevel = itemSet.equipLevel;
-        this.flags = itemSet.flags;
+        this.flags = new Set(itemSet.flags);
         this.outfitCache = null;
     }
 
