@@ -15,6 +15,7 @@ import {
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
+import { MBSSelect } from "glob_vars";
 
 /**
  * Copy the player's hair color the to passed item.
@@ -691,22 +692,6 @@ export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelOptionBase[];
 
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;
-
-/** Variables related to the `MBSFortuneWheel` screen */
-export const MBSCustomize: {
-    /** The selected item index within {@link MBSSettings.FortuneWheelSets} */
-    selectedIndex: number,
-    /** The preview character */
-    preview: null | Character,
-} = Object.seal({ selectedIndex: 0, preview: null });
-
-/** Variables related to the `MBSFortuneWheelSelect` screen */
-export const MBSSelect: {
-    /** The custom MBS fortune wheel item sets of {@link WheelFortuneCharacter} */
-    currentFortuneWheelSets: null | readonly (null | import("common").WheelFortuneItemSet)[];
-} = Object.seal({
-    currentFortuneWheelSets: null,
-});
 
 /** Load the wheel of fortune options and defaults of the appropriate character. */
 function loadFortuneWheel(): void {

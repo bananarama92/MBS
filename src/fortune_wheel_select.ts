@@ -3,7 +3,7 @@
 "use strict";
 
 import { FORTUNE_WHEEL_MAX_SETS, setScreenNoText } from "common";
-import { MBSCustomize, MBSSelect } from "fortune_wheel";
+import { MBSCustomize, MBSSelect } from "glob_vars";
 
 const START = Object.freeze({
     X: 250,

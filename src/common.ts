@@ -6,6 +6,7 @@ import bcModSdk from "bondage-club-mod-sdk";
 import { pushMBSSettings } from "settings";
 import { fromItemBundle } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
+import { MBSSelect } from "glob_vars";
 
 /** The maximum number of custom user-specified wheel of fortune item sets. */
 export const FORTUNE_WHEEL_MAX_SETS = 14;
@@ -477,11 +478,12 @@ export class WheelFortuneSelectedItemSet {
         if (this.name === null) {
             return false;
         }
-        return Player.MBSSettings.FortuneWheelSets.every((item, i) => {
+        const itemSets = MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
+        return itemSets.every((itemSet, i) => {
             if (i === selectedIndex) {
                 return true;
             } else {
-                return item?.name !== this.name;
+                return itemSet?.name !== this.name;
             }
         });
     }
@@ -576,7 +578,8 @@ export class WheelFortuneItemSet {
 
     /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
     get index(): number {
-        return Player.MBSSettings.FortuneWheelSets.findIndex(i => i === this);
+        const itemSets = MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
+        return itemSets.findIndex(i => i === this);
     }
 
     /** Initialize the instance */

@@ -10,7 +10,7 @@ import {
     setScreenNoText,
 } from "common";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
-import { MBSSelect, MBSCustomize } from "fortune_wheel";
+import { MBSSelect, MBSCustomize } from "glob_vars";
 import { MBSFortuneWheelSelectExit } from "fortune_wheel_select";
 
 /** The background for the MBS wheel of fortune customization screen. */
@@ -121,7 +121,10 @@ export function MBSFortuneWheelRun(): void {
     let acceptDisabled = false;
     let acceptColor = "White";
     let acceptDescription = "Accept";
-    if (!itemSettings.isValidName(MBSCustomize.selectedIndex)) {
+    if (!isPlayer) {
+        acceptDisabled = true;
+        acceptColor = "Gray";
+    } else if (!itemSettings.isValidName(MBSCustomize.selectedIndex)) {
         acceptDisabled = true;
         acceptColor = "Gray";
         acceptDescription += (itemSettings.name === null) ? ": Missing name" : ": Duplicate name";
@@ -129,9 +132,6 @@ export function MBSFortuneWheelRun(): void {
         acceptDisabled = true;
         acceptColor = "Gray";
         acceptDescription += ": Missing outfit";
-    } else if (!isPlayer) {
-        acceptDisabled = true;
-        acceptColor = "Gray";
     }
     DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
 
