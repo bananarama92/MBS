@@ -80,7 +80,7 @@ function initMBSSettings(): void {
 
     let fortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
     if (!Array.isArray(fortuneWheelSets)) {
-        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).map(() => null);
+        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
     }
     if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
         fortuneWheelSets = fortuneWheelSets.slice(0, FORTUNE_WHEEL_MAX_SETS);

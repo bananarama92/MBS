@@ -701,7 +701,7 @@ function loadFortuneWheel(): void {
         if (fortuneWheelSets !== undefined) {
             console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item sets`);
         }
-        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).map(() => null);
+        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
     }
 
     WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
