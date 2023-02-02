@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.3.2
+* Minor bugfixes related to interactions with people that lack MBS
+* Make the inspection of other people's custom item sets a bit more robust
+
 ## v0.3.1
 * Minor improvements to the README documentation
 * Minor `pushMBSSettings` optimizations
