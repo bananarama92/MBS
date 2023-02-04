@@ -11,7 +11,7 @@ function deepCopy<T>(obj: T): T {
  * Load and assign the type to the passed item without refreshing.
  * @param item The Item in question
  * @param character The player or simple character
- * @param type The item's type
+ * @param type The item's `Type` (or `Mode` in the case of vibrating items)
  */
 export function itemSetType(item: Item, character: Character, type: null | string): void {
     if (
@@ -42,7 +42,7 @@ export function itemSetType(item: Item, character: Character, type: null | strin
  * Construct a baseline property object for the passed object and given type.
  * @param item The Item in question
  * @param character The player or simple character
- * @param type The item's type
+ * @param type The item's `Type` (or `Mode` in the case of vibrating items)
  */
 export function getBaselineProperty(asset: Asset, character: Character, type: null | string): ItemProperties {
     const item: Item = { Asset: asset };

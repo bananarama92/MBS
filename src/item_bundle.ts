@@ -98,12 +98,19 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
                 CraftingValidate(craft, asset, false);
             }
 
+            let type: null | string = null;
+            if (typeof item.Property?.Type === "string" || item.Property?.Type === null) {
+                type = item.Property.Type;
+            } else if (typeof item.Property?.Mode === "string") {
+                type = item.Property.Mode;
+            }
+
             const wheelItem: FortuneWheelItem = {
                 Name: item.Name,
                 Group: item.Group,
                 Custom: true,
                 Property: sanitizeProperties(asset, item.Property),
-                Type: (typeof item.Property?.Type === "string") ? item.Property.Type : null,
+                Type: type,
                 Color: color,
                 Craft: craft,
             };
