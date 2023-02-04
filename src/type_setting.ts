@@ -130,13 +130,6 @@ const itemSetTypeDict = Object.freeze({
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
 function setTypeNoArch(item: Item, character: Character, type: null | string): void {
-    if (!Array.isArray(item.Asset.AllowType)) {
-        return;
-    }
-    if (!item.Asset.AllowType.includes(<string>type)) {
-        throw new Error(`${item.Asset.Group.Name}${item.Asset.Name}: Invalid non-archetypical item type "${type}"`);
-    }
-
     if (item.Asset.Name === "FuturisticVibrator") {
         itemSetTypeDict[ExtendedArchetype.VIBRATING](item, character, type);
         (<ItemProperties>item.Property).TriggerValues = ItemVulvaFuturisticVibratorTriggers.join("");
