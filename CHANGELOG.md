@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v0.3.3
+* Ensure that MBS does not throw literals as exceptions
+* Fix the vibrator mode not being properly read for custom outfits
+* Various fixes and improvements related to the futuristic vibrator
+* Update `MBSSelect.currentFortuneWheelSets` when saving/removing wheel of fortune outfits
+
 ## v0.3.2
 * Minor bugfixes related to interactions with people that lack MBS
 * Make the inspection of other people's custom item sets a bit more robust
