@@ -38,15 +38,34 @@ export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze(
 const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.dev0)?$/;
 
 /**
+ * Check whether an integer falls within the specified range and raise otherwise.
+ * @param int The to-be validate integer
+ * @param varName The name of the variable
+ * @param min The minimum allowed value of the integer
+ * @param max The maximum allowed value of the integer
+ */
+function validateInt(int: number, varName: string, min: number = -Infinity, max: number = Infinity): void {
+    if (!(Number.isInteger(int) && int >= min && int <= max)) {
+        if (typeof int !== "number") {
+            throw new TypeError(`Invalid "${varName}" type: ${typeof int}`);
+        } else if (!Number.isInteger(int)) {
+            throw new Error(`"${varName}" must be an integer: ${int}`);
+        } else {
+            throw new RangeError(`"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
+        }
+    }
+}
+
+/**
  * Attach and set a timer lock to the passed item for the specified duration.
  * @param item The item in question
  * @param minutes The duration of the timer lock; its value must fall in the [0, 240] interval
  */
 export function equipTimerLock(item: Item, minutes: number, character: Character): void {
     if (typeof minutes !== "number") {
-        throw `Invalid "minutes" type: ${typeof minutes}`;
+        throw new TypeError(`Invalid "minutes" type: ${typeof minutes}`);
     } else if (minutes < 0 || minutes > 240) {
-        throw '"minutes" must fall in the [0, 240] interval';
+        throw new RangeError(`"minutes" must fall in the [0, 240] interval: ${minutes}`);
     }
 
     // Equip the timer lock if desired and possible
@@ -81,11 +100,11 @@ export function equipHighSecLock(item: Item, character: Character): void {
  */
 export function equipLock(item: Item, lockName: AssetLockType, character: Character): boolean {
     if (item === null || typeof item !== "object") {
-        throw `Invalid "item" type: ${typeof item}`;
+        throw new TypeError(`Invalid "item" type: ${typeof item}`);
     } else if (typeof lockName !== "string") {
-        throw `Invalid "lockName" type: ${typeof lockName}`;
+        throw new TypeError(`Invalid "lockName" type: ${typeof lockName}`);
     } else if (!character.IsPlayer() || character.IsSimple()) {
-        throw "Expected a simple or player character";
+        throw new Error("Expected a simple or player character");
     }
 
     // Equip the timer lock if desired and possible
@@ -109,9 +128,13 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
  * @param step - The step size
  */
 export function* range(start: number, stop: number, step: number = 1): Generator<number, void, unknown> {
-    if (typeof start !== "number") throw `Invalid "start" type: ${typeof start}`;
-    if (typeof stop !== "number") throw `Invalid "stop" type: ${typeof stop}`;
-    if (typeof step !== "number") throw `Invalid "step" type: ${typeof step}`;
+    if (typeof start !== "number") {
+        throw new TypeError(`Invalid "start" type: ${typeof start}`);
+    } else if (typeof stop !== "number") {
+        throw new TypeError(`Invalid "stop" type: ${typeof stop}`);
+    } else if (typeof step !== "number") {
+        throw new TypeError(`Invalid "step" type: ${typeof step}`);
+    }
 
     let i = start;
     while (i < stop) {
@@ -127,9 +150,9 @@ export function* range(start: number, stop: number, step: number = 1): Generator
  */
 export function randomElement<T>(list: readonly T[]): T {
     if (!Array.isArray(list)) {
-        throw `Invalid "list" type: ${typeof list}`;
+        throw new TypeError(`Invalid "list" type: ${typeof list}`);
     } else if (list.length === 0) {
-        throw 'Passed "list" must contain at least 1 item';
+        throw new Error('Passed "list" must contain at least 1 item');
     }
     return list[Math.round(Math.random() * (list.length - 1))];
 }
@@ -141,7 +164,7 @@ export function randomElement<T>(list: readonly T[]): T {
  */
 export function getRandomPassword(n: number): string {
     if (n < 0 || n > 8) {
-        throw `Invalid "n" value: ${typeof n}`;
+        throw new RangeError(`"n" must fall in the [0, 8] interval: ${n}`);
     }
 
     let ret = "";
@@ -159,7 +182,7 @@ export function getRandomPassword(n: number): string {
 export function parseVersion(version: string): [number, number] {
     const match = GameVersionFormat.exec(version);
     if (match === null) {
-        throw `Failed to match the passed version: ${version}`;
+        throw new Error(`Failed to match the passed version: ${version}`);
     }
     return [
         Number(match[2]),
@@ -246,11 +269,11 @@ export class LoopIterator<T> {
      */
     constructor(list: readonly T[], index: number = 0) {
         if (!Array.isArray(list)) {
-            throw `Invalid "list" type: ${typeof list}`;
+            throw new TypeError(`Invalid "list" type: ${typeof list}`);
         } else if (list.length === 0) {
-            throw 'Passed "list" must contain at least one element';
-        } else if (!Number.isInteger(index) || index < 0 || index >= list.length) {
-            throw `Invalid "start" value: ${index}`;
+            throw new Error('Passed "list" must contain at least one element');
+        } else {
+            validateInt(index, "index", 0, list.length - 1);
         }
         this.#list = list;
         this.#index = index;
@@ -282,9 +305,7 @@ export class LoopIterator<T> {
 
     /** Set the position of the iterator. */
     setPosition(index: number) {
-        if (!Number.isInteger(index) || index < 0 || index >= this.#list.length) {
-            throw `Invalid "index" value: ${index}`;
-        }
+        validateInt(index, "index", 0, this.#list.length - 1);
         this.#index = index;
     }
 
@@ -310,13 +331,11 @@ export class LoopIterator<T> {
  * @returns A list of unique UTF16 characters
  */
 export function generateIDs(n: number, start: number = 0, exclude: null | readonly string[] = null): string[] {
-    if (!Number.isInteger(n) || n < 0) {
-        throw `Invalid "n" value: ${n}`;
-    }
+    validateInt(n, "n", 0);
     if (exclude == null) {
         exclude = [];
     } else if (!Array.isArray(exclude)) {
-        throw `Invalid "exclude" type: ${typeof exclude}`;
+        throw new TypeError(`Invalid "exclude" type: ${typeof exclude}`);
     }
 
     const ret: string[] = [];
@@ -331,7 +350,7 @@ export function generateIDs(n: number, start: number = 0, exclude: null | readon
     }
 
     if (n > 0) {
-        throw "Insufficient available UTF16 characters";
+        throw new Error("Insufficient available UTF16 characters");
     }
     return ret;
 }
@@ -409,7 +428,7 @@ export class WheelFortuneSelectedItemSet {
      */
     readItemSet(itemSet: WheelFortuneItemSet): void {
         if (!(itemSet instanceof WheelFortuneItemSet)) {
-            throw `Invalid "ItemSet" type: ${typeof itemSet}`;
+            throw new TypeError(`Invalid "ItemSet" type: ${typeof itemSet}`);
         }
         this.name = itemSet.name;
         this.itemList = itemSet.itemList;
@@ -428,7 +447,7 @@ export class WheelFortuneSelectedItemSet {
         preRunCallback: null | FortuneWheelPreRunCallback = null,
     ): WheelFortuneItemSet {
         if (this.name === null || this.itemList === null) {
-            throw "Cannot create an ItemSet while \"name\" or \"itemList\" is null";
+            throw new Error("Cannot create an ItemSet while \"name\" or \"itemList\" is null");
         }
         return new WheelFortuneItemSet(
             this.name,
@@ -572,7 +591,7 @@ export class WheelFortuneItemSet {
         } else if (value === false) {
             this.registerOptions();
         } else {
-            throw `Invalid type: ${typeof value}`;
+            throw new TypeError(`Invalid "${this.name}.hidden" type: ${typeof value}`);
         }
     }
 
@@ -617,13 +636,13 @@ export class WheelFortuneItemSet {
     /** Validation function for the classes' constructor */
     static validate(kwargs: Partial<WheelFortuneItemSetKwargTypes>): WheelFortuneItemSetKwargTypesParsed {
         if (typeof kwargs.name !== "string") {
-            throw `Invalid "name" type: ${typeof kwargs.name}`;
+            throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
 
         if (Array.isArray(kwargs.itemList)) {
             kwargs.itemList = Object.freeze([...kwargs.itemList]);
         } else {
-            throw `Invalid "itemList" type: ${typeof kwargs.itemList}`;
+            throw new TypeError(`Invalid "itemList" type: ${typeof kwargs.itemList}`);
         }
 
         if (!Object.values(StripLevel).includes(<StripLevel>kwargs.stripLevel)) {
@@ -864,10 +883,10 @@ export function setScreenNoText(NewScreen: string): void {
     const w = <typeof window & Record<string, any>>window;
     // Check for required functions
     if (typeof w[`${NewScreen}Run`] !== "function") {
-        throw Error(`Screen "${NewScreen}": Missing required Run function`);
+        throw new Error(`Screen "${NewScreen}": Missing required Run function`);
     }
     if (typeof w[`${NewScreen}Click`] !== "function") {
-        throw Error(`Screen "${NewScreen}": Missing required Click function`);
+        throw new Error(`Screen "${NewScreen}": Missing required Click function`);
     }
 
     CurrentScreen = NewScreen;
@@ -914,18 +933,13 @@ export class Version {
     readonly beta: boolean;
 
     constructor(major: number = 0, minor: number = 0, micro: number = 0, beta: boolean = false) {
-        if (!Number.isInteger(major)) {
-            throw `Invalid "major" type: ${typeof major}`;
-        }
-        if (!Number.isInteger(minor)) {
-            throw `Invalid "minor" type: ${typeof minor}`;
-        }
-        if (!Number.isInteger(micro)) {
-            throw `Invalid "micro" type: ${typeof micro}`;
-        }
+        validateInt(major, "major", 0);
+        validateInt(minor, "minor", 0);
+        validateInt(micro, "micro", 0);
         if (typeof beta !== "boolean") {
-            throw `Invalid "beta" type: ${typeof beta}`;
+            throw new TypeError(`Invalid "beta" type: ${typeof beta}`);
         }
+
         this.major = major;
         this.minor = minor;
         this.micro = micro;
@@ -989,7 +1003,7 @@ export class Version {
     static fromVersion(version: string): Version {
         const match = MBS_VERSION_PATTERN.exec(version);
         if (match === null) {
-            throw `Invalid "version": ${version}`;
+            throw new Error(`Invalid "version": ${version}`);
         }
         return new Version(
             Number(match[2]),

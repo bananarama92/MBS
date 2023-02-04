@@ -24,10 +24,9 @@ import { MBSSelect } from "glob_vars";
  */
 function copyHairColor(item: Item, indices: readonly number[]): void {
     if (item === null || typeof item !== "object") {
-        throw `Invalid "item" type: ${typeof item}`;
-    }
-    if (!Array.isArray(indices)) {
-        throw `Invalid "indices" type: ${typeof indices}`;
+        throw new TypeError(`Invalid "item" type: ${typeof item}`);
+    } else if (!Array.isArray(indices)) {
+        throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }
 
     const hair = Player.Appearance.find(i => i.Asset.Group.Name === "HairFront");
@@ -66,10 +65,10 @@ function copyHairColor(item: Item, indices: readonly number[]): void {
  */
 function colorItems(groupNames: readonly AssetGroupName[], color: string): void {
     if (!Array.isArray(<readonly AssetGroupName[]>groupNames)) {
-        throw `Invalid "groupNames" type: ${typeof groupNames}`;
+        throw new TypeError(`Invalid "groupNames" type: ${typeof groupNames}`);
     }
     if (typeof color !== "string") {
-        throw `Invalid "color" type: ${typeof groupNames}`;
+        throw new TypeError(`Invalid "color" type: ${typeof groupNames}`);
     }
 
     for (const name of groupNames) {
@@ -667,7 +666,7 @@ function generateItems(): FortuneWheelItems {
                 Craft.Lock = "";
                 const asset = AssetGet(Player.AssetFamily, Group, Name);
                 if (asset == null) {
-                    throw `Invalid ${setName} item: ${Group}${Name}`;
+                    throw new Error(`Invalid ${setName} item: ${Group}${Name}`);
                 }
                 Craft.Name = Craft.Name || asset.Description;
                 CraftingValidate(<CraftingItem>Craft, asset, false);
@@ -728,7 +727,7 @@ function loadFortuneWheel(): void {
  */
 function sanitizeWheelFortuneIDs(IDs: string): string {
     if (typeof IDs !== "string") {
-        throw `Invalid "IDs" type: ${typeof IDs}`;
+        throw new TypeError(`Invalid "IDs" type: ${typeof IDs}`);
     }
     let ret = "";
     for (const option of WheelFortuneOption) {

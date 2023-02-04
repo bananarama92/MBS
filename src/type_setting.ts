@@ -19,10 +19,10 @@ export function itemSetType(item: Item, character: Character, type: null | strin
         || typeof character !== "object"
         || !(character.IsPlayer() || character.IsSimple())
     ) {
-        throw `Invalid "character": ${character?.AccountName}`;
+        throw new Error(`Invalid "character": ${character?.AccountName}`);
     }
     if (item === null || typeof item !== "object") {
-        throw `Invalid "item" type: ${typeof item}`;
+        throw new TypeError(`Invalid "item" type: ${typeof item}`);
     }
 
     const asset = item.Asset;
@@ -57,7 +57,7 @@ const itemSetTypeDict = Object.freeze({
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
         if (data === undefined) {
-            throw `${key}: Item absent from Typed item lookup table`;
+            throw new Error(`${key}: Item absent from Typed item lookup table`);
         }
 
         // Find and validate the item option
@@ -102,7 +102,7 @@ const itemSetTypeDict = Object.freeze({
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = ModularItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
         if (data === undefined) {
-            throw `${key}: Item absent from Modular item lookup table`;
+            throw new Error(`${key}: Item absent from Modular item lookup table`);
         }
 
         if (type !== null && !(item.Asset.AllowType ?? []).includes(type)) {
@@ -134,7 +134,7 @@ function setTypeNoArch(item: Item, character: Character, type: null | string): v
         return;
     }
     if (!item.Asset.AllowType.includes(<string>type)) {
-        throw `${item.Asset.Group.Name}${item.Asset.Name}: Invalid non-archetypical item type "${type}"`;
+        throw new Error(`${item.Asset.Group.Name}${item.Asset.Name}: Invalid non-archetypical item type "${type}"`);
     }
 
     if (item.Asset.Name === "FuturisticVibrator") {

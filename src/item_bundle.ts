@@ -69,7 +69,7 @@ const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
  */
 export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[], boolean] {
     if (!Array.isArray(<readonly ItemBundle[]>items)) {
-        throw `Invalid "items" type: ${typeof items}`;
+        throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
 
     // NOTE: Take extra care here as users can pass arbitrary arrays due to the handling of base64-decompressed data
@@ -81,7 +81,7 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
             asset = <Asset>AssetGet("Female3DCG", item.Group, item.Name);
             for (const [msgPrefix, validationCheck] of UNSUPPORTED_ASSET_CHECKS) {
                 if (validationCheck(asset)) {
-                    throw `${msgPrefix}: ${item.Group}${item.Name}`;
+                    throw new Error(`${msgPrefix}: ${item.Group}${item.Name}`);
                 }
             }
 
@@ -129,12 +129,12 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
  */
 export function toItemBundle(items: readonly FortuneWheelItem[], character: Character): ItemBundle[] {
     if (!Array.isArray(<readonly FortuneWheelItem[]>items)) {
-        throw `Invalid "items" type: ${typeof items}`;
+        throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
     return items.map(({ Group, Name, Color, Craft, Type, Property }) => {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         if (asset == null) {
-            throw `Unknown asset: ${Group}${Name}`;
+            throw new Error(`Unknown asset: ${Group}${Name}`);
         }
         return {
             Group: Group,

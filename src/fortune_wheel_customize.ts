@@ -317,7 +317,7 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
             break;
         }
         default:
-            throw `Unsupported action: ${action}`;
+            throw new Error(`Unsupported action: ${action}`);
     }
 
     if (fullExit) {

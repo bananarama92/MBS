@@ -55,7 +55,7 @@ export function getStripCondition(stripLevel: StripLevel, character: Character):
             };
         }
         default: {
-            throw `Invalid "stripLevel" value: ${stripLevel}`;
+            throw new Error(`Invalid "stripLevel" value: ${stripLevel}`);
         }
     }
 }
@@ -68,7 +68,7 @@ export function getStripCondition(stripLevel: StripLevel, character: Character):
  */
 export function characterStrip(stripLevel: StripLevel, character: Character): void {
     if (!character || !(character.IsSimple() || character.IsPlayer())) {
-        throw "Expected a simple or player character";
+        throw new Error("Expected a simple or player character");
     }
 
     const stripCondition = getStripCondition(stripLevel, character);
@@ -139,7 +139,7 @@ export function itemsArgSort(
     itemSuperList: readonly SimpleItem[] = [],
 ): Map<AssetGroupName, Node> {
     if (!Array.isArray(<readonly SimpleItem[]>itemList)) {
-        throw `Invalid "itemList" type: ${typeof itemList}`;
+        throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
     }
 
     // Map all equipped item groups to the groups that they block
@@ -151,7 +151,7 @@ export function itemsArgSort(
             }
             const asset = AssetGet(character.AssetFamily, Group, Name);
             if (asset == null) {
-                throw `Unknown asset: ${Group}${Name}`;
+                throw new Error(`Unknown asset: ${Group}${Name}`);
             } else if (asset.Group.Category !== "Item") {
                 continue;
             }
@@ -269,7 +269,7 @@ export function fortuneWheelEquip(
     character: Character = Player,
 ): void {
     if (!Array.isArray(<readonly FortuneWheelItem[]>itemList)) {
-        throw `Invalid "itemList" type: ${typeof itemList}`;
+        throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
     }
     characterStrip(stripLevel, character);
 
