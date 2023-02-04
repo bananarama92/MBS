@@ -286,6 +286,18 @@ export function MBSFortuneWheelClick(): void {
 }
 
 /**
+ * Helper screen-change function for {@link MBSFortuneWheelExit}.
+ * @param fullExit Whether to return to the initial wheel of fortune screen.
+ */
+function customizeExit(fullExit: boolean): void {
+    if (fullExit) {
+        MBSFortuneWheelSelectExit();
+    } else {
+        setScreenNoText("MBSFortuneWheelSelect");
+    }
+}
+
+/**
  * Exit the customization screen.
  * @param fullExit Whether to return to the initial wheel of fortune screen.
  * @param action Whether to do nothing, save the custom item settings or delete to them.
@@ -294,8 +306,8 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
     ElementRemove("MBSname");
     ElementRemove("MBSoutfitCache");
 
-    if (!WheelFortuneCharacter?.IsPlayer()) {
-        action = ExitAction.NONE;
+    if (!WheelFortuneCharacter?.IsPlayer() || MBSSelect.currentFortuneWheelSets === null) {
+        return customizeExit(fullExit);
     }
 
     const settings = Player.MBSSettings.FortuneWheelSets;
@@ -319,10 +331,5 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
         default:
             throw new Error(`Unsupported action: ${action}`);
     }
-
-    if (fullExit) {
-        MBSFortuneWheelSelectExit();
-    } else {
-        setScreenNoText("MBSFortuneWheelSelect");
-    }
+    customizeExit(fullExit);
 }

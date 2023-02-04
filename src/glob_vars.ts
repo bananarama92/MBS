@@ -16,7 +16,7 @@ export const MBSCustomize: {
 /** Variables related to the `MBSFortuneWheelSelect` screen */
 export const MBSSelect: {
     /** The custom MBS fortune wheel item sets of {@link WheelFortuneCharacter} */
-    currentFortuneWheelSets: null | readonly (null | import("common").WheelFortuneItemSet)[];
+    currentFortuneWheelSets: null | (null | import("common").WheelFortuneItemSet)[];
 } = Object.seal({
     currentFortuneWheelSets: null,
 });

@@ -705,19 +705,28 @@ function loadFortuneWheel(): void {
 
     WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
-    MBSSelect.currentFortuneWheelSets = fortuneWheelSets.map((protoItemSet, i) => {
-        if (protoItemSet === null) {
-            return null;
+    if (WheelFortuneCharacter?.IsPlayer()) {
+        MBSSelect.currentFortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
+        for (const itemSet of MBSSelect.currentFortuneWheelSets) {
+            if (itemSet !== null) {
+                itemSet.registerOptions(false);
+            }
         }
-        try {
-            const itemSet = WheelFortuneItemSet.fromObject(protoItemSet);
-            itemSet.registerOptions(false);
-            return itemSet;
-        } catch (error) {
-            console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item set ${i}`, error);
-            return null;
-        }
-    });
+    } else {
+        MBSSelect.currentFortuneWheelSets = fortuneWheelSets.map((protoItemSet, i) => {
+            if (protoItemSet === null) {
+                return null;
+            }
+            try {
+                const itemSet = WheelFortuneItemSet.fromObject(protoItemSet);
+                itemSet.registerOptions(false);
+                return itemSet;
+            } catch (error) {
+                console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item set ${i}`, error);
+                return null;
+            }
+        });
+    }
 }
 
 /**
@@ -790,7 +799,7 @@ waitFor(settingsMBSLoaded).then(() => {
     if (Player.OnlineSharedSettings.WheelFortune != null) {
         Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
     }
-    pushMBSSettings();
+    pushMBSSettings(false);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         loadFortuneWheel();
