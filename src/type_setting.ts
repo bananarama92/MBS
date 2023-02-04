@@ -132,7 +132,10 @@ const itemSetTypeDict = Object.freeze({
 function setTypeNoArch(item: Item, character: Character, type: null | string): void {
     if (item.Asset.Name === "FuturisticVibrator") {
         itemSetTypeDict[ExtendedArchetype.VIBRATING](item, character, type);
-        (<ItemProperties>item.Property).TriggerValues = ItemVulvaFuturisticVibratorTriggers.join("");
+        Object.assign(<ItemProperties>item.Property, {
+            TriggerValues: ItemVulvaFuturisticVibratorTriggers.join(""),
+            AccessMode: "",
+        });
     } else {
         console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
     }
