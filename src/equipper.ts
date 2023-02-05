@@ -4,7 +4,7 @@
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { deepCopy, BCX_MOD_API } from "common";
+import { deepCopy, BCX_MOD_API, waitFor, settingsMBSLoaded } from "common";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
@@ -24,7 +24,8 @@ export const StripLevel = Object.freeze({
 });
 
 /** A dummy character without any blocked or limited items. */
-const MBSDummy = CharacterLoadSimple("MBSDummy");
+let MBSDummy: Character;
+waitFor(settingsMBSLoaded).then(() => MBSDummy = CharacterLoadSimple("MBSDummy"));
 
 /**
  * Return that a callable that returns whether the passed asset satisfies the specified strip {@link StripLevel}

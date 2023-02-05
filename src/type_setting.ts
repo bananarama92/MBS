@@ -2,10 +2,7 @@
 
 "use strict";
 
-/** Return a deep copy of the passed object. */
-function deepCopy<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj));
-}
+import { deepCopy } from "common";
 
 /**
  * Load and assign the type to the passed item without refreshing.
@@ -31,7 +28,7 @@ export function itemSetType(item: Item, character: Character, type: null | strin
     }
 
     if (asset.Archetype) {
-        const setType = itemSetTypeDict[asset.Archetype];
+        const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
         return setType(item, character, type);
     } else {
         return setTypeNoArch(item, character, type);
@@ -50,9 +47,12 @@ export function getBaselineProperty(asset: Asset, character: Character, type: nu
     return item.Property ?? {};
 }
 
+/** Type-setting callback type for {@link ITEM_SET_TYPE_DICT} */
+type setTypeCallback = (item: Item, character: Character, type: string | null) => void;
+
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
-const itemSetTypeDict = Object.freeze({
-    [ExtendedArchetype.TYPED]: (item: Item, character: Character, type: string | null): void => {
+const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({
+    typed: (item: Item, character: Character, type: string | null): void => {
         // Grab the item data
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
@@ -79,7 +79,7 @@ const itemSetTypeDict = Object.freeze({
             Object.assign(item.Property, deepCopy(data.BaselineProperty));
         }
     },
-    [ExtendedArchetype.VIBRATING]: (item: Item, character: Character, type: string | null): void => {
+    vibrating: (item: Item, character: Character, type: string | null): void => {
         // Find the item option
         let isAdvanced = true;
         let option = VibratorModeOptions.Advanced.find((o) => o.Name === type);
@@ -97,7 +97,7 @@ const itemSetTypeDict = Object.freeze({
             VibratorModeSetProperty(item, option.Property);
         }
     },
-    [ExtendedArchetype.MODULAR]: (item: Item, character: Character, type: string | null): void => {
+    modular: (item: Item, character: Character, type: string | null): void => {
         // Find the item data
         const key = `${item.Asset.Group.Name}${item.Asset.Name}`;
         const data = ModularItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
@@ -125,13 +125,13 @@ const itemSetTypeDict = Object.freeze({
         });
         item.Property = ModularItemMergeModuleValues(data, currentModuleValues, data.BaselineProperty);
     },
-    [ExtendedArchetype.VARIABLEHEIGHT]: () => { return; },
+    variableheight: () => { return; },
 });
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
 function setTypeNoArch(item: Item, character: Character, type: null | string): void {
     if (item.Asset.Name === "FuturisticVibrator") {
-        itemSetTypeDict[ExtendedArchetype.VIBRATING](item, character, type);
+        ITEM_SET_TYPE_DICT[ExtendedArchetype.VIBRATING](item, character, type);
         Object.assign(<ItemProperties>item.Property, {
             TriggerValues: ItemVulvaFuturisticVibratorTriggers.join(""),
             AccessMode: "",
