@@ -8,7 +8,7 @@ import {
     WheelFortuneSelectedItemSet,
     FORTUNE_WHEEL_FLAGS,
     setScreenNoText,
-} from "common";
+} from "common_bc";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
 import { MBSSelect, MBSCustomize } from "glob_vars";
 import { MBSFortuneWheelSelectExit } from "fortune_wheel_select";

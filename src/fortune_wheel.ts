@@ -7,11 +7,13 @@ import {
     range,
     randomElement,
     waitFor,
+} from "common";
+import {
     WheelFortuneItemSet,
     setScreenNoText,
     settingsMBSLoaded,
     FORTUNE_WHEEL_MAX_SETS,
-} from "common";
+} from "common_bc";
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";

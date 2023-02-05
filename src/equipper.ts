@@ -4,7 +4,8 @@
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { deepCopy, BCX_MOD_API, waitFor, settingsMBSLoaded } from "common";
+import { deepCopy, BCX_MOD_API, waitFor } from "common";
+import { settingsMBSLoaded } from "common_bc";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.

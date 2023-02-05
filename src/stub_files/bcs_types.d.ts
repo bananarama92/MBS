@@ -13,7 +13,7 @@ interface FortuneWheelOptionBase {
     /** Whether this is a custom user-specified option */
     readonly Custom?: boolean,
     /** The parent item set */
-    readonly Parent?: import("common").WheelFortuneItemSet,
+    readonly Parent?: import("common_bc").WheelFortuneItemSet,
     /** The character ID of the item option's owner or `null` if it's not a custom item */
     readonly OwnerID?: null | number,
 }
@@ -100,5 +100,5 @@ interface MBSSettings {
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
-    FortuneWheelSets: (null | import("common").WheelFortuneItemSet)[],
+    FortuneWheelSets: (null | import("common_bc").WheelFortuneItemSet)[],
 }

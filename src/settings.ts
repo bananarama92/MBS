@@ -6,11 +6,13 @@ import {
     waitFor,
     MBS_VERSION,
     range,
+    Version,
+} from "common";
+import {
     WheelFortuneItemSet,
     settingsLoaded,
     FORTUNE_WHEEL_MAX_SETS,
-    Version,
-} from "common";
+} from "common_bc";
 
 /** Check whether MBS has just been upgraded for the user in question. */
 function detectUpgrade(versionString?: string): versionString is string {

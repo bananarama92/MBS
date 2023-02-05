@@ -2,7 +2,8 @@
 
 "use strict";
 
-import { MBS_MOD_API, range, waitFor, settingsMBSLoaded } from "common";
+import { MBS_MOD_API, range, waitFor } from "common";
+import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
 const CRAFTING_SLOT_MAX_ORIGINAL = 40;

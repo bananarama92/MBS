@@ -2,7 +2,8 @@
 
 "use strict";
 
-import { waitFor, settingsMBSLoaded } from "common";
+import { waitFor } from "common";
+import { settingsMBSLoaded } from "common_bc";
 
 import {
     MBSFortuneWheelBackground,
@@ -21,6 +22,7 @@ import {
 } from "fortune_wheel_select";
 
 import * as common from "common";
+import * as common_bc from "common_bc";
 import * as crafting from "crafting";
 import * as equipper from "equipper";
 import * as fortune_wheel_customize from "fortune_wheel_customize";
@@ -33,6 +35,7 @@ import * as glob_vars from "glob_vars";
 waitFor(settingsMBSLoaded).then(() => {
     const exportMBS = Object.freeze({
         common: Object.freeze(common),
+        common_bc: Object.freeze(common_bc),
         crafting: Object.freeze(crafting),
         equipper: Object.freeze(equipper),
         fortune_wheel_customize: Object.freeze(fortune_wheel_customize),
