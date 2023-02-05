@@ -329,7 +329,7 @@ export class Version {
             [this.major, other.major],
             [this.minor, other.minor],
             [this.micro, other.micro],
-            [this.beta, other.beta],
+            [!this.beta, !other.beta],
         ];
         for (const [thisAttr, otherAttr] of attrList) {
             if (thisAttr > otherAttr) {
