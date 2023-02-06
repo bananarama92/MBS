@@ -11,7 +11,8 @@
     },
     "homepage": "https://github.com/bananarama92/MBS#readme",
     "dependencies": {
-        "bondage-club-mod-sdk": "^1.1.0"
+        "bondage-club-mod-sdk": "^1.1.0",
+        "mapsort": "^1.0.3"
     },
     "devDependencies": {
         "@open-wc/building-rollup": "*",

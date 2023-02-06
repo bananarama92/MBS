@@ -2,6 +2,8 @@
 
 "use strict";
 
+import mapSort from "mapsort";
+
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
 import { deepCopy, BCX_MOD_API, waitFor } from "common";
@@ -186,16 +188,20 @@ export function getBlockSuperset<T extends SimpleItem>(
 
 /**
  * Sort and return the passed itemlist in a manner to minimize group slot blocking.
- * @param itemList The to-be sorted item list. Note that the list is modified inplace.
+ * @param itemList The to-be sorted item list.
  * @param character The intended to=be equipped character.
  * Defaults to a simple character without any blacklisted or limited items/options.
  */
 export function fortuneItemsSort(
-    itemList: FortuneWheelItem[],
+    itemList: readonly FortuneWheelItem[],
     character: Character = MBSDummy,
 ): FortuneWheelItem[] {
     const sortRecord = itemsArgSort(itemList, character);
-    return itemList.sort(item => sortRecord.get(item.Group)?.priority ?? Infinity);
+    return mapSort(
+        itemList,
+        (item) => sortRecord.get(item.Group)?.priority ?? Infinity,
+        (a, b) => a - b,
+    );
 }
 
 /** A {@link canUnlock} cache for keeping track of whether a character has keys for specific lock types. */

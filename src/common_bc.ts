@@ -2,6 +2,8 @@
 
 "use strict";
 
+import mapSort from "mapsort";
+
 import {
     toStringTemplate,
     getRandomPassword,
@@ -520,7 +522,11 @@ export class WheelFortuneItemSet {
             }
         }
         if (push) {
-            WheelFortuneOption.sort(option => option.Custom ? 2 + (option.Parent?.index ?? 0) : 0);
+            WheelFortuneOption = mapSort(
+                WheelFortuneOption,
+                (o) => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false),
+                (a, b) => a - b,
+            );
             pushMBSSettings();
         }
     }
