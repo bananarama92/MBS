@@ -106,7 +106,7 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
                 type = item.Property.Mode;
             }
 
-            const wheelItem: FortuneWheelItem = {
+            const wheelItem: FortuneWheelItem = Object.freeze({
                 Name: item.Name,
                 Group: item.Group,
                 Custom: true,
@@ -114,7 +114,7 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
                 Type: type,
                 Color: color,
                 Craft: craft,
-            };
+            });
 
             ret.push(wheelItem);
         } catch (ex) {

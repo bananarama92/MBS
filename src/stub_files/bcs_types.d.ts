@@ -1,9 +1,9 @@
 /** Base type for fortune wheel options */
 interface FortuneWheelOptionBase {
     /** A single-character UTF16 string with the option's ID */
-    ID: string,
+    readonly ID: string,
     /** The color of the option button */
-    Color: FortuneWheelColor,
+    readonly Color: FortuneWheelColor,
     /** An optional script that will be executed whenever the option is picked */
     readonly Script?: () => void,
     /** An optional description of the option */

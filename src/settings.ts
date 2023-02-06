@@ -11,6 +11,7 @@ import {
 import {
     WheelFortuneItemSet,
     settingsLoaded,
+    sanitizeWheelFortuneIDs,
     FORTUNE_WHEEL_MAX_SETS,
 } from "common_bc";
 
@@ -91,7 +92,10 @@ function initMBSSettings(): void {
             fortuneWheelSets.push(null);
         }
     }
-    fortuneWheelSets.forEach((itemSet, i, array) => {
+
+    Player.MBSSettings.FortuneWheelSets = Object.seal(fortuneWheelSets);
+    Player.MBSSettings = Object.seal(Player.MBSSettings);
+    Player.MBSSettings.FortuneWheelSets.forEach((itemSet, i, array) => {
         if (itemSet !== null) {
             try {
                 array[i] = WheelFortuneItemSet.fromObject(itemSet);
@@ -104,8 +108,6 @@ function initMBSSettings(): void {
             array[i] = null;
         }
     });
-    Player.MBSSettings.FortuneWheelSets = Object.seal(fortuneWheelSets);
-    Player.MBSSettings = Object.seal(Player.MBSSettings);
 }
 
 /**
@@ -122,6 +124,9 @@ export function pushMBSSettings(push: boolean = true): void {
         Version: MBS_VERSION,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(itemSet => itemSet?.hidden === false ? itemSet.valueOf() : null),
     });
+    if (Player.OnlineSharedSettings.WheelFortune != null) {
+        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
+    }
 
     if (push) {
         ServerAccountUpdate.QueueData({
@@ -133,6 +138,6 @@ export function pushMBSSettings(push: boolean = true): void {
 
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
-    pushMBSSettings(false);
+    pushMBSSettings();
     console.log("MBS: Initializing settings module");
 });

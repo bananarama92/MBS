@@ -2,8 +2,6 @@
 
 "use strict";
 
-import mapSort from "mapsort";
-
 import {
     MBS_MOD_API,
     range,
@@ -15,6 +13,7 @@ import {
     setScreenNoText,
     settingsMBSLoaded,
     FORTUNE_WHEEL_MAX_SETS,
+    sanitizeWheelFortuneIDs,
 } from "common_bc";
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
@@ -711,44 +710,24 @@ function loadFortuneWheel(): void {
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
     if (WheelFortuneCharacter?.IsPlayer()) {
         MBSSelect.currentFortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
-        for (const itemSet of MBSSelect.currentFortuneWheelSets) {
-            if (itemSet !== null) {
-                itemSet.registerOptions(false);
-            }
-        }
     } else {
         MBSSelect.currentFortuneWheelSets = fortuneWheelSets.map((protoItemSet, i) => {
             if (protoItemSet === null) {
                 return null;
             }
             try {
-                const itemSet = WheelFortuneItemSet.fromObject(protoItemSet);
-                itemSet.registerOptions(false);
-                return itemSet;
+                return WheelFortuneItemSet.fromObject(protoItemSet);
             } catch (error) {
                 console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item set ${i}`, error);
                 return null;
             }
         });
     }
-}
-
-/**
- * Filter the passed ID string, ensuring that only IDs defined in {@link WheelFortuneOption} are present.
- * Note that the relative order of substrings is not guaranteed to be preserved.
- * @param IDs A string of wheel of fortune IDs
- */
-function sanitizeWheelFortuneIDs(IDs: string): string {
-    if (typeof IDs !== "string") {
-        throw new TypeError(`Invalid "IDs" type: ${typeof IDs}`);
-    }
-    let ret = "";
-    for (const option of WheelFortuneOption) {
-        if (IDs.includes(option.ID)) {
-            ret += option.ID;
+    MBSSelect.currentFortuneWheelSets.forEach(itemSet => {
+        if (!itemSet?.hidden) {
+            itemSet?.registerOptions(false);
         }
-    }
-    return ret;
+    });
 }
 
 // Requires BC R88Beta1 or higher
@@ -797,13 +776,8 @@ waitFor(settingsMBSLoaded).then(() => {
         ),
     ]);
     FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
-    WheelFortuneOption = mapSort(
-        WheelFortuneOption,
-        (o) => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false),
-        (a, b) => a - b,
-    );
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
-    FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneOption.filter(o => !o.Custom).map(o => o.ID).join("");
+    FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
     if (Player.OnlineSharedSettings.WheelFortune != null) {
         Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
     }

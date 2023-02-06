@@ -69,6 +69,26 @@ export function* range(
 }
 
 /**
+ * Take an iterable and iterate over it, yielding `[index, value]` pairs.
+ * @param iter The to-be traversed iterable
+ * @param start The starting index
+ */
+export function* enumerate<T>(
+    iter: Iterable<T>,
+    start: number = 0,
+): Generator<[index: number, value: T], void, unknown> {
+    if (typeof start !== "number") {
+        throw new TypeError(`Invalid "start" type: ${typeof start}`);
+    }
+
+    let i = start;
+    for (const value of iter) {
+        yield [i, value];
+        i += 1;
+    }
+}
+
+/**
  * Return a random element from the passed list.
  * @param list The list in question
  * @returns The random element from the passed list
@@ -237,36 +257,28 @@ export class LoopIterator<T> {
 
 /**
  * Generate a list of unique length-1 UTF16 characters.
- * @param n - The number of characters that should be returned
  * @param start - The starting value of the to-be explored unicode character codes
- * @param exclude - Characters that should not be contained in the to-be returned list
- * @returns A list of unique UTF16 characters
+ * @param indices - An array with UTF16 character codes, excluding an offset as defined by `start`
+ * @returns A list of unique UTF16 characters with the same length as `indices`
  */
 export function generateIDs(
-    n: number,
-    start: number = 0,
-    exclude: null | readonly string[] = null,
+    start: number,
+    indices: readonly number[],
 ): string[] {
-    validateInt(n, "n", 0);
-    if (exclude == null) {
-        exclude = [];
-    } else if (!Array.isArray(exclude)) {
-        throw new TypeError(`Invalid "exclude" type: ${typeof exclude}`);
+    if (!Array.isArray(indices)) {
+        throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
+    }
+
+    const stop = start + Math.max(...indices) + 1;
+    if (stop > 2**16) {
+        throw new RangeError("Insufficient available UTF16 characters");
     }
 
     const ret: string[] = [];
-    for (const i of range(start, 2**16)) {
-        const utf16 = String.fromCharCode(i);
-        if (n <= 0) {
-            break;
-        } else if (!exclude.includes(utf16)) {
-            ret.push(utf16);
-            n -= 1;
+    for (const [i, j] of enumerate(range(start, stop))) {
+        if (indices.includes(i)) {
+            ret.push(String.fromCharCode(j));
         }
-    }
-
-    if (n > 0) {
-        throw new Error("Insufficient available UTF16 characters");
     }
     return ret;
 }

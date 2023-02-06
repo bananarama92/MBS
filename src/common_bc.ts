@@ -20,6 +20,12 @@ import { MBSSelect } from "glob_vars";
 /** The maximum number of custom user-specified wheel of fortune item sets. */
 export const FORTUNE_WHEEL_MAX_SETS = 14;
 
+/** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
+const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
+
+/** The maximum number of IDs for ab item set. */
+const ITEM_SET_ID_RANGE = 16; // 2**4
+
 /** A list of all valid wheel of fortune colors. */
 export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([
     "Blue",
@@ -31,6 +37,24 @@ export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze(
     "Red",
     "Yellow",
 ]);
+
+/**
+ * Filter the passed ID string, ensuring that only IDs defined in {@link WheelFortuneOption} are present.
+ * Note that the relative order of substrings is not guaranteed to be preserved.
+ * @param IDs A string of wheel of fortune IDs
+ */
+export function sanitizeWheelFortuneIDs(IDs: string): string {
+    if (typeof IDs !== "string") {
+        throw new TypeError(`Invalid "IDs" type: ${typeof IDs}`);
+    }
+    let ret = "";
+    for (const option of WheelFortuneOption) {
+        if (IDs.includes(option.ID)) {
+            ret += option.ID;
+        }
+    }
+    return ret;
+}
 
 /**
  * Attach and set a timer lock to the passed item for the specified duration.
@@ -111,8 +135,12 @@ export function settingsMBSLoaded(): boolean {
 }
 
 /**
- * A list of with the various {@link FortuneWheelOption} flavors that should be generated
+ * A list ordered of with the various {@link FortuneWheelOption} flavors that should be generated
  * for a single {@link FortuneWheelOption}.
+ *
+ * Used by {@link WheelFortuneItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
+ * * The order of list elements is *never* changed; new entries can be appended though
+ * * The list consists of <= 16 elements
  */
 export const FORTUNE_WHEEL_FLAGS: readonly FortuneWheelFlags[] = Object.freeze([
     "Exclusive", "5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "High Security",
@@ -132,6 +160,14 @@ const FLAGS_CALLBACKS: Record<FortuneWheelFlags, FortuneWheelCallback> = {
         equipHighSecLock(item, character);
     },
 };
+
+/** Indices of the default MBS wheel of fortune item sets */
+const DEFAULT_ITEM_SET_INDEX: Record<string, number> = Object.freeze({
+    "PSO Bondage": 0,
+    "Mummification": 1,
+    "Bondage Maid": 2,
+    "Petrification": 3,
+});
 
 export class WheelFortuneSelectedItemSet {
     /** The name of custom option */
@@ -464,13 +500,33 @@ export class WheelFortuneItemSet {
      * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    toOptions(
-        idExclude: null | readonly string[] = null,
-        colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS,
-    ): FortuneWheelOption[] {
-        // Reserve the [0, 2**8] ID range for native MBS item sets
-        const flags = Array.from(this.flags).sort((i) => FORTUNE_WHEEL_FLAGS.indexOf(i));
-        const IDs = generateIDs(flags.length, this.custom ? 2**8 : 0, idExclude);
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelOption[] {
+        const flags = mapSort(
+            Array.from(this.flags),
+            (flag) => FORTUNE_WHEEL_FLAGS.indexOf(flag),
+            (a, b) => a - b,
+        );
+        const flagsNumeric = flags.map(i => FORTUNE_WHEEL_FLAGS.indexOf(i));
+
+        /**
+         * * Reserve the `[0, 2**8)` range (extened ASCII) for BC's default
+         * * Reserve the `[2**8, 2**9)` range for MBS's builtin options
+         * * "Reserve" the `[2**9, 2**16)` range for MBS's custom options
+         */
+        let start: number;
+        if (!this.custom) {
+            start = ITEM_SET_CATEGORY_ID_RANGE + DEFAULT_ITEM_SET_INDEX[this.name] * ITEM_SET_ID_RANGE;
+            if (Number.isNaN(start)) {
+                throw new Error(`Unknown default item set "${this.name}"`);
+            }
+        } else {
+            start = 2 * ITEM_SET_CATEGORY_ID_RANGE + this.index * ITEM_SET_ID_RANGE;
+            if (start < 0) {
+                throw new Error(`Item set "${this.name}" absent from currently selected fortune wheel sets`);
+            }
+        }
+
+        const IDs = generateIDs(start, flagsNumeric);
         return flags.map((flag, i) => {
             return {
                 ID: IDs[i],
@@ -485,6 +541,17 @@ export class WheelFortuneItemSet {
         });
     }
 
+    /** Find the insertion position within `WheelFortuneOption`. */
+    #registerFindStart(): number {
+        if (!this.#children?.length) {
+            return WheelFortuneOption.length;
+        } else {
+            const initialID = this.#children[0].ID;
+            const start = WheelFortuneOption.findIndex(i => i.ID >= initialID);
+            return start === -1 ? WheelFortuneOption.length : start;
+        }
+    }
+
     /**
      * Convert this instance into a list of {@link FortuneWheelOption} and
      * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
@@ -492,41 +559,27 @@ export class WheelFortuneItemSet {
      */
     registerOptions(push: boolean = true): void {
         this.#hidden = false;
-        const options = this.#children = this.toOptions(WheelFortuneOption.map(i => i.ID));
-        for (const o of options) {
+        this.#children = this.toOptions();
+        let start = this.#registerFindStart();
+        for (const o of this.#children) {
             // Check whether the option is already registered
-            let i: number = -1;
-            const prevOption = WheelFortuneOption.find((prevOption, index) => {
-                if (prevOption.Description === o.Description) {
-                    i = index;
-                    return true;
-                } else {
-                    return false;
-                }
-            });
+            const i = WheelFortuneOption.findIndex(prevOption => prevOption.ID === o.ID);
 
             // Either replace or add a new option
-            if (prevOption !== undefined) {
+            if (i !== -1) {
                 WheelFortuneOption[i] = o;
-                if (o.ID !== prevOption.ID) {
-                    o.ID = prevOption.ID;
-                }
                 if (o.Default && !WheelFortuneDefault.includes(o.ID)) {
                     WheelFortuneDefault += o.ID;
                 }
             } else {
-                WheelFortuneOption.push(o);
+                WheelFortuneOption.splice(start, 0, o);
                 if (o.Default) {
                     WheelFortuneDefault += o.ID;
                 }
             }
+            start += 1;
         }
         if (push) {
-            WheelFortuneOption = mapSort(
-                WheelFortuneOption,
-                (o) => o.Custom ? 3 + (o.Parent?.index ?? -1) : Number(o.Custom === false),
-                (a, b) => a - b,
-            );
             pushMBSSettings();
         }
     }
@@ -537,26 +590,12 @@ export class WheelFortuneItemSet {
      */
     unregisterOptions(push: boolean = true): void {
         this.#hidden = true;
+        const IDs = this.children?.map(c => c.ID) ?? [];
         this.#children = null;
-        const descriptions: Set<string> = new Set();
-        const IDs: Set<string> = new Set();
-        for (const flag of this.flags) {
-            descriptions.add(this.name + (flag === "Exclusive" ? "" : `: ${flag}`));
-        }
+        WheelFortuneOption = WheelFortuneOption.filter(i => !IDs.includes(i.ID));
+        WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.includes(i)).join("");
 
-        for (let i = WheelFortuneOption.length - 1; i >= 0; i--) {
-            const option = WheelFortuneOption[i];
-            if (descriptions.has(<string>option.Description)) {
-                IDs.add(option.ID);
-                WheelFortuneOption.splice(i, 1);
-            }
-        }
-
-        if (push && IDs.size !== 0) {
-            WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.has(i)).join("");
-            if (typeof Player.OnlineSharedSettings.WheelFortune === "string") {
-                Player.OnlineSharedSettings.WheelFortune = Array.from(Player.OnlineSharedSettings.WheelFortune).filter(i => !IDs.has(i)).join("");
-            }
+        if (push) {
             pushMBSSettings();
         }
     }
