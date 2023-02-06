@@ -132,7 +132,7 @@ export async function waitFor(predicate: () => boolean, timeout: number = 10): P
 }
 
 /** The MBS version. */
-export const MBS_VERSION = "0.3.3";
+export const MBS_VERSION = "0.4.0";
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({

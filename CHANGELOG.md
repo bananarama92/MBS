@@ -1,5 +1,16 @@
 # MBS Changelog
 
+## v0.4.0
+* Place the `ITEM_SET_TYPE_DICT` and `MBSDummy` initialization behind a `waitFor` guard
+* Split `common` into two modules
+* Fix the previously broken `Version.beta` comparison
+* Overhaul the ID assignment of custom item sets; make it more robust
+* Add `mapsort` as a dependency
+* Ensure that the previous item set is properly unregistered before saving a new one
+* Fix a potential issue with the BC version comparison
+* Resize the preview character for a better fit
+* Up the number of custom item slots from 14 to 16
+
 ## v0.3.3
 * Ensure that MBS does not throw literals as exceptions
 * Fix the vibrator mode not being properly read for custom outfits
