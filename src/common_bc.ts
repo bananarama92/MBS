@@ -17,14 +17,14 @@ import { fromItemBundle } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
 import { MBSSelect } from "glob_vars";
 
-/** The maximum number of custom user-specified wheel of fortune item sets. */
-export const FORTUNE_WHEEL_MAX_SETS = 14;
-
 /** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
 const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
 
 /** The maximum number of IDs for ab item set. */
 const ITEM_SET_ID_RANGE = 16; // 2**4
+
+/** The maximum number of custom user-specified wheel of fortune item sets. */
+export const FORTUNE_WHEEL_MAX_SETS = ITEM_SET_ID_RANGE;
 
 /** A list of all valid wheel of fortune colors. */
 export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([

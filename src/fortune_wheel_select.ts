@@ -11,7 +11,7 @@ const START = Object.freeze({
 });
 const SPACING = Object.freeze({
     X: 800,
-    Y: 100,
+    Y: 90,
 });
 
 /** The background for the MBS wheel of fortune selection screen. */
