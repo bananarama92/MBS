@@ -136,7 +136,7 @@ export function MBSFortuneWheelRun(): void {
     DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
 
     if (MBSCustomize.preview !== null) {
-        DrawCharacter(MBSCustomize.preview, 300, 100, 0.85, false);
+        DrawCharacter(MBSCustomize.preview, 300, 175, 0.78, false);
     }
 
     const parseDisabled = itemSettings.outfitCache === null || !isPlayer;
