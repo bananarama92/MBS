@@ -120,22 +120,6 @@ export function getRandomPassword(n: number): string {
 }
 
 /**
- * Convert the passed BC version into a 2-tuple with the major- and beta-version
- * @param version The to-be parsed version
- * @returns A 2-tuple with the major- and beta version
- */
-export function parseVersion(version: string): [number, number] {
-    const match = GameVersionFormat.exec(version);
-    if (match === null) {
-        throw new Error(`Failed to match the passed version: ${version}`);
-    }
-    return [
-        Number(match[2]),
-        Number((match[3] === undefined) ? Infinity : match[4]),
-    ];
-}
-
-/**
  * Wait for the passed predicate to evaluate to `true`.
  * @param predicate A predicate
  * @param timeout The timeout in miliseconds for when the predicate fails
@@ -383,6 +367,15 @@ export class Version {
             Number(match[4]),
             (match[5] !== undefined),
         );
+    }
+
+    /** Construct a new instance from the passed BC version string */
+    static fromBCVersion(version: string): Version {
+        const match = GameVersionFormat.exec(version);
+        if (match === null) {
+            throw new Error(`Invalid BC "version": ${version}`);
+        }
+        return new Version(Number(match[1]), 0, 0, match[2] !== undefined);
     }
 
     /** Return a string representation of this instance. */
