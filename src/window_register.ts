@@ -23,6 +23,7 @@ import {
 
 import * as common from "common";
 import * as common_bc from "common_bc";
+import * as sanity_checks from "sanity_checks";
 import * as crafting from "crafting";
 import * as equipper from "equipper";
 import * as fortune_wheel_customize from "fortune_wheel_customize";
@@ -44,6 +45,7 @@ waitFor(settingsMBSLoaded).then(() => {
         item_bundle: Object.freeze(item_bundle),
         settings: Object.freeze(settings),
         glob_vars: Object.freeze(glob_vars),
+        sanity_checks: Object.freeze(sanity_checks),
     });
     const globalExport = {
         MBSFortuneWheelBackground: MBSFortuneWheelBackground,

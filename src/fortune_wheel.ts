@@ -15,6 +15,7 @@ import {
     FORTUNE_WHEEL_MAX_SETS,
     sanitizeWheelFortuneIDs,
 } from "common_bc";
+import { validateBuiltinWheelIDs } from "sanity_checks";
 import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
@@ -733,6 +734,9 @@ function loadFortuneWheel(): void {
 // Requires BC R88Beta1 or higher
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing wheel of fortune module");
+    if (!validateBuiltinWheelIDs()) {
+        return;
+    }
 
     // Load and register the default MBS item sets
     FORTUNE_WHEEL_ITEMS = Object.freeze(generateItems());
