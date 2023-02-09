@@ -176,3 +176,4 @@ declare function ServerAccountBeep(data: {
 }): void;
 declare function LogQuery(QueryLogName: string, QueryLogGroup: string): boolean;
 declare const ItemVulvaFuturisticVibratorAccessModes: readonly string[];
+declare const VariableHeightDataLookup: Record<string, VariableHeightData>;

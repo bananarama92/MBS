@@ -8,12 +8,40 @@ type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: 
 type PropMappingType = {[T in keyof ItemProperties]: PropValidator<T>};
 type PropEntries = [keyof ItemProperties, PropValidator<keyof ItemProperties>][];
 
+/** Validation function for the {@link ItemProperties.OverrideHeight} property. */
+function validateOverrideHeight(property: unknown, asset: Asset): property is AssetOverrideHeight {
+    const data = VariableHeightDataLookup[`${asset.Group.Name}${asset.Name}`];
+    if (data === undefined) {
+        return false;
+    }
+
+    const p = <AssetOverrideHeight | null>property;
+    return (
+        p !== null
+        && typeof p === "object"
+        && Number.isInteger(p.Priority)
+        && (
+            typeof p.Height === "number"
+            && p.Height <= data.maxHeight
+            && p.Height >= data.minHeight
+        )
+        && (
+            p.HeightRatioProportion == null
+            || (
+                typeof p.HeightRatioProportion === "number"
+                && p.HeightRatioProportion >= 0
+                && p.HeightRatioProportion <= 1
+            )
+        )
+    );
+}
+
 /**
  * A record {@link ItemProperties} with validation functions.
  * Properties are limited to a subset that are not managed by the extended item type-setting machinery.
  */
 const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
-    OverridePriority: (p, _) => typeof p === "number",
+    OverridePriority: (p, _) => Number.isInteger(p),
     Opacity: (p, a) => typeof p === "number" && p <= a.MaxOpacity && p >= a.MinOpacity,
     Text: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text ?? -1),
     Text2: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text2 ?? -1),
@@ -33,6 +61,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
         return p.every(i => typeof i === "string" && i.length <= ItemDevicesLuckyWheelMaxTextLength);
     },
     TargetAngle: (p, _) => typeof p === "number",
+    OverrideHeight: validateOverrideHeight,
 });
 
 /**
