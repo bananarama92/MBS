@@ -5,8 +5,9 @@ declare let WheelFortuneDefault: string;
 declare const Player: PlayerCharacter & {
     MBSSettings: MBSSettings,
     OnlineSettings: { MBS: string },
-    OnlineSharedSettings: { MBS:
-        {
+    OnlineSharedSettings: {
+        WheelFortune: string,
+        MBS: {
             Version: string,
             FortuneWheelSets: (null | {
                 name: string,

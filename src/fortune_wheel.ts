@@ -13,7 +13,6 @@ import {
     setScreenNoText,
     settingsMBSLoaded,
     FORTUNE_WHEEL_MAX_SETS,
-    sanitizeWheelFortuneIDs,
 } from "common_bc";
 import { validateBuiltinWheelIDs } from "sanity_checks";
 import { pushMBSSettings } from "settings";
@@ -782,9 +781,6 @@ waitFor(settingsMBSLoaded).then(() => {
     FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
     FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
-    if (Player.OnlineSharedSettings.WheelFortune != null) {
-        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
-    }
     pushMBSSettings(false);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {

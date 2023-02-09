@@ -81,6 +81,7 @@ function initMBSSettings(): void {
         Player.MBSSettings.CraftingCache = "";
     }
 
+    // Pad/trim the item sets if necessary
     let fortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
     if (!Array.isArray(fortuneWheelSets)) {
         fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
@@ -108,6 +109,11 @@ function initMBSSettings(): void {
             array[i] = null;
         }
     });
+
+    // Ensure that the player's wheel of fortune settings are initialized
+    if (Player.OnlineSharedSettings.WheelFortune == null) {
+        Player.OnlineSharedSettings.WheelFortune = WheelFortuneDefault;
+    }
 }
 
 /**
@@ -124,9 +130,7 @@ export function pushMBSSettings(push: boolean = true): void {
         Version: MBS_VERSION,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(itemSet => itemSet?.hidden === false ? itemSet.valueOf() : null),
     });
-    if (Player.OnlineSharedSettings.WheelFortune != null) {
-        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
-    }
+    Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
 
     if (push) {
         ServerAccountUpdate.QueueData({
