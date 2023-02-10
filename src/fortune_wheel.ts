@@ -12,6 +12,7 @@ import {
     WheelFortuneItemSet,
     setScreenNoText,
     settingsMBSLoaded,
+    canChangeCosplay,
     FORTUNE_WHEEL_MAX_SETS,
 } from "common_bc";
 import { validateBuiltinWheelIDs } from "sanity_checks";
@@ -88,7 +89,7 @@ function colorItems(groupNames: readonly AssetGroupName[], color: string): void 
 }
 
 function statueCopyColors<T>(itemList: T): T {
-    if (!Player.OnlineSharedSettings?.BlockBodyCosplay) {
+    if (canChangeCosplay(Player)) {
         const groupNames: AssetGroupName[] = [
             "HairAccessory1",
             "HairAccessory2",
@@ -542,19 +543,19 @@ function generateItems(): FortuneWheelItems {
                 Name: "ReverseBunnySuit",
                 Group: "SuitLower",
                 Color: ["#1B1B1B"],
-                Equip: () => !(Player.OnlineSharedSettings?.BlockBodyCosplay || false),
+                Equip: () => canChangeCosplay(Player),
             },
             {
                 Name: "SeamlessCatsuit",
                 Group: "SuitLower",
                 Color: ["#484747"],
-                Equip: () => Player.OnlineSharedSettings?.BlockBodyCosplay || false,
+                Equip: () => !canChangeCosplay(Player),
             },
             {
                 Name: "SeamlessCatsuit",
                 Group: "Suit",
                 Color: ["#484747"],
-                Equip: () => Player.OnlineSharedSettings?.BlockBodyCosplay || false,
+                Equip: () => !canChangeCosplay(Player),
             },
             {
                 Name: "ReverseBunnySuit",

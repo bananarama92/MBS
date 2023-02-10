@@ -7,7 +7,7 @@ import mapSort from "mapsort";
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
 import { deepCopy, BCX_MOD_API, waitFor } from "common";
-import { settingsMBSLoaded } from "common_bc";
+import { settingsMBSLoaded, canChangeCosplay } from "common_bc";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
@@ -37,30 +37,24 @@ waitFor(settingsMBSLoaded).then(() => MBSDummy = CharacterLoadSimple("MBSDummy")
  */
 export function getStripCondition(stripLevel: StripLevel, character: Character): ((asset: Asset) => boolean) {
     switch (stripLevel) {
-        case StripLevel.NONE: {
+        case StripLevel.NONE:
             return () => false;
-        }
-        case StripLevel.CLOTHES: {
+        case StripLevel.CLOTHES:
             return (asset) => (asset.Group.AllowNone && !asset.BodyCosplay && !asset.Group.Underwear);
-        }
-        case StripLevel.UNDERWEAR: {
+        case StripLevel.UNDERWEAR:
             return (asset) => (asset.Group.AllowNone && !asset.BodyCosplay);
-        }
-        case StripLevel.COSPLAY: {
+        case StripLevel.COSPLAY:
             return (asset) => {
-                const blockBodyCosplay = character.OnlineSharedSettings?.BlockBodyCosplay ?? true;
+                const blockBodyCosplay = !canChangeCosplay(character);
                 return blockBodyCosplay ? (asset.Group.AllowNone && !asset.BodyCosplay) : asset.Group.AllowNone;
             };
-        }
-        case StripLevel.ALL: {
+        case StripLevel.ALL:
             return (asset) => {
-                const blockBodyCosplay = character.OnlineSharedSettings?.BlockBodyCosplay ?? true;
+                const blockBodyCosplay = !canChangeCosplay(character);
                 return blockBodyCosplay ? (asset.Group.AllowNone && !asset.BodyCosplay) : true;
             };
-        }
-        default: {
+        default:
             throw new Error(`Invalid "stripLevel" value: ${stripLevel}`);
-        }
     }
 }
 

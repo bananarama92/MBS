@@ -11,6 +11,7 @@ import {
     isIterable,
     generateIDs,
     randomElement,
+    BCX_MOD_API,
 } from "common";
 import { pushMBSSettings } from "settings";
 import { fromItemBundle } from "item_bundle";
@@ -37,6 +38,30 @@ export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze(
     "Red",
     "Yellow",
 ]);
+
+/**
+ * Check whether cosplay items can be changed on the given character, including support for the BCX `alt_allow_changing_appearance` rule.
+ * @param character The character in question
+ * @returns whether cosplay items can be changed or not
+ */
+export function canChangeCosplay(character: Character): boolean {
+    const cosplayBlocked = character.OnlineSharedSettings?.BlockBodyCosplay ?? true;
+    if (!cosplayBlocked) {
+        return true;
+    }
+
+    const ruleState = BCX_MOD_API.getRuleState("alt_allow_changing_appearance");
+    if (ruleState === null || !character.IsPlayer()) {
+        return false;
+    }
+
+    // Allow cosplay changes as long as the minimum role isn't set to lover or above
+    return (
+        ruleState.inEffect
+        && ruleState.isEnforced
+        && <number>ruleState.customData.minimumRole > 3
+    );
+}
 
 /**
  * Filter the passed ID string, ensuring that only IDs defined in {@link WheelFortuneOption} are present.
