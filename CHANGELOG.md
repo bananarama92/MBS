@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v0.4.1
+* Consolidate and expand the BC validation
+* Allow custom wheel of fortune item sets to store the `OverrideHeight` property
+* Check for the BCX `alt_allow_changing_appearance` rule when determining whether cosplay items can be changed
+* Add `lodash` as a dependency; remove `mapsort`
+* Fix custom override priorities of the builtin MBS item sets
+* Check whether an item is not blocked at the room level before equipping
+
 ## v0.4.0
 * Place the `ITEM_SET_TYPE_DICT` and `MBSDummy` initialization behind a `waitFor` guard
 * Split `common` into two modules
