@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { cloneDeep, clone } from "lodash-es";
+
 import { getBaselineProperty } from "type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
@@ -124,7 +126,10 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
 
             let craft: undefined | CraftingItem = undefined;
             if (item.Craft !== null && typeof item.Craft === "object") {
-                craft = { ...item.Craft, Type: null, OverridePriority: null, Lock: "" };
+                craft = Object.assign(
+                    cloneDeep(item.Craft),
+                    {Type: null, OverridePriority: null, Lock: "" },
+                );
                 CraftingValidate(craft, asset, false);
             }
 
@@ -176,9 +181,12 @@ export function toItemBundle(items: readonly FortuneWheelItem[], character: Char
         return {
             Group: Group,
             Name: Name,
-            Color: (Color !== undefined) ? [...Color] : undefined,
-            Craft: Craft,
-            Property: { ...getBaselineProperty(asset, character, Type), ...Property },
+            Color: clone(<string[] | undefined>Color),
+            Craft: clone(Craft),
+            Property: Object.assign(
+                getBaselineProperty(asset, character, Type),
+                cloneDeep(Property),
+            ),
         };
     });
 }

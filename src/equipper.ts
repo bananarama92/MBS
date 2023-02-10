@@ -2,11 +2,11 @@
 
 "use strict";
 
-import mapSort from "mapsort";
+import { cloneDeep, sortBy } from "lodash-es";
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { deepCopy, BCX_MOD_API, waitFor } from "common";
+import { BCX_MOD_API, waitFor } from "common";
 import { settingsMBSLoaded, canChangeCosplay } from "common_bc";
 
 /**
@@ -191,10 +191,9 @@ export function fortuneItemsSort(
     character: Character = MBSDummy,
 ): FortuneWheelItem[] {
     const sortRecord = itemsArgSort(itemList, character);
-    return mapSort(
+    return sortBy(
         itemList,
         (item) => sortRecord.get(item.Group)?.priority ?? Infinity,
-        (a, b) => a - b,
     );
 }
 
@@ -340,14 +339,14 @@ export function fortuneWheelEquip(
             continue;
         }
         if (Craft !== undefined) {
-            newItem.Craft = { ...Craft };
+            newItem.Craft = cloneDeep(Craft);
         }
         itemSetType(newItem, character, Type);
         InventoryCraft(character, character, Group, Craft, false, false);
         if (newItem.Property == null) {
-            newItem.Property = deepCopy(Property);
+            newItem.Property = cloneDeep(Property);
         } else {
-            Object.assign(newItem.Property, deepCopy(Property));
+            Object.assign(newItem.Property, cloneDeep(Property));
         }
 
         // Fire up any of the provided item-specific dynamic callbacks

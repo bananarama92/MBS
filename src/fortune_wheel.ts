@@ -4,9 +4,9 @@
 
 import {
     MBS_MOD_API,
-    range,
     randomElement,
     waitFor,
+    padArray,
 } from "common";
 import {
     WheelFortuneItemSet,
@@ -29,7 +29,7 @@ import { MBSSelect } from "glob_vars";
 function copyHairColor(item: Item, indices: readonly number[]): void {
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
-    } else if (!Array.isArray(indices)) {
+    } else if (!Array.isArray(<readonly number[]>indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }
 
@@ -39,17 +39,12 @@ function copyHairColor(item: Item, indices: readonly number[]): void {
     }
 
     // Ensure that the item's color is stored as an array
+    const colorLength = Math.max(...indices);
     let color: string[];
     if (typeof item.Color === "string") {
-        item.Color = color = [item.Color];
-        for (const _ of range(1, 1 + Math.max(...indices))) {
-            item.Color.push("Default");
-        }
+        item.Color = color = padArray([item.Color], colorLength, "Default");
     } else if (!Array.isArray(item.Color) || item.Color.length === 0) {
-        item.Color = color = [];
-        for (const _ of range(0, 1 + Math.max(...indices))) {
-            item.Color.push("Default");
-        }
+        item.Color = color = Array(colorLength).fill("Default");
     } else {
         color = item.Color;
     }
@@ -80,11 +75,7 @@ function colorItems(groupNames: readonly AssetGroupName[], color: string): void 
         if (item == null) {
             continue;
         }
-
-        item.Color = [];
-        for (const _ of range(0, item.Asset.ColorableLayerCount)) {
-            item.Color.push(color);
-        }
+        item.Color = Array(item.Asset.ColorableLayerCount).fill(color);
     }
 }
 

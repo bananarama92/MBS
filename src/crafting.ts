@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { MBS_MOD_API, range, waitFor } from "common";
+import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
@@ -52,9 +52,7 @@ waitFor(settingsMBSLoaded).then(() => {
         Player.Crafting.length <= CRAFTING_SLOT_MAX_ORIGINAL
         && Player.MBSSettings.CraftingCache.length !== 0
     ) {
-        for (const _ of range(Player.Crafting.length, CRAFTING_SLOT_MAX_ORIGINAL)) {
-            Player.Crafting.push(null);
-        }
+        padArray(Player.Crafting, CRAFTING_SLOT_MAX_ORIGINAL, null);
 
         let refresh = false;
         const packet = LZString.compressToUTF16(Player.MBSSettings.CraftingCache);

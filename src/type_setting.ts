@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { deepCopy } from "common";
+import { cloneDeep } from "lodash-es";
 
 /**
  * Load and assign the type to the passed item without refreshing.
@@ -74,9 +74,9 @@ const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> =
         }
 
         // Apply the item option
-        item.Property = option.Property ? deepCopy(option.Property) : {};
+        item.Property = option.Property ? cloneDeep(option.Property) : {};
         if (data.BaselineProperty) {
-            Object.assign(item.Property, deepCopy(data.BaselineProperty));
+            Object.assign(item.Property, cloneDeep(data.BaselineProperty));
         }
     },
     vibrating: (item: Item, character: Character, type: string | null): void => {

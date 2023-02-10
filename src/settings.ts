@@ -5,8 +5,9 @@
 import {
     waitFor,
     MBS_VERSION,
-    range,
     Version,
+    padArray,
+    trimArray,
 } from "common";
 import {
     WheelFortuneItemSet,
@@ -85,13 +86,10 @@ function initMBSSettings(): void {
     let fortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
     if (!Array.isArray(fortuneWheelSets)) {
         fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
-    }
-    if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
-        fortuneWheelSets = fortuneWheelSets.slice(0, FORTUNE_WHEEL_MAX_SETS);
+    } else if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
+        trimArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS);
     } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
-        for (const _ of range(fortuneWheelSets.length, FORTUNE_WHEEL_MAX_SETS)) {
-            fortuneWheelSets.push(null);
-        }
+        padArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS, null);
     }
 
     Player.MBSSettings.FortuneWheelSets = Object.seal(fortuneWheelSets);

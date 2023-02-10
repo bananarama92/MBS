@@ -2,7 +2,7 @@
 
 "use strict";
 
-import mapSort from "mapsort";
+import { sortBy } from "lodash-es";
 
 import {
     toStringTemplate,
@@ -526,10 +526,9 @@ export class WheelFortuneItemSet {
      * @returns A list of wheel of fortune options
      */
     toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelOption[] {
-        const flags = mapSort(
+        const flags = sortBy(
             Array.from(this.flags),
             (flag) => FORTUNE_WHEEL_FLAGS.indexOf(flag),
-            (a, b) => a - b,
         );
         const flagsNumeric = flags.map(i => FORTUNE_WHEEL_FLAGS.indexOf(i));
 

@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { range, zip, isEqual, random } from "lodash-es";
+
 import bcModSdk from "bondage-club-mod-sdk";
 
 /** An array with all alpha-numerical characters. */
@@ -43,49 +45,37 @@ export function validateInt(
 }
 
 /**
- * Return an object that produces a generator of integers from start (inclusive) to stop (exclusive) by step.
- * @param start - The starting value
- * @param stop - The maximum value
- * @param step - The step size
+ * Pad an array with a given value to a given length.
+ * Performs an inplace update of the passed array.
+ * @param list The to-be padded array
+ * @param n The desired array length. Must be at least as large as `list.length`
+ * @param padValue The value used for padding
+ * @returns The originally passed `list` modified inplace
  */
-export function* range(
-    start: number,
-    stop: number,
-    step: number = 1,
-): Generator<number, void, unknown> {
-    if (typeof start !== "number") {
-        throw new TypeError(`Invalid "start" type: ${typeof start}`);
-    } else if (typeof stop !== "number") {
-        throw new TypeError(`Invalid "stop" type: ${typeof stop}`);
-    } else if (typeof step !== "number") {
-        throw new TypeError(`Invalid "step" type: ${typeof step}`);
+export function padArray<T>(list: T[], n: number, padValue: T): T[] {
+    validateInt(n, "n", list.length);
+    if (!Array.isArray(list)) {
+        throw new TypeError(`Invalid "list" type: ${typeof list}`);
     }
 
-    let i = start;
-    while (i < stop) {
-        yield i;
-        i += step;
-    }
+    const nPad = n - list.length;
+    list.push(...Array(nPad).fill(padValue));
+    return list;
 }
 
 /**
- * Take an iterable and iterate over it, yielding `[index, value]` pairs.
- * @param iter The to-be traversed iterable
- * @param start The starting index
+ * Trim an array to a given length.
+ * Performs an inplace update of the passed array.
+ * @param list The to-be padded array
+ * @param n The desired array length. Must be at most as large as `list.length`
+ * @returns The originally passed `list` modified inplace
  */
-export function* enumerate<T>(
-    iter: Iterable<T>,
-    start: number = 0,
-): Generator<[index: number, value: T], void, unknown> {
-    if (typeof start !== "number") {
-        throw new TypeError(`Invalid "start" type: ${typeof start}`);
+export function trimArray<T>(list: T[], n: number): T[] {
+    validateInt(n, "n", 0, list.length);
+    if (!Array.isArray(list)) {
+        throw new TypeError(`Invalid "list" type: ${typeof list}`);
     }
-
-    let i = start;
-    for (const value of iter) {
-        yield [i, value];
-        i += 1;
-    }
+    return list.splice(n, list.length - n);
 }
 
 /**
@@ -99,7 +89,7 @@ export function randomElement<T>(list: readonly T[]): T {
     } else if (list.length === 0) {
         throw new Error('Passed "list" must contain at least 1 item');
     }
-    return list[Math.round(Math.random() * (list.length - 1))];
+    return list[random(0, list.length - 1, false)];
 }
 
 /**
@@ -111,12 +101,7 @@ export function getRandomPassword(n: number): string {
     if (n < 0 || n > 8) {
         throw new RangeError(`"n" must fall in the [0, 8] interval: ${n}`);
     }
-
-    let ret = "";
-    for (const _ of range(0, n)) {
-        ret += randomElement(ALPHABET);
-    }
-    return ret;
+    return range(0, n).map(_ => randomElement(ALPHABET)).join("");
 }
 
 /**
@@ -258,23 +243,13 @@ export function generateIDs(
         throw new RangeError("Insufficient available UTF16 characters");
     }
 
-    const ret: string[] = [];
-    for (const [i, j] of enumerate(range(start, stop))) {
-        if (indices.includes(i)) {
-            ret.push(String.fromCharCode(j));
-        }
-    }
-    return ret;
+    const charcodeRange = range(start, stop);
+    return indices.map(i => String.fromCharCode(charcodeRange[i]));
 }
 
 /** Check whether the passed object as an iterable. */
 export function isIterable(obj: unknown): obj is Iterable<any> {
     return (Symbol.iterator in Object(obj));
-}
-
-/** Return a deep copy of the passed object. */
-export function deepCopy<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj));
 }
 
 /** A class for representing semantic versions */
@@ -303,17 +278,17 @@ export class Version {
         Object.freeze(this);
     }
 
+    /** Return an array with all version values. */
+    values(): [major: number, minor: number, micro: number, beta: boolean] {
+        return [this.major, this.minor, this.micro, this.beta];
+    }
+
     /** Check whether two versions are equal */
     equal(other: Version): boolean {
         if (!(other instanceof Version)) {
             return false;
         }
-        return (
-            this.major === other.major
-            && this.minor === other.micro
-            && this.micro === other.micro
-            && this.beta === other.beta
-        );
+        return isEqual(this.values(), other.values());
     }
 
     /** Check whether this version is greater than the other */
@@ -321,12 +296,7 @@ export class Version {
         if (!(other instanceof Version)) {
             return false;
         }
-        const attrList = [
-            [this.major, other.major],
-            [this.minor, other.minor],
-            [this.micro, other.micro],
-            [!this.beta, !other.beta],
-        ];
+        const attrList = <[number | boolean, number | boolean][]>zip(this.values(), other.values());
         for (const [thisAttr, otherAttr] of attrList) {
             if (thisAttr > otherAttr) {
                 return true;
