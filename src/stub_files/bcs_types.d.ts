@@ -83,7 +83,7 @@ interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
 /** A union with the names of all pre-defined MBS item sets. */
 type FortuneWheelNames = "leash_candy" | "mummy" | "maid" | "statue";
 
-type FortuneWheelItems = Record<FortuneWheelNames, FortuneWheelItem[]>;
+type FortuneWheelItems = Readonly<Record<FortuneWheelNames, readonly FortuneWheelItem[]>>;
 
 /** Wheel of fortune callbacks that are to-be applied to individual items */
 type FortuneWheelCallback = (item: Item, character: Character) => void;

@@ -102,7 +102,7 @@ function statueCopyColors<T>(itemList: T): T {
 
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): FortuneWheelItems {
-    const ret: Record<FortuneWheelNames, FortuneWheelItemBase[]> = {
+    const protoRecord: Record<FortuneWheelNames, FortuneWheelItemBase[]> = {
         leash_candy: [
             {
                 Name: "ReverseBunnySuit",
@@ -649,34 +649,41 @@ function generateItems(): FortuneWheelItems {
         ],
     };
 
-    for (const [setName, itemList] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
-        for (const [i, item] of itemList.entries()) {
-            item.Custom = false;
-            item.Property = item.Property ?? {};
-            item.Type = item.Type ?? null;
-            const {Name, Group, Craft} = item;
-            if (Craft !== null && typeof Craft === "object") {
-                Craft.Item = Name;
-                Craft.Private = true;
-                Craft.Lock = "";
-                const asset = AssetGet(Player.AssetFamily, Group, Name);
+    const ret = Object.fromEntries(Object.entries(protoRecord).map(([setName, itemList]) => {
+        const itemListNew: readonly FortuneWheelItem[] = Object.freeze(itemList.map(protoItem => {
+            let craft: undefined | CraftingItem = undefined;
+            if (protoItem.Craft !== null && typeof protoItem.Craft === "object") {
+                const asset = AssetGet(Player.AssetFamily, protoItem.Group, protoItem.Name);
                 if (asset == null) {
-                    throw new Error(`Invalid ${setName} item: ${Group}${Name}`);
+                    throw new Error(`Invalid ${setName} item: ${protoItem.Group}${protoItem.Name}`);
                 }
-                Craft.Name = Craft.Name || asset.Description;
-                CraftingValidate(<CraftingItem>Craft, asset, false);
-            } else {
-                item.Craft = undefined;
+
+                craft = <CraftingItem>{
+                    ...protoItem.Craft,
+                    Item: protoItem.Name,
+                    Private: true,
+                    Lock: "",
+                    Type: null,
+                    Name: protoItem.Craft.Name || asset.Description,
+                };
+                CraftingValidate(craft, asset, false);
             }
-            itemList[i] = Object.freeze(item);
-        }
-        ret[setName] = <FortuneWheelItemBase[]>Object.freeze(itemList);
-    }
-    return <FortuneWheelItems>ret;
+
+            return Object.freeze({
+                ...protoItem,
+                Custom: false,
+                Property: protoItem.Property ?? {},
+                Type: protoItem.Type ?? null,
+                Craft: Object.freeze(craft),
+            });
+        }));
+        return [setName, itemListNew];
+    }));
+    return Object.freeze(<FortuneWheelItems>ret);
 }
 
 /** A read-only record with the raw MBS fortune wheel items. */
-export let FORTUNE_WHEEL_ITEMS: Readonly<FortuneWheelItems>;
+export let FORTUNE_WHEEL_ITEMS: FortuneWheelItems;
 
 /** A read-only list with the fully fledged MBS fortune wheel item sets. */
 export let FORTUNE_WHEEL_ITEM_SETS: readonly WheelFortuneItemSet[];
@@ -730,7 +737,7 @@ waitFor(settingsMBSLoaded).then(() => {
     }
 
     // Load and register the default MBS item sets
-    FORTUNE_WHEEL_ITEMS = Object.freeze(generateItems());
+    FORTUNE_WHEEL_ITEMS = generateItems();
     FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
         new WheelFortuneItemSet(
             "PSO Bondage",
