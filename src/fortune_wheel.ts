@@ -652,7 +652,7 @@ function generateItems(): FortuneWheelItems {
     for (const [setName, itemList] of <[FortuneWheelNames, FortuneWheelItemBase[]][]>Object.entries(ret)) {
         for (const [i, item] of itemList.entries()) {
             item.Custom = false;
-            item.Property = {};
+            item.Property = item.Property ?? {};
             item.Type = item.Type ?? null;
             const {Name, Group, Craft} = item;
             if (Craft !== null && typeof Craft === "object") {
