@@ -310,6 +310,7 @@ export function fortuneWheelEquip(
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(character, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, Group, false),
+                "InventoryChatRoomAllow": !InventoryChatRoomAllow(asset.Category ?? []),
             };
 
             const equipFailure = Object.entries(equipChecks).filter(tup => tup[1]);

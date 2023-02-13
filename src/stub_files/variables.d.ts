@@ -178,3 +178,4 @@ declare function LogQuery(QueryLogName: string, QueryLogGroup: string): boolean;
 declare const ItemVulvaFuturisticVibratorAccessModes: readonly string[];
 declare const VariableHeightDataLookup: Record<string, VariableHeightData>;
 declare const LZString: import("lz-string").LZStringStatic;
+declare function InventoryChatRoomAllow(Category: readonly string[]): boolean;
