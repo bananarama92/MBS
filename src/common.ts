@@ -137,7 +137,7 @@ class ModAPIProxy implements BCX_ModAPI {
 
     /** Returns state handler for a rule or `null` for unknown rule */
     getRuleState<T extends BCX_Rule>(rule: T): BCX_RuleStateAPI<T> | null {
-        if (this.#api === null && bcx !== undefined) {
+        if (this.#api === null && typeof bcx !== "undefined") {
             this.#api = bcx.getModApi("MBS");
         }
         return this.#api?.getRuleState(rule) ?? null;
