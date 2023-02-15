@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.4.2
+* Fixed a crash that could occur when BCX is not installed
+* Fixed builtin MBS options not properly saving
+
 ## v0.4.1
 * Consolidate and expand the BC validation
 * Allow custom wheel of fortune item sets to store the `OverrideHeight` property
