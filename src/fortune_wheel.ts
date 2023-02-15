@@ -780,7 +780,7 @@ waitFor(settingsMBSLoaded).then(() => {
     FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
     FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
-    pushMBSSettings(false);
+    pushMBSSettings();
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         loadFortuneWheel();

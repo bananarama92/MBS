@@ -128,9 +128,9 @@ export function pushMBSSettings(push: boolean = true): void {
         Version: MBS_VERSION,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(itemSet => itemSet?.hidden === false ? itemSet.valueOf() : null),
     });
-    Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
 
     if (push) {
+        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
         ServerAccountUpdate.QueueData({
             OnlineSettings: Player.OnlineSettings,
             OnlineSharedSettings: Player.OnlineSharedSettings,
@@ -140,6 +140,6 @@ export function pushMBSSettings(push: boolean = true): void {
 
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
-    pushMBSSettings();
+    pushMBSSettings(false);
     console.log("MBS: Initializing settings module");
 });
