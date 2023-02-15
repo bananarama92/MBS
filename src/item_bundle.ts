@@ -85,7 +85,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
     return ret;
 }
 
-/** A map with various {@link Asset} validation checks for {@link fromItemBundle}. */
+/** A map with various {@link Asset} validation checks for {@link fromItemBundles}. */
 const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
     ["Unknown asset", (asset: null | Asset) => asset == null],
     ["Unsupported owner-only asset", (asset: null | Asset) => asset?.OwnerOnly],
@@ -95,11 +95,63 @@ const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
 ]));
 
 /**
+ * Convert an item bundle into a wheel of fortune item.
+ * @param item The original bundled item
+ * @returns The new wheel of fortune item
+ */
+export function fromItemBundle(
+    asset: null | Asset,
+    item: ItemBundle,
+    custom: boolean = true,
+): FortuneWheelItem {
+    for (const [msgPrefix, validationCheck] of UNSUPPORTED_ASSET_CHECKS) {
+        if (validationCheck(asset)) {
+            throw new Error(`${msgPrefix}: ${item.Group}${item.Name}`);
+        }
+    }
+
+    let color: undefined | readonly string[] = undefined;
+    if (typeof item.Color === "string") {
+        color = [item.Color];
+    } else if (Array.isArray(item.Color) && item.Color.every(i => typeof i === "string")) {
+        color = [...item.Color];
+    }
+
+    let craft: undefined | CraftingItem = undefined;
+    if (item.Craft !== null && typeof item.Craft === "object") {
+        craft = Object.assign(
+            cloneDeep(item.Craft),
+            {Type: null, OverridePriority: null, Lock: "" },
+        );
+        CraftingValidate(craft, asset, false);
+    }
+
+    let type: null | string = null;
+    if (typeof item.Property?.Type === "string" || item.Property?.Type === null) {
+        type = item.Property.Type;
+    } else if (typeof item.Property?.Mode === "string") {
+        type = item.Property.Mode;
+    }
+
+    return Object.freeze({
+        Name: item.Name,
+        Group: item.Group,
+        Custom: custom,
+        Property: Object.freeze(sanitizeProperties(<Asset>asset, item.Property)),
+        Type: type,
+        Color: color,
+        Craft: Object.freeze(craft),
+        ItemCallback: undefined,
+        Equip: undefined,
+    });
+}
+
+/**
  * Validate and convert a base64-deserialized {@link ItemBundle} array into a wheel of fortune item list.
  * @param items The original bundled items
- * @returns A 2-tuple with the new list of wheel of fortune items and whether all provided items were successfully parsed
+ * @returns The new list of wheel of fortune items
  */
-export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[], boolean] {
+export function fromItemBundles(items: readonly ItemBundle[]): FortuneWheelItem[] {
     if (!Array.isArray(<readonly ItemBundle[]>items)) {
         throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
@@ -110,47 +162,8 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
     items.forEach((item, i)  => {
         let asset: null | Asset = null;
         try {
-            asset = <Asset>AssetGet("Female3DCG", item.Group, item.Name);
-            for (const [msgPrefix, validationCheck] of UNSUPPORTED_ASSET_CHECKS) {
-                if (validationCheck(asset)) {
-                    throw new Error(`${msgPrefix}: ${item.Group}${item.Name}`);
-                }
-            }
-
-            let color: undefined | readonly string[] = undefined;
-            if (typeof item.Color === "string") {
-                color = [item.Color];
-            } else if (Array.isArray(item.Color) && item.Color.every(i => typeof i === "string")) {
-                color = [...item.Color];
-            }
-
-            let craft: undefined | CraftingItem = undefined;
-            if (item.Craft !== null && typeof item.Craft === "object") {
-                craft = Object.assign(
-                    cloneDeep(item.Craft),
-                    {Type: null, OverridePriority: null, Lock: "" },
-                );
-                CraftingValidate(craft, asset, false);
-            }
-
-            let type: null | string = null;
-            if (typeof item.Property?.Type === "string" || item.Property?.Type === null) {
-                type = item.Property.Type;
-            } else if (typeof item.Property?.Mode === "string") {
-                type = item.Property.Mode;
-            }
-
-            const wheelItem: FortuneWheelItem = Object.freeze({
-                Name: item.Name,
-                Group: item.Group,
-                Custom: true,
-                Property: Object.freeze(sanitizeProperties(asset, item.Property)),
-                Type: type,
-                Color: color,
-                Craft: Object.freeze(craft),
-            });
-
-            ret.push(wheelItem);
+            asset = AssetGet("Female3DCG", item.Group, item.Name);
+            ret.push(fromItemBundle(asset, item));
         } catch (ex) {
             let key = `${asset?.Group?.Name}${asset?.Name}`;
             if (key.includes("undefined")) {
@@ -162,31 +175,38 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
     if (caughtErrors.size !== 0) {
         console.log(`MBS: Failed to parse ${caughtErrors.size} of the provided items`, caughtErrors);
     }
-    return [ret, caughtErrors.size === 0];
+    return ret;
 }
 
 /**
- * Convert a wheel of fortune item into an item bundle
+ * Convert a single wheel of fortune item into an item bundle
+ * @param item The original wheel of fortune item
+ */
+export function toItemBundle(item: FortuneWheelItem, character: Character): ItemBundle {
+    const { Group, Name, Color, Craft, Type, Property } = item;
+    const asset = AssetGet(character.AssetFamily, Group, Name);
+    if (asset == null) {
+        throw new Error(`Unknown asset: ${Group}${Name}`);
+    }
+    return {
+        Group: Group,
+        Name: Name,
+        Color: clone(<string[] | undefined>Color),
+        Craft: clone(Craft),
+        Property: Object.assign(
+            getBaselineProperty(asset, character, Type),
+            cloneDeep(Property),
+        ),
+    };
+}
+
+/**
+ * Convert wheel of fortune items into an item bundle
  * @param items The original wheel of fortune items
  */
-export function toItemBundle(items: readonly FortuneWheelItem[], character: Character): ItemBundle[] {
+export function toItemBundles(items: readonly FortuneWheelItem[], character: Character): ItemBundle[] {
     if (!Array.isArray(<readonly FortuneWheelItem[]>items)) {
         throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
-    return items.map(({ Group, Name, Color, Craft, Type, Property }) => {
-        const asset = AssetGet(character.AssetFamily, Group, Name);
-        if (asset == null) {
-            throw new Error(`Unknown asset: ${Group}${Name}`);
-        }
-        return {
-            Group: Group,
-            Name: Name,
-            Color: clone(<string[] | undefined>Color),
-            Craft: clone(Craft),
-            Property: Object.assign(
-                getBaselineProperty(asset, character, Type),
-                cloneDeep(Property),
-            ),
-        };
-    });
+    return items.map(item => toItemBundle(item, character));
 }

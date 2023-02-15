@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { toItemBundle } from "item_bundle";
+import { toItemBundles } from "item_bundle";
 import {
     getTextInputElement,
     WheelFortuneSelectedItemSet,
@@ -94,7 +94,7 @@ export function MBSFortuneWheelLoad(): void {
     if (itemSet !== null) {
         itemSettings.readItemSet(itemSet);
         nameElement.value = itemSet.name;
-        itemSettings.outfitCache = outfitElement.value = LZString.compressToBase64(JSON.stringify(toItemBundle(
+        itemSettings.outfitCache = outfitElement.value = LZString.compressToBase64(JSON.stringify(toItemBundles(
             itemSet.itemList, MBSCustomize.preview,
         )));
     } else {

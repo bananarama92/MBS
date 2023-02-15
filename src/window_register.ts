@@ -32,6 +32,7 @@ import * as fortune_wheel from "fortune_wheel";
 import * as item_bundle from "item_bundle";
 import * as settings from "settings";
 import * as glob_vars from "glob_vars";
+import * as testing from "testing";
 
 waitFor(settingsMBSLoaded).then(() => {
     const exportMBS = Object.freeze({
@@ -46,6 +47,9 @@ waitFor(settingsMBSLoaded).then(() => {
         settings: Object.freeze(settings),
         glob_vars: Object.freeze(glob_vars),
         sanity_checks: Object.freeze(sanity_checks),
+        testing: Object.freeze(testing),
+        runTests: testing.runTests,
+        MBS_VERSION: common.MBS_VERSION,
     });
     const globalExport = {
         MBSFortuneWheelBackground: MBSFortuneWheelBackground,

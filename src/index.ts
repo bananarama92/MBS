@@ -2,9 +2,12 @@
 
 "use strict";
 
-import { MBS_VERSION as MBS_VERSION, waitFor } from "common";
+import { MBS_VERSION, waitFor } from "common";
 import { validateBCVersion, validateHookHashes } from "sanity_checks";
 import { settingsMBSLoaded } from "common_bc";
+import { runTests } from "testing";
+
+export { runTests, MBS_VERSION };
 
 console.log(`MBS: Initializing MBS version ${MBS_VERSION}`);
 waitFor(() => GameVersion !== undefined && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));

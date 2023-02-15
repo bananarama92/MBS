@@ -12,9 +12,10 @@ import {
     generateIDs,
     randomElement,
     BCX_MOD_API,
+    validateInt,
 } from "common";
 import { pushMBSSettings } from "settings";
-import { fromItemBundle } from "item_bundle";
+import { fromItemBundles } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
 import { MBSSelect } from "glob_vars";
 
@@ -87,11 +88,7 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
  * @param minutes The duration of the timer lock; its value must fall in the [0, 240] interval
  */
 export function equipTimerLock(item: Item, minutes: number, character: Character): void {
-    if (typeof minutes !== "number") {
-        throw new TypeError(`Invalid "minutes" type: ${typeof minutes}`);
-    } else if (minutes < 0 || minutes > 240) {
-        throw new RangeError(`"minutes" must fall in the [0, 240] interval: ${minutes}`);
-    }
+    validateInt(minutes, "minutes", 0, 240);
 
     // Equip the timer lock if desired and possible
     if (!equipLock(item, "TimerPasswordPadlock", character)) {
@@ -128,15 +125,18 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
     } else if (typeof lockName !== "string") {
         throw new TypeError(`Invalid "lockName" type: ${typeof lockName}`);
-    } else if (!character.IsPlayer() || character.IsSimple()) {
+    } else if (!character?.IsPlayer() && !character?.IsSimple()) {
         throw new Error("Expected a simple or player character");
     }
 
-    // Equip the timer lock if desired and possible
     const lock = AssetGet(character.AssetFamily, "ItemMisc", lockName);
+    if (lock == null) {
+        throw new Error(`Invalid "lockName" value: ${lockName}`);
+    }
+
+    // Equip the lock if possible
     if (
-        lock == null
-        || InventoryGetLock(item) != null
+        InventoryGetLock(item) != null
         || !InventoryDoesItemAllowLock(item)
         || InventoryBlockedOrLimited(character, { Asset: lock })
     ) {
@@ -297,7 +297,7 @@ export class WheelFortuneSelectedItemSet {
             return false;
         }
 
-        const [itemList] = fromItemBundle(items);
+        const itemList = fromItemBundles(items);
         if (itemList.length === 0) {
             return false;
         }
@@ -506,18 +506,22 @@ export class WheelFortuneItemSet {
      * @returns A valid {@link FortuneWheelOption.Script} callback
      */
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
-        const condition = getStripCondition(this.equipLevel, Player);
-        const items = this.itemList.filter(({Name, Group}) => {
-            const asset = AssetGet(Player.AssetFamily, Group, Name);
-            if (asset == null) {
-                return false;
-            } else if (asset.Group.Category !== "Appearance") {
-                return true;
-            } else {
-                return condition(asset);
-            }
-        });
+        const assets = this.itemList.map(({Name, Group}) => AssetGet(Player.AssetFamily, Group, Name));
+
         return (character) => {
+            character = character ?? Player;
+            const condition = getStripCondition(this.equipLevel, character);
+            const items = this.itemList.filter((_, i) => {
+                const asset = assets[i];
+                if (asset == null) {
+                    return false;
+                } else if (asset.Group.Category !== "Appearance") {
+                    return true;
+                } else {
+                    return condition(asset);
+                }
+            });
+
             fortuneWheelEquip(
                 this.name, items, this.stripLevel, globalCallback,
                 this.preRunCallback, character ?? Player,
@@ -566,6 +570,7 @@ export class WheelFortuneItemSet {
                 Custom: this.custom,
                 Parent: this,
                 OwnerID: this.ownerID,
+                Flag: flag,
             };
         });
     }

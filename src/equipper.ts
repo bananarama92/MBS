@@ -65,7 +65,9 @@ export function getStripCondition(stripLevel: StripLevel, character: Character):
  * @param character The to-be stripped character, defaults to the {@link Player}
  */
 export function characterStrip(stripLevel: StripLevel, character: Character): void {
-    if (!character || !(character.IsSimple() || character.IsPlayer())) {
+    if (character === null || typeof character !== "object") {
+        throw new TypeError(`Invalid "character" type: ${typeof character}`);
+    } else if (!character.IsSimple() && !character.IsPlayer()) {
         throw new Error("Expected a simple or player character");
     }
 
@@ -319,7 +321,7 @@ export function fortuneWheelEquip(
     for (const {Name, Group, Equip} of <FortuneWheelItem[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
-        const equip = typeof Equip === "function" ? Equip() : true;
+        const equip = typeof Equip === "function" ? Equip(character) : true;
 
         // Check whether the item can actually be equipped
         if (asset == null) {

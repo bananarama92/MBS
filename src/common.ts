@@ -77,7 +77,6 @@ export function trimArray<T>(list: T[], n: number): T[] {
     if (!Array.isArray(list)) {
         throw new TypeError(`Invalid "list" type: ${typeof list}`);
     }
-
     const nTrim = list.length - n;
     if (nTrim > 0) {
         list.splice(n, nTrim);
@@ -105,9 +104,7 @@ export function randomElement<T>(list: readonly T[]): T {
  * @returns the newly generated password
  */
 export function getRandomPassword(n: number): string {
-    if (n < 0 || n > 8) {
-        throw new RangeError(`"n" must fall in the [0, 8] interval: ${n}`);
-    }
+    validateInt(n, "n", 0, 8);
     return range(0, n).map(_ => randomElement(ALPHABET)).join("");
 }
 
@@ -157,7 +154,7 @@ export const BCX_MOD_API = new ModAPIProxy();
 /** Helper function for creating {@link Object.prototype.toString} methods. */
 export function toStringTemplate(typeName: string, obj: object): string {
     let ret = `${typeName}(`;
-    ret += Object.values(obj).join(", ");
+    ret += Object.values(obj).map(i => String(i)).join(", ");
     ret += ")";
     return ret;
 }
@@ -195,7 +192,7 @@ export class LoopIterator<T> {
 
     /** Return the next element from the iterator and increment. */
     next(incrementPosition: boolean = true): T {
-        const index = (this.#index + this.#list.length - 1) % this.#list.length;
+        const index = (this.#index + 1) % this.#list.length;
         if (incrementPosition) {
             this.#index = index;
         }
@@ -204,7 +201,7 @@ export class LoopIterator<T> {
 
     /** Return the previous element from the iterator and decrement. */
     previous(decrementPosition: boolean = true): T {
-        const index = (this.#index + 1) % this.#list.length;
+        const index = (this.#index + this.#list.length - 1) % this.#list.length;
         if (decrementPosition) {
             this.#index = index;
         }
@@ -241,6 +238,7 @@ export function generateIDs(
     start: number,
     indices: readonly number[],
 ): string[] {
+    validateInt(start, "start", 0, 2**16);
     if (!Array.isArray(indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }

@@ -36,4 +36,6 @@ interface WheelFortuneOptionType {
     readonly Parent?: import("common_bc").WheelFortuneItemSet,
     /** The character ID of the item option's owner or `null` if it's not a custom item */
     readonly OwnerID?: null | number,
+    /** The type of lock flavor */
+    readonly Flag?: FortuneWheelFlags,
 }

@@ -22,18 +22,23 @@ import { StripLevel } from "equipper";
 import { MBSSelect } from "glob_vars";
 
 /**
- * Copy the player's hair color the to passed item.
+ * Copy the character's hair color the to passed item.
  * @param item The item in question
+ * @param character The respective player- or simple character
  * @param indices The indices of the {@link item.Color} array whose color will be updated
  */
-function copyHairColor(item: Item, indices: readonly number[]): void {
+function copyHairColor(item: Item, character: Character, indices: readonly number[]): void {
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
     } else if (!Array.isArray(<readonly number[]>indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
+    } else if (character === null || typeof character !== "object") {
+        throw new TypeError(`Invalid "character" type: ${typeof character}`);
+    } else if (!character.IsSimple() && !character.IsPlayer()) {
+        throw new Error("Expected a simple or player character");
     }
 
-    const hair = Player.Appearance.find(i => i.Asset.Group.Name === "HairFront");
+    const hair = character.Appearance.find(i => i.Asset.Group.Name === "HairFront");
     if (hair === undefined) {
         return;
     }
@@ -60,18 +65,18 @@ function copyHairColor(item: Item, indices: readonly number[]): void {
 /**
  * Color all items in the passed groups with the specified color.
  * @param groupNames The to-be colored groups
+ * @param character The respective player- or simple character
  * @param color The color
  */
-function colorItems(groupNames: readonly AssetGroupName[], color: string): void {
+function colorItems(groupNames: readonly AssetGroupName[], character: Character, color: string): void {
     if (!Array.isArray(<readonly AssetGroupName[]>groupNames)) {
         throw new TypeError(`Invalid "groupNames" type: ${typeof groupNames}`);
-    }
-    if (typeof color !== "string") {
+    } else if (typeof color !== "string") {
         throw new TypeError(`Invalid "color" type: ${typeof groupNames}`);
     }
 
     for (const name of groupNames) {
-        const item = InventoryGet(Player, name);
+        const item = InventoryGet(character, name);
         if (item == null) {
             continue;
         }
@@ -79,8 +84,14 @@ function colorItems(groupNames: readonly AssetGroupName[], color: string): void 
     }
 }
 
-function statueCopyColors<T>(itemList: T): T {
-    if (canChangeCosplay(Player)) {
+function statueCopyColors<T>(itemList: T, character: Character): T {
+    if (character === null || typeof character !== "object") {
+        throw new TypeError(`Invalid "character" type: ${typeof character}`);
+    } else if (!character.IsSimple() && !character.IsPlayer()) {
+        throw new Error("Expected a simple or player character");
+    }
+
+    if (canChangeCosplay(character)) {
         const groupNames: AssetGroupName[] = [
             "HairAccessory1",
             "HairAccessory2",
@@ -95,7 +106,7 @@ function statueCopyColors<T>(itemList: T): T {
             "Blush",
             "Mouth",
         ];
-        colorItems(groupNames, "#484747");
+        colorItems(groupNames, character, "#484747");
     }
     return itemList;
 }
@@ -107,18 +118,18 @@ function generateItems(): FortuneWheelItems {
             {
                 Name: "ReverseBunnySuit",
                 Group: "Suit",
-                ItemCallback: (item) => copyHairColor(item, [0, 1]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "Catsuit",
                 Group: "SuitLower",
-                ItemCallback: (item) => copyHairColor(item, [0, 1]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "FaceVeil",
                 Group: "Mask",
                 Color: ["#000", "Default"],
-                ItemCallback: (item) => copyHairColor(item, [1]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [1]),
             },
             {
                 Name: "FuturisticMittens",
@@ -128,7 +139,7 @@ function generateItems(): FortuneWheelItems {
                     Property: "Secure",
                     Name: "Permanent PSO Mittens",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0, 1]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "InteractiveVRHeadset",
@@ -138,7 +149,7 @@ function generateItems(): FortuneWheelItems {
                     Property: "Secure",
                     Name: "Permanent PSO Headset",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "LargeDildo",
@@ -167,7 +178,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Muzzle",
                     Description: "Keeping your cries muffled",
                 },
-                ItemCallback: (item) => copyHairColor(item, [3]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [3]),
             },
             {
                 Name: "FuturisticVibrator",
@@ -188,7 +199,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Panties",
                     Description: "No escape and no Orgasms",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0, 2, 4, 5]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0, 2, 4, 5]),
             },
             {
                 Name: "BonedNeckCorset",
@@ -199,7 +210,7 @@ function generateItems(): FortuneWheelItems {
                     Property: "Secure",
                     Name: "Permanent PSO Collar",
                 },
-                ItemCallback: (item) => copyHairColor(item, [2, 3]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [2, 3]),
             },
             {
                 Name: "CollarChainShort",
@@ -212,7 +223,7 @@ function generateItems(): FortuneWheelItems {
                 Property: {
                     OverridePriority: 7,
                 },
-                ItemCallback: (item) => copyHairColor(item, [0]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "StrictLeatherPetCrawler",
@@ -245,7 +256,7 @@ function generateItems(): FortuneWheelItems {
                 Property: {
                     OverridePriority: 23,
                 },
-                ItemCallback: (item) => copyHairColor(item, [0, 1, 2]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1, 2]),
             },
             {
                 Name: "FuturisticEarphones",
@@ -256,7 +267,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Earphones",
                 },
                 Color: ["#0F0F0F", "Default", "Default"],
-                ItemCallback: (item) => copyHairColor(item, [1]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [1]),
             },
             {
                 Name: "CeilingChain",
@@ -267,7 +278,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Chain",
                     Description: "Never to escape",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "RoundPiercing",
@@ -278,7 +289,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Piercings",
                 },
                 Color: ["#000000", "Default", "Default"],
-                ItemCallback: (item) => copyHairColor(item, [1, 2]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [1, 2]),
             },
             {
                 Name: "CollarAutoShockUnit",
@@ -297,7 +308,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Permanent PSO Straps",
                     Description: "To keep a PSO on their knees",
                 },
-                ItemCallback: (item) => copyHairColor(item, [2]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [2]),
             },
             {
                 Name: "DroneMask",
@@ -307,7 +318,7 @@ function generateItems(): FortuneWheelItems {
                     Property: "Thin",
                     Name: "Permanent PSO Mask",
                 },
-                ItemCallback: (item) => copyHairColor(item, [2]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [2]),
             },
         ],
         mummy: [
@@ -320,11 +331,11 @@ function generateItems(): FortuneWheelItems {
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
-                ItemCallback: (item) => {
-                    copyHairColor(item, [0]);
+                ItemCallback: (item, character) => {
+                    copyHairColor(item, character, [0]);
                     const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
                     const type = randomElement(allowType);
-                    itemSetType(item, Player, type);
+                    itemSetType(item, character, type);
                 },
             },
             {
@@ -336,11 +347,11 @@ function generateItems(): FortuneWheelItems {
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
-                ItemCallback: (item) => {
-                    copyHairColor(item, [0]);
+                ItemCallback: (item, character) => {
+                    copyHairColor(item, character, [0]);
                     const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
                     const type = randomElement(allowType);
-                    itemSetType(item, Player, type);
+                    itemSetType(item, character, type);
                 },
             },
             {
@@ -352,7 +363,7 @@ function generateItems(): FortuneWheelItems {
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
-                ItemCallback: (item) => copyHairColor(item, [0]),
+                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "DuctTape",
@@ -364,7 +375,7 @@ function generateItems(): FortuneWheelItems {
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, [0]);
+                    copyHairColor(item, character, [0]);
                     const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
@@ -389,7 +400,7 @@ function generateItems(): FortuneWheelItems {
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, [0]);
+                    copyHairColor(item, character, [0]);
                     const type = randomElement(["Full", "Double", "Cover"]);
                     itemSetType(item, character, type);
                 },
@@ -405,7 +416,7 @@ function generateItems(): FortuneWheelItems {
                 },
                 Equip: () => (Math.random() > 0.5),
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, [0]);
+                    copyHairColor(item, character, [0]);
                     const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
@@ -534,19 +545,19 @@ function generateItems(): FortuneWheelItems {
                 Name: "ReverseBunnySuit",
                 Group: "SuitLower",
                 Color: ["#1B1B1B"],
-                Equip: () => canChangeCosplay(Player),
+                Equip: (character) => canChangeCosplay(character),
             },
             {
                 Name: "SeamlessCatsuit",
                 Group: "SuitLower",
                 Color: ["#484747"],
-                Equip: () => !canChangeCosplay(Player),
+                Equip: (character) => !canChangeCosplay(character),
             },
             {
                 Name: "SeamlessCatsuit",
                 Group: "Suit",
                 Color: ["#484747"],
-                Equip: () => !canChangeCosplay(Player),
+                Equip: (character) => !canChangeCosplay(character),
             },
             {
                 Name: "ReverseBunnySuit",
@@ -567,7 +578,6 @@ function generateItems(): FortuneWheelItems {
                 Name: "HighCollar",
                 Group: "ItemNeck",
                 Color: ["#363636", "#717171"],
-                Type: "e0m3b0br0op0ms0",
                 Craft: {
                     Property: "Secure",
                     Name: "Statue Neck",
@@ -665,6 +675,9 @@ function generateItems(): FortuneWheelItems {
                     Lock: "",
                     Type: null,
                     Name: protoItem.Craft.Name || asset.Description,
+                    OverridePriority: protoItem.Craft.OverridePriority ?? null,
+                    MemberNumber: undefined,
+                    MemberName: "",
                 };
                 CraftingValidate(craft, asset, false);
             }
@@ -675,6 +688,9 @@ function generateItems(): FortuneWheelItems {
                 Property: Object.freeze(protoItem.Property ?? {}),
                 Type: protoItem.Type ?? null,
                 Craft: Object.freeze(craft),
+                Color: protoItem.Color ?? undefined,
+                ItemCallback: protoItem.ItemCallback ?? undefined,
+                Equip: protoItem.Equip ?? undefined,
             });
         }));
         return [setName, itemListNew];
@@ -743,7 +759,7 @@ waitFor(settingsMBSLoaded).then(() => {
             "PSO Bondage",
             FORTUNE_WHEEL_ITEMS.leash_candy,
             StripLevel.UNDERWEAR,
-            StripLevel.CLOTHES,
+            StripLevel.UNDERWEAR,
             ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive", "High Security"],
             false,
             false,

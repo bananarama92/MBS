@@ -31,7 +31,7 @@ interface FortuneWheelItemBase {
     /** The optional color of the item */
     Color?: readonly string[],
     /** An optional callback whose output denotes whether the item should be equipped */
-    Equip?: () => boolean,
+    Equip?: (character: Character) => boolean,
     /** Optional crafted item data */
     Craft?: Partial<CraftingItem>,
     /** An optional callback for post-processing the item after it's equipped and its type is set */
@@ -44,12 +44,12 @@ interface FortuneWheelItemBase {
      * The properties of the item.
      * Note that {@link FortuneWheelItemBase.Type}-specific properties should be excluded from here.
      */
-    Property?: ItemProperties;
+    Property?: ItemProperties,
 }
 
 interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
     /** Optional crafted item data */
-    readonly Craft?: Readonly<CraftingItem>,
+    readonly Craft: undefined | Readonly<CraftingItem>,
     /** Whether this is a custom user-specified item set */
     readonly Custom: boolean,
     /** The type of the item; should preferably be specified in `Craft.Type` */
@@ -58,7 +58,13 @@ interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
      * The properties of the item.
      * Note that {@link FortuneWheelItemBase.Type}-specific properties should be excluded from here.
      */
-    readonly Property: Readonly<ItemProperties>;
+    readonly Property: Readonly<ItemProperties>,
+    /** The optional color of the item */
+    readonly Color: undefined | readonly string[],
+    /** An optional callback for post-processing the item after it's equipped and its type is set */
+    readonly ItemCallback: undefined | FortuneWheelCallback;
+    /** An optional callback whose output denotes whether the item should be equipped */
+    readonly Equip: undefined | ((character: Character) => boolean),
 }
 
 /** A union with the names of all pre-defined MBS item sets. */
