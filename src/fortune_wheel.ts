@@ -672,7 +672,7 @@ function generateItems(): FortuneWheelItems {
             return Object.freeze({
                 ...protoItem,
                 Custom: false,
-                Property: protoItem.Property ?? {},
+                Property: Object.freeze(protoItem.Property ?? {}),
                 Type: protoItem.Type ?? null,
                 Craft: Object.freeze(craft),
             });

@@ -144,10 +144,10 @@ export function fromItemBundle(items: readonly ItemBundle[]): [FortuneWheelItem[
                 Name: item.Name,
                 Group: item.Group,
                 Custom: true,
-                Property: sanitizeProperties(asset, item.Property),
+                Property: Object.freeze(sanitizeProperties(asset, item.Property)),
                 Type: type,
                 Color: color,
-                Craft: craft,
+                Craft: Object.freeze(craft),
             });
 
             ret.push(wheelItem);
