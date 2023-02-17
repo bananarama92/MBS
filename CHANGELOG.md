@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.4.3
+* Fix `Item.Craft` not being properly copied
+* Further enforce the immutability of `FortuneWheelItem`
+
 ## v0.4.2
 * Fixed a crash that could occur when BCX is not installed
 * Fixed builtin MBS options not properly saving
