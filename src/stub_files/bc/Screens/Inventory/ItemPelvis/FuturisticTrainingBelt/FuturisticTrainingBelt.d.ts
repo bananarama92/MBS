@@ -1,0 +1,46 @@
+declare function InventoryItemPelvisFuturisticTrainingBeltLoad(): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltDraw(): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltClick(): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltExit(): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltPublishAction(C: any, Option: any): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltPublishMode(C: any, Setting: any, Active: any): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltPublishGeneric(C: any, msg: any): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltValidate(C: any, Item: any): string;
+declare function InventoryItemPelvisFuturisticTrainingBeltNpcDialog(C: any, Option: any): void;
+declare function InventoryItemPelvisFuturisticTrainingBeltGetVibeMode(C: any, State: any, First: any): "Low" | "Medium" | "High" | "Off" | "Maximum";
+declare function InventoryItemPelvisFuturisticTrainingBeltUpdateVibeMode(C: any, PersistentData: any, Item: any, Force: any): void;
+declare function InventoryFuturisticTrainingBeltCheckPunishSpeech(Item: any, LastTime: any): "" | "Speech" | "RequiredSpeech" | {
+    name: string;
+    word: any;
+};
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptUpdatePlayer(data: any, LastTime: any): void;
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptStateMachine(data: any): void;
+/** @type {DynamicScriptDrawCallback} */
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptDraw(data: {
+    C: Character;
+    Item: Item;
+    PersistentData: <T>() => T;
+}): void;
+declare var FuturisticTrainingBeltPermissions: string[];
+declare var FuturisticTrainingBeltSpeechPunishments: string[];
+declare var FuturisticTrainingBeltModes: string[];
+declare var FuturisticTrainingBeltStates: string[];
+declare var FuturisticTrainingBeltSetMode: number;
+declare var FuturisticTrainingBeltStandUpFlag: boolean;
+declare var FuturisticTrainingBeltSpeechCharacterLimit: number;
+declare var FuturisticTrainingBeltRandomEdgeCycle: number;
+declare var FuturisticTrainingBeltRandomTeaseDurationMin: number;
+declare var FuturisticTrainingBeltRandomTeaseDurationMax: number;
+declare var FuturisticTrainingBeltRandomTeaseDurationCooldown: number;
+declare var FuturisticTrainingBeltRandomTeaseChance: number;
+declare var FuturisticTrainingBeltRandomTeaseMaxChance: number;
+declare var FuturisticTrainingBeltRandomDenyChance: number;
+declare var FuturisticTrainingBeltRandomDenyDuration: number;
+declare var FuturisticTrainingBeltRandomOrgasmDurationMin: number;
+declare var FuturisticTrainingBeltRandomOrgasmDurationMax: number;
+declare var FuturisticTrainingBeltRandomOrgasmDurationCooldown: number;
+declare var FuturisticTrainingBeltRandomOrgasmChance: number;
+declare var FuturisticTrainingBeltPunishmentEdgeDuration: number;
+declare var FuturisticTrainingBeltPunishmentVibeDuration: number;
+declare var FuturisticTrainingBeltPage: number;
+declare var FuturisticTrainingBeltMaxPage: number;

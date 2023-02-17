@@ -50,7 +50,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     Text3: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text3 ?? -1),
     ShowText: (p, _) => typeof p === "boolean",
     TriggerValues: (p, _) => typeof p === "string" && p.split(",").length === ItemVulvaFuturisticVibratorTriggers.length,
-    AccessMode: (p, _) => typeof p === "string" && ItemVulvaFuturisticVibratorAccessModes.includes(p),
+    AccessMode: (p, _) => typeof p === "string" && ItemVulvaFuturisticVibratorAccessModes.includes(<"" | "ProhibitSelf" | "LockMember">p),
     PunishOrgasm: (p, _) => typeof p === "boolean",
     PunishStandup: (p, _) => typeof p === "boolean",
     Texts: (p, _) => {

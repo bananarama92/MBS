@@ -1,46 +1,39 @@
-interface HSVColor {
-    H: number,
-    S: number,
-    V: number,
+declare const LZString: import("lz-string").LZStringStatic;
+
+interface CharacterOnlineSharedSettings {
+    MBS: {
+        Version: string,
+        FortuneWheelSets: (null | {
+            name: string,
+            itemList: readonly FortuneWheelItem[],
+            stripLevel: StripLevel,
+            equipLevel: StripLevel,
+            flags: FortuneWheelFlags[],
+            custom: boolean,
+            hidden: boolean,
+            preRunCallback: FortuneWheelPreRunCallback | null,
+        })[],
+    },
 }
 
-type ChatRoomSpaceType = "X" | "" | "M" | "Asylum";
-
-type NotificationSetting = {
-    AlertType: NotificationAlertType,
-    Audio: NotificationAudioType,
-};
-
-type GenderSetting = {
-    Female: boolean,
-    Male: boolean,
-};
-
-declare class TextCache {
-    constructor(path: string, warn?: string);
-    path: string;
-    warn: string;
-    language: string;
-    cache: Record<string, string>;
-    rebuildListeners: (() => void)[];
-    loaded: boolean;
-    get(key: string): string;
-    onRebuild(callback: () => void, immediate?: boolean): () => void;
-    buildCache(): void;
-    fetchCsv(): Promise<string[][]>;
-    cacheLines(lines: string[][]): void;
-    translate(lines: string[][]): Promise<string[][]>;
-    buildTranslations(lines: string[][], translations: string[]): string[][];
+interface PlayerCharacter {
+    MBSSettings: MBSSettings,
 }
 
-declare class AccountUpdater {
-    constructor();
-    Queue: Map<string, object>;
-    Timeout: number | null;
-    Start: number;
-    SyncToServer(): void;
-    QueueData(Data: object, Force?: boolean): void;
+interface PlayerOnlineSettings {
+    MBS: string,
 }
 
-type Asset = Readonly<_Asset>;
-type AssetGroup = Readonly<_AssetGroup>;
+/** Base type for fortune wheel options */
+interface WheelFortuneOptionType {
+    /** An optional description of the option */
+    readonly Description?: string,
+    /** Whether the option should be enabled by default */
+    readonly Default?: boolean,
+    /** Whether this is a custom user-specified option */
+    readonly Custom?: boolean,
+    /** The parent item set */
+    readonly Parent?: import("common_bc").WheelFortuneItemSet,
+    /** The character ID of the item option's owner or `null` if it's not a custom item */
+    readonly OwnerID?: null | number,
+}

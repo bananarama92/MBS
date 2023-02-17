@@ -1,29 +1,4 @@
-/** Base type for fortune wheel options */
-interface FortuneWheelOptionBase {
-    /**
-     * A single-character UTF16 string with the option's ID.
-     *
-     * Character codes are divided in the following ranges:
-     * * The `[0, 2**8)` range (extened ASCII) for BC's builtin options
-     * * The `[2**8, 2**9)` range for MBS's builtin options
-     * * The `[2**9, 2**16)` range for MBS's custom options
-     * */
-    readonly ID: string,
-    /** The color of the option button */
-    readonly Color: FortuneWheelColor,
-    /** An optional script that will be executed whenever the option is picked */
-    readonly Script?: () => void,
-    /** An optional description of the option */
-    readonly Description?: string,
-    /** Whether the option should be enabled by default */
-    readonly Default?: boolean,
-    /** Whether this is a custom user-specified option */
-    readonly Custom?: boolean,
-    /** The parent item set */
-    readonly Parent?: import("common_bc").WheelFortuneItemSet,
-    /** The character ID of the item option's owner or `null` if it's not a custom item */
-    readonly OwnerID?: null | number,
-}
+type FortuneWheelOptionBase = WheelFortuneOptionType;
 
 /** Type representing MBS-specific fortune wheel options */
 interface FortuneWheelOption extends Required<FortuneWheelOptionBase> {

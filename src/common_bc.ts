@@ -664,7 +664,7 @@ export function getTextInputElement<T extends string>(
     placeholder: string,
     coords: readonly [X: number, Y: number, W: number, H?: number],
     value: string = "",
-    maxLength: null | number = null,
+    maxLength?: number,
 ): HTMLInputElement {
     let element = ElementCreateInput(`MBS${name}`, "text", value, maxLength);
     if (element) {

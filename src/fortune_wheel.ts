@@ -785,9 +785,9 @@ waitFor(settingsMBSLoaded).then(() => {
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         loadFortuneWheel();
         if (TextScreenCache != null) {
-            for (const option of WheelFortuneOption) {
-                if (option.Description !== undefined) {
-                    TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
+            for (const { Description, Custom, ID } of WheelFortuneOption) {
+                if (Description !== undefined) {
+                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
                 }
             }
         }
@@ -796,9 +796,9 @@ waitFor(settingsMBSLoaded).then(() => {
 
     MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
         if (TextScreenCache != null) {
-            for (const option of WheelFortuneOption) {
-                if (option.Description !== undefined) {
-                    TextScreenCache.cache[`Option${option.ID}`] = (option.Custom) ? `*${option.Description}` : option.Description;
+            for (const { Description, Custom, ID } of WheelFortuneOption) {
+                if (Description !== undefined) {
+                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
                 }
             }
         }

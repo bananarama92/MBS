@@ -335,7 +335,7 @@ export function fortuneWheelEquip(
                 "Locked item equipped": !canUnlock(oldItem, character),
                 "InventoryBlockedOrLimited": InventoryBlockedOrLimited(character, { Asset: asset }),
                 "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
-                "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, Group, false),
+                "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, <AssetGroupItemName>Group, false),
                 "InventoryChatRoomAllow": !InventoryChatRoomAllow(asset.Category ?? []),
                 "Blocked via Club Slave Collar": isClubSlave && asset.Group.Category === "Appearance",
             };
@@ -369,7 +369,7 @@ export function fortuneWheelEquip(
         itemSetType(newItem, character, Type);
         if (Craft !== undefined) {
             newItem.Craft = cloneDeep(Craft);
-            InventoryCraft(character, character, Group, newItem.Craft, false, false);
+            InventoryCraft(character, character, <AssetGroupItemName>Group, newItem.Craft, false, false);
         }
         newItem.Property = Object.assign(newItem.Property ?? {}, cloneDeep(Property));
 

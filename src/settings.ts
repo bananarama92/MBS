@@ -69,8 +69,14 @@ https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
 
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
+    if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
+        const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
+        throw new Error(`"Player.${settingsName}" still unitialized`);
+    }
+
+    // Load saved settings and check whether MBS has been upgraded
     Player.MBSSettings = <MBSSettings>{ Version: MBS_VERSION };
-    const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS || "");
+    const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS ?? "");
     let s: Partial<MBSSettings> = (data == null) ? null : JSON.parse(data);
     s = (s !== null && typeof s === "object") ? s : {};
     if (detectUpgrade(s.Version)) {
@@ -78,6 +84,7 @@ function initMBSSettings(): void {
     }
     Object.assign(Player.MBSSettings, s, { Version: MBS_VERSION });
 
+    // Check the crafting cache
     if (typeof Player.MBSSettings.CraftingCache !== "string") {
         Player.MBSSettings.CraftingCache = "";
     }
@@ -119,6 +126,11 @@ function initMBSSettings(): void {
  * @param push Whether to actually push to the server or to merely assign the online (shared) settings.
  */
 export function pushMBSSettings(push: boolean = true): void {
+    if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
+        const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
+        throw new Error(`"Player.${settingsName}" still unitialized`);
+    }
+
     const settings = {
         ...Player.MBSSettings,
         FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(i => i?.valueOf() ?? null),

@@ -94,7 +94,7 @@ const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> =
         } else if (option === undefined) {
             VibratorModeSetProperty(item, VibratorModeOff);
         } else {
-            VibratorModeSetProperty(item, option.Property);
+            VibratorModeSetProperty(item, <object>option.Property);
         }
     },
     modular: (item: Item, character: Character, type: string | null): void => {

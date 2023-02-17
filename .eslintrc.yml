@@ -8,6 +8,7 @@ extends: [
 plugins: ["@typescript-eslint"]
 ignorePatterns: [
   "dist/",
+  "src/stub_files/bc/*",
 ]
 overrides: []
 parserOptions:
