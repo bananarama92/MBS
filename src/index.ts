@@ -7,7 +7,7 @@ import { validateBCVersion, validateHookHashes } from "sanity_checks";
 import { settingsMBSLoaded } from "common_bc";
 
 console.log(`MBS: Initializing MBS version ${MBS_VERSION}`);
-waitFor(() => GameVersion !== undefined).then(() => validateBCVersion(GameVersion));
+waitFor(() => GameVersion !== undefined && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));
 waitFor(settingsMBSLoaded).then(validateHookHashes);
 
 import "settings";
