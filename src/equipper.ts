@@ -339,16 +339,12 @@ export function fortuneWheelEquip(
         if (newItem == null) {
             continue;
         }
+        itemSetType(newItem, character, Type);
         if (Craft !== undefined) {
             newItem.Craft = cloneDeep(Craft);
+            InventoryCraft(character, character, Group, newItem.Craft, false, false);
         }
-        itemSetType(newItem, character, Type);
-        InventoryCraft(character, character, Group, Craft, false, false);
-        if (newItem.Property == null) {
-            newItem.Property = cloneDeep(Property);
-        } else {
-            Object.assign(newItem.Property, cloneDeep(Property));
-        }
+        newItem.Property = Object.assign(newItem.Property ?? {}, cloneDeep(Property));
 
         // Fire up any of the provided item-specific dynamic callbacks
         if (typeof ItemCallback === "function") {
