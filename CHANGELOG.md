@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v0.4.4
+* Properly respect items with the `Enclose` effect such as the futuristic crate
+* Do not attempt to wear clothes if one is wearing a clubsslave collar
+* Allow `FortuneWheelOption.Script` to be used on arbitrary player- and simple characters
+
 ## v0.4.3
 * Fix `Item.Craft` not being properly copied
 * Further enforce the immutability of `FortuneWheelItem`
