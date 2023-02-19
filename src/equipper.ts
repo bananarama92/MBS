@@ -290,6 +290,7 @@ export function fortuneWheelEquip(
     keyCache.clear();
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
+    const isClubSlave = LogQuery("ClubSlave", "Management");
     for (const {Name, Group, Equip} of <FortuneWheelItem[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
@@ -311,6 +312,7 @@ export function fortuneWheelEquip(
                 "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, Group, false),
                 "InventoryChatRoomAllow": !InventoryChatRoomAllow(asset.Category ?? []),
+                "Blocked via Club Slave Collar": isClubSlave && asset.Group.Category === "Appearance",
             };
 
             const equipFailure = Object.entries(equipChecks).filter(tup => tup[1]);
