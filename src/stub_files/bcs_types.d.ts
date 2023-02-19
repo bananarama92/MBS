@@ -26,7 +26,13 @@ interface FortuneWheelOptionBase {
 }
 
 /** Type representing MBS-specific fortune wheel options */
-type FortuneWheelOption = Required<FortuneWheelOptionBase>;
+interface FortuneWheelOption extends Required<FortuneWheelOptionBase> {
+    /**
+     * An optional script that will be executed whenever the option is picked.
+     * @param character The to-be affected player- or simple character
+     */
+    readonly Script: (character?: null | Character) => void,
+}
 
 /**
  * A list of with the various {@link FortuneWheelOption} flavors that should be generated

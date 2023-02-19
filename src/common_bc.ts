@@ -505,7 +505,7 @@ export class WheelFortuneItemSet {
      * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
      * @returns A valid {@link FortuneWheelOption.Script} callback
      */
-    scriptFactory(globalCallback: null | FortuneWheelCallback = null): () => void {
+    scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
         const condition = getStripCondition(this.equipLevel, Player);
         const items = this.itemList.filter(({Name, Group}) => {
             const asset = AssetGet(Player.AssetFamily, Group, Name);
@@ -517,7 +517,12 @@ export class WheelFortuneItemSet {
                 return condition(asset);
             }
         });
-        return () => fortuneWheelEquip(this.name, items, this.stripLevel, globalCallback, this.preRunCallback, Player);
+        return (character) => {
+            fortuneWheelEquip(
+                this.name, items, this.stripLevel, globalCallback,
+                this.preRunCallback, character ?? Player,
+            );
+        };
     }
 
     /**
