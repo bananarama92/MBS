@@ -147,17 +147,26 @@ export function itemsArgSort(
             if (graph.has(Group)) {
                 continue;
             }
+
             const asset = AssetGet(character.AssetFamily, Group, Name);
             if (asset == null) {
                 throw new Error(`Unknown asset: ${Group}${Name}`);
             } else if (asset.Group.Category !== "Item") {
                 continue;
             }
+
             const property = getBaselineProperty(asset, character, Type ?? null);
             const node = <Node>{
                 superSet: i === 1,
                 block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
             };
+
+            // Enclosing items take priority over everything else
+            const isEnclose = asset.Effect?.includes("Enclose") || property.Effect?.includes("Enclose");
+            if (isEnclose) {
+                node.priority = AssetGroup.length;
+                node.blocksSubSet = node.superSet;
+            }
             graph.set(Group, node);
         }
     });
@@ -253,6 +262,16 @@ function canUnlock(item: Item, character: Character): boolean {
 }
 
 /**
+ * Return whether the character is both enclosed and the enclosing item has an unremovable lock
+ * (as defined via the {@link canUnlock} output).
+ * @param character The character in question
+ */
+function blockedByEnclose(character: Character): boolean {
+    const item = character.Appearance.find(i => InventoryItemHasEffect(i, "Enclose"));
+    return (item == null) ? false : !canUnlock(item, character);
+}
+
+/**
  * Equip the character with all items from the passed fortune wheel item list.
  * @param name The name of the wheel of fortune item list
  * @param itemList The items in question
@@ -271,6 +290,12 @@ export function fortuneWheelEquip(
 ): void {
     if (!Array.isArray(<readonly FortuneWheelItem[]>itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
+    }
+
+    // Abort if the character is enclosed and the lock of the enclosing item cannot be removed
+    if (blockedByEnclose(character)) {
+        console.log(`MBS: Failed to equip all "${name}" wheel of fortune items: cannot unlock enclosing item`);
+        return;
     }
     characterStrip(stripLevel, character);
 
