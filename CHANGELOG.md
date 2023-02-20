@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.4.5
+* Fix the `padArray` and `trimArray` logic; make them more lenient
+
 ## v0.4.4
 * Properly respect items with the `Enclose` effect such as the futuristic crate
 * Do not attempt to wear clothes if one is wearing a clubsslave collar
