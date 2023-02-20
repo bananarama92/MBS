@@ -41,6 +41,18 @@ export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze(
 ]);
 
 /**
+ * Test whether the passed object is a player- or simple character and raise otherwise.
+ * @param character The character in question
+ */
+export function validateCharacter(character: Character): void {
+    if (character === null || typeof character !== "object") {
+        throw new TypeError(`Invalid "character" type: ${typeof character}`);
+    } else if (!character.IsSimple() && !character.IsPlayer()) {
+        throw new Error("Expected a simple or player character");
+    }
+}
+
+/**
  * Check whether cosplay items can be changed on the given character, including support for the BCX `alt_allow_changing_appearance` rule.
  * @param character The character in question
  * @returns whether cosplay items can be changed or not
@@ -125,9 +137,8 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
     } else if (typeof lockName !== "string") {
         throw new TypeError(`Invalid "lockName" type: ${typeof lockName}`);
-    } else if (!character?.IsPlayer() && !character?.IsSimple()) {
-        throw new Error("Expected a simple or player character");
     }
+    validateCharacter(character);
 
     const lock = AssetGet(character.AssetFamily, "ItemMisc", lockName);
     if (lock == null) {

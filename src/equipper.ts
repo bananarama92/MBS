@@ -7,7 +7,7 @@ import { cloneDeep, sortBy } from "lodash-es";
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
 import { BCX_MOD_API, waitFor } from "common";
-import { settingsMBSLoaded, canChangeCosplay } from "common_bc";
+import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
@@ -65,12 +65,7 @@ export function getStripCondition(stripLevel: StripLevel, character: Character):
  * @param character The to-be stripped character, defaults to the {@link Player}
  */
 export function characterStrip(stripLevel: StripLevel, character: Character): void {
-    if (character === null || typeof character !== "object") {
-        throw new TypeError(`Invalid "character" type: ${typeof character}`);
-    } else if (!character.IsSimple() && !character.IsPlayer()) {
-        throw new Error("Expected a simple or player character");
-    }
-
+    validateCharacter(character);
     const stripCondition = getStripCondition(stripLevel, character);
     const appearance = character.Appearance;
     for (let i = appearance.length - 1; i >= 0; i--) {

@@ -3,6 +3,7 @@
 "use strict";
 
 import { cloneDeep } from "lodash-es";
+import { validateCharacter } from "common_bc";
 
 /**
  * Load and assign the type to the passed item without refreshing.
@@ -11,13 +12,7 @@ import { cloneDeep } from "lodash-es";
  * @param type The item's `Type` (or `Mode` in the case of vibrating items)
  */
 export function itemSetType(item: Item, character: Character, type: null | string): void {
-    if (
-        character === null
-        || typeof character !== "object"
-        || !(character.IsPlayer() || character.IsSimple())
-    ) {
-        throw new Error(`Invalid "character": ${character?.AccountName}`);
-    }
+    validateCharacter(character);
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
     }
