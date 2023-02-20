@@ -45,7 +45,7 @@ export function validateInt(
 }
 
 /**
- * Pad an array with a given value to a given length.
+ * Pad an array with a given value to a given length if necessary.
  * Performs an inplace update of the passed array.
  * @param list The to-be padded array
  * @param n The desired array length. Must be at least as large as `list.length`
@@ -53,29 +53,36 @@ export function validateInt(
  * @returns The originally passed `list` modified inplace
  */
 export function padArray<T>(list: T[], n: number, padValue: T): T[] {
-    validateInt(n, "n", list.length);
+    validateInt(n, "n", 0);
     if (!Array.isArray(list)) {
         throw new TypeError(`Invalid "list" type: ${typeof list}`);
     }
 
     const nPad = n - list.length;
-    list.push(...Array(nPad).fill(padValue));
+    if (nPad > 0) {
+        list.push(...Array(nPad).fill(padValue));
+    }
     return list;
 }
 
 /**
- * Trim an array to a given length.
+ * Trim an array up to a given length.
  * Performs an inplace update of the passed array.
  * @param list The to-be padded array
  * @param n The desired array length. Must be at most as large as `list.length`
  * @returns The originally passed `list` modified inplace
  */
 export function trimArray<T>(list: T[], n: number): T[] {
-    validateInt(n, "n", 0, list.length);
+    validateInt(n, "n", 0);
     if (!Array.isArray(list)) {
         throw new TypeError(`Invalid "list" type: ${typeof list}`);
     }
-    return list.splice(n, list.length - n);
+
+    const nTrim = list.length - n;
+    if (nTrim > 0) {
+        list.splice(n, nTrim);
+    }
+    return list;
 }
 
 /**
