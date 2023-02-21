@@ -1,17 +1,43 @@
-type FortuneWheelOptionBase = WheelFortuneOptionType;
+type FortuneWheelBaseOption = WheelFortuneOptionType;
 
-/** Type representing MBS-specific fortune wheel options */
-interface FortuneWheelOption extends Required<FortuneWheelOptionBase> {
+/** Type representing for MBS `WheelFortuneItemSet` fortune wheel options */
+interface FortuneWheelItemOption extends Required<FortuneWheelBaseOption> {
     /**
      * An optional script that will be executed whenever the option is picked.
      * @param character The to-be affected player- or simple character
      */
     readonly Script: (character?: null | Character) => void,
+    /** The parent item set */
+    readonly Parent: import("common_bc").WheelFortuneItemSet,
+}
+
+/** Type representing for MBS `WheelFortuneCommandSet` fortune wheel options */
+interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
+    /**
+     * Unused field for `WheelFortuneCommandSet`.
+     * An optional script that will be executed whenever the option is picked.
+     */
+    readonly Script: undefined,
+    /**
+     * Unused field for `WheelFortuneCommandSet`.
+     * The type of lock flavor.
+     */
+    readonly Flag: undefined,
+    /** A description of the option */
+    readonly Description: string,
+    /** Whether the option should be enabled by default */
+    readonly Default: boolean,
+    /** Whether this is a custom user-specified option */
+    readonly Custom: true,
+    /** The parent item set */
+    readonly Parent: import("common_bc").WheelFortuneCommandSet,
+    /** The character ID of the item option's owner */
+    readonly OwnerID: number,
 }
 
 /**
- * A list of with the various {@link FortuneWheelOption} flavors that should be generated
- * for a single {@link FortuneWheelOption}.
+ * A list of with the various {@link FortuneWheelItemOption} flavors that should be generated
+ * for a single {@link FortuneWheelItemOption}.
  */
 type FortuneWheelFlags = "5 Minutes" | "15 Minutes" | "1 Hour" | "4 Hours" | "Exclusive" | "High Security";
 

@@ -705,7 +705,7 @@ export let FORTUNE_WHEEL_ITEMS: FortuneWheelItems;
 export let FORTUNE_WHEEL_ITEM_SETS: readonly WheelFortuneItemSet[];
 
 /** A read-only list with all player-independent {@link WheelFortuneOption} values. */
-export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelOptionBase[];
+export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelBaseOption[];
 
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;

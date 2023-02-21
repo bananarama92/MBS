@@ -171,8 +171,8 @@ export function settingsMBSLoaded(): boolean {
 }
 
 /**
- * A list ordered of with the various {@link FortuneWheelOption} flavors that should be generated
- * for a single {@link FortuneWheelOption}.
+ * A list ordered of with the various {@link FortuneWheelItemOption} flavors that should be generated
+ * for a single {@link FortuneWheelItemOption}.
  *
  * Used by {@link WheelFortuneItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
  * * The order of list elements is *never* changed; new entries can be appended though
@@ -210,7 +210,7 @@ export class WheelFortuneSelectedItemSet {
     name: null | string = null;
     /** The to-be equipped items */
     itemList: null | readonly FortuneWheelItem[] = null;
-    /** Which flavors of {@link FortuneWheelOption} should be created */
+    /** Which flavors of {@link FortuneWheelItemOption} should be created */
     flags: Set<FortuneWheelFlags> = new Set();
     /** The cached base64 outfit code */
     outfitCache: null | string = null;
@@ -352,6 +352,139 @@ export class WheelFortuneSelectedItemSet {
     }
 }
 
+/** A base class for fortune wheel sets. */
+export abstract class WheelFortuneBaseSet<OptionType extends FortuneWheelBaseOption> {
+    /** The name of custom option */
+    readonly name: string;
+    /** Whether this concerns a custom user-created item set */
+    readonly custom: boolean;
+    /** The character ID of the item option's owner when or `null` for non-custom items */
+    readonly ownerID: null | number;
+    /** The registered options corresponding to this item set (if any) */
+    #children: null | readonly OptionType[] = null;
+    /** Whether the item set is meant to be hidden */
+    #hidden: boolean = true;
+
+    /** Get the registered options corresponding to this item set (if any) */
+    get children(): null | readonly OptionType[] { return this.#children; }
+
+    /** Get or set whether the item set is meant to be hidden */
+    get hidden(): boolean {  return this.#hidden; }
+    set hidden(value: boolean) {
+        if (value === true) {
+            this.unregisterOptions();
+        } else if (value === false) {
+            this.registerOptions();
+        } else {
+            throw new TypeError(`Invalid "${this.name}.hidden" type: ${typeof value}`);
+        }
+    }
+
+    /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
+    get index(): number {
+        return this.itemSets.findIndex(i => i === this);
+    }
+
+    abstract get itemSets(): (WheelFortuneBaseSet<OptionType> | null)[];
+
+    constructor(name: string, custom: boolean, hidden: boolean) {
+        this.name = name;
+        this.custom = custom;
+        this.ownerID = custom ? WheelFortuneCharacter?.MemberNumber ?? <number>Player.MemberNumber : null;
+        this.#hidden = hidden;
+    }
+
+    /**
+     * Validation function for the classes' constructor
+     * @param kwargs The to-be validated arguments
+     */
+    static validate(_: object): object {
+        throw new Error("Trying to call an abstract method");
+    }
+
+    /**
+     * Construct a new {@link WheelFortuneBaseSet} instance from the passed object
+     * @param kwargs The to-be parsed object
+     */
+    static fromObject(_: object): WheelFortuneBaseSet<FortuneWheelBaseOption> {
+        throw new Error("Trying to call an abstract method");
+    }
+
+    /**
+     * Convert this instance into a list of {@link FortuneWheelItemOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
+     * @returns A list of wheel of fortune options
+     */
+    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+
+    /** Find the insertion position within `WheelFortuneOption`. */
+    #registerFindStart(): number {
+        if (!this.#children?.length) {
+            return WheelFortuneOption.length;
+        } else {
+            const initialID = this.#children[0].ID;
+            const start = WheelFortuneOption.findIndex(i => i.ID >= initialID);
+            return start === -1 ? WheelFortuneOption.length : start;
+        }
+    }
+
+    /**
+     * Convert this instance into a list of {@link FortuneWheelItemOption} and
+     * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
+     * @param push Wether the new MBS settings should be pushed to the server
+     */
+    registerOptions(push: boolean = true): void {
+        this.#hidden = false;
+        this.#children = this.toOptions();
+        let start = this.#registerFindStart();
+        for (const o of this.#children) {
+            // Check whether the option is already registered
+            const i = WheelFortuneOption.findIndex(prevOption => prevOption.ID === o.ID);
+
+            // Either replace or add a new option
+            if (i !== -1) {
+                WheelFortuneOption[i] = o;
+                if (o.Default && !WheelFortuneDefault.includes(o.ID)) {
+                    WheelFortuneDefault += o.ID;
+                }
+            } else {
+                WheelFortuneOption.splice(start, 0, o);
+                if (o.Default) {
+                    WheelFortuneDefault += o.ID;
+                }
+            }
+            start += 1;
+        }
+        if (push) {
+            pushMBSSettings();
+        }
+    }
+
+    /**
+     * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
+     * @param push Wether the new MBS settings should be pushed to the server
+     */
+    unregisterOptions(push: boolean = true): void {
+        this.#hidden = true;
+        const IDs = this.children?.map(c => c.ID) ?? [];
+        this.#children = null;
+        WheelFortuneOption = WheelFortuneOption.filter(i => !IDs.includes(i.ID));
+        WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.includes(i)).join("");
+
+        if (push) {
+            pushMBSSettings();
+        }
+    }
+
+    /** Return a string representation of this instance. */
+    toString(): string {
+        return toStringTemplate(typeof this, this.valueOf());
+    }
+
+    /** Return a (JSON safe-ish) object representation of this instance. */
+    abstract valueOf(): any;
+}
+
 /** {@link WheelFortuneItemSet} constructor argument types in tuple form */
 type WheelFortuneItemSetArgTypes = [
     name: string,
@@ -380,47 +513,20 @@ type WheelFortuneItemSetKwargTypes = {
 type WheelFortuneItemSetKwargTypesParsed = Required<WheelFortuneItemSetKwargTypes> & { flags: Readonly<Set<FortuneWheelFlags>> };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
-export class WheelFortuneItemSet {
-    /** The name of custom option */
-    readonly name: string;
+export class WheelFortuneItemSet extends WheelFortuneBaseSet<FortuneWheelItemOption> {
     /** The to-be equipped items */
     readonly itemList: readonly FortuneWheelItem[];
     /** Which items should be removed from the user */
     readonly stripLevel: StripLevel;
     /** Which from the to-be equipped outfit should be actually equipped */
     readonly equipLevel: StripLevel;
-    /** Which flavors of {@link FortuneWheelOption} should be created */
+    /** Which flavors of {@link FortuneWheelItemOption} should be created */
     readonly flags: Readonly<Set<FortuneWheelFlags>>;
-    /** Whether this concerns a custom user-created item set */
-    readonly custom: boolean;
     /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
-    /** The character ID of the item option's owner when or `null` for non-custom items */
-    readonly ownerID: null | number;
-    /** The registered options corresponding to this item set (if any) */
-    #children: null | readonly FortuneWheelOption[] = null;
-    /** Whether the item set is meant to be hidden */
-    #hidden: boolean = true;
 
-    /** Get the registered options corresponding to this item set (if any) */
-    get children(): null | readonly FortuneWheelOption[] {  return this.#children; }
-
-    /** Get or set whether the item set is meant to be hidden */
-    get hidden(): boolean {  return this.#hidden; }
-    set hidden(value: boolean) {
-        if (value === true) {
-            this.unregisterOptions();
-        } else if (value === false) {
-            this.registerOptions();
-        } else {
-            throw new TypeError(`Invalid "${this.name}.hidden" type: ${typeof value}`);
-        }
-    }
-
-    /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
-    get index(): number {
-        const itemSets = MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
-        return itemSets.findIndex(i => i === this);
+    get itemSets() {
+        return MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
     }
 
     /** Initialize the instance */
@@ -444,19 +550,16 @@ export class WheelFortuneItemSet {
             hidden: hidden,
             preRunCallback: preRunCallback,
         });
-        this.name = kwargs.name;
+        super(kwargs.name, kwargs.custom, kwargs.hidden);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
         this.flags = kwargs.flags;
-        this.custom = kwargs.custom;
-        this.#hidden = kwargs.hidden;
         this.preRunCallback = kwargs.preRunCallback;
-        this.ownerID = (kwargs.custom) ? WheelFortuneCharacter?.MemberNumber ?? <number>Player.MemberNumber : null;
     }
 
     /** Validation function for the classes' constructor */
-    static validate(kwargs: Partial<WheelFortuneItemSetKwargTypes>): WheelFortuneItemSetKwargTypesParsed {
+    static validate(kwargs: WheelFortuneItemSetKwargTypes): WheelFortuneItemSetKwargTypesParsed {
         if (typeof kwargs.name !== "string") {
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
@@ -512,9 +615,9 @@ export class WheelFortuneItemSet {
     }
 
     /**
-     * Factory method for generating {@link FortuneWheelOption.Script} callbacks.
+     * Factory method for generating {@link FortuneWheelItemOption.Script} callbacks.
      * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
-     * @returns A valid {@link FortuneWheelOption.Script} callback
+     * @returns A valid {@link FortuneWheelItemOption.Script} callback
      */
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
         const assets = this.itemList.map(({Name, Group}) => AssetGet(Player.AssetFamily, Group, Name));
@@ -541,11 +644,11 @@ export class WheelFortuneItemSet {
     }
 
     /**
-     * Convert this instance into a list of {@link FortuneWheelOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelOption.ID} values
+     * Convert this instance into a list of {@link FortuneWheelItemOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelOption[] {
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelItemOption[] {
         const flags = sortBy(
             Array.from(this.flags),
             (flag) => FORTUNE_WHEEL_FLAGS.indexOf(flag),
@@ -586,70 +689,6 @@ export class WheelFortuneItemSet {
         });
     }
 
-    /** Find the insertion position within `WheelFortuneOption`. */
-    #registerFindStart(): number {
-        if (!this.#children?.length) {
-            return WheelFortuneOption.length;
-        } else {
-            const initialID = this.#children[0].ID;
-            const start = WheelFortuneOption.findIndex(i => i.ID >= initialID);
-            return start === -1 ? WheelFortuneOption.length : start;
-        }
-    }
-
-    /**
-     * Convert this instance into a list of {@link FortuneWheelOption} and
-     * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
-     * @param push Wether the new MBS settings should be pushed to the server
-     */
-    registerOptions(push: boolean = true): void {
-        this.#hidden = false;
-        this.#children = this.toOptions();
-        let start = this.#registerFindStart();
-        for (const o of this.#children) {
-            // Check whether the option is already registered
-            const i = WheelFortuneOption.findIndex(prevOption => prevOption.ID === o.ID);
-
-            // Either replace or add a new option
-            if (i !== -1) {
-                WheelFortuneOption[i] = o;
-                if (o.Default && !WheelFortuneDefault.includes(o.ID)) {
-                    WheelFortuneDefault += o.ID;
-                }
-            } else {
-                WheelFortuneOption.splice(start, 0, o);
-                if (o.Default) {
-                    WheelFortuneDefault += o.ID;
-                }
-            }
-            start += 1;
-        }
-        if (push) {
-            pushMBSSettings();
-        }
-    }
-
-    /**
-     * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
-     * @param push Wether the new MBS settings should be pushed to the server
-     */
-    unregisterOptions(push: boolean = true): void {
-        this.#hidden = true;
-        const IDs = this.children?.map(c => c.ID) ?? [];
-        this.#children = null;
-        WheelFortuneOption = WheelFortuneOption.filter(i => !IDs.includes(i.ID));
-        WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.includes(i)).join("");
-
-        if (push) {
-            pushMBSSettings();
-        }
-    }
-
-    /** Return a string representation of this instance. */
-    toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
-    }
-
     /** Return a (JSON safe-ish) object representation of this instance. */
     valueOf() {
         return {
@@ -662,6 +701,83 @@ export class WheelFortuneItemSet {
             hidden: this.hidden,
             preRunCallback: this.preRunCallback,
         };
+    }
+}
+
+/** {@link WheelFortuneCommandSet} constructor argument types in tuple form */
+type WheelFortuneCommandSetArgTypes = [
+    name: string,
+    hidden?: boolean,
+];
+
+/** {@link WheelFortuneCommandSet} constructor argument types in object form */
+type WheelFortuneCommandSetKwargTypes = {
+    name: string,
+    hidden?: boolean,
+};
+
+/** A class for storing custom user-specified wheel of fortune item sets. */
+export class WheelFortuneCommandSet extends WheelFortuneBaseSet<FortuneWheelCommandOption> {
+    // @ts-ignore: false positive; narrowing of superclass attribute type
+    readonly custom: true;
+    // @ts-ignore: false positive; narrowing of superclass attribute type
+    readonly ownerID: number;
+
+    get itemSets(): (null | WheelFortuneCommandSet)[] {
+        return [];
+    }
+
+    /** Initialize the instance */
+    constructor(name: string, hidden?: boolean) {
+        const kwargs = WheelFortuneCommandSet.validate({ name: name, hidden: hidden });
+        super(kwargs.name, true, kwargs.hidden);
+    }
+
+    /** Validation function for the classes' constructor */
+    static validate(kwargs: WheelFortuneCommandSetKwargTypes): Required<WheelFortuneCommandSetKwargTypes> {
+        if (typeof kwargs.name !== "string") {
+            throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
+        }
+
+        if (typeof kwargs.hidden !== "boolean") {
+            kwargs.hidden = true;
+        }
+        return <WheelFortuneItemSetKwargTypesParsed>kwargs;
+    }
+
+    /**
+     * Construct a new {@link WheelFortuneItemSet} instance from the passed object
+     * @param kwargs The to-be parsed object
+     */
+    static fromObject(kwargs: WheelFortuneCommandSetKwargTypes): WheelFortuneCommandSet {
+        const argNames: (keyof typeof kwargs)[] = ["name", "hidden"];
+        const args = <WheelFortuneCommandSetArgTypes>argNames.map(name => kwargs[name]);
+        return new WheelFortuneCommandSet(...args);
+    }
+
+    /**
+     * Convert this instance into a list of {@link FortuneWheelItemOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
+     * @returns A list of wheel of fortune options
+     */
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelCommandOption[] {
+        const ID = 3 * ITEM_SET_CATEGORY_ID_RANGE + this.index;
+        return [{
+            ID: String.fromCharCode(ID),
+            Color: randomElement(colors),
+            Description: this.name,
+            Default: true,
+            Custom: this.custom,
+            Parent: this,
+            OwnerID: this.ownerID,
+            Script: undefined,
+            Flag: undefined,
+        }];
+    }
+
+    /** Return a (JSON safe-ish) object representation of this instance. */
+    valueOf() {
+        return { name: this.name, hidden: this.hidden };
     }
 }
 
