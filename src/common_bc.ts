@@ -324,7 +324,7 @@ export class WheelFortuneSelectedItemSet {
         if (this.name === null) {
             return false;
         }
-        const itemSets = MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
+        const itemSets = MBSSelect.FortuneWheelItemSets ?? Player.MBSSettings.FortuneWheelItemSets;
         return itemSets.every((itemSet, i) => {
             if (i === selectedIndex) {
                 return true;
@@ -526,7 +526,7 @@ export class WheelFortuneItemSet extends WheelFortuneBaseSet<FortuneWheelItemOpt
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
 
     get itemSets() {
-        return MBSSelect.currentFortuneWheelSets ?? Player.MBSSettings.FortuneWheelSets;
+        return MBSSelect.FortuneWheelItemSets ?? Player.MBSSettings.FortuneWheelItemSets;
     }
 
     /** Initialize the instance */
@@ -724,7 +724,7 @@ export class WheelFortuneCommandSet extends WheelFortuneBaseSet<FortuneWheelComm
     readonly ownerID: number;
 
     get itemSets(): (null | WheelFortuneCommandSet)[] {
-        return [];
+        return MBSSelect.FortuneWheelCommandSets ?? Player.MBSSettings.FortuneWheelCommandSets;
     }
 
     /** Initialize the instance */

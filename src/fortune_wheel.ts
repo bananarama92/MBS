@@ -10,6 +10,7 @@ import {
 } from "common";
 import {
     WheelFortuneItemSet,
+    WheelFortuneCommandSet,
     setScreenNoText,
     settingsMBSLoaded,
     canChangeCosplay,
@@ -710,39 +711,58 @@ export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelBaseOption[];
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;
 
-/** Load the wheel of fortune options and defaults of the appropriate character. */
-function loadFortuneWheel(): void {
+/**
+ * A {@link loadFortuneWheel} helper function for loading item- or command sets.
+ * @param fieldName The name of the sets-field
+ * @param name The name of the sets
+ */
+function loadFortuneWheelSet(
+    fieldName: "FortuneWheelItemSets" | "FortuneWheelCommandSets",
+    name: string,
+): void {
+    /**
+     * NOTE: TS is very bad with these types of heterogenous structs combined with
+     * multiple variable field names, thus requiring a lot of `any`-casts
+     */
+
     const mbs = WheelFortuneCharacter?.OnlineSharedSettings?.MBS;
-    let fortuneWheelSets = mbs?.FortuneWheelSets;
+    let fortuneWheelSets = (mbs === undefined) ? undefined : mbs[fieldName];
     if (!Array.isArray(fortuneWheelSets)) {
         if (fortuneWheelSets !== undefined) {
-            console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item sets`);
+            console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune ${name} sets`);
         }
         fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
     }
 
-    WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
-    WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
     if (WheelFortuneCharacter?.IsPlayer()) {
-        MBSSelect.currentFortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
+        MBSSelect[fieldName] = <any[]>Player.MBSSettings[fieldName];
     } else {
-        MBSSelect.currentFortuneWheelSets = fortuneWheelSets.map((protoItemSet, i) => {
-            if (protoItemSet === null) {
+        const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommandSet;
+        MBSSelect[fieldName] = <any[]>fortuneWheelSets.map((protoSet, i) => {
+            if (protoSet === null) {
                 return null;
             }
             try {
-                return WheelFortuneItemSet.fromObject(protoItemSet);
+                return cls.fromObject(<any>protoSet);
             } catch (error) {
-                console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune item set ${i}`, error);
+                console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune ${name} set ${i}`, error);
                 return null;
             }
         });
     }
-    MBSSelect.currentFortuneWheelSets.forEach(itemSet => {
+    (<any[]>MBSSelect[fieldName]).forEach(itemSet => {
         if (!itemSet?.hidden) {
             itemSet?.registerOptions(false);
         }
     });
+}
+
+/** Load the wheel of fortune options and defaults of the appropriate character. */
+function loadFortuneWheel(): void {
+    WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
+    WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
+    loadFortuneWheelSet("FortuneWheelItemSets", "item");
+    loadFortuneWheelSet("FortuneWheelCommandSets", "command");
 }
 
 // Requires BC R88Beta1 or higher

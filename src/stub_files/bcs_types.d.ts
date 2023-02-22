@@ -1,6 +1,6 @@
 type FortuneWheelBaseOption = WheelFortuneOptionType;
 
-/** Type representing for MBS `WheelFortuneItemSet` fortune wheel options */
+/** Type representing MBS `WheelFortuneItemSet` fortune wheel options */
 interface FortuneWheelItemOption extends Required<FortuneWheelBaseOption> {
     /**
      * An optional script that will be executed whenever the option is picked.
@@ -11,7 +11,7 @@ interface FortuneWheelItemOption extends Required<FortuneWheelBaseOption> {
     readonly Parent: import("common_bc").WheelFortuneItemSet,
 }
 
-/** Type representing for MBS `WheelFortuneCommandSet` fortune wheel options */
+/** Type representing MBS `WheelFortuneCommandSet` fortune wheel options */
 interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
     /**
      * Unused field for `WheelFortuneCommandSet`.
@@ -120,5 +120,9 @@ interface MBSSettings {
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
-    FortuneWheelSets: (null | import("common_bc").WheelFortuneItemSet)[],
+    FortuneWheelItemSets: (null | import("common_bc").WheelFortuneItemSet)[],
+    /** A sealed array with all custom user-created wheel of fortune command sets */
+    FortuneWheelCommandSets: (null | import("common_bc").WheelFortuneCommandSet)[],
+    /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
+    FortuneWheelSets?: (null | import("common_bc").WheelFortuneItemSet)[],
 }

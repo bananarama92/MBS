@@ -11,6 +11,7 @@ import {
 } from "common";
 import {
     WheelFortuneItemSet,
+    WheelFortuneCommandSet,
     settingsLoaded,
     sanitizeWheelFortuneIDs,
     FORTUNE_WHEEL_MAX_SETS,
@@ -67,6 +68,34 @@ https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
     });
 }
 
+function parseFortuneWheelSets(fieldName: "FortuneWheelItemSets" | "FortuneWheelCommandSets"): void {
+    // Pad/trim the item sets if necessary
+    let fortuneWheelSets = <(WheelFortuneItemSet | null)[]>Player.MBSSettings[fieldName];
+    if (!Array.isArray(fortuneWheelSets)) {
+        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+    } else if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
+        trimArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS);
+    } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
+        padArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS, null);
+    }
+
+    const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommandSet;
+    Player.MBSSettings[<"FortuneWheelItemSets">fieldName] = Object.seal(fortuneWheelSets);
+    Player.MBSSettings[fieldName].forEach((itemSet, i, array) => {
+        if (itemSet !== null) {
+            try {
+                array[i] = cls.fromObject(<WheelFortuneItemSet>itemSet);
+                array[i]?.registerOptions(false);
+            } catch (ex) {
+                console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
+                array[i] = null;
+            }
+        } else {
+            array[i] = null;
+        }
+    });
+}
+
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
@@ -89,31 +118,15 @@ function initMBSSettings(): void {
         Player.MBSSettings.CraftingCache = "";
     }
 
-    // Pad/trim the item sets if necessary
-    let fortuneWheelSets = Player.MBSSettings.FortuneWheelSets;
-    if (!Array.isArray(fortuneWheelSets)) {
-        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
-    } else if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
-        trimArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS);
-    } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
-        padArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS, null);
+    // Swap out the deprecated alias
+    if (Player.MBSSettings.FortuneWheelSets !== undefined) {
+        Player.MBSSettings.FortuneWheelItemSets = Player.MBSSettings.FortuneWheelSets;
+        delete Player.MBSSettings.FortuneWheelSets;
     }
 
-    Player.MBSSettings.FortuneWheelSets = Object.seal(fortuneWheelSets);
+    parseFortuneWheelSets("FortuneWheelItemSets");
+    parseFortuneWheelSets("FortuneWheelCommandSets");
     Player.MBSSettings = Object.seal(Player.MBSSettings);
-    Player.MBSSettings.FortuneWheelSets.forEach((itemSet, i, array) => {
-        if (itemSet !== null) {
-            try {
-                array[i] = WheelFortuneItemSet.fromObject(itemSet);
-                array[i]?.registerOptions(false);
-            } catch (ex) {
-                console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
-                array[i] = null;
-            }
-        } else {
-            array[i] = null;
-        }
-    });
 
     // Ensure that the player's wheel of fortune settings are initialized
     if (Player.OnlineSharedSettings.WheelFortune == null) {
@@ -133,12 +146,14 @@ export function pushMBSSettings(push: boolean = true): void {
 
     const settings = {
         ...Player.MBSSettings,
-        FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(i => i?.valueOf() ?? null),
+        FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(i => i?.valueOf() ?? null),
+        FortuneWheelCommandSets: Player.MBSSettings.FortuneWheelCommandSets.map(i => i?.valueOf() ?? null),
     };
     Player.OnlineSettings.MBS = LZString.compressToBase64(JSON.stringify(settings));
     Player.OnlineSharedSettings.MBS = Object.freeze({
         Version: MBS_VERSION,
-        FortuneWheelSets: Player.MBSSettings.FortuneWheelSets.map(itemSet => itemSet?.hidden === false ? itemSet.valueOf() : null),
+        FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.hidden === false ? set.valueOf() : null),
+        FortuneWheelCommandSets: Player.MBSSettings.FortuneWheelCommandSets.map(set => set?.hidden === false ? set.valueOf() : null),
     });
 
     if (push) {

@@ -181,11 +181,11 @@ export function test_LoopIterator(): void {
     const raiseList: RaiseStruct<[list: any, index?: any]>[] = [
         {
             args: [undefined],
-            excMessage: "Invalid \"list\" type: undefined",
+            excMessage: "Invalid \"iterable\" type: undefined",
         },
         {
             args: [[]],
-            excMessage: "Passed \"list\" must contain at least one element",
+            excMessage: "Passed \"iterable\" must contain at least one element",
         },
         {
             args: [[1], 0.5],

@@ -40,7 +40,7 @@ const STRIP_MAPPING = Object.freeze({
 
 /** Reload the appearance of the {@link MBSCustomize.preview} character based on the current {@link itemSettings}. */
 function reloadPreviewAppearance(): void {
-    if (MBSSelect.currentFortuneWheelSets === null) {
+    if (MBSSelect.FortuneWheelItemSets === null) {
         return MBSFortuneWheelExit();
     } else if (MBSCustomize.preview === null) {
         MBSCustomize.preview = CharacterLoadSimple("MBSCustomize.preview");
@@ -73,7 +73,7 @@ function reloadPreviewAppearance(): void {
 
 /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
 export function MBSFortuneWheelLoad(): void {
-    if (MBSSelect.currentFortuneWheelSets === null) {
+    if (MBSSelect.FortuneWheelItemSets === null) {
         console.warn("MBS: failed to load the current wheel of fortune item set");
         return MBSFortuneWheelExit();
     }
@@ -90,7 +90,7 @@ export function MBSFortuneWheelLoad(): void {
     }
 
     // Load the settings
-    const itemSet = MBSSelect.currentFortuneWheelSets[MBSCustomize.selectedIndex];
+    const itemSet = MBSSelect.FortuneWheelItemSets[MBSCustomize.selectedIndex];
     if (itemSet !== null) {
         itemSettings.readItemSet(itemSet);
         nameElement.value = itemSet.name;
@@ -306,11 +306,11 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
     ElementRemove("MBSname");
     ElementRemove("MBSoutfitCache");
 
-    if (!WheelFortuneCharacter?.IsPlayer() || MBSSelect.currentFortuneWheelSets === null) {
+    if (!WheelFortuneCharacter?.IsPlayer() || MBSSelect.FortuneWheelItemSets === null) {
         return customizeExit(fullExit);
     }
 
-    const settings = Player.MBSSettings.FortuneWheelSets;
+    const settings = Player.MBSSettings.FortuneWheelItemSets;
     switch (action) {
         case ExitAction.NONE:
             break;

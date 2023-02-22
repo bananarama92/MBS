@@ -160,37 +160,50 @@ export function toStringTemplate(typeName: string, obj: object): string {
 }
 
 export class LoopIterator<T> {
+    /** The iterator's underlying array. */
     readonly #list: readonly T[];
+    /** The current position of the iterator. */
     #index: number;
 
-    get index() { return this.#index; }
-    get value() { return this.#list[this.#index]; }
-    get list() { return this.#list; }
+    /** Get or set the current position of the iterator. */
+    get index(): number { return this.#index; }
+    set index(value: number) { this.setPosition(value); }
+    /** Get the current value of the iterator. */
+    get value(): T { return this.#list[this.#index]; }
+    /** Get the iterator's underlying array. */
+    get list(): readonly T[] { return this.#list; }
 
     /**
      * Initialize the instance
-     * @param list The to-be iterated array
-     * @param start The starting position within the array
+     * @param list The to-be iterated iterable. Note that the iterable will be converted into an array or copied otherwise.
+     * @param index The starting position within the array
      */
-    constructor(list: readonly T[], index: number = 0) {
-        if (!Array.isArray(list)) {
-            throw new TypeError(`Invalid "list" type: ${typeof list}`);
-        } else if (list.length === 0) {
-            throw new Error('Passed "list" must contain at least one element');
-        } else {
-            validateInt(index, "index", 0, list.length - 1);
+    constructor(list: Iterable<T>, index: number = 0) {
+        if (!isIterable(list)) {
+            throw new TypeError(`Invalid "iterable" type: ${typeof list}`);
         }
-        this.#list = list;
+        const copiedList = Object.freeze([...list]);
+
+        if (copiedList.length === 0) {
+            throw new Error('Passed "iterable" must contain at least one element');
+        } else {
+            validateInt(index, "index", 0, copiedList.length - 1);
+        }
+        this.#list = copiedList;
         this.#index = index;
     }
 
+    /** Yield {@link LoopIterator.next} outputs. */
     *[Symbol.iterator]() {
         while (true) {
             yield this.next();
         }
     }
 
-    /** Return the next element from the iterator and increment. */
+    /**
+     * Return the next element from the iterator and increment.
+     * @param incrementPosition Whether to increment the iterator in addition to returning the next element
+     */
     next(incrementPosition: boolean = true): T {
         const index = (this.#index + 1) % this.#list.length;
         if (incrementPosition) {
@@ -199,7 +212,10 @@ export class LoopIterator<T> {
         return this.#list[index];
     }
 
-    /** Return the previous element from the iterator and decrement. */
+    /**
+     * Return the previous element from the iterator and decrement.
+     * @param decrementPosition Whether to derecement the iterator in addition to returning the previous element
+     */
     previous(decrementPosition: boolean = true): T {
         const index = (this.#index + this.#list.length - 1) % this.#list.length;
         if (decrementPosition) {
@@ -208,8 +224,11 @@ export class LoopIterator<T> {
         return this.#list[index];
     }
 
-    /** Set the position of the iterator. */
-    setPosition(index: number) {
+    /**
+     * Set the position of the iterator.
+     * @param index The new {@link LoopIterator.index} of the iterator
+     */
+    setPosition(index: number): void {
         validateInt(index, "index", 0, this.#list.length - 1);
         this.#index = index;
     }
