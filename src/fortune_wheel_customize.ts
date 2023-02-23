@@ -92,7 +92,7 @@ export function MBSFortuneWheelLoad(): void {
     // Load the settings
     const itemSet = MBSSelect.FortuneWheelItemSets[MBSCustomize.selectedIndex];
     if (itemSet !== null) {
-        itemSettings.readItemSet(itemSet);
+        itemSettings.readSettings(itemSet);
         nameElement.value = itemSet.name;
         itemSettings.outfitCache = outfitElement.value = LZString.compressToBase64(JSON.stringify(toItemBundles(
             itemSet.itemList, MBSCustomize.preview,
@@ -317,7 +317,7 @@ export function MBSFortuneWheelExit(fullExit: boolean = true, action: ExitAction
         case ExitAction.SAVE: {
             if (itemSettings.isValidName(MBSCustomize.selectedIndex) && itemSettings.itemList !== null) {
                 const hidden = settings[MBSCustomize.selectedIndex]?.hidden ?? false;
-                settings[MBSCustomize.selectedIndex] = itemSettings.writeItemSet(hidden);
+                settings[MBSCustomize.selectedIndex] = itemSettings.writeSettings(hidden);
                 settings[MBSCustomize.selectedIndex]?.registerOptions();
             }
             break;

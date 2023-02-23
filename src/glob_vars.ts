@@ -18,8 +18,8 @@ export const MBSSelect: {
     /** The custom MBS fortune wheel item sets of {@link WheelFortuneCharacter} */
     FortuneWheelItemSets: null | (null | import("common_bc").WheelFortuneItemSet)[];
     /** The custom MBS fortune wheel command sets of {@link WheelFortuneCharacter} */
-    FortuneWheelCommandSets: null | (null | import("common_bc").WheelFortuneCommandSet)[];
+    FortuneWheelCommands: null | (null | import("common_bc").WheelFortuneCommand)[];
 } = Object.seal({
     FortuneWheelItemSets: null,
-    FortuneWheelCommandSets: null,
+    FortuneWheelCommands: null,
 });

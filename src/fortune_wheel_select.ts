@@ -26,7 +26,7 @@ const pageSelector = new LoopIterator([
         index: 1,
         screen: "MBSFortuneWheelCommand",
         name: "command",
-        field: "FortuneWheelCommandSets",
+        field: "FortuneWheelCommands",
     }),
 ]);
 

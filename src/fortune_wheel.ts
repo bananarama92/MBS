@@ -10,7 +10,7 @@ import {
 } from "common";
 import {
     WheelFortuneItemSet,
-    WheelFortuneCommandSet,
+    WheelFortuneCommand,
     setScreenNoText,
     settingsMBSLoaded,
     canChangeCosplay,
@@ -717,7 +717,7 @@ export let FORTUNE_WHEEL_DEFAULT_BASE: string;
  * @param name The name of the sets
  */
 function loadFortuneWheelSet(
-    fieldName: "FortuneWheelItemSets" | "FortuneWheelCommandSets",
+    fieldName: "FortuneWheelItemSets" | "FortuneWheelCommands",
     name: string,
 ): void {
     /**
@@ -737,7 +737,7 @@ function loadFortuneWheelSet(
     if (WheelFortuneCharacter?.IsPlayer()) {
         MBSSelect[fieldName] = <any[]>Player.MBSSettings[fieldName];
     } else {
-        const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommandSet;
+        const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommand;
         MBSSelect[fieldName] = <any[]>fortuneWheelSets.map((protoSet, i) => {
             if (protoSet === null) {
                 return null;
@@ -762,7 +762,7 @@ function loadFortuneWheel(): void {
     WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
     loadFortuneWheelSet("FortuneWheelItemSets", "item");
-    loadFortuneWheelSet("FortuneWheelCommandSets", "command");
+    loadFortuneWheelSet("FortuneWheelCommands", "command");
 }
 
 // Requires BC R88Beta1 or higher

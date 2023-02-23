@@ -11,15 +11,15 @@ interface FortuneWheelItemOption extends Required<FortuneWheelBaseOption> {
     readonly Parent: import("common_bc").WheelFortuneItemSet,
 }
 
-/** Type representing MBS `WheelFortuneCommandSet` fortune wheel options */
+/** Type representing MBS `WheelFortuneCommand` fortune wheel options */
 interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
     /**
-     * Unused field for `WheelFortuneCommandSet`.
+     * Unused field for `WheelFortuneCommand`.
      * An optional script that will be executed whenever the option is picked.
      */
     readonly Script: undefined,
     /**
-     * Unused field for `WheelFortuneCommandSet`.
+     * Unused field for `WheelFortuneCommand`.
      * The type of lock flavor.
      */
     readonly Flag: undefined,
@@ -30,7 +30,7 @@ interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
     /** Whether this is a custom user-specified option */
     readonly Custom: true,
     /** The parent item set */
-    readonly Parent: import("common_bc").WheelFortuneCommandSet,
+    readonly Parent: import("common_bc").WheelFortuneCommand,
     /** The character ID of the item option's owner */
     readonly OwnerID: number,
 }
@@ -122,7 +122,7 @@ interface MBSSettings {
     /** A sealed array with all custom user-created wheel of fortune item sets */
     FortuneWheelItemSets: (null | import("common_bc").WheelFortuneItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
-    FortuneWheelCommandSets: (null | import("common_bc").WheelFortuneCommandSet)[],
+    FortuneWheelCommands: (null | import("common_bc").WheelFortuneCommand)[],
     /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
     FortuneWheelSets?: (null | import("common_bc").WheelFortuneItemSet)[],
 }
