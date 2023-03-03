@@ -9,18 +9,18 @@ import {
     padArray,
 } from "common";
 import {
-    WheelFortuneItemSet,
-    WheelFortuneCommand,
-    setScreenNoText,
+    FWItemSet,
+    FWCommand,
     settingsMBSLoaded,
     canChangeCosplay,
     FORTUNE_WHEEL_MAX_SETS,
 } from "common_bc";
 import { validateBuiltinWheelIDs } from "sanity_checks";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, parseFWObjects } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
-import { MBSSelect } from "glob_vars";
+import { FWSelectScreen } from "fortune_wheel_select";
+import { ScreenProxy } from "screen_abc";
 
 /**
  * Copy the character's hair color the to passed item.
@@ -114,7 +114,7 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
 
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): FortuneWheelItems {
-    const protoRecord: Record<FortuneWheelNames, FortuneWheelItemBase[]> = {
+    const protoRecord: Record<FortuneWheelNames, FWItemBase[]> = {
         leash_candy: [
             {
                 Name: "ReverseBunnySuit",
@@ -661,7 +661,7 @@ function generateItems(): FortuneWheelItems {
     };
 
     const ret = Object.fromEntries(Object.entries(protoRecord).map(([setName, itemList]) => {
-        const itemListNew: readonly FortuneWheelItem[] = Object.freeze(itemList.map(protoItem => {
+        const itemListNew: readonly FWItem[] = Object.freeze(itemList.map(protoItem => {
             let craft: undefined | CraftingItem = undefined;
             if (protoItem.Craft !== null && typeof protoItem.Craft === "object") {
                 const asset = AssetGet(Player.AssetFamily, protoItem.Group, protoItem.Name);
@@ -703,10 +703,10 @@ function generateItems(): FortuneWheelItems {
 export let FORTUNE_WHEEL_ITEMS: FortuneWheelItems;
 
 /** A read-only list with the fully fledged MBS fortune wheel item sets. */
-export let FORTUNE_WHEEL_ITEM_SETS: readonly WheelFortuneItemSet[];
+export let FORTUNE_WHEEL_ITEM_SETS: readonly FWItemSet[];
 
 /** A read-only list with all player-independent {@link WheelFortuneOption} values. */
-export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FortuneWheelBaseOption[];
+export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FWObjectOption[];
 
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;
@@ -716,54 +716,72 @@ export let FORTUNE_WHEEL_DEFAULT_BASE: string;
  * @param fieldName The name of the sets-field
  * @param name The name of the sets
  */
-function loadFortuneWheelSet(
-    fieldName: "FortuneWheelItemSets" | "FortuneWheelCommands",
+function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "FortuneWheelCommands">(
+    character: Character,
+    fieldName: T,
     name: string,
-): void {
-    /**
-     * NOTE: TS is very bad with these types of heterogenous structs combined with
-     * multiple variable field names, thus requiring a lot of `any`-casts
-     */
-
-    const mbs = WheelFortuneCharacter?.OnlineSharedSettings?.MBS;
-    let fortuneWheelSets = (mbs === undefined) ? undefined : mbs[fieldName];
-    if (!Array.isArray(fortuneWheelSets)) {
-        if (fortuneWheelSets !== undefined) {
-            console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune ${name} sets`);
+): MBSSettings[T] {
+    const mbs = character.OnlineSharedSettings?.MBS;
+    let protoWheelList = (mbs === undefined) ? undefined : mbs[fieldName];
+    if (!Array.isArray(protoWheelList)) {
+        if (protoWheelList !== undefined) {
+            console.warn(`MBS: Failed to load "${character.AccountName}" wheel of fortune ${name}`);
         }
-        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+        protoWheelList = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
     }
 
-    if (WheelFortuneCharacter?.IsPlayer()) {
-        MBSSelect[fieldName] = <any[]>Player.MBSSettings[fieldName];
+    let wheelList: MBSSettings[T];
+    if (character.IsPlayer()) {
+        wheelList = Player.MBSSettings[fieldName];
     } else {
-        const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommand;
-        MBSSelect[fieldName] = <any[]>fortuneWheelSets.map((protoSet, i) => {
-            if (protoSet === null) {
-                return null;
-            }
-            try {
-                return cls.fromObject(<any>protoSet);
-            } catch (error) {
-                console.warn(`MBS: Failed to load "${WheelFortuneCharacter?.AccountName}" wheel of fortune ${name} set ${i}`, error);
-                return null;
-            }
-        });
+        const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
+        // @ts-ignore
+        wheelList = parseFWObjects(constructor, protoWheelList);
     }
-    (<any[]>MBSSelect[fieldName]).forEach(itemSet => {
-        if (!itemSet?.hidden) {
-            itemSet?.registerOptions(false);
-        }
-    });
+    wheelList.forEach(i => {if (!i?.hidden) { i?.registerOptions(false); }});
+    return wheelList;
 }
 
-/** Load the wheel of fortune options and defaults of the appropriate character. */
-function loadFortuneWheel(): void {
-    WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
-    WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
-    loadFortuneWheelSet("FortuneWheelItemSets", "item");
-    loadFortuneWheelSet("FortuneWheelCommands", "command");
+class FWScreenProxy extends ScreenProxy {
+    static readonly screen = "WheelFortune";
+    readonly screen = FWScreenProxy.screen;
+    character: Character;
+    FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[];
+    FortuneWheelCommands: (null | import("common_bc").FWCommand)[];
+
+    constructor() {
+        super(
+            null,
+            "WheelFortune",
+            "MiniGame",
+            {
+                Run: WheelFortuneRun,
+                Click: WheelFortuneClick,
+                Exit: WheelFortuneExit,
+                Load: WheelFortuneLoad,
+                Unload: CommonNoop,
+                Resize: CommonNoop,
+                KeyDown: CommonNoop,
+            },
+        );
+        this.character = Player;
+        this.FortuneWheelItemSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+        this.FortuneWheelCommands = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+    }
+
+    initialize() {
+        if (WheelFortuneCharacter == null) {
+            throw new Error("Cannot load the fortune wheel UI while `WheelFortuneCharacter == null`");
+        }
+        WheelFortuneOption = [...FORTUNE_WHEEL_OPTIONS_BASE];
+        WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
+        this.character = WheelFortuneCharacter;
+        this.FortuneWheelItemSets = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelItemSets", "item sets");
+        this.FortuneWheelCommands = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelCommands", "commands");
+    }
 }
+
+export let fortuneWheelState: FWScreenProxy;
 
 // Requires BC R88Beta1 or higher
 waitFor(settingsMBSLoaded).then(() => {
@@ -775,36 +793,40 @@ waitFor(settingsMBSLoaded).then(() => {
     // Load and register the default MBS item sets
     FORTUNE_WHEEL_ITEMS = generateItems();
     FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
-        new WheelFortuneItemSet(
+        new FWItemSet(
             "PSO Bondage",
             FORTUNE_WHEEL_ITEMS.leash_candy,
+            Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
             ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive", "High Security"],
             false,
             false,
         ),
-        new WheelFortuneItemSet(
+        new FWItemSet(
             "Mummification",
             FORTUNE_WHEEL_ITEMS.mummy,
+            Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.CLOTHES,
             StripLevel.UNDERWEAR,
             ["Exclusive"],
             false,
             false,
         ),
-        new WheelFortuneItemSet(
+        new FWItemSet(
             "Bondage Maid",
             FORTUNE_WHEEL_ITEMS.maid,
+            Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
             ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
             false,
             false,
         ),
-        new WheelFortuneItemSet(
+        new FWItemSet(
             "Petrification",
             FORTUNE_WHEEL_ITEMS.statue,
+            Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
             ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
@@ -819,7 +841,7 @@ waitFor(settingsMBSLoaded).then(() => {
     pushMBSSettings();
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
-        loadFortuneWheel();
+        fortuneWheelState.initialize();
         if (TextScreenCache != null) {
             for (const { Description, Custom, ID } of WheelFortuneOption) {
                 if (Description !== undefined) {
@@ -852,9 +874,17 @@ waitFor(settingsMBSLoaded).then(() => {
 
     MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
         if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
-            return setScreenNoText("MBSFortuneWheelSelect");
+            const struct = {
+                FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
+                FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
+            };
+            const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
+            fortuneWheelState.children.set(subScreen.screen, subScreen);
+            return subScreen.load();
         } else {
             return next(args);
         }
     });
+
+    fortuneWheelState = new FWScreenProxy();
 });

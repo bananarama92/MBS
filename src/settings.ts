@@ -6,15 +6,15 @@ import {
     waitFor,
     MBS_VERSION,
     Version,
-    padArray,
     trimArray,
 } from "common";
 import {
-    WheelFortuneItemSet,
-    WheelFortuneCommand,
+    FWItemSet,
+    FWCommand,
     settingsLoaded,
     sanitizeWheelFortuneIDs,
     FORTUNE_WHEEL_MAX_SETS,
+    FWObject,
 } from "common_bc";
 
 /** Check whether MBS has just been upgraded for the user in question. */
@@ -68,32 +68,33 @@ https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
     });
 }
 
-function parseFortuneWheelSets(fieldName: "FortuneWheelItemSets" | "FortuneWheelCommands"): void {
+export function parseFWObjects<
+    T extends FWSimpleItemSet | FWSimpleCommand,
+    RT extends FWObject<FWObjectOption>,
+>(
+    constructor: (wheelList: (null | RT)[], kwargs: T) => RT,
+    protoWheelList?: (null | T)[],
+): (null | RT)[] {
     // Pad/trim the item sets if necessary
-    let fortuneWheelSets = <(WheelFortuneItemSet | null)[]>Player.MBSSettings[fieldName];
-    if (!Array.isArray(fortuneWheelSets)) {
-        fortuneWheelSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
-    } else if (fortuneWheelSets.length > FORTUNE_WHEEL_MAX_SETS) {
-        trimArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS);
-    } else if (fortuneWheelSets.length < FORTUNE_WHEEL_MAX_SETS) {
-        padArray(fortuneWheelSets, FORTUNE_WHEEL_MAX_SETS, null);
+    if (!Array.isArray(protoWheelList)) {
+        protoWheelList = [];
+    } else if (protoWheelList.length > FORTUNE_WHEEL_MAX_SETS) {
+        trimArray(protoWheelList, FORTUNE_WHEEL_MAX_SETS);
     }
 
-    const cls = fieldName === "FortuneWheelItemSets" ? WheelFortuneItemSet : WheelFortuneCommand;
-    Player.MBSSettings[<"FortuneWheelItemSets">fieldName] = Object.seal(fortuneWheelSets);
-    Player.MBSSettings[fieldName].forEach((itemSet, i, array) => {
-        if (itemSet !== null) {
-            try {
-                array[i] = cls.fromObject(<WheelFortuneItemSet>itemSet);
-                array[i]?.registerOptions(false);
-            } catch (ex) {
-                console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
-                array[i] = null;
-            }
-        } else {
-            array[i] = null;
+    const wheelList: (null | RT)[] = Object.seal(Array(FORTUNE_WHEEL_MAX_SETS).fill(null));
+    protoWheelList.forEach((simpleObject, i) => {
+        if (simpleObject === null) {
+            return;
+        }
+        try {
+            const wheelObject = wheelList[i] = constructor(wheelList, simpleObject);
+            wheelObject.registerOptions(false);
+        } catch (ex) {
+            console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
         }
     });
+    return wheelList;
 }
 
 /** Initialize the MBS settings. */
@@ -104,29 +105,31 @@ function initMBSSettings(): void {
     }
 
     // Load saved settings and check whether MBS has been upgraded
-    Player.MBSSettings = <MBSSettings>{ Version: MBS_VERSION };
+    const settings: MBSProtoSettings = { Version: MBS_VERSION };
     const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS ?? "");
-    let s: Partial<MBSSettings> = (data == null) ? null : JSON.parse(data);
+    let s: Partial<MBSProtoSettings> = (data == null) ? null : JSON.parse(data);
     s = (s !== null && typeof s === "object") ? s : {};
     if (detectUpgrade(s.Version)) {
         showChangelog();
     }
-    Object.assign(Player.MBSSettings, s, { Version: MBS_VERSION });
+    Object.assign(settings, s);
 
     // Check the crafting cache
-    if (typeof Player.MBSSettings.CraftingCache !== "string") {
-        Player.MBSSettings.CraftingCache = "";
+    if (typeof settings.CraftingCache !== "string") {
+        settings.CraftingCache = "";
     }
 
     // Swap out the deprecated alias
-    if (Player.MBSSettings.FortuneWheelSets !== undefined) {
-        Player.MBSSettings.FortuneWheelItemSets = Player.MBSSettings.FortuneWheelSets;
-        delete Player.MBSSettings.FortuneWheelSets;
+    if (settings.FortuneWheelSets !== undefined) {
+        settings.FortuneWheelItemSets = settings.FortuneWheelSets;
     }
 
-    parseFortuneWheelSets("FortuneWheelItemSets");
-    parseFortuneWheelSets("FortuneWheelCommands");
-    Player.MBSSettings = Object.seal(Player.MBSSettings);
+    Player.MBSSettings = Object.seal({
+        Version: settings.Version,
+        CraftingCache: settings.CraftingCache,
+        FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
+        FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
+    });
 
     // Ensure that the player's wheel of fortune settings are initialized
     if (Player.OnlineSharedSettings.WheelFortune == null) {

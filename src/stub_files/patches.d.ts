@@ -3,20 +3,8 @@ declare const LZString: import("lz-string").LZStringStatic;
 interface CharacterOnlineSharedSettings {
     MBS: {
         readonly Version: string,
-        readonly FortuneWheelItemSets: (null | {
-            name: string,
-            itemList: readonly FortuneWheelItem[],
-            stripLevel: StripLevel,
-            equipLevel: StripLevel,
-            flags: readonly FortuneWheelFlags[],
-            custom: boolean,
-            hidden: boolean,
-            preRunCallback: FortuneWheelPreRunCallback | null,
-        })[],
-        readonly FortuneWheelCommands: (null | {
-            name: string,
-            hidden: boolean,
-        })[],
+        readonly FortuneWheelItemSets: (null | Readonly<FWSimpleItemSet>)[],
+        readonly FortuneWheelCommands: (null | Readonly<FWSimpleCommand>)[],
     },
 }
 
@@ -37,9 +25,7 @@ interface WheelFortuneOptionType {
     /** Whether this is a custom user-specified option */
     readonly Custom?: boolean,
     /** The parent item set */
-    readonly Parent?: import("common_bc").WheelFortuneBase<WheelFortuneOptionType>,
-    /** The character ID of the item option's owner or `null` if it's not a custom item */
-    readonly OwnerID?: null | number,
+    readonly Parent?: import("common_bc").FWObject<WheelFortuneOptionType>,
     /** The type of lock flavor */
     readonly Flag?: FortuneWheelFlags,
 }

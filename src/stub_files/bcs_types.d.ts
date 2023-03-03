@@ -1,25 +1,25 @@
-type FortuneWheelBaseOption = WheelFortuneOptionType;
+type FWObjectOption = WheelFortuneOptionType;
 
-/** Type representing MBS `WheelFortuneItemSet` fortune wheel options */
-interface FortuneWheelItemOption extends Required<FortuneWheelBaseOption> {
+/** Type representing MBS `FWItemSet` fortune wheel options */
+interface FWItemSetOption extends Required<FWObjectOption> {
     /**
      * An optional script that will be executed whenever the option is picked.
      * @param character The to-be affected player- or simple character
      */
     readonly Script: (character?: null | Character) => void,
     /** The parent item set */
-    readonly Parent: import("common_bc").WheelFortuneItemSet,
+    readonly Parent: import("common_bc").FWItemSet,
 }
 
-/** Type representing MBS `WheelFortuneCommand` fortune wheel options */
-interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
+/** Type representing MBS `FWCommand` fortune wheel options */
+interface FWCommandOption extends FWObjectOption {
     /**
-     * Unused field for `WheelFortuneCommand`.
+     * Unused field for `FWCommand`.
      * An optional script that will be executed whenever the option is picked.
      */
     readonly Script: undefined,
     /**
-     * Unused field for `WheelFortuneCommand`.
+     * Unused field for `FWCommand`.
      * The type of lock flavor.
      */
     readonly Flag: undefined,
@@ -30,14 +30,12 @@ interface FortuneWheelCommandOption extends FortuneWheelBaseOption {
     /** Whether this is a custom user-specified option */
     readonly Custom: true,
     /** The parent item set */
-    readonly Parent: import("common_bc").WheelFortuneCommand,
-    /** The character ID of the item option's owner */
-    readonly OwnerID: number,
+    readonly Parent: import("common_bc").FWCommand,
 }
 
 /**
- * A list of with the various {@link FortuneWheelItemOption} flavors that should be generated
- * for a single {@link FortuneWheelItemOption}.
+ * A list of with the various {@link FWItemSetOption} flavors that should be generated
+ * for a single {@link FWItemSetOption}.
  */
 type FortuneWheelFlags = "5 Minutes" | "15 Minutes" | "1 Hour" | "4 Hours" | "Exclusive" | "High Security";
 
@@ -47,9 +45,7 @@ type FortuneWheelFlags = "5 Minutes" | "15 Minutes" | "1 Hour" | "4 Hours" | "Ex
  */
 type StripLevel = 0 | 1 | 2 | 3 | 4;
 
-type ExitAction = 0 | 1 | 2;
-
-interface FortuneWheelItemBase {
+interface FWItemBase {
     /** The name of the item */
     Name: string,
     /** The group of the item */
@@ -68,12 +64,12 @@ interface FortuneWheelItemBase {
     Type?: null | string,
     /**
      * The properties of the item.
-     * Note that {@link FortuneWheelItemBase.Type}-specific properties should be excluded from here.
+     * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
      */
     Property?: ItemProperties,
 }
 
-interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
+interface FWItem extends Readonly<FWItemBase> {
     /** Optional crafted item data */
     readonly Craft: undefined | Readonly<CraftingItem>,
     /** Whether this is a custom user-specified item set */
@@ -82,7 +78,7 @@ interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
     readonly Type: null | string,
     /**
      * The properties of the item.
-     * Note that {@link FortuneWheelItemBase.Type}-specific properties should be excluded from here.
+     * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
      */
     readonly Property: Readonly<ItemProperties>,
     /** The optional color of the item */
@@ -96,7 +92,7 @@ interface FortuneWheelItem extends Readonly<FortuneWheelItemBase> {
 /** A union with the names of all pre-defined MBS item sets. */
 type FortuneWheelNames = "leash_candy" | "mummy" | "maid" | "statue";
 
-type FortuneWheelItems = Readonly<Record<FortuneWheelNames, readonly FortuneWheelItem[]>>;
+type FortuneWheelItems = Readonly<Record<FortuneWheelNames, readonly FWItem[]>>;
 
 /** Wheel of fortune callbacks that are to-be applied to individual items */
 type FortuneWheelCallback = (item: Item, character: Character) => void;
@@ -106,12 +102,26 @@ type FortuneWheelCallback = (item: Item, character: Character) => void;
  * The callback must return either a new or the original item list.
  */
 type FortuneWheelPreRunCallback = (
-    itemList: readonly FortuneWheelItem[],
+    itemList: readonly FWItem[],
     character: Character,
-) => readonly FortuneWheelItem[];
+) => readonly FWItem[];
 
 /** A union of valid wheel of fortune button colors */
 type FortuneWheelColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple" | "Red" | "Yellow";
+
+/** The (unparsed) MBS settings */
+interface MBSProtoSettings {
+    /** The MBS version */
+    readonly Version: string,
+    /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
+    CraftingCache?: string,
+    /** A sealed array with all custom user-created wheel of fortune item sets */
+    FortuneWheelItemSets?: (null | FWSimpleItemSet)[],
+    /** A sealed array with all custom user-created wheel of fortune command sets */
+    FortuneWheelCommands?: (null | FWSimpleCommand)[],
+    /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
+    FortuneWheelSets?: MBSProtoSettings["FortuneWheelItemSets"],
+}
 
 /** The MBS settings */
 interface MBSSettings {
@@ -120,9 +130,46 @@ interface MBSSettings {
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
-    FortuneWheelItemSets: (null | import("common_bc").WheelFortuneItemSet)[],
+    readonly FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
-    FortuneWheelCommands: (null | import("common_bc").WheelFortuneCommand)[],
-    /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
-    FortuneWheelSets?: (null | import("common_bc").WheelFortuneItemSet)[],
+    readonly FortuneWheelCommands: (null | import("common_bc").FWCommand)[],
+}
+
+/** An interface for representing clickable buttons */
+interface ClickAction {
+    /** A 4-tuple with the buttons X & Y coordinates, its width and its height */
+    readonly coords: readonly [X: number, Y: number, W: number, H: number],
+    /** A callback to-be executed when the button is clicked */
+    readonly next: () => void,
+    /** Whether the button click requires a player character */
+    readonly requiresPlayer: boolean,
+}
+
+/** A simplified interface representing {@link FWItemSet} */
+interface FWSimpleItemSet {
+    name: string,
+    itemList: readonly FWItem[],
+    stripLevel: StripLevel,
+    equipLevel: StripLevel,
+    flags: readonly FortuneWheelFlags[],
+    custom: boolean,
+    hidden: boolean,
+    preRunCallback: FortuneWheelPreRunCallback | null,
+}
+
+/** A simplified (partial) interface representing {@link FWItemSet} */
+interface FWSimplePartialItemSet extends Partial<FWSimpleItemSet>{
+    name: string,
+    itemList: readonly FWItem[],
+}
+
+/** A simplified interface representing {@link FWCommand} */
+interface FWSimpleCommand {
+    name: string,
+    hidden: boolean,
+}
+
+/** A simplified (partial) interface representing {@link FWCommand} */
+interface FWSimplePartialCommand extends Partial<FWSimpleCommand> {
+    name: string,
 }

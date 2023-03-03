@@ -193,9 +193,9 @@ export function getBlockSuperset<T extends SimpleItem>(
  * Defaults to a simple character without any blacklisted or limited items/options.
  */
 export function fortuneItemsSort(
-    itemList: readonly FortuneWheelItem[],
+    itemList: readonly FWItem[],
     character: Character = MBSDummy,
-): FortuneWheelItem[] {
+): FWItem[] {
     const sortRecord = itemsArgSort(itemList, character);
     return sortBy(
         itemList,
@@ -279,13 +279,13 @@ function blockedByEnclose(character: Character): boolean {
  */
 export function fortuneWheelEquip(
     name: string,
-    itemList: readonly FortuneWheelItem[],
+    itemList: readonly FWItem[],
     stripLevel: StripLevel,
     globalCallback: null | FortuneWheelCallback = null,
     preRunCallback: null | FortuneWheelPreRunCallback = null,
     character: Character = Player,
 ): void {
-    if (!Array.isArray(<readonly FortuneWheelItem[]>itemList)) {
+    if (!Array.isArray(<readonly FWItem[]>itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
     }
 
@@ -313,7 +313,7 @@ export function fortuneWheelEquip(
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
     const isClubSlave = LogQuery("ClubSlave", "Management");
-    for (const {Name, Group, Equip} of <FortuneWheelItem[]>[...blockingItems, ...itemList]) {
+    for (const {Name, Group, Equip} of <FWItem[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
         const equip = typeof Equip === "function" ? Equip(character) : true;

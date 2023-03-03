@@ -17,7 +17,6 @@ import {
 import { pushMBSSettings } from "settings";
 import { fromItemBundles } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
-import { MBSSelect } from "glob_vars";
 
 /** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
 const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
@@ -171,10 +170,10 @@ export function settingsMBSLoaded(): boolean {
 }
 
 /**
- * A list ordered of with the various {@link FortuneWheelItemOption} flavors that should be generated
- * for a single {@link FortuneWheelItemOption}.
+ * A list ordered of with the various {@link FWItemSetOption} flavors that should be generated
+ * for a single {@link FWItemSetOption}.
  *
- * Used by {@link WheelFortuneItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
+ * Used by {@link FWItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
  * * The order of list elements is *never* changed; new entries can be appended though
  * * The list consists of <= 16 elements
  */
@@ -205,11 +204,15 @@ const DEFAULT_ITEM_SET_INDEX: Record<string, number> = Object.freeze({
     "Petrification": 3,
 });
 
-export abstract class WheelFortuneSelectedBase {
+export abstract class FWSelectedObject<T extends FWObject<WheelFortuneOptionType>> {
     /** The name of custom option */
     name: null | string = null;
-    /** Get the name of the relevant {@link MBSSelect} field */
-    abstract get fieldName(): keyof typeof MBSSelect;
+    /** A read-only view of the underlying list of wheel objects */
+    readonly wheelList: readonly (null | T)[];
+
+    constructor(wheelList: readonly (null | T)[]) {
+        this.wheelList = wheelList;
+    }
 
     /** Reset all currently select options to their default. */
     reset(): void {
@@ -217,15 +220,14 @@ export abstract class WheelFortuneSelectedBase {
     }
 
     /**
-     * Return whether the {@link WheelFortuneSelectedItemSet.name} attribute is valid.
-     * @param selectedIndex The index of the currently opened {@link WheelFortuneItemSet} (if any)
+     * Return whether the {@link FWSelectedItemSet.name} and any other attributes are valid.
+     * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
      */
-    isValidName(selectedIndex: null | number = null): boolean {
+    isValid(selectedIndex: null | number = null): boolean {
         if (this.name === null) {
             return false;
         }
-        const values: (null | { name: string })[] = MBSSelect[this.fieldName] ?? Player.MBSSettings[this.fieldName];
-        return values.every((value, i) => {
+        return this.wheelList.every((value, i) => {
             if (i === selectedIndex) {
                 return true;
             } else {
@@ -238,10 +240,10 @@ export abstract class WheelFortuneSelectedBase {
      * Update this instance with settings from the provided wheel of fortune object.
      * @param value The to-be read wheel of fortune object
      */
-    abstract readSettings(value: WheelFortuneBase<FortuneWheelBaseOption>): void;
+    abstract readSettings(value: T): void;
 
     /** Construct a new wheel of fortune object. */
-    abstract writeSettings(hidden?: boolean): WheelFortuneBase<FortuneWheelBaseOption>;
+    abstract writeSettings(hidden?: boolean): T;
 
     /** Return a string representation of this instance. */
     toString(): string {
@@ -252,12 +254,10 @@ export abstract class WheelFortuneSelectedBase {
     abstract valueOf(): object;
 }
 
-export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
-    /** Get the name of the relevant {@link MBSSelect} field */
-    get fieldName(): "FortuneWheelItemSets" { return "FortuneWheelItemSets"; }
+export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
     /** The to-be equipped items */
-    itemList: null | readonly FortuneWheelItem[] = null;
-    /** Which flavors of {@link FortuneWheelItemOption} should be created */
+    itemList: null | readonly FWItem[] = null;
+    /** Which flavors of {@link FWItemSetOption} should be created */
     flags: Set<FortuneWheelFlags> = new Set(["5 Minutes", "15 Minutes", "1 Hour", "Exclusive"]);
     /** The cached base64 outfit code */
     outfitCache: null | string = null;
@@ -280,8 +280,8 @@ export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
         this.equipIter.setPosition(index);
     }
 
-    constructor() {
-        super();
+    constructor(wheelList: readonly (null | FWItemSet)[]) {
+        super(wheelList);
         this.stripIter = new LoopIterator([StripLevel.NONE, StripLevel.CLOTHES, StripLevel.UNDERWEAR, StripLevel.COSPLAY], StripLevel.UNDERWEAR);
         this.equipIter = new LoopIterator([StripLevel.NONE, StripLevel.CLOTHES, StripLevel.UNDERWEAR, StripLevel.COSPLAY], StripLevel.UNDERWEAR);
     }
@@ -300,8 +300,8 @@ export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
      * Update this instance with settings from the provided item set.
      * @param itemSet The to-be read wheel of fortune item set
      */
-    readSettings(itemSet: WheelFortuneItemSet): void {
-        if (!(itemSet instanceof WheelFortuneItemSet)) {
+    readSettings(itemSet: FWItemSet): void {
+        if (!(itemSet instanceof FWItemSet)) {
             throw new TypeError(`Invalid "ItemSet" type: ${typeof itemSet}`);
         }
         this.name = itemSet.name;
@@ -319,13 +319,14 @@ export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
     writeSettings(
         hidden: boolean = false,
         preRunCallback: null | FortuneWheelPreRunCallback = null,
-    ): WheelFortuneItemSet {
+    ): FWItemSet {
         if (this.name === null || this.itemList === null) {
             throw new Error("Cannot create an ItemSet while \"name\" or \"itemList\" is null");
         }
-        return new WheelFortuneItemSet(
+        return new FWItemSet(
             this.name,
             this.itemList,
+            this.wheelList,
             this.stripLevel,
             this.equipLevel,
             this.flags,
@@ -363,6 +364,14 @@ export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
         return true;
     }
 
+    /**
+     * Return whether the {@link FWSelectedItemSet.name} and any other attributes are valid.
+     * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
+     */
+    isValid(selectedIndex: null | number = null): this is typeof this & { itemList: readonly FWItem[] } {
+        return super.isValid(selectedIndex) && this.itemList !== null;
+    }
+
     /** Return an object representation of this instance. */
     valueOf() {
         return {
@@ -376,10 +385,7 @@ export class WheelFortuneSelectedItemSet extends WheelFortuneSelectedBase {
     }
 }
 
-export class WheelFortuneSelectedCommand extends WheelFortuneSelectedBase {
-    /** Get the name of the relevant {@link MBSSelect} field */
-    get fieldName(): "FortuneWheelCommands" { return "FortuneWheelCommands"; }
-
+export class FWSelectedCommand extends FWSelectedObject<FWCommand> {
     /** Reset all currently select options to their default. */
     reset(): void {
         this.name = null;
@@ -389,19 +395,19 @@ export class WheelFortuneSelectedCommand extends WheelFortuneSelectedBase {
      * Update this instance with settings from the provided command.
      * @param command The to-be read wheel of fortune command
      */
-    readSettings(command: WheelFortuneCommand): void {
-        if (!(command instanceof WheelFortuneCommand)) {
+    readSettings(command: FWCommand): void {
+        if (!(command instanceof FWCommand)) {
             throw new TypeError(`Invalid "command" type: ${typeof command}`);
         }
         this.name = command.name;
     }
 
     /** Construct a new wheel of fortune command. */
-    writeSettings(hidden: boolean = false): WheelFortuneCommand {
+    writeSettings(hidden: boolean = false): FWCommand {
         if (this.name === null) {
             throw new Error("Cannot create a Command while \"name\" is null");
         }
-        return new WheelFortuneCommand(this.name, hidden);
+        return new FWCommand(this.name, this.wheelList, hidden);
     }
 
     /** Return an object representation of this instance. */
@@ -413,17 +419,17 @@ export class WheelFortuneSelectedCommand extends WheelFortuneSelectedBase {
 }
 
 /** A base class for fortune wheel sets. */
-export abstract class WheelFortuneBase<OptionType extends FortuneWheelBaseOption> {
+export abstract class FWObject<OptionType extends FWObjectOption> {
     /** The name of custom option */
     readonly name: string;
     /** Whether this concerns a custom user-created item set */
     readonly custom: boolean;
-    /** The character ID of the item option's owner when or `null` for non-custom items */
-    readonly ownerID: null | number;
     /** The registered options corresponding to this item set (if any) */
     #children: null | readonly OptionType[] = null;
     /** Whether the item set is meant to be hidden */
     #hidden: boolean = true;
+    /** A readonly view of the character's list of wheel objects */
+    readonly wheelList: readonly (null | FWObject<OptionType>)[];
 
     /** Get the registered options corresponding to this item set (if any) */
     get children(): null | readonly OptionType[] { return this.#children; }
@@ -442,15 +448,13 @@ export abstract class WheelFortuneBase<OptionType extends FortuneWheelBaseOption
 
     /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
     get index(): number {
-        return this.itemSets.findIndex(i => i === this);
+        return this.wheelList.findIndex(i => i === this);
     }
 
-    abstract get itemSets(): (WheelFortuneBase<OptionType> | null)[];
-
-    constructor(name: string, custom: boolean, hidden: boolean) {
+    constructor(name: string, custom: boolean, wheelList: readonly (null | FWObject<OptionType>)[], hidden: boolean) {
         this.name = name;
         this.custom = custom;
-        this.ownerID = custom ? WheelFortuneCharacter?.MemberNumber ?? <number>Player.MemberNumber : null;
+        this.wheelList = wheelList;
         this.#hidden = hidden;
     }
 
@@ -463,16 +467,16 @@ export abstract class WheelFortuneBase<OptionType extends FortuneWheelBaseOption
     }
 
     /**
-     * Construct a new {@link WheelFortuneBase} instance from the passed object
+     * Construct a new {@link FWObject} instance from the passed object
      * @param kwargs The to-be parsed object
      */
-    static fromObject(_: object): WheelFortuneBase<FortuneWheelBaseOption> {
+    static fromObject(..._: any): FWObject<FWObjectOption> {
         throw new Error("Trying to call an abstract method");
     }
 
     /**
-     * Convert this instance into a list of {@link FortuneWheelItemOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
+     * Convert this instance into a list of {@link FWItemSetOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
     abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
@@ -489,7 +493,7 @@ export abstract class WheelFortuneBase<OptionType extends FortuneWheelBaseOption
     }
 
     /**
-     * Convert this instance into a list of {@link FortuneWheelItemOption} and
+     * Convert this instance into a list of {@link FWItemSetOption} and
      * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
      * @param push Wether the new MBS settings should be pushed to the server
      */
@@ -545,10 +549,11 @@ export abstract class WheelFortuneBase<OptionType extends FortuneWheelBaseOption
     abstract valueOf(): object;
 }
 
-/** {@link WheelFortuneItemSet} constructor argument types in tuple form */
-type WheelFortuneItemSetArgTypes = [
+/** {@link FWItemSet} constructor argument types in tuple form */
+type FWItemSetArgTypes = [
     name: string,
-    itemList: readonly FortuneWheelItem[],
+    itemList: readonly FWItem[],
+    wheelList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
     flags?: Iterable<FortuneWheelFlags>,
@@ -557,10 +562,11 @@ type WheelFortuneItemSetArgTypes = [
     preRunCallback?: null | FortuneWheelPreRunCallback,
 ];
 
-/** {@link WheelFortuneItemSet} constructor argument types in object form */
-type WheelFortuneItemSetKwargTypes = {
+/** {@link FWItemSet} constructor argument types in object form */
+type FWItemSetKwargTypes = {
     name: string,
-    itemList: readonly FortuneWheelItem[],
+    itemList: readonly FWItem[],
+    wheelList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
     flags?: Iterable<FortuneWheelFlags>,
@@ -569,30 +575,29 @@ type WheelFortuneItemSetKwargTypes = {
     preRunCallback?: null | FortuneWheelPreRunCallback,
 };
 
-/** {@link WheelFortuneItemSet} parsed constructor argument types in object form */
-type WheelFortuneItemSetKwargTypesParsed = Required<WheelFortuneItemSetKwargTypes> & { flags: Readonly<Set<FortuneWheelFlags>> };
+/** {@link FWItemSet} parsed constructor argument types in object form */
+type WheelFortuneItemSetKwargTypesParsed = Required<FWItemSetKwargTypes> & { flags: Readonly<Set<FortuneWheelFlags>> };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
-export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption> {
+export class FWItemSet extends FWObject<FWItemSetOption> {
     /** The to-be equipped items */
-    readonly itemList: readonly FortuneWheelItem[];
+    readonly itemList: readonly FWItem[];
     /** Which items should be removed from the user */
     readonly stripLevel: StripLevel;
     /** Which from the to-be equipped outfit should be actually equipped */
     readonly equipLevel: StripLevel;
-    /** Which flavors of {@link FortuneWheelItemOption} should be created */
+    /** Which flavors of {@link FWItemSetOption} should be created */
     readonly flags: Readonly<Set<FortuneWheelFlags>>;
     /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
-
-    get itemSets() {
-        return MBSSelect.FortuneWheelItemSets ?? Player.MBSSettings.FortuneWheelItemSets;
-    }
+    // @ts-ignore: false positive; narrowing of superclass attribute type
+    readonly wheelList: readonly (null | FWItemSet)[];
 
     /** Initialize the instance */
     constructor(
         name: string,
-        itemList: readonly FortuneWheelItem[],
+        itemList: readonly FWItem[],
+        wheelList: readonly (null | FWItemSet)[],
         stripLevel?: StripLevel,
         equipLevel?: StripLevel,
         flags?: Iterable<FortuneWheelFlags>,
@@ -600,9 +605,10 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
         hidden?: boolean,
         preRunCallback?: null | FortuneWheelPreRunCallback,
     ) {
-        const kwargs = WheelFortuneItemSet.validate({
+        const kwargs = FWItemSet.validate({
             name: name,
             itemList: itemList,
+            wheelList: wheelList,
             stripLevel: stripLevel,
             equipLevel: equipLevel,
             flags: flags,
@@ -610,7 +616,7 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
             hidden: hidden,
             preRunCallback: preRunCallback,
         });
-        super(kwargs.name, kwargs.custom, kwargs.hidden);
+        super(kwargs.name, kwargs.custom, kwargs.wheelList, kwargs.hidden);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
@@ -619,7 +625,7 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
     }
 
     /** Validation function for the classes' constructor */
-    static validate(kwargs: WheelFortuneItemSetKwargTypes): WheelFortuneItemSetKwargTypesParsed {
+    static validate(kwargs: FWItemSetKwargTypes): WheelFortuneItemSetKwargTypesParsed {
         if (typeof kwargs.name !== "string") {
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
@@ -628,6 +634,10 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
             kwargs.itemList = Object.freeze([...kwargs.itemList]);
         } else {
             throw new TypeError(`Invalid "itemList" type: ${typeof kwargs.itemList}`);
+        }
+
+        if (!Array.isArray(kwargs.wheelList)) {
+            throw new TypeError(`Invalid "wheelList" type: ${typeof kwargs.wheelList}`);
         }
 
         if (!Object.values(StripLevel).includes(<StripLevel>kwargs.stripLevel)) {
@@ -665,19 +675,28 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
     }
 
     /**
-     * Construct a new {@link WheelFortuneItemSet} instance from the passed object
+     * Construct a new {@link FWItemSet} instance from the passed object
      * @param kwargs The to-be parsed object
      */
-    static fromObject(kwargs: WheelFortuneItemSetKwargTypes): WheelFortuneItemSet {
-        const argNames: (keyof typeof kwargs)[] = ["name", "itemList", "stripLevel", "equipLevel", "flags", "custom", "hidden", "preRunCallback"];
-        const args = <WheelFortuneItemSetArgTypes>argNames.map(name => kwargs[name]);
-        return new WheelFortuneItemSet(...args);
+    static fromObject(wheelList: readonly (null | FWItemSet)[], kwargs: FWSimplePartialItemSet): FWItemSet {
+        const args: FWItemSetArgTypes = [
+            kwargs.name,
+            kwargs.itemList,
+            wheelList,
+            kwargs.stripLevel,
+            kwargs.equipLevel,
+            kwargs.flags,
+            kwargs.custom,
+            kwargs.hidden,
+            kwargs.preRunCallback,
+        ];
+        return new FWItemSet(...args);
     }
 
     /**
-     * Factory method for generating {@link FortuneWheelItemOption.Script} callbacks.
+     * Factory method for generating {@link FWItemSetOption.Script} callbacks.
      * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
-     * @returns A valid {@link FortuneWheelItemOption.Script} callback
+     * @returns A valid {@link FWItemSetOption.Script} callback
      */
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
         const assets = this.itemList.map(({Name, Group}) => AssetGet(Player.AssetFamily, Group, Name));
@@ -704,11 +723,11 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
     }
 
     /**
-     * Convert this instance into a list of {@link FortuneWheelItemOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
+     * Convert this instance into a list of {@link FWItemSetOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelItemOption[] {
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
         const flags = sortBy(
             Array.from(this.flags),
             (flag) => FORTUNE_WHEEL_FLAGS.indexOf(flag),
@@ -743,14 +762,13 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
                 Default: !["4 Hours", "High Security"].includes(flag),
                 Custom: this.custom,
                 Parent: this,
-                OwnerID: this.ownerID,
                 Flag: flag,
             };
         });
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf() {
+    valueOf(): FWSimpleItemSet {
         return {
             name: this.name,
             itemList: this.itemList,
@@ -764,63 +782,68 @@ export class WheelFortuneItemSet extends WheelFortuneBase<FortuneWheelItemOption
     }
 }
 
-/** {@link WheelFortuneCommand} constructor argument types in tuple form */
-type WheelFortuneCommandSetArgTypes = [
+/** {@link FWCommand} constructor argument types in tuple form */
+type FWCommandArgTypes = [
     name: string,
+    wheelList: readonly (null | FWCommand)[],
     hidden?: boolean,
 ];
 
-/** {@link WheelFortuneCommand} constructor argument types in object form */
-type WheelFortuneCommandSetKwargTypes = {
+/** {@link FWCommand} constructor argument types in tuple form */
+type FWCommandKwargTypes = {
     name: string,
+    wheelList: readonly (null | FWCommand)[],
     hidden?: boolean,
 };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
-export class WheelFortuneCommand extends WheelFortuneBase<FortuneWheelCommandOption> {
+export class FWCommand extends FWObject<FWCommandOption> {
     // @ts-ignore: false positive; narrowing of superclass attribute type
     readonly custom: true;
     // @ts-ignore: false positive; narrowing of superclass attribute type
-    readonly ownerID: number;
-
-    get itemSets(): (null | WheelFortuneCommand)[] {
-        return MBSSelect.FortuneWheelCommands ?? Player.MBSSettings.FortuneWheelCommands;
-    }
+    readonly wheelList: readonly (null | FWCommand)[];
 
     /** Initialize the instance */
-    constructor(name: string, hidden?: boolean) {
-        const kwargs = WheelFortuneCommand.validate({ name: name, hidden: hidden });
-        super(kwargs.name, true, kwargs.hidden);
+    constructor(name: string, wheelList: readonly (null | FWCommand)[], hidden?: boolean) {
+        const kwargs = FWCommand.validate({ name: name, wheelList: wheelList, hidden: hidden });
+        super(kwargs.name, true, kwargs.wheelList, kwargs.hidden);
     }
 
     /** Validation function for the classes' constructor */
-    static validate(kwargs: WheelFortuneCommandSetKwargTypes): Required<WheelFortuneCommandSetKwargTypes> {
+    static validate(kwargs: FWCommandKwargTypes): Required<FWCommandKwargTypes> {
         if (typeof kwargs.name !== "string") {
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
+        }
+
+        if (!Array.isArray(kwargs.wheelList)) {
+            throw new TypeError(`Invalid "wheelList" type: ${typeof kwargs.wheelList}`);
         }
 
         if (typeof kwargs.hidden !== "boolean") {
             kwargs.hidden = true;
         }
-        return <WheelFortuneItemSetKwargTypesParsed>kwargs;
+        return <Required<FWCommandKwargTypes>>kwargs;
     }
 
     /**
-     * Construct a new {@link WheelFortuneItemSet} instance from the passed object
+     * Construct a new {@link FWItemSet} instance from the passed object
      * @param kwargs The to-be parsed object
      */
-    static fromObject(kwargs: WheelFortuneCommandSetKwargTypes): WheelFortuneCommand {
-        const argNames: (keyof typeof kwargs)[] = ["name", "hidden"];
-        const args = <WheelFortuneCommandSetArgTypes>argNames.map(name => kwargs[name]);
-        return new WheelFortuneCommand(...args);
+    static fromObject(wheelList: readonly (null | FWCommand)[], kwargs: FWSimplePartialCommand): FWCommand {
+        const args: FWCommandArgTypes = [
+            kwargs.name,
+            wheelList,
+            kwargs.hidden,
+        ];
+        return new FWCommand(...args);
     }
 
     /**
-     * Convert this instance into a list of {@link FortuneWheelItemOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FortuneWheelItemOption.ID} values
+     * Convert this instance into a list of {@link FWItemSetOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FortuneWheelCommandOption[] {
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWCommandOption[] {
         const ID = 3 * ITEM_SET_CATEGORY_ID_RANGE + this.index;
         return [{
             ID: String.fromCharCode(ID),
@@ -829,14 +852,13 @@ export class WheelFortuneCommand extends WheelFortuneBase<FortuneWheelCommandOpt
             Default: true,
             Custom: this.custom,
             Parent: this,
-            OwnerID: this.ownerID,
             Script: undefined,
             Flag: undefined,
         }];
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf() {
+    valueOf(): FWSimpleCommand {
         return { name: this.name, hidden: this.hidden };
     }
 }

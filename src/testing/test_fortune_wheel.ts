@@ -2,12 +2,12 @@
 
 import { flatten } from "lodash-es";
 
-import { WheelFortuneItemSet } from "../common_bc";
+import { FWItemSet } from "../common_bc";
 import { FORTUNE_WHEEL_ITEM_SETS } from "../fortune_wheel";
 import { fromItemBundle } from "../item_bundle";
 import { assertEqual, assert, PASSES } from "./testing_tools";
 
-type filterCallback = (wheelItem: FortuneWheelItem, character: Character) => null | FortuneWheelItem;
+type filterCallback = (wheelItem: FWItem, character: Character) => null | FWItem;
 
 const OptionFilters = Object.freeze(<Record<string, filterCallback>>{
     Mummification: (wheelItem) => {
@@ -22,7 +22,7 @@ export function test_builtinMBSWheel(): void {
     const characterNames = options.map(i => i.Description);
     try {
         options.forEach(option => {
-            if (!(option.Parent instanceof WheelFortuneItemSet)) {
+            if (!(option.Parent instanceof FWItemSet)) {
                 return;
             }
             const character = CharacterLoadSimple(option.Description);

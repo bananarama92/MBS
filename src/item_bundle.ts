@@ -103,7 +103,7 @@ export function fromItemBundle(
     asset: null | Asset,
     item: ItemBundle,
     custom: boolean = true,
-): FortuneWheelItem {
+): FWItem {
     for (const [msgPrefix, validationCheck] of UNSUPPORTED_ASSET_CHECKS) {
         if (validationCheck(asset)) {
             throw new Error(`${msgPrefix}: ${item.Group}${item.Name}`);
@@ -151,13 +151,13 @@ export function fromItemBundle(
  * @param items The original bundled items
  * @returns The new list of wheel of fortune items
  */
-export function fromItemBundles(items: readonly ItemBundle[]): FortuneWheelItem[] {
+export function fromItemBundles(items: readonly ItemBundle[]): FWItem[] {
     if (!Array.isArray(<readonly ItemBundle[]>items)) {
         throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
 
     // NOTE: Take extra care here as users can pass arbitrary arrays due to the handling of base64-decompressed data
-    const ret: FortuneWheelItem[] = [];
+    const ret: FWItem[] = [];
     const caughtErrors: Map<string, Error> = new Map();
     items.forEach((item, i)  => {
         let asset: null | Asset = null;
@@ -182,7 +182,7 @@ export function fromItemBundles(items: readonly ItemBundle[]): FortuneWheelItem[
  * Convert a single wheel of fortune item into an item bundle
  * @param item The original wheel of fortune item
  */
-export function toItemBundle(item: FortuneWheelItem, character: Character): ItemBundle {
+export function toItemBundle(item: FWItem, character: Character): ItemBundle {
     const { Group, Name, Color, Craft, Type, Property } = item;
     const asset = AssetGet(character.AssetFamily, Group, Name);
     if (asset == null) {
@@ -204,8 +204,8 @@ export function toItemBundle(item: FortuneWheelItem, character: Character): Item
  * Convert wheel of fortune items into an item bundle
  * @param items The original wheel of fortune items
  */
-export function toItemBundles(items: readonly FortuneWheelItem[], character: Character): ItemBundle[] {
-    if (!Array.isArray(<readonly FortuneWheelItem[]>items)) {
+export function toItemBundles(items: readonly FWItem[], character: Character): ItemBundle[] {
+    if (!Array.isArray(<readonly FWItem[]>items)) {
         throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
     return items.map(item => toItemBundle(item, character));
