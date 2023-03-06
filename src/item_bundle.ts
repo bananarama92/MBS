@@ -4,6 +4,7 @@
 
 import { cloneDeep, clone } from "lodash-es";
 
+import { isArray } from "common";
 import { getBaselineProperty } from "type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
@@ -205,7 +206,7 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
  * @param items The original wheel of fortune items
  */
 export function toItemBundles(items: readonly FWItem[], character: Character): ItemBundle[] {
-    if (!Array.isArray(<readonly FWItem[]>items)) {
+    if (!isArray(items)) {
         throw new TypeError(`Invalid "items" type: ${typeof items}`);
     }
     return items.map(item => toItemBundle(item, character));

@@ -7,6 +7,7 @@ import {
     randomElement,
     waitFor,
     padArray,
+    isArray,
 } from "common";
 import {
     FWItemSet,
@@ -31,7 +32,7 @@ import { ScreenProxy } from "screen_abc";
 function copyHairColor(item: Item, character: Character, indices: readonly number[]): void {
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
-    } else if (!Array.isArray(<readonly number[]>indices)) {
+    } else if (!isArray(indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     } else if (character === null || typeof character !== "object") {
         throw new TypeError(`Invalid "character" type: ${typeof character}`);
@@ -70,7 +71,7 @@ function copyHairColor(item: Item, character: Character, indices: readonly numbe
  * @param color The color
  */
 function colorItems(groupNames: readonly AssetGroupName[], character: Character, color: string): void {
-    if (!Array.isArray(<readonly AssetGroupName[]>groupNames)) {
+    if (!isArray(groupNames)) {
         throw new TypeError(`Invalid "groupNames" type: ${typeof groupNames}`);
     } else if (typeof color !== "string") {
         throw new TypeError(`Invalid "color" type: ${typeof groupNames}`);

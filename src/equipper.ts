@@ -6,7 +6,7 @@ import { cloneDeep, sortBy } from "lodash-es";
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { BCX_MOD_API, waitFor } from "common";
+import { BCX_MOD_API, waitFor, isArray } from "common";
 import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
 
 /**
@@ -133,7 +133,7 @@ export function itemsArgSort(
     character: Character,
     itemSuperList: readonly SimpleItem[] = [],
 ): Map<AssetGroupName, Node> {
-    if (!Array.isArray(<readonly SimpleItem[]>itemList)) {
+    if (!isArray(itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
     }
 
@@ -285,7 +285,7 @@ export function fortuneWheelEquip(
     preRunCallback: null | FortuneWheelPreRunCallback = null,
     character: Character = Player,
 ): void {
-    if (!Array.isArray(<readonly FWItem[]>itemList)) {
+    if (!isArray(itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
     }
 
