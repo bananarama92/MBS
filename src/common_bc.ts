@@ -345,18 +345,16 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
             return false;
         }
 
-        let items: ItemBundle[];
+        let items: ItemBundle | ItemBundle[];
+        let itemList: FWItem[];
         try {
             items = JSON.parse(<string>LZString.decompressFromBase64(this.outfitCache));
+            itemList = fromItemBundles(items);
         } catch (ex) {
             console.warn("MBS: Failed to parse outfit code:", ex);
             return false;
         }
-        if (!Array.isArray(items)) {
-            return false;
-        }
 
-        const itemList = fromItemBundles(items);
         if (itemList.length === 0) {
             return false;
         }
