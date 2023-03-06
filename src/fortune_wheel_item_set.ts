@@ -188,14 +188,14 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
         if (!isPlayer) {
             acceptDisabled = true;
             acceptColor = "Gray";
-        } else if (!this.settings.isValid(this.index)) {
-            acceptDisabled = true;
-            acceptColor = "Gray";
-            acceptDescription += (this.settings.name === null) ? ": Missing name" : ": Duplicate name";
         } else if (this.settings.itemList === null) {
             acceptDisabled = true;
             acceptColor = "Gray";
             acceptDescription += ": Missing outfit";
+        } else if (!this.settings.isValid(this.index)) {
+            acceptDisabled = true;
+            acceptColor = "Gray";
+            acceptDescription += (this.settings.name === null) ? ": Missing name" : ": Duplicate name";
         }
         DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
         DrawCharacter(this.preview, 300, 175, 0.78, false);
