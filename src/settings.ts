@@ -125,7 +125,7 @@ function initMBSSettings(): void {
     }
 
     Player.MBSSettings = Object.seal({
-        Version: settings.Version,
+        Version: MBS_VERSION,
         CraftingCache: settings.CraftingCache,
         FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
