@@ -90,7 +90,7 @@ export function trimArray<T>(list: T[], n: number): T[] {
  * @returns The random element from the passed list
  */
 export function randomElement<T>(list: readonly T[]): T {
-    if (!Array.isArray(list)) {
+    if (!isArray(list)) {
         throw new TypeError(`Invalid "list" type: ${typeof list}`);
     } else if (list.length === 0) {
         throw new Error('Passed "list" must contain at least 1 item');
@@ -121,7 +121,7 @@ export async function waitFor(predicate: () => boolean, timeout: number = 10): P
 }
 
 /** The MBS version. */
-export const MBS_VERSION = "0.5.0";
+export const MBS_VERSION = "0.5.1";
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({
@@ -386,4 +386,9 @@ export class Version {
             beta: this.beta,
         };
     }
+}
+
+/** A more readonly-friendly version of {@link Array.isArray}. */
+export function isArray(arg: any): arg is readonly any[] {
+    return Array.isArray(arg);
 }

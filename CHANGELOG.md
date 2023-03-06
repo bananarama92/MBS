@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.5.1
+* Fix the "Missing outfit" error message not showing
+* Allow custom item sets to be specified via (serialized) single items in addition to item lists
+
 ## v0.5.0
 * Add a MBS test suite
 * Drop BC R88 support
