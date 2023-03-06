@@ -148,13 +148,17 @@ export function fromItemBundle(
 }
 
 /**
- * Validate and convert a base64-deserialized {@link ItemBundle} array into a wheel of fortune item list.
- * @param items The original bundled items
+ * Validate and convert a base64-deserialized {@link ItemBundle} or array thereof into a wheel of fortune item list.
+ * @param items The original bundled item(s)
  * @returns The new list of wheel of fortune items
  */
-export function fromItemBundles(items: readonly ItemBundle[]): FWItem[] {
-    if (!Array.isArray(<readonly ItemBundle[]>items)) {
-        throw new TypeError(`Invalid "items" type: ${typeof items}`);
+export function fromItemBundles(items: ItemBundle | readonly ItemBundle[]): FWItem[] {
+    if (!isArray(items)) {
+        if (items !== null && typeof items === "object") {
+            items = [items];
+        } else {
+            throw new TypeError(`Invalid "items" type: ${typeof items}`);
+        }
     }
 
     // NOTE: Take extra care here as users can pass arbitrary arrays due to the handling of base64-decompressed data
