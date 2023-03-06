@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v0.5.2
+* Fix the name of the `MiniGame` module
+* Ensure that colors are always copied when creating items
+* Update type annotations for BC R90Beta1
+* Allow custom item sets to be specified via (serialized) single items in addition to item lists (for real this time...)
+
 ## v0.5.1
 * Fix the "Missing outfit" error message not showing
 * Allow custom item sets to be specified via (serialized) single items in addition to item lists
