@@ -355,8 +355,10 @@ export function fortuneWheelEquip(
         }
 
         // Equip the item while avoiding refreshes as much as possible until all items are
+        const color = Color ?? asset.DefaultColor;
+        const colorCopy = isArray(color) ? [...color] : color;
         CharacterAppearanceSetItem(
-            character, Group, asset, Color || asset.DefaultColor,
+            character, Group, asset, colorCopy,
             SkillGetWithRatio("Bondage"), character.MemberNumber, false,
         );
         const newItem = InventoryGet(character, Group);
