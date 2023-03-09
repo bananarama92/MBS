@@ -120,6 +120,6 @@ export class FWSelectScreen extends MBSScreen {
 
     exit(): void {
         this.exitScreens(true);
-        CommonSetScreen("Minigame", "WheelFortune");
+        CommonSetScreen("MiniGame", "WheelFortune");
     }
 }
