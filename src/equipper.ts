@@ -204,7 +204,7 @@ export function fortuneItemsSort(
 }
 
 /** A {@link canUnlock} cache for keeping track of whether a character has keys for specific lock types. */
-const keyCache: Map<AssetLockType, boolean> = new Map();
+const keyCache: Map<string, boolean> = new Map();
 
 /**
  * Return whether the character can unlock the item in question.
@@ -235,10 +235,10 @@ function canUnlock(item: Item, character: Character): boolean {
             if (blockKeyUse || LogQuery("KeyDeposit", "Cell")) {
                 return false;
             }
-            let hasKey = keyCache.get("MetalPadlock");
+            let hasKey = keyCache.get(`${character.ID}:${lock.Asset.Name}`);
             if (hasKey === undefined) {
                 hasKey = character.Inventory.some(item => item.Asset.Name === `${lock.Asset.Name}Key`);
-                keyCache.set("MetalPadlock", hasKey);
+                keyCache.set(`${character.ID}:${lock.Asset.Name}`, hasKey);
             }
             return hasKey;
         }
