@@ -53,8 +53,8 @@ type HashList = readonly [
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
         ["WheelFortuneLoad", ["204D57D4"]],
-        ["WheelFortuneCustomizeLoad", ["C2E0EA45"]],
-        ["WheelFortuneClick", ["16991349", "97F0A81E"]],
+        ["WheelFortuneCustomizeLoad", ["C2E0EA45", "97F0A81E"]],
+        ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["51EF162A", "E9E5F3D6"]],
         ["CraftingSaveServer", ["823BB54B"]],
     ];
