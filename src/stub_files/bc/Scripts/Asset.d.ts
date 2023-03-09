@@ -112,40 +112,41 @@ declare function AssetLoadDescription(Family: IAssetFamily): void;
  * @param {ExtendedItemConfig} ExtendedConfig
  */
 declare function AssetLoad(Groups: readonly AssetGroupDefinition[], Family: IAssetFamily, ExtendedConfig: ExtendedItemConfig): void;
+/** Reset and load all the assets */
 declare function AssetLoadAll(): void;
 /**
  * Gets a specific asset by family/group/name
- * @param {string} Family - The family to search in (Ignored until other family is added)
+ * @param {IAssetFamily} Family - The family to search in (Ignored until other family is added)
  * @param {AssetGroupName} Group - Name of the group of the searched asset
  * @param {string} Name - Name of the searched asset
  * @returns {Asset|null}
  */
-declare function AssetGet(Family: string, Group: AssetGroupName, Name: string): Asset | null;
+declare function AssetGet(Family: IAssetFamily, Group: AssetGroupName, Name: string): Asset | null;
 /**
  * Gets all activities on a family and name
- * @param {string} family - The family to search in
+ * @param {IAssetFamily} family - The family to search in
  * @returns {Activity[]}
  */
-declare function AssetAllActivities(family: string): Activity[];
+declare function AssetAllActivities(family: IAssetFamily): Activity[];
 /**
  * Gets an activity asset by family and name
- * @param {string} family - The family to search in
- * @param {string} name - Name of activity to search for
+ * @param {IAssetFamily} family - The family to search in
+ * @param {ActivityName} name - Name of activity to search for
  * @returns {Activity|undefined}
  */
-declare function AssetGetActivity(family: string, name: string): Activity | undefined;
+declare function AssetGetActivity(family: IAssetFamily, name: ActivityName): Activity | undefined;
 /**
  * Get the list of all activities on a group for a given family.
  *
  * @description Note that this just returns activities as defined, no checks are
  * actually done on whether the activity makes sense.
  *
- * @param {string} family
+ * @param {IAssetFamily} family
  * @param {AssetGroupName} groupname
  * @param {"self" | "other" | "any"} onSelf
  * @returns {Activity[]}
  */
-declare function AssetActivitiesForGroup(family: string, groupname: AssetGroupName, onSelf?: "self" | "other" | "any"): Activity[];
+declare function AssetActivitiesForGroup(family: IAssetFamily, groupname: AssetGroupName, onSelf?: "self" | "other" | "any"): Activity[];
 /**
  * Cleans the given array of assets of any items that no longer exists
  * @param {readonly ItemPermissions[]} AssetArray - The arrays of items to clean
@@ -154,11 +155,11 @@ declare function AssetActivitiesForGroup(family: string, groupname: AssetGroupNa
 declare function AssetCleanArray(AssetArray: readonly ItemPermissions[]): ItemPermissions[];
 /**
  * Gets an asset group by the asset family name and group name
- * @param {string} Family - The asset family that the group belongs to (Ignored until other family is added)
+ * @param {IAssetFamily} Family - The asset family that the group belongs to (Ignored until other family is added)
  * @param {AssetGroupName} Group - The name of the asset group to find
  * @returns {AssetGroup|null} - The asset group matching the provided family and group name
  */
-declare function AssetGroupGet(Family: string, Group: AssetGroupName): AssetGroup | null;
+declare function AssetGroupGet(Family: IAssetFamily, Group: AssetGroupName): AssetGroup | null;
 /**
  * Utility function for retrieving the preview image directory path for an asset
  * @param {Asset} A - The asset whose preview path to retrieve
@@ -174,6 +175,7 @@ declare function AssetGetPreviewPath(A: Asset): string;
 declare function AssetGetInventoryPath(A: Asset): string;
 /**
  * Sort a list of asset layers for the {@link Character.AppearanceLayers } property.
+ * Performs an inplace update of the passed array and then returns it.
  * @param {AssetLayer[]} layers - The to-be sorted asset layers
  * @returns {AssetLayer[]} - The newly sorted asset layers
  */

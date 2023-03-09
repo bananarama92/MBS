@@ -39,5 +39,5 @@ declare var AfkTimerIsEnabled: null | boolean;
 declare var AfkTimerEventsList: string[];
 /** @type {null | ReturnType<typeof setInterval>} */
 declare var AfkTimerID: null | ReturnType<typeof setInterval>;
-/** @type {null | string} */
-declare var AfkTimerOldEmoticon: null | string;
+/** @type {null | ExpressionNameMap["Emoticon"]} */
+declare var AfkTimerOldEmoticon: null | ExpressionNameMap["Emoticon"];

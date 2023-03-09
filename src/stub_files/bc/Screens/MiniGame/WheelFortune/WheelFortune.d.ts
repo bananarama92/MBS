@@ -1,10 +1,10 @@
 /**
  * Returns TRUE if the wheel of fortune can add an item on the specified asset slot
  * @param {String} AssetName - The asset name
- * @param {AssetGroupItemName} GroupName - The asset group to focus
+ * @param {AssetGroupName} GroupName - The asset group to focus
  * @returns {boolean} - TRUE if we can add
  */
-declare function WheelFortuneCanWear(AssetName: string, GroupName: AssetGroupItemName): boolean;
+declare function WheelFortuneCanWear(AssetName: string, GroupName: AssetGroupName): boolean;
 /**
  * Puts the player in random futuristic bondage
  * @returns {void} - Nothing
@@ -80,7 +80,8 @@ declare function WheelFortuneResult(): void;
  */
 declare function WheelFortuneExit(): void;
 declare var WheelFortuneBackground: string;
-declare var WheelFortuneEntryModule: string;
+/** @type {"" | ModuleType} */
+declare var WheelFortuneEntryModule: "" | ModuleType;
 declare var WheelFortuneEntryScreen: string;
 /** @type {null | Character} */
 declare var WheelFortuneCharacter: null | Character;

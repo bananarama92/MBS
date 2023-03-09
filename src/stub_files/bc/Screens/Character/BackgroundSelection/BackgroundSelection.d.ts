@@ -81,7 +81,8 @@ declare var BackgroundSelectionSize: number;
 declare var BackgroundSelectionOffset: number;
 /** @type {null | ((selection: string) => void)} */
 declare var BackgroundSelectionCallback: (selection: string) => void;
-declare var BackgroundSelectionPreviousModule: string;
+/** @type {"" | ModuleType} */
+declare var BackgroundSelectionPreviousModule: "" | ModuleType;
 declare var BackgroundSelectionPreviousScreen: string;
 /** @type {{ Name: string, Description: string, Low: string }[]} */
 declare var BackgroundSelectionAll: {

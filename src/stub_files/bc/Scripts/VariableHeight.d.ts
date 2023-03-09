@@ -11,15 +11,17 @@ declare function VariableHeightRegister(asset: Asset, config: VariableHeightConf
  * Generates an asset's variable height data
  * @param {Asset} asset - The asset to generate modular item data for
  * @param {VariableHeightConfig} config - The variable height configuration
+ * @param {ItemProperties} property
+ * @param {ExtendedItemOption[]} parentOptions
  * @returns {VariableHeightData} - The generated variable height data for the asset
  */
-declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, Slider, Dialog, ChatTags, GetHeightFunction, SetHeightFunction }: VariableHeightConfig, property: any, parentOptions: any): VariableHeightData;
+declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, Slider, Dialog, ChatTags, GetHeightFunction, SetHeightFunction }: VariableHeightConfig, property: ItemProperties, parentOptions: ExtendedItemOption[]): VariableHeightData;
 /**
  * Creates an asset's extended item load function
  * @param {VariableHeightData} data - The variable height data for the asset
  * @returns {void} - Nothing
  */
-declare function VariableHeightCreateLoadFunction({ defaultProperty, maxHeight, minHeight, slider, functionPrefix, getHeight, setHeight }: VariableHeightData): void;
+declare function VariableHeightCreateLoadFunction({ maxHeight, minHeight, slider, functionPrefix, getHeight, setHeight }: VariableHeightData): void;
 /**
  * Creates an asset's extended item draw function
  * @param {VariableHeightData} data - The variable height data for the asset
@@ -53,11 +55,11 @@ declare function VariableHeightExit(): void;
  * Publishes a custom action to the chat for the height change
  * @param {Object} dialog - The keywords for the dialog entries to look up
  * @param {Asset} asset - The asset for the variable height item
- * @param {CommonChatTags[]} chatTags - The tags to map to a dictionary entry
+ * @param {readonly CommonChatTags[]} chatTags - The tags to map to a dictionary entry
  * @param {Function} getHeight - Function to find the current setting from a property
  * @returns {void} - Nothing
  */
-declare function VariableHeightPublish(dialog: any, asset: Asset, chatTags: CommonChatTags[], getHeight: Function): void;
+declare function VariableHeightPublish(dialog: any, asset: Asset, chatTags: readonly CommonChatTags[], getHeight: Function): void;
 /**
  * Retrieve the current height position override if set, accounting for inversion
  * @param {ItemProperties} property - Property of the item determining the variable height
@@ -73,6 +75,15 @@ declare function VariableHeightGetOverrideHeight(property: ItemProperties): numb
  * @returns {void} - Nothing
  */
 declare function VariableHeightSetOverrideHeight(property: ItemProperties, height: number, maxHeight: number, minHeight: number): void;
+/**
+ * Initialize the variable height item properties
+ * @param {Item} Item - The item in question
+ * @param {Character} C - The character that has the item equiped
+ * @param {string} Type - The item's type
+ * @param {boolean} Refresh -  Whether the character and relevant item should be refreshed and pushed to the server
+ * @see {@link ExtendedItemInit}
+ */
+declare function VariableHeightInit(Item: Item, C: Character, Type: string, Refresh?: boolean): void;
 /**
  * The name of vertical slider element
  * @const {string}

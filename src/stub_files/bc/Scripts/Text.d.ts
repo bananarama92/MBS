@@ -37,8 +37,8 @@ declare class TextCache {
     language: string;
     /** @type {Record<string, string>} */
     cache: Record<string, string>;
-    /** @type {(() => void)[]} */
-    rebuildListeners: (() => void)[];
+    /** @type {((cache?: TextCache) => void)[]} */
+    rebuildListeners: ((cache?: TextCache) => void)[];
     loaded: boolean;
     /**
      * Looks up a string from this TextCache. If the cache contains a value for the provided key and a translation is available, the return
@@ -52,11 +52,11 @@ declare class TextCache {
      * Adds a callback function as a rebuild listener. Rebuild listeners will
      * be called whenever the cache has completed a rebuild (either after
      * initial construction, or after a language change).
-     * @param {Function} callback - The callback to register
+     * @param {(cache?: TextCache) => void} callback - The callback to register
      * @param {boolean} [immediate] - Whether or not the callback should be called on registration
      * @returns {Function} - A callback function which can be used to unsubscribe the added listener
      */
-    onRebuild(callback: Function, immediate?: boolean): Function;
+    onRebuild(callback: (cache?: TextCache) => void, immediate?: boolean): Function;
     /**
      * Kicks off a build of the text lookup cache
      * @returns {void} - Nothing

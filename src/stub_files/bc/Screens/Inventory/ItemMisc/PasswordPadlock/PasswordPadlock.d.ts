@@ -1,23 +1,13 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemMiscPasswordPadlockInit(Item: Item, C: Character): void;
 declare function InventoryItemMiscPasswordPadlockLoad(): void;
 declare function InventoryItemMiscPasswordPadlockDraw(): void;
 declare function InventoryItemMiscPasswordPadlockDrawControls(): void;
 declare function InventoryItemMiscPasswordPadlockClick(): void;
-/**
- * @param {() => void} ExitCallback
- */
-declare function InventoryItemMiscPasswordPadlockControlsClick(ExitCallback: () => void): void;
-/**
- * @param {() => void} ExitCallback
- */
-declare function InventoryItemMiscPasswordPadlockHandleOpenClick(ExitCallback: () => void): void;
-/**
- * @param {() => void} ExitCallback
- */
-declare function InventoryItemMiscPasswordPadlockHandleFirstSet(ExitCallback: () => void): void;
+declare function InventoryItemMiscPasswordPadlockControlsClick(ExitCallback: any): void;
+declare function InventoryItemMiscPasswordPadlockHandleOpenClick(ExitCallback: any): void;
+declare function InventoryItemMiscPasswordPadlockHandleFirstSet(ExitCallback: any): void;
 declare function InventoryItemMiscPasswordPadlockExit(): void;
 declare function InventoryItemMiscPasswordPadlockIsSet(): boolean;
-/**
- * @param {Character} C
- */
-declare function InventoryItemMiscPasswordPadlockPublishPasswordChange(C: Character): void;
+declare function InventoryItemMiscPasswordPadlockPublishPasswordChange(C: any): void;
 declare const InventoryItemMiscPasswordPadlockPasswordRegex: RegExp;

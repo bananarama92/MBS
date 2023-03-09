@@ -14,8 +14,4 @@ declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
 /** @type {DynamicBeforeDrawCallback} */
 declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData): void;

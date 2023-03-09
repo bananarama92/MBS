@@ -6,10 +6,10 @@
 declare function SpeechFullEmote(D: string): boolean;
 /**
  * Returns the gag level corresponding to the given effect array, or 0 if the effect array contains no gag effects
- * @param {EffectName[]} Effect - The effect to lookup the gag level for
+ * @param {readonly EffectName[]} Effect - The effect to lookup the gag level for
  * @return {number} - The gag level corresponding to the given effects
  */
-declare function SpeechGetEffectGagLevel(Effect: EffectName[]): number;
+declare function SpeechGetEffectGagLevel(Effect: readonly EffectName[]): number;
 /**
  * Gets the cumulative gag level of an asset group. Each gagging effect has a specific numeric value. The following
  * Effect arrays are used for the calculation:
@@ -17,10 +17,10 @@ declare function SpeechGetEffectGagLevel(Effect: EffectName[]): number;
  *     - Item.Asset.Effect
  *     - Item.Asset.Group.Effect
  * @param {Character} C - The character, whose assets are used for the check
- * @param {readonly AssetGroupName[]} AssetGroups - The name of the asset groups to look through
+ * @param {readonly AssetGroupItemName[]} AssetGroups - The name of the asset groups to look through
  * @returns {number} - Returns the total gag effect of the character's assets
  */
-declare function SpeechGetGagLevel(C: Character, AssetGroups: readonly AssetGroupName[]): number;
+declare function SpeechGetGagLevel(C: Character, AssetGroups: readonly AssetGroupItemName[]): number;
 /**
  * Gets the cumulative gag level of a character
  * @param {Character} C - The character, whose assets are used for the check
@@ -44,9 +44,9 @@ declare function sfc32(a: any, b: any, c: any, d: any): () => number;
  * @param {number} b - seed 2
  * @param {number} c - seed 3
  * @param {number} d - seed 4
- * @returns {function} - The function where it could be used to do PRNG magic.
+ * @returns {() => number} - The function where it could be used to do PRNG magic.
  */
-declare function sfc32(a: number, b: number, c: number, d: number): Function;
+declare function sfc32(a: number, b: number, c: number, d: number): () => number;
 /**
  * Random seeding tool to generate random seeding sequence that is able to be used.
  * This allows the random result always be the same when the seed is the same.
@@ -108,9 +108,10 @@ declare function isAccentedOrLatinCharacter(character: string): boolean;
  * The core of the speech garble function, usable without being tied to a specific character
  * @param {number} GagEffect - The gag level of the speech
  * @param {string} CD - The character's dialog to alter
+ * @param {boolean} IgnoreOOC
  * @return {string} - Garbled text
  */
-declare function SpeechGarbleByGagLevel(GagEffect: number, CD: string, IgnoreOOC: any): string;
+declare function SpeechGarbleByGagLevel(GagEffect: number, CD: string, IgnoreOOC?: boolean): string;
 /**
  * Makes the character stutter if she has a vibrating item and/or is aroused. Stuttering based on arousal is toggled in the character's settings.
  * @param {Character} C - The character, whose dialog might need to be altered

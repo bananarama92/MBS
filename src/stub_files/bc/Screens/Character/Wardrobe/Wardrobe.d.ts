@@ -71,16 +71,20 @@ declare function WardrobeFastSave(C: Character, W: number, Push?: boolean): void
 /**
  * Returns the expressions of character C as a single big object
  * @param {Character} C - The character whose expressions should be returned
- * @returns {object} Expression - The expresssion of a character
+ * @returns {Partial<Record<ExpressionGroupName, ExpressionName>>} Expression - The expresssion of a character
  */
-declare function WardrobeGetExpression(C: Character): object;
+declare function WardrobeGetExpression(C: Character): Partial<Record<ExpressionGroupName, ExpressionName>>;
 /**
  * Checks if a given group of a character can be accessed.
  * @param {Character} C - The character in the wardrobe
  * @param {AssetGroup} Group - The group to check for accessibility
+ * @param {object} [Options] - Options to use for the check
+ * @param {boolean} Options.ExcludeNonCloth - Removes anything that's not clothing.
  * @returns {boolean} - Whether the zone can be altered or not.
  */
-declare function WardrobeGroupAccessible(C: Character, Group: AssetGroup, Options: any): boolean;
+declare function WardrobeGroupAccessible(C: Character, Group: AssetGroup, Options?: {
+    ExcludeNonCloth: boolean;
+}): boolean;
 declare var WardrobeBackground: string;
 /** @type {Character[]} */
 declare var WardrobeCharacter: Character[];

@@ -30,9 +30,11 @@ declare function AnimationRequestDraw(C: Character): void;
  * Gets the group object for a given character. This method should not be called explicitly, use the Data builder passed to the dynamic drawing functions.
  * @param {Character} C - Character wearing the animated object
  * @param {string} Name - Name of the animated object
- * @returns {object} - Contains the persistent group data, returns a new empty object if it was never initialized previously.
+ * @returns {{ Subscriptions: string[] }} - Contains the persistent group data, returns a new empty object if it was never initialized previously.
  */
-declare function AnimationGroupGet(C: Character, Name: string): object;
+declare function AnimationGroupGet(C: Character, Name: string): {
+    Subscriptions: string[];
+};
 /**
  * Marks a given asset as part of a shared data group.
  * @param {Character} C - Character wearing the dynamic object
@@ -66,14 +68,14 @@ declare function AnimationPurge(C: Character, IncludeAll: boolean): void;
 declare var AnimationPersistentStorage: Record<string, any>;
 /**
  * Types of dynamic data that can be stored.
+ * @type {{ AssetGroup: "AssetGroup", Base: "", Canvas: "DynamicPlayerCanvas", PersistentData: "PersistentData", Rebuild: "Rebuild", RefreshTime: "RefreshTime", RefreshRate: "RefreshRate" }}
  */
-type AnimationDataTypes = string;
-declare namespace AnimationDataTypes {
-    const AssetGroup: string;
-    const Base: string;
-    const Canvas: string;
-    const PersistentData: string;
-    const Rebuild: string;
-    const RefreshTime: string;
-    const RefreshRate: string;
-}
+declare var AnimationDataTypes: {
+    AssetGroup: "AssetGroup";
+    Base: "";
+    Canvas: "DynamicPlayerCanvas";
+    PersistentData: "PersistentData";
+    Rebuild: "Rebuild";
+    RefreshTime: "RefreshTime";
+    RefreshRate: "RefreshRate";
+};

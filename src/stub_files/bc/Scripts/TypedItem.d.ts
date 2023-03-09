@@ -103,9 +103,9 @@ declare function TypedItemRegisterSubscreens(asset: Asset, config: TypedItemConf
  * Constructs the chat message dictionary for the typed item based on the items configuration data.
  * @param {ExtendedItemChatData<ExtendedItemOption>} ChatData - The chat data that triggered the message.
  * @param {TypedItemData} data - The typed item data for the asset
- * @returns {object[]} - The dictionary for the item based on its required chat tags
+ * @returns {ChatMessageDictionary} - The dictionary for the item based on its required chat tags
  */
-declare function TypedItemBuildChatMessageDictionary(ChatData: ExtendedItemChatData<ExtendedItemOption>, { asset, chatTags, dictionary }: TypedItemData): object[];
+declare function TypedItemBuildChatMessageDictionary(ChatData: ExtendedItemChatData<ExtendedItemOption>, { asset, chatTags, dictionary }: TypedItemData): ChatMessageDictionary;
 /**
  * Returns the options configuration array for a typed item
  * @param {AssetGroupName} groupName - The name of the asset group
@@ -189,6 +189,12 @@ declare function TypedItemSetRandomOption(C: Character, itemOrGroupName: Item | 
  * @returns {string} The dialogue prefix for the custom chatroom messages
  */
 declare function TypedItemCustomChatPrefix(Name: string, Data: TypedItemData): string;
+/**
+ * Initialize the typed item properties
+ * @type {ExtendedItemInitCallback}
+ * @see {@link ExtendedItemInit}
+ */
+declare function TypedItemInit(Item: Item, C: Character, Refresh?: boolean): void;
 /**
  * TypedItem.js
  * ------------

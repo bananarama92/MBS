@@ -1,10 +1,10 @@
 /**
  * Dresses a character C as a witch, the colors and clothes can changes based on the house
  * @param {Character} C - The character that will wear the clothes
- * @param {String} House - The house name
+ * @param {"" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"} House - The house name
  * @returns {void} - Nothing
  */
-declare function MagicSchoolLaboratoryPrepareNPC(C: Character, House: string): void;
+declare function MagicSchoolLaboratoryPrepareNPC(C: Character, House: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"): void;
 /**
  * Loads the magic school laboratory and the teacher
  * @returns {void} - Nothing
@@ -33,16 +33,16 @@ declare function MagicSchoolLaboratorySpellPractice(SpellNumber: number): void;
 declare function MagicSchoolLaboratorySpellPracticeEnd(): void;
 /**
  * Check if someone is a member of a magic house or not
- * @param {string} House - The house name
+ * @param {"" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"} House - The house name
  * @returns {boolean} - TRUE if a member, FALSE if not
  */
-declare function MagicSchoolLaboratoryInHouse(House: string): boolean;
+declare function MagicSchoolLaboratoryInHouse(House: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"): boolean;
 /**
  * Joins a specific magic house, sets the reputation to 1 and clear all other reputations
- * @param {string} House - The house name
+ * @param {"" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"} House - The house name
  * @returns {void} - Nothing
  */
-declare function MagicSchoolLaboratoryJoinHouse(House: string): void;
+declare function MagicSchoolLaboratoryJoinHouse(House: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"): void;
 /**
  * Dresses the player as it's current magic school house
  * @returns {void} - Nothing
@@ -89,10 +89,10 @@ declare function MagicSchoolLaboratoryBuildSister(): void;
 declare function MagicSchoolLaboratoryFindStudent(): void;
 /**
  * When a fight begins between the player and a student
- * @param {string} Type - The type of battle to do (Normal, Wage or Honor)
+ * @param {"Wage25" | "Honor" | "RainbowWand"} Type - The type of battle to do (Normal, Wage or Honor)
  * @returns {void} - Nothing
  */
-declare function MagicSchoolLaboratoryBattleStudentStart(Type: string): void;
+declare function MagicSchoolLaboratoryBattleStudentStart(Type: "Wage25" | "Honor" | "RainbowWand"): void;
 /**
  * When a student battle ends, we release the winner, change reputation or give some money based on the wage
  * @returns {void} - Nothing
@@ -100,11 +100,11 @@ declare function MagicSchoolLaboratoryBattleStudentStart(Type: string): void;
 declare function MagicSchoolLaboratoryBattleStudentEnd(): void;
 /**
  * Sets an emote for the student when there's an activity
- * @param {string} Blush
- * @param {string} Eyes
+ * @param {ExpressionNameMap["Blush"]} Blush
+ * @param {ExpressionNameMap["Eyes"]} Eyes
  * @returns {void}
  */
-declare function MagicSchoolLaboratoryStudentEmote(Blush: string, Eyes: string): void;
+declare function MagicSchoolLaboratoryStudentEmote(Blush: ExpressionNameMap["Blush"], Eyes: ExpressionNameMap["Eyes"]): void;
 /**
  * Checks, if the player can bring the student to her private room
  * @returns {boolean} - Returns true, if the player can

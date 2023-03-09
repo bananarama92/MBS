@@ -1,8 +1,4 @@
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemMouthFuturisticHarnessBallGagScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemMouthFuturisticHarnessBallGagScriptDraw(data: DynamicScriptCallbackData): void;
 /** @type {DynamicBeforeDrawCallback} */
 declare function AssetsItemMouthFuturisticHarnessBallGagBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;

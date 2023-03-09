@@ -1,13 +1,26 @@
 /**
- * Loads WebGL, if not available, use the old canvas engine
+ * Setup WebGL rendering
+ *
+ * This will create a drawing canvas and try to initialize it for GL rendering.
+ * In case of failure, or if the fallback is required, it will disable GL
+ * rendering entirely, switching back to the normal canvas-based rendering
+ * (see Drawing.js).
+ *
+ * @param {Event} _evt - Unused DOM event
+ * @param {boolean} [force2d] - Whether to force a fallback to 2d mode
  * @returns {void} - Nothing
  */
-declare function GLDrawLoad(): void;
+declare function GLDrawLoad(_evt: Event, force2d?: boolean): void;
 /**
- * Gets the graphical options saved in the player's local storage.
- * @returns {WebGLContextAttributes} - WebG context attributes based on saved settings
+ * Loads the graphical options from localSstorage.
+ * @returns {WebGLContextAttributes} - WebGL context attributes based on saved settings
  */
 declare function GLDrawGetOptions(): WebGLContextAttributes;
+/**
+ * Saves the graphical options in localStorage.
+ * @param {WebGLContextAttributes} options - WebGL context attributes based on saved settings
+ */
+declare function GLDrawSetOptions(options: WebGLContextAttributes): void;
 /**
  * Handler for WebGL context lost events
  * @param {WebGLContextEvent} event
@@ -15,7 +28,7 @@ declare function GLDrawGetOptions(): WebGLContextAttributes;
  */
 declare function GLDrawOnContextLost(event: WebGLContextEvent): void;
 /**
- * Restores the original CharacterAppearanceBuildCanvas function, and cleans up any GLDraw resources.
+ * Disables GLDraw rendering, and cleans up any resources.
  * @returns {void} - Nothing
  */
 declare function GLDrawRevertToCanvas2D(): void;
@@ -25,10 +38,13 @@ declare function GLDrawRevertToCanvas2D(): void;
  */
 declare function GLDrawOnContextRestored(): void;
 /**
- * Removes the current GLDraw canvas, clears the image cache, and reloads a fresh canvas.
+ * Resets the GLDraw renderer
+ *
+ * This function removes the current canvas, removes cached textures from the
+ * image cache, and reloads a fresh canvas unless prevented.
  * @returns {void} - Nothing
  */
-declare function GLDrawResetCanvas(): void;
+declare function GLDrawResetCanvas(force2d?: boolean): void;
 /**
  * Rebuilds the canvas for any characters that are currently on screen.
  * @returns {void} - Nothing
@@ -39,13 +55,7 @@ declare function GLDrawRebuildCharacters(): void;
  * @param {WebGL2RenderingContext} gl - The WebGL context of the canvas
  * @returns {void} - Nothing
  */
-declare function GLDrawMakeGLProgam(gl: WebGL2RenderingContext): void;
-/**
- * Initializes a WebGL canvas for characters
- * @param {HTMLCanvasElement} [canvas] - The canvas used to draw characters on
- * @returns {HTMLCanvasElement} - The prepared canvas
- */
-declare function GLDrawInitCharacterCanvas(canvas?: HTMLCanvasElement): HTMLCanvasElement;
+declare function GLDrawMakeGLProgram(gl: WebGL2RenderingContext): void;
 /**
  * Creates a shader for the current WebGL context from a given source
  * @param {WebGL2RenderingContext} gl - WebGL context

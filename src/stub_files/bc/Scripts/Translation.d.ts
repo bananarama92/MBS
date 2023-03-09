@@ -13,28 +13,28 @@ declare function TranslationParseTXT(str: string): string[];
 /**
  * Translates a string to another language from the array, the translation is always the one right after the english line
  * @param {string} S - The original english string to translate
- * @param {string[]} T - The active translation dictionary
+ * @param {readonly string[]} T - The active translation dictionary
  * @param {string} CharacterName - Name of the character if it is required to replace it within the string.
  * @returns {string} - The translated string
  */
-declare function TranslationString(S: string, T: string[], CharacterName: string): string;
+declare function TranslationString(S: string, T: readonly string[], CharacterName: string): string;
 /**
  * Translates a character dialog from the specified array
  * @param {Character} C - The character for which we need to translate the dialog array.
- * @param {string[]} T - The active translation dictionary
+ * @param {readonly string[]} T - The active translation dictionary
  * @returns {void} - Nothing
  */
-declare function TranslationDialogArray(C: Character, T: string[]): void;
+declare function TranslationDialogArray(C: Character, T: readonly string[]): void;
 /**
  * Translates a set of tags. Rerenders the login message when on the login page.
- * @param {Array.<{Tag: string, Value: string}>} S - Array of current tag-value pairs
- * @param {string[]} T - The active translation dictionary
+ * @param {readonly { Tag: string, Value: string }[]} S - Array of current tag-value pairs
+ * @param {readonly string[]} T - The active translation dictionary
  * @returns {void} - Nothing
  */
-declare function TranslationTextArray(S: Array<{
+declare function TranslationTextArray(S: readonly {
     Tag: string;
     Value: string;
-}>, T: string[]): void;
+}[], T: readonly string[]): void;
 /**
  * Translate a character dialog if the file is in the dictionary
  * @param {Character} C - The character for which we want to translate the dialog
@@ -43,13 +43,13 @@ declare function TranslationTextArray(S: Array<{
 declare function TranslationDialog(C: Character): void;
 /**
  * Translate an array of tags in the current selected language
- * @param {Array.<{Tag: string, Value: string}>} Text - Array of current tag-value pairs
+ * @param {readonly {Tag: string, Value: string}[]} Text - Array of current tag-value pairs
  * @returns {void} - Nothing
  */
-declare function TranslationText(Text: Array<{
+declare function TranslationText(Text: readonly {
     Tag: string;
     Value: string;
-}>): void;
+}[]): void;
 /**
  * Translates the asset group and asset descriptions based on the given dictionary
  * @param {string[]} T - The active translation dictionary
@@ -58,10 +58,10 @@ declare function TranslationText(Text: Array<{
 declare function TranslationAssetProcess(T: string[]): void;
 /**
  * Translates the description of the assets and groups of an asset family
- * @param {string} Family - Name of the asset family to translate
+ * @param {IAssetFamily} Family - Name of the asset family to translate
  * @returns {void} - Nothing
  */
-declare function TranslationAsset(Family: string): void;
+declare function TranslationAsset(Family: IAssetFamily): void;
 /**
  * Changes the current language and save the new selected language to local storage
  * @returns {void} - Nothing

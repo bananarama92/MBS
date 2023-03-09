@@ -140,7 +140,14 @@ declare function AsylumGGTSTransformGag(Group: AssetGroupName): void;
  */
 declare function AsylumGGTSConfigureGag(Group: AssetGroupName): void;
 /**
- * Processes the tasks that doesn't need any player input.	GGTS does everything and ends the task automatically.
+ * Selects a random pose for an item and picks one, applying effects as appropriate
+ * @param {Item} Item
+ * @param {AssetPoseName[]} AdditionalPoses
+ * @param {EffectName[]} Effects
+ */
+declare function AsylumGGTSSetForcedPoseForItem(Item: Item, AdditionalPoses: AssetPoseName[], Effects: EffectName[]): void;
+/**
+ * Processes the tasks that doesn't need any player input. GGTS does everything and ends the task automatically.
  * @returns {void} - Nothing
  */
 declare function AsylumGGTSAutomaticTask(): void;

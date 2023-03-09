@@ -12,10 +12,10 @@ declare function NotificationEventHandlerSetup(eventType: NotificationEventType,
 /**
  * Create a new notification
  * @param {NotificationEventType} eventType - The type of event that occurred
- * @param {object} [data={}] - Data relating to the event that can be passed into a popup
+ * @param {NotificationData} [data={}] - Data relating to the event that can be passed into a popup
  * @returns {void} - Nothing
  */
-declare function NotificationRaise(eventType: NotificationEventType, data?: object): void;
+declare function NotificationRaise(eventType: NotificationEventType, data?: NotificationData): void;
 /**
  * Clear all raised notifications of the specified type
  * @param {NotificationEventType} eventType - The type of event to be cleared
@@ -30,10 +30,10 @@ declare function NotificationResetAll(): void;
 /**
  * Returns whether popup notifications are permitted
  * @param {NotificationEventType} eventType - The type of event that occurred
- * @param {object} [data={}] - Data relating to the event that can be passed into a popup
+ * @param {NotificationData} [data={}] - Data relating to the event that can be passed into a popup
  * @returns {boolean} - Whether popups can appear
  */
-declare function NotificationPopupsEnabled(eventType: NotificationEventType, data?: object): boolean;
+declare function NotificationPopupsEnabled(eventType: NotificationEventType, data?: NotificationData): boolean;
 /**
  * Returns the total number of notifications raised for a particular alert type
  * @param {NotificationAlertType} alertType - The type of alert to check
@@ -53,16 +53,16 @@ declare function NotificationTitleUpdate(): void;
 declare function NotificationDrawFavicon(resetingAll: boolean): void;
 /**
  * An enum for the events in the game that notifications can be raised for
+ * @type {{ CHATMESSAGE: "ChatMessage", CHATJOIN: "ChatJoin", BEEP: "Beep", DISCONNECT: "Disconnect", TEST: "Test", LARP: "Larp" }}
  */
-type NotificationEventType = string;
-declare namespace NotificationEventType {
-    const CHATMESSAGE: string;
-    const CHATJOIN: string;
-    const BEEP: string;
-    const DISCONNECT: string;
-    const TEST: string;
-    const LARP: string;
-}
+declare const NotificationEventType: {
+    CHATMESSAGE: "ChatMessage";
+    CHATJOIN: "ChatJoin";
+    BEEP: "Beep";
+    DISCONNECT: "Disconnect";
+    TEST: "Test";
+    LARP: "Larp";
+};
 /**
  * An enum for the types of notifications that can be raised
  * @type {Record<"NONE"|"TITLEPREFIX"|"FAVICON"|"POPUP",NotificationAlertType>}
@@ -74,12 +74,6 @@ declare const NotificationAlertType: Record<"NONE" | "TITLEPREFIX" | "FAVICON" |
  */
 declare const NotificationAudioType: Record<"NONE" | "FIRST" | "REPEAT", NotificationAudioType>;
 /**
- * An object defining the components of the player's settings for a particular notification event
- * @typedef {object} NotificationSetting
- * @property {NotificationAlertType} AlertType - The selected type of notification alert to use
- * @property {NotificationAudioType} Audio - The selected audio setting to apply
- */
-/**
  * A class to track the state of each notification event type and handle actions based on the player's settings
  */
 declare class NotificationEventHandler {
@@ -89,22 +83,22 @@ declare class NotificationEventHandler {
      * @param {NotificationSetting} settings - The player settings corresponding to the event type
      */
     constructor(eventType: NotificationEventType, settings: NotificationSetting);
-    eventType: string;
+    eventType: NotificationEventType;
     settings: NotificationSetting;
     raisedCount: number;
     popup: Notification;
     /**
      * Raise a notification
-     * @param {object} data - Data relating to the event that can be passed into a popup
+     * @param {NotificationData} data - Data relating to the event that can be passed into a popup
      * @returns {void} - Nothing
      */
-    raise(data: object): void;
+    raise(data: NotificationData): void;
     /**
      * Raise a popup notification
-     * @param {any} data - Data relating to the event passed into the popup
+     * @param {NotificationData} data - Data relating to the event passed into the popup
      * @returns {void} - Nothing
      */
-    raisePopup(data: any): void;
+    raisePopup(data: NotificationData): void;
     /**
      * Determines whether an audio alert shoud be played
      * @param {boolean} usingPopup - If TRUE this indicates that the audio will be played by a popup, rather than an in-game alert
@@ -118,19 +112,9 @@ declare class NotificationEventHandler {
      */
     reset(resetingAll: boolean): void;
 }
-declare let NotificationEventHandlers: any;
-declare var NotificationAlertTypeList: any[];
-declare var NotificationAudioTypeList: any[];
-/**
- * An object defining the components of the player's settings for a particular notification event
- */
-type NotificationSetting = {
-    /**
-     * - The selected type of notification alert to use
-     */
-    AlertType: NotificationAlertType;
-    /**
-     * - The selected audio setting to apply
-     */
-    Audio: NotificationAudioType;
-};
+/** @type {Record<NotificationEventType, NotificationEventHandler>} */
+declare let NotificationEventHandlers: Record<NotificationEventType, NotificationEventHandler>;
+/** @type {NotificationAlertType[]} */
+declare var NotificationAlertTypeList: NotificationAlertType[];
+/** @type {NotificationAudioType[]} */
+declare var NotificationAudioTypeList: NotificationAudioType[];

@@ -517,7 +517,8 @@ declare var ManagementCanReleaseChastity: boolean;
 declare var ManagementEmpty: boolean;
 /** @type {null | NPCCharacter} */
 declare var ManagementRandomGirl: null | NPCCharacter;
-declare var ManagementRandomGirlArchetype: string;
+/** @type {"" | "Maid"} */
+declare var ManagementRandomGirlArchetype: "" | "Maid";
 declare var ManagementRandomActivityCount: number;
 declare var ManagementRandomActivity: string;
 declare var ManagementRandomActivityList: string[];

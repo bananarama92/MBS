@@ -1,28 +1,28 @@
 /**
  * Sets the new title of the player, if the title has changed
- * @param {string} NewTitle - The new title for the player
- * @returns {string} - The new title of the player
+ * @param {TitleName} NewTitle - The new title for the player
+ * @returns {TitleName} - The new title of the player
  */
-declare function TitleSet(NewTitle: string): string;
+declare function TitleSet(NewTitle: TitleName): TitleName;
 /**
  * Returns the current title of the given player. If an invalid title is found or the player has to wear a certain title
  * the correct title is pushed to the player's attributes
  * @param {Character} C - The player, whose title we want to get
- * @returns {string} - The title of the given player
+ * @returns {TitleName} - The title of the given player
  */
-declare function TitleGet(C: Character): string;
+declare function TitleGet(C: Character): TitleName;
 /**
  * Checks, if the given title is forced a forced title like 'Club Slave' or 'Escaped Patient'
- * @param {string} Title - The title to check
+ * @param {TitleName} Title - The title to check
  * @returns {boolean} - Result of the check
  */
-declare function TitleIsForced(Title: string): boolean;
+declare function TitleIsForced(Title: TitleName): boolean;
 /**
  * Checks, if the given title is earned a earned title is any title that doesn't always return true such as 'Switch', 'Doll' & 'Angel'
- * @param {string} Title - The title to check
+ * @param {TitleName} Title - The title to check
  * @returns {boolean} - Result of the check
  */
-declare function TitleIsEarned(Title: string): boolean;
+declare function TitleIsEarned(Title: TitleName): boolean;
 /**
  * When the title screen is loaded
  * @returns {void} - Nothing
@@ -45,22 +45,22 @@ declare function TitleClick(): void;
  */
 declare function TitleExit(): void;
 declare var TitleBackground: string;
-/** @type {{ Name: string; Requirement: () => boolean; Earned?: boolean, Force?: boolean }[]} */
+/** @type {{ Name: TitleName; Requirement: () => boolean; Earned?: boolean, Force?: boolean }[]} */
 declare var TitleList: {
-    Name: string;
+    Name: TitleName;
     Requirement: () => boolean;
     Earned?: boolean;
     Force?: boolean;
 }[];
-/** @type {null | string} */
-declare var TitleSelectedTitle: null | string;
+/** @type {null | TitleName} */
+declare var TitleSelectedTitle: null | TitleName;
 declare var TitleCanEditNickname: boolean;
-/** @type {null | string} */
-declare var TitleNicknameStatus: null | string;
+/** @type {null | "NicknameTooLong" | "NicknameInvalidChars"} */
+declare var TitleNicknameStatus: null | "NicknameTooLong" | "NicknameInvalidChars";
 declare let TitleOffset: number;
-/** @type {{ Name: string; Requirement: () => boolean; Earned?: boolean, Force?: boolean }[]} */
+/** @type {{ Name: TitleName; Requirement: () => boolean; Earned?: boolean, Force?: boolean }[]} */
 declare let TitleListFiltered: {
-    Name: string;
+    Name: TitleName;
     Requirement: () => boolean;
     Earned?: boolean;
     Force?: boolean;

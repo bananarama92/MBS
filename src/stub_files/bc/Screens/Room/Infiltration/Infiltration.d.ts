@@ -166,11 +166,14 @@ declare var InfiltrationBackground: string;
 /** @type {NPCCharacter} */
 declare var InfiltrationSupervisor: NPCCharacter;
 declare var InfiltrationDifficulty: number;
-declare var InfiltrationMission: string;
-declare var InfiltrationMissionType: string[];
-declare var InfiltrationObjectType: string[];
-/** @type {InfiltrationMissionTarget} */
-declare var InfiltrationTarget: InfiltrationMissionTarget;
+/** @type {InfiltrationMissionType | ""} */
+declare var InfiltrationMission: InfiltrationMissionType | "";
+/** @type {InfiltrationMissionType[]} */
+declare var InfiltrationMissionType: InfiltrationMissionType[];
+/** @type {InfiltrationTargetType[]} */
+declare var InfiltrationObjectType: InfiltrationTargetType[];
+/** @type {InfiltrationMissionTarget | null} */
+declare var InfiltrationTarget: InfiltrationMissionTarget | null;
 declare var InfiltrationCollectRansom: boolean;
 /** @type {NPCCharacter} */
 declare var InfiltrationKidnapper: NPCCharacter;

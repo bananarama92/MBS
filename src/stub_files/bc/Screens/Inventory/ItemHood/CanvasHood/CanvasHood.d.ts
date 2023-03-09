@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemHoodCanvasHoodInit(Item: Item, C: Character, Refresh?: boolean): void;
 /**
  * Loads the canvas hood's extended item properties
  * @returns {void} - Nothing

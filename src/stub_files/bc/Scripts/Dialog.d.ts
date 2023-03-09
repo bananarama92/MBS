@@ -6,18 +6,18 @@
 declare function DialogGetCharacter(C: Character | string): Character;
 /**
  * Compares the player's reputation with a given value
- * @param {string} RepType - The name of the reputation to check
+ * @param {ReputationType} RepType - The name of the reputation to check
  * @param {string} Value - The value to compare
  * @returns {boolean} - Returns TRUE if a specific reputation type is less or equal than a given value
  */
-declare function DialogReputationLess(RepType: string, Value: string): boolean;
+declare function DialogReputationLess(RepType: ReputationType, Value: string): boolean;
 /**
  * Compares the player's reputation with a given value
- * @param {string} RepType - The name of the reputation to check
+ * @param {ReputationType} RepType - The name of the reputation to check
  * @param {string} Value - The value to compare
  * @returns {boolean} - Returns TRUE if a specific reputation type is greater or equal than a given value
  */
-declare function DialogReputationGreater(RepType: string, Value: string): boolean;
+declare function DialogReputationGreater(RepType: ReputationType, Value: string): boolean;
 /**
  * Compares the player's money with a given amount
  * @param {string} Amount - The amount of money that must be met
@@ -32,18 +32,18 @@ declare function DialogMoneyGreater(Amount: string): boolean;
 declare function DialogChangeMoney(Amount: string): void;
 /**
  * Alters the current player's reputation by a given amount
- * @param {string} RepType - The name of the reputation to change
+ * @param {ReputationType} RepType - The name of the reputation to change
  * @param {number|string} Value - The value, the player's reputation should be altered by
  * @returns {void} - Nothing
  */
-declare function DialogSetReputation(RepType: string, Value: number | string): void;
+declare function DialogSetReputation(RepType: ReputationType, Value: number | string): void;
 /**
  * Change the player's reputation progressively through dialog options (a reputation is easier to break than to build)
- * @param {string} RepType - The name of the reputation to change
+ * @param {ReputationType} RepType - The name of the reputation to change
  * @param {number|string} Value - The value, the player's reputation should be altered by
  * @returns {void} - Nothing
  */
-declare function DialogChangeReputation(RepType: string, Value: number | string): void;
+declare function DialogChangeReputation(RepType: ReputationType, Value: number | string): void;
 /**
  * Equips a specific item on the player from dialog
  * @param {string} AssetName - The name of the asset that should be equipped
@@ -166,11 +166,11 @@ declare function DialogCanInteract(C: string | Character): boolean;
 declare function DialogSetPose(C: string, NewPose?: null | AssetPoseName): void;
 /**
  * Checks, whether a given skill of the player is greater or equal a given value
- * @param {string} SkillType - Name of the skill to check
+ * @param {SkillType} SkillType - Name of the skill to check
  * @param {string} Value - The value, the given skill must be compared to
  * @returns {boolean} - Returns true if a specific skill is greater or equal than a given value
  */
-declare function DialogSkillGreater(SkillType: string, Value: string): boolean;
+declare function DialogSkillGreater(SkillType: SkillType, Value: string): boolean;
 /**
  * Checks, if a given item is available in the player's inventory
  * @param {string} InventoryName
@@ -305,8 +305,10 @@ declare function DialogRemoveGroup(GroupName: AssetGroupName): void;
  */
 declare function DialogEndExpression(): void;
 /**
- * Leaves the item menu for both characters. De-initializes global variables, sets the FocusGroup of
- * player and current character to null and calls various cleanup functions
+ * Leaves the item menu for both characters.
+ *
+ * This exits the item-selecting UI and switches back to the current character's dialog options.
+ *
  * @param {boolean} [resetPermissionsMode=true] - If TRUE and in permissions mode, exits the mode
  * @returns {void} - Nothing
  */
@@ -400,10 +402,10 @@ declare function DialogInventorySort(): void;
 /**
  * Returns TRUE if the crafted item can be used on a character, validates for owners and lovers
  * @param {Character} C - The character whose inventory must be built
- * @param {Object} Craft - The crafting properties of the item
+ * @param {CraftingItem} Craft - The crafting properties of the item
  * @returns {Boolean} - TRUE if we can use it
  */
-declare function DialogCanUseCraftedItem(C: Character, Craft: any): boolean;
+declare function DialogCanUseCraftedItem(C: Character, Craft: CraftingItem): boolean;
 /**
  * Build the inventory listing for the dialog which is what's equipped,
  * the player's inventory and the character's inventory for that group
@@ -468,11 +470,11 @@ declare function DialogMenuButtonClick(): void;
 declare function DialogPublishAction(C: Character, Action: string, ClickItem: Item): void;
 /**
  * Returns TRUE if the clicked item can be processed, make sure it's not the same item as the one already used
- * @param {Object} CurrentItem - The item currently equiped
- * @param {Object} ClickItem - The clicked item
+ * @param {Item} CurrentItem - The item currently equiped
+ * @param {Item} ClickItem - The clicked item
  * @returns {boolean} - TRUE when we can process
  */
-declare function DialogAllowItemClick(CurrentItem: any, ClickItem: any): boolean;
+declare function DialogAllowItemClick(CurrentItem: Item, ClickItem: Item): boolean;
 /**
  * Handles clicks on an item
  * @param {DialogInventoryItem} ClickItem - The item that is clicked
@@ -525,10 +527,10 @@ declare function DialogFindNextSubMenu(): void;
 declare function DialogFindSubMenu(MenuName: string): boolean;
 /**
  * Finds and sets a facial expression group. The expression sub menu has to be already opened.
- * @param {string} ExpressionGroup - The name of the expression group, see XXX.
+ * @param {ExpressionGroupName} ExpressionGroup - The name of the expression group, see XXX.
  * @returns {boolean} True, when the expression group was found and opened. False otherwise and nothing happens.
  */
-declare function DialogFindFacialExpressionMenuGroup(ExpressionGroup: string): boolean;
+declare function DialogFindFacialExpressionMenuGroup(ExpressionGroup: ExpressionGroupName): boolean;
 /**
  * Displays the given text for 5 seconds
  * @param {string} NewText - The text to be displayed
@@ -536,13 +538,19 @@ declare function DialogFindFacialExpressionMenuGroup(ExpressionGroup: string): b
  */
 declare function DialogSetText(NewText: string): void;
 /**
- * Shows the extended item menue for a given item, if possible.
+ * Shows the extended item menu for a given item, if possible.
  * Therefore a dynamic function name is created and then called.
  * @param {Item} Item - The item the extended menu should be shown for
  * @param {Item} [SourceItem] - The source of the extended menu
  * @returns {void} - Nothing
  */
 declare function DialogExtendItem(Item: Item, SourceItem?: Item): void;
+/**
+ * Shows the tigthen/loosen item menu for a given item, if possible.
+ * @param {Item} Item - The item to open the menu for
+ * @returns {void} - Nothing
+ */
+declare function DialogSetTightenLoosenItem(Item: Item): void;
 /**
  * Validates that the player is allowed to change the item color and swaps it on the fly
  * @param {Character} C - The player who wants to change the color
@@ -629,6 +637,12 @@ declare function DialogDraw(): void;
  */
 declare function DialogDrawExpressionMenu(): void;
 /**
+ * Return the page number of the expression item's current expression.
+ * @param {ExpressionItem} item - The expression item
+ * @returns {number} The page number of the item's current expression
+ */
+declare function DialogGetCurrentExpressionPage(item: ExpressionItem): number;
+/**
  * Handles clicks in the dialog expression menu.
  * @returns {void} - Nothing
  */
@@ -656,11 +670,11 @@ declare function DialogDrawOwnerRulesMenu(): void;
 /**
  * Sets the skill ratio for the player, will be a % of effectiveness applied to the skill when using it.
  * This way a player can use only a part of her bondage or evasion skill.
- * @param {string} SkillType - The name of the skill to influence
+ * @param {SkillType} SkillType - The name of the skill to influence
  * @param {string} NewRatio - The ration of this skill that should be used
  * @returns {void} - Nothing
  */
-declare function DialogSetSkillRatio(SkillType: string, NewRatio: string): void;
+declare function DialogSetSkillRatio(SkillType: SkillType, NewRatio: string): void;
 /**
  * Sends an room administrative command to the server for the chat room from the player dialog
  * @param {string} ActionType - The name of the administrative command to use
@@ -696,31 +710,24 @@ declare function DialogCanCraft(): boolean;
  */
 declare function DialogActualNameForGroup(C: Character, G: AssetGroup): string;
 /**
- * Check if there's a struggling minigame started.
+ * Propose one of the struggle minigames or start one automatically.
  *
- * StruggleProgress == 0 also happens when the selection screen is up,
- * but StruggleProgressCurrentMinigame will be "" in that case.
- * @returns {boolean}
- */
-declare function DialogIsStruggling(): boolean;
-/**
- * Propose one of the struggle minigames.
- *
- * If it's not the player struggling, or we're applying a new item, or the
- * existing item is locked with a key the character has, or the player can
- * interact, it's not a mountable item, or the item's difficulty is low enough
- * to progress by itself, we're currently trying to swap items on someone. In
- * that case, the Strength minigame will be started.
- *
- * Otherwise, setup the variables so DialogDrawItemMenu/DialogItemClick switch
- * to the selection screen, saving the items in the two temporary item variables.
+ * This function checks the difficulty of the current struggle attempt and
+ * either use the Strength minigame by default or setup the menu state to show
+ * the selection screen.
  *
  * @param {Character} C
- * @param {string} Action
+ * @param {DialogStruggleActionType} Action
  * @param {Item} PrevItem
  * @param {Item} NextItem
  */
-declare function DialogStruggleStart(C: Character, Action: string, PrevItem: Item, NextItem: Item): void;
+declare function DialogStruggleStart(C: Character, Action: DialogStruggleActionType, PrevItem: Item, NextItem: Item): void;
+/**
+ * Handle the struggle minigame completing, either as a failure, an interruption, or a success.
+ *
+ * @type {StruggleCompletionCallback}
+ */
+declare function DialogStruggleStop(C: Character, Game: StruggleKnownMinigames, { Progress, PrevItem, NextItem, Skill, Attempts, Interrupted, Auto }: StruggleCompletionData): void;
 declare var DialogText: string;
 declare var DialogTextDefault: string;
 declare var DialogTextDefaultTimer: number;
@@ -728,26 +735,56 @@ declare var DialogTextDefaultTimer: number;
 declare var DialogColor: null | string;
 /** @type {null | string} */
 declare var DialogExpressionColor: null | string;
-/** @type {null | string} */
-declare var DialogColorSelect: null | string;
-declare var DialogPreviousCharacterData: {};
-/** @type DialogInventoryItem[] */
+/**
+ * The default color to use when applying items.
+ * @type {string}
+ */
+declare var DialogColorSelect: string;
+/**
+ * The list of available items for the selected group.
+ * @type DialogInventoryItem[]
+ */
+/**
+ * The current page offset of the item list. Also used for activities.
+ * @type {DialogInventoryItem[]}
+ */
 declare var DialogInventory: DialogInventoryItem[];
 declare var DialogInventoryOffset: number;
-/** @type {Item|null} */
+/**
+ * The item currently selected in the Dialog and showing its extended screen.
+ *
+ * Note that in case this is a lock, the item being locked is available in {@link DialogFocusSourceItem}.
+ * @type {Item|null}
+ */
 declare var DialogFocusItem: Item | null;
 /** @type {Item|null} */
+declare var DialogTightenLoosenItem: Item | null;
+/**
+ * The actual item being locked while the lock asset has its extended screen drawn.
+ * @type {Item|null}
+ */
 declare var DialogFocusSourceItem: Item | null;
 /** @type {null | ReturnType<typeof setTimeout>} */
 declare var DialogFocusItemColorizationRedrawTimer: null | ReturnType<typeof setTimeout>;
-/** @type {string[]} */
+/**
+ * The list of currently visible menu item buttons.
+ * @type {string[]}
+ */
 declare var DialogMenuButton: string[];
 /** @type {null | Item} */
 declare var DialogItemToLock: null | Item;
 declare var DialogAllowBlush: boolean;
 declare var DialogAllowEyebrows: boolean;
 declare var DialogAllowFluids: boolean;
-declare var DialogFacialExpressions: any[];
+/** @type {ExpressionItem[]} */
+declare var DialogFacialExpressions: ExpressionItem[];
+/** The maximum number of expressions per page for a given asset group. */
+declare const DialogFacialExpressionsPerPage: 18;
+/**
+ * The currently selected expression page number for a given asset group.
+ * Contains up to {@link DialogFacialExpressionsPerPage} expressions.
+ */
+declare let DialogFacialExpressionsSelectedPage: number;
 declare var DialogFacialExpressionsSelected: number;
 declare var DialogFacialExpressionsSelectedBlindnessLevel: number;
 /** @type {Character[]} */
@@ -757,7 +794,10 @@ declare var DialogActivePoses: Pose[][];
 declare var DialogItemPermissionMode: boolean;
 declare var DialogExtendedMessage: string;
 declare var DialogActivityMode: boolean;
-/** @type {ItemActivity[]} */
+/**
+ * The list of available activities for the selected group.
+ * @type {ItemActivity[]}
+ */
 declare var DialogActivity: ItemActivity[];
 /** @type {Record<"Enabled" | "Equipped" | "BothFavoriteUsable" | "TargetFavoriteUsable" | "PlayerFavoriteUsable" | "Usable" | "TargetFavoriteUnusable" | "PlayerFavoriteUnusable" | "Unusable" | "Blocked", DialogSortOrder>} */
 declare var DialogSortOrder: Record<"Enabled" | "Equipped" | "BothFavoriteUsable" | "TargetFavoriteUsable" | "PlayerFavoriteUsable" | "Usable" | "TargetFavoriteUnusable" | "PlayerFavoriteUnusable" | "Unusable" | "Blocked", DialogSortOrder>;
@@ -768,11 +808,26 @@ declare var DialogLockMenu: boolean;
 declare var DialogCraftingMenu: boolean;
 declare var DialogLentLockpicks: boolean;
 declare var DialogGamingPreviousRoom: string;
-declare var DialogGamingPreviousModule: string;
+/** @type {"" | ModuleType} */
+declare var DialogGamingPreviousModule: "" | ModuleType;
 declare var DialogButtonDisabledTester: RegExp;
-declare let DialogStruggleAction: any;
-declare let DialogStrugglePrevItem: any;
-declare let DialogStruggleNextItem: any;
+/**
+ * The attempted action that's leading the player to struggle.
+ * @type {DialogStruggleActionType?}
+ */
+declare let DialogStruggleAction: DialogStruggleActionType | null;
+/**
+ * The item we're struggling out of, or swapping from.
+ * @type {Item}
+ */
+declare let DialogStrugglePrevItem: Item;
+/**
+ * The item we're swapping to.
+ * @type {Item}
+ */
+declare let DialogStruggleNextItem: Item;
+/** Whether we went through the struggle selection screen or went straight through. */
+declare let DialogStruggleSelectMinigame: boolean;
 /** @type {Map<string, string>} */
 declare var PlayerDialog: Map<string, string>;
 /** @type {FavoriteState[]} */

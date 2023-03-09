@@ -19,13 +19,12 @@ declare function LogAdd<T extends keyof LogNameType>(NewLogName: LogNameType[T],
 declare function LogDelete<T extends keyof LogNameType>(DelLogName: LogNameType[T], DelLogGroup: T, Push?: boolean): void;
 /**
  * Deletes all log entries to starts with the name.
- * @template {LogGroupType} T
- * @param {LogNameType[T]} DelLogName - The name of the log
- * @param {T} DelLogGroup - The name of the log's group
+ * @param {string} DelLogName - The name of the log
+ * @param {LogGroupType} DelLogGroup - The name of the log's group
  * @param {boolean} [Push=true] - TRUE if we must push the log to the server
  * @returns {void} - Nothing
  */
-declare function LogDeleteStarting<T extends keyof LogNameType>(DelLogName: LogNameType[T], DelLogGroup: T, Push?: boolean): void;
+declare function LogDeleteStarting(DelLogName: string, DelLogGroup: LogGroupType, Push?: boolean): void;
 /**
  * Deletes all log entries in a particular log group.
  * @param {LogGroupType} DelLogGroup - The name of the log's group

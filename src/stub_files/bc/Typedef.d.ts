@@ -23,8 +23,8 @@ interface WebGL2RenderingContext {
 	programFull?: WebGLProgram;
 	programHalf?: WebGLProgram;
 	programTexMask?: WebGLProgram;
-	textureCache?: Map<string, any>;
-	maskCache?: Map<string, any>;
+	textureCache?: Map<string, { width: number, height: number, texture: WebGLTexture }>;
+	maskCache?: Map<string, WebGLTexture>;
 }
 
 interface WebGLProgram {
@@ -48,7 +48,7 @@ interface HTMLImageElement {
 }
 
 interface HTMLElement {
-	setAttribute(qualifiedName: string, value: string | number | boolean): void;
+	setAttribute(qualifiedName: string, value: any): void;
 }
 
 interface RGBColor {
@@ -69,21 +69,14 @@ type CommonSubtituteSubstitution = [tag: string, substitution: string, replacer?
 //#endregion
 
 //#region Enums
-type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight";
-
-type TypedItemChatSetting = "toOnly" | "fromTo" | "silent";
-type ModularItemChatSetting = "perModule" | "perOption";
-
-type NotificationAudioType = 0 | 1 | 2;
-type NotificationAlertType = 0 | 1 | 3 | 2;
 
 type DialogSortOrder = | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
+type DialogStruggleActionType = "ActionUse" | "ActionSwap" | "ActionRemove" | "ActionUnlock" | "ActionUnlockAndRemove" | "ActionStruggle" | "ActionEscape" | "ActionDismount";
 
 type CharacterType = "online" | "npc" | "simple";
 
 type VibratorIntensity = -1 | 0 | 1 | 2 | 3;
-
-type VibratorModeSet = "Standard" | "Advanced";
 
 type VibratorModeState = "Default" | "Deny" | "Orgasm" | "Rest";
 
@@ -229,6 +222,35 @@ type EffectName =
 	""
 	;
 
+interface ExpressionNameMap {
+	Eyebrows: "Raised" | "Lowered" | "OneRaised" | "Harsh" | "Angry" | "Soft",
+	Eyes: (
+		"Closed" | "Dazed" | "Shy" | "Sad" | "Horny" | "Lewd" | "VeryLewd" |
+		"Heart" | "HeartPink" | "LewdHeart" | "LewdHeartPink" | "Dizzy" | "Daydream" |
+		"ShylyHappy" | "Angry" | "Surprised" | "Scared"
+	),
+	Eyes2: ExpressionNameMap["Eyes"],
+	Mouth: (
+		"Frown" | "Sad" | "Pained" | "Angry" | "HalfOpen" | "Open" | "Ahegao" | "Moan" |
+		"TonguePinch" | "LipBite" | "Happy" | "Devious" | "Laughing" | "Grin" | "Smirk" | "Pout"
+	),
+	Pussy: "Hard",
+	Blush: "Low" | "Medium" | "High" | "VeryHigh" | "Extreme" | "ShortBreath",
+	Fluids: (
+		"DroolLow" | "DroolMedium" | "DroolHigh" | "DroolSides" | "DroolMessy" | "DroolTearsLow" |
+		"DroolTearsMedium" | "DroolTearsHigh" | "DroolTearsMessy" | "DroolTearsSides" |
+		"TearsHigh" | "TearsMedium" | "TearsLow"
+	),
+	Emoticon: (
+		"Afk" | "Whisper" | "Sleep" | "Hearts" | "Tear" | "Hearing" | "Confusion" | "Exclamation" |
+		"Annoyed" | "Read" | "RaisedHand" | "Spectator" | "ThumbsDown" | "ThumbsUp" | "LoveRope" |
+		"LoveGag" | "LoveLock" | "Wardrobe" | "Gaming" | "Coffee"
+	),
+}
+
+type ExpressionGroupName = keyof ExpressionNameMap;
+type ExpressionName = ExpressionNameMap[ExpressionGroupName];
+
 type AssetGroupItemName =
 	'ItemAddon' | 'ItemArms' | 'ItemBoots' | 'ItemBreast' | 'ItemButt' |
 	'ItemDevices' | 'ItemEars' | 'ItemFeet' | 'ItemHands' | 'ItemHead' |
@@ -236,22 +258,25 @@ type AssetGroupItemName =
 	'ItemMouth3' | 'ItemNeck' | 'ItemNeckAccessories' | 'ItemNeckRestraints' |
 	'ItemNipples' | 'ItemNipplesPiercings' | 'ItemNose' | 'ItemPelvis' |
 	'ItemTorso' | 'ItemTorso2'| 'ItemVulva' | 'ItemVulvaPiercings' |
-	'ItemHandheld' | 'ItemScript' |
+	'ItemHandheld' |
 
 	'ItemHidden' /* TODO: investigate, not a real group */
 	;
 
+type AssetGroupScriptName = 'ItemScript';
+
 type AssetGroupBodyName =
-	'Blush' | 'BodyLower' | 'BodyUpper' | 'Bra' | 'Bracelet' | 'Cloth' |
-	'ClothAccessory' | 'ClothLower' | 'Corset' | 'Emoticon' | 'Eyebrows' |
-	'Eyes' | 'Eyes2' | 'Fluids' | 'FacialHair' | 'Garters' | 'Glasses' | 'Gloves' |
+	ExpressionGroupName | 'BodyLower' | 'BodyUpper' | 'Bra' | 'Bracelet' | 'Cloth' |
+	'ClothAccessory' | 'ClothLower' | 'Corset' | 'FacialHair' | 'Garters' | 'Glasses' | 'Gloves' |
 	'HairAccessory1' | 'HairAccessory2' | 'HairAccessory3' | 'HairBack' |
 	'HairFront' | 'FacialHair' | 'Hands' | 'Hat' | 'Head' | 'Height' | 'Jewelry' | 'LeftAnklet' | 'LeftHand' | 'Mask' |
-	'Mouth' | 'Necklace' | 'Nipples' | 'Panties' | 'Pussy' | 'Pronouns' | 'RightAnklet' | 'RightHand' |
+	'Necklace' | 'Nipples' | 'Panties' | 'Pronouns' | 'RightAnklet' | 'RightHand' |
 	'Shoes' | 'Socks' | 'SocksLeft' | 'SocksRight' | 'Suit' | 'SuitLower' | 'TailStraps' | 'Wings'
 	;
 
-type AssetGroupName = AssetGroupBodyName | AssetGroupItemName;
+type AssetGroupName = AssetGroupBodyName | AssetGroupItemName | AssetGroupScriptName;
+
+type AssetCategory = "Medical" | "Extreme" | "Pony" | "SciFi" | "ABDL" | "Fantasy";
 
 type AssetPoseCategory = 'BodyUpper' | 'BodyLower' | 'BodyFull';
 
@@ -260,7 +285,7 @@ type AssetPoseName =
 	/* BodyLower */ 'BaseLower' | 'Kneel' | 'KneelingSpread' | 'LegsClosed' | 'LegsOpen' | 'Spread' |
 
 	/* BodyFull  */ 'Hogtied' | 'AllFours' |
-	/* BodyAddon */ 'Suspension' | 'SuspensionHogtied'
+	/* BodyAddon */ 'Suspension'
 	;
 
 type AssetPoseMapping = Partial<Record<AssetPoseName, AssetPoseName | "">>;
@@ -289,6 +314,50 @@ type AssetAttribute =
 type CraftingStatusType = 0 | 1 | 2;
 
 type ItemColorMode = "Default" | "ColorPicker";
+
+// NOTE: `NPCArchetype` is for NPC's only
+type TitleName =
+	NPCArchetype | "None" | "Mistress" | "ClubSlave" | "Maid" | "HeadMaid" | "BondageMaid" | "Kidnapper" |
+	"MasterKidnapper" | "Patient" | "PermanentPatient" | "EscapedPatient" | "Nurse" | "Doctor" |
+	"LadyLuck" | "Patron" | "CollegeStudent" |"Nawashi" | "Houdini" | "PonyAlicorn" |
+	"PonyPegasus" | "PonyUnicorn" | "PonyWild" | "PonyHot" | "PonyWarm" | "PonyCold" | "PonyFarm" |
+	"PonyFoal" | "InfilrationMole" | "InfilrationInfiltrator" | "InfilrationAgent" |
+	"InfilrationOperative" | "InfilrationSuperspy" | "MagicSchoolWizard" | "MagicSchoolMagus" |
+	"MagicSchoolMagician" | "MagicSchoolSorcerer" | "MagicSchoolSage" | "MagicSchoolOracle" |
+	"MagicSchoolWitch" | "MagicSchoolWarlock" | "Duchess" | "LittleOne" | "Baby" | "DL" |
+	"BondageBaby" | "Switch" | "Kitten" | "Puppy" | "Foxy" | "Bunny" | "Doll" | "Demon" | "Angel" |
+	"Succubus" | "GoodGirl" | "GoodSlaveGirl" | "GoodSlave" | "Drone"
+	;
+
+type AssetPrerequisite =
+	"NoItemFeet" | "NoItemArms" | "NoItemLegs" | "NoItemHands" | "LegsOpen" | "CanCloseLegs" |
+	"NotKneeling" | "CanKneel" | "NotMounted" | "NotHorse" | "NotSuspended" | "NotLifted" |
+	"NotHogtied" | "NotYoked" | "NotKneelingSpread" | "NotChaste" | "NotChained" | "NoFeetSpreader" |
+	"NotShackled" | "Collared" | "CannotHaveWand" | "CannotBeSuited" | "AllFours" | "OnBed" |
+	"CuffedArms" | "CuffedLegs" | "CuffedFeet" | "CuffedArmsOrEmpty" | "CuffedLegsOrEmpty" |
+	"CuffedFeetOrEmpty" | "NoOuterClothes" | "NoClothLower" | "NoMaidTray" | "CanBeCeilingTethered" |
+	"HasBreasts" | "HasFlatChest" | "HasVagina" | "HasPenis" | "AccessTorso" | "AccessBreast" |
+	"AccessBreastSuitZip" | "AccessVulva" | "AccessButt" | "AccessMouth" | "HoodEmpty" | "EyesEmpty" |
+	"VulvaNotBlockedByBelt" | "VulvaEmpty" | "ClitEmpty" | "ButtEmpty" | "NakedFeet" | "NakedHands" |
+	"DisplayFrame" | "GasMask" | "NotMasked" | "RemotesAllowed" | "GagUnique" | "GagCorset" |
+	"NotProtrudingFromMouth" | "NeedsNippleRings" | "GagFlat" | "BlockedMouth"
+	;
+
+type ActivityPrerequisite =
+	"UseMouth" | "UseTongue" | "TargetMouthBlocked" | "IsGagged" | "TargetKneeling" | "UseHands" |
+	"UseArms" | "UseFeet" | "CantUseArms" | "CantUseFeet" | "TargetCanUseTongue" | "TargetMouthOpen" |
+	"VulvaEmpty" | "AssEmpty" | "UseVulva" | "UseAss" | "MoveHead" | "ZoneAccessible" |
+	"TargetZoneAccessible" | "ZoneNaked" | "TargetZoneNaked" | "TargetHasPenis" | "HasPenis" |
+	"CanUsePenis" | "TargetHasVagina" | "HasVagina" | "TargetHasBreasts" | "HasBreasts" |
+	"TargetHasFlatChest" | "HasFlatChest" |
+
+	"Needs-SpankItem" | "Needs-TickleItem" | "Needs-RubItem" | "Needs-RollItem" | "Needs-MasturbateItem" |
+	"Needs-PourItem" | "Needs-ShockItem" | "Needs-Inject" | "Needs-PenetrateItem" | "Needs-SipItem"
+	;
+
+type AnimationDataTypes = "AssetGroup" | "" | "DynamicPlayerCanvas" | "PersistentData" | "Rebuild" | "RefreshTime" | "RefreshRate";
+
+type ModuleType = "Character" | "Cutscene" | "MiniGame" | "Online" | "Room";
 
 //#endregion
 
@@ -349,8 +418,11 @@ declare function LoseFocus(event: MouseEvent): void;
 
 interface IChatRoomGameResponse {
 	Data: {
-		KinkyDungeon: any;
-		OnlineBounty: any;
+		KinkyDungeon: string;
+		OnlineBounty: {
+			finishTime: number,
+			target: number,
+		};
 		/* LARP */
 		GameProgress?: "Start" | "Stop" | "Next" | "Skip" | "Action";
 		Action?: undefined;
@@ -358,13 +430,37 @@ interface IChatRoomGameResponse {
 		Item?: string;
 
 		/* MagicBattle */
-		Spell?: string;
+		Spell?: number;
 		Time?: number; /* ms */
 	}
 	Sender: number;
 	RNG: number
 }
 
+//#endregion
+
+//#region Server messages
+
+interface IChatRoomSyncExpressionMessageBase<T extends ExpressionGroupName> {
+	MemberNumber: number;
+	Group: T;
+	Name?: ExpressionNameMap[T];
+}
+type IChatRoomSyncExpressionMessageMap<T> = T extends ExpressionGroupName ? IChatRoomSyncExpressionMessageBase<T> : never;
+type IChatRoomSyncExpressionMessage = IChatRoomSyncExpressionMessageMap<ExpressionGroupName>;
+
+interface IChatRoomSyncPoseMessage {
+	MemberNumber: number;
+	Pose: AssetPoseName[] | AssetPoseName;
+}
+
+interface IChatRoomSyncArousalMessage {
+	MemberNumber: number;
+	OrgasmTimer: number;
+	OrgasmCount: number;
+	Progress: number;
+	ProgressTimer: number;
+}
 //#endregion
 
 //#region Chat
@@ -375,15 +471,21 @@ interface ChatRoom {
 	Admin: number[];
 	Ban: number[];
 	Limit: number;
-	Game: string;
+	Game: ChatRoomGame;
 	Background: string;
 	Private: boolean;
 	Locked: boolean;
-	BlockCategory: string[];
-	Language: string;
+	BlockCategory: ChatRoomBlockCategory[];
+	Language: ChatRoomLanguage;
 	Character?: any[]; /* From server, not really a Character object */
 }
 
+type ChatRoomLovershipOption = "" | "CanOfferBeginWedding" | "CanBeginWedding";
+type ChatRoomOwnershipOption = "" | "CanOfferEndTrial" | "CanOfferTrial" | "CanEndTrial";
+type ChatRoomSpaceType = "X" | "" | "M" | "Asylum";
+type ChatRoomGame = "" | "LARP" | "MagicBattle" | "GGTS";
+type ChatRoomBlockCategory = AssetCategory | "Leashing" | "Photos" | "Arousal";
+type ChatRoomLanguage = "EN" | "DE" | "FR" | "ES" | "CN" | "RU";
 type StimulationAction = "Kneel" | "Walk" | "Struggle" | "StruggleFail" | "Talk";
 
 interface StimulationEvent {
@@ -625,7 +727,7 @@ interface AssetGroupNameDictionaryEntry {
  */
 interface ActivityNameDictionaryEntry {
 	/** The name of the activity carried out */
-	ActivityName: string;
+	ActivityName: ActivityName;
 }
 
 type ChatMessageDictionaryEntry =
@@ -677,7 +779,7 @@ interface IChatRoomMessageMetadata {
 	/** Whether the message is considered game-initiated. Used for automatic vibe changes for example. */
 	Automatic?: boolean;
 	/** The group that has been interacted with to trigger the message */
-	FocusGroup?: AssetGroup;
+	FocusGroup?: AssetItemGroup;
 	/** The name of the group that has been interacted with to trigger the message */
 	GroupName?: AssetGroupName;
 	/** The assets referenced in the message */
@@ -688,7 +790,7 @@ interface IChatRoomMessageMetadata {
 	ShockIntensity?: number;
 	ActivityCounter?: number;
 	/** The triggered activity */
-	ActivityName?: string;
+	ActivityName?: ActivityName;
 	/** The name of the asset used for the activity */
 	ActivityAsset?: Asset;
 	/** The name of the chatroom, appropriately garbled */
@@ -820,7 +922,7 @@ interface AssetGroup {
 	Zone?: readonly [number, number, number, number][];
 	SetPose?: readonly AssetPoseName[];
 	AllowPose: readonly AssetPoseName[];
-	AllowExpression?: readonly string[];
+	AllowExpression?: readonly ExpressionName[];
 	Effect?: readonly EffectName[];
 	MirrorGroup: AssetGroupName | "";
 	RemoveItemOnRemove: readonly { Group: AssetGroupItemName; Name: string; Type?: string }[];
@@ -838,8 +940,46 @@ interface AssetGroup {
 	/** A dict mapping colors to custom filename suffices.
 	The "HEX_COLOR" key is special-cased to apply to all color hex codes. */
 	ColorSuffix?: Record<string, string>;
-	ExpressionPrerequisite?: readonly string[];
+	ExpressionPrerequisite?: readonly AssetPrerequisite[];
 	HasPreviewImages: boolean;
+	/** Return whether this group belongs to the `Appearance` {@link AssetGroup.Category} */
+	IsAppearance(): this is AssetAppearanceGroup;
+	/** Return whether this group belongs to the `Item` {@link AssetGroup.Category} */
+	IsItem(): this is AssetItemGroup;
+	/** Return whether this group belongs to the `Script` {@link AssetGroup.Category} */
+	IsScript(): this is AssetScriptGroup;
+}
+
+/** An AssetGroup subtype for the `Appearance` {@link AssetGroup.Category} */
+interface AssetAppearanceGroup extends AssetGroup {
+	Category: "Appearance";
+	Name: AssetGroupBodyName;
+	IsRestraint: false;
+	AllowExpression?: readonly ExpressionName[];
+}
+
+/** An AssetGroup subtype for the `Item` {@link AssetGroup.Category} */
+interface AssetItemGroup extends AssetGroup {
+	Category: "Item";
+	Name: AssetGroupItemName;
+	Underwear: false;
+	BodyCosplay: false;
+	Clothing: false;
+	IsDefault: false;
+	AllowExpression?: undefined;
+	Zone: readonly [number, number, number, number][];
+}
+
+/** An AssetGroup subtype for the `Script` {@link AssetGroup.Category} */
+interface AssetScriptGroup extends AssetGroup {
+	Category: "Script";
+	Name: AssetGroupScriptName;
+	IsRestraint: false;
+	BodyCosplay: false;
+	Underwear: false;
+	Clothing: false;
+	IsDefault: false;
+	AllowExpression?: undefined;
 }
 
 /** An object defining a drawable layer of an asset */
@@ -901,6 +1041,8 @@ interface AssetLayer {
 	HideForAttribute: readonly AssetAttribute[] | null;
 	/* Specifies that this layer should not be drawn unless the character is wearing an item with one of the given attributes */
 	ShowForAttribute: readonly AssetAttribute[] | null;
+	/** Used along with a hook to make layers of an asset disappear in some cases. */
+	Visibility: "Player" | "AllExceptPlayerDialog" | "Others" | "OthersExceptDialog" | "Owner" | "Lovers" | "Mistresses" | null;
 }
 
 /** An object defining a group of alpha masks to be applied when drawing an asset layer */
@@ -929,10 +1071,19 @@ interface ResolvedTintDefinition extends TintDefinition {
 	Item: Item;
 }
 
-interface ExpressionTrigger {
-	Group: AssetGroupName;
-	Name: string;
+interface ExpressionTriggerBase<GroupName extends ExpressionGroupName> {
+	Group: GroupName;
+	Name: ExpressionNameMap[GroupName];
 	Timer: number;
+}
+type ExpressionTriggerMap<T> = T extends ExpressionGroupName ? ExpressionTriggerBase<T> : never;
+type ExpressionTrigger = ExpressionTriggerMap<ExpressionGroupName>;
+
+interface ExpressionItem {
+	Appearance: Item,
+	Group: ExpressionGroupName,
+	CurrentExpression: null | ExpressionName,
+	ExpressionList: ExpressionName[],
 }
 
 /**
@@ -950,11 +1101,11 @@ interface Asset {
 	Visible: boolean;
 	NotVisibleOnScreen?: readonly string[];
 	Wear: boolean;
-	Activity: string | null;
-	AllowActivity?: readonly string[];
+	Activity: ActivityName | null;
+	AllowActivity?: readonly ActivityName[];
 	ActivityAudio?: readonly string[];
-	ActivityExpression: Record<string, readonly ExpressionTrigger[]>;
-	AllowActivityOn?: AssetGroupItemName[];
+	ActivityExpression: Partial<Record<ActivityName, readonly ExpressionTrigger[]>>;
+	AllowActivityOn?: readonly AssetGroupItemName[];
 	BuyGroup?: string;
 	PrerequisiteBuyGroups?: readonly string[];
 	Effect?: readonly EffectName[];
@@ -968,7 +1119,7 @@ interface Asset {
 	Require: readonly AssetGroupBodyName[];
 	SetPose?: readonly AssetPoseName[];
 	AllowPose: readonly AssetPoseName[] | null;
-	HideForPose: readonly AssetPoseName[];
+	HideForPose: readonly (AssetPoseName | "")[];
 	PoseMapping?: AssetPoseMapping;
 	AllowActivePose?: readonly AssetPoseName[];
 	WhitelistActivePose?: readonly AssetPoseName[];
@@ -989,7 +1140,7 @@ interface Asset {
 	HeightModifier: number;
 	ZoomModifier: number;
 	Alpha?: readonly AlphaDefinition[];
-	Prerequisite: readonly string[];
+	Prerequisite: readonly AssetPrerequisite[];
 	Extended: boolean;
 	AlwaysExtend: boolean;
 	AlwaysInteract: boolean;
@@ -1012,10 +1163,10 @@ interface Asset {
 	MinOpacity: number;
 	MaxOpacity: number;
 	Audio?: string;
-	Category?: readonly string[];
-	Fetish?: readonly string[];
+	Category?: readonly AssetCategory[];
+	Fetish?: readonly FetishName[];
 	CustomBlindBackground?: string;
-	ArousalZone: AssetGroupName;
+	ArousalZone: AssetGroupItemName;
 	IsRestraint: boolean;
 	BodyCosplay: boolean;
 	OverrideBlinking: boolean;
@@ -1025,7 +1176,7 @@ interface Asset {
 	DynamicAllowInventoryAdd: (C: Character) => boolean;
 	DynamicName: (C: Character) => string;
 	DynamicGroupName: AssetGroupName;
-	DynamicActivity: (C: Character) => string | null | undefined;
+	DynamicActivity: (C: Character) => ActivityName | null | undefined;
 	DynamicAudio: ((C: Character) => string) | null;
 	CharacterRestricted: boolean;
 	AllowRemoveExclusive: boolean;
@@ -1040,8 +1191,8 @@ interface Asset {
 	OverrideHeight?: AssetOverrideHeight;
 	FreezeActivePose: readonly AssetPoseCategory[];
 	DrawLocks: boolean;
-	AllowExpression?: readonly string[];
-	MirrorExpression?: AssetGroupName;
+	AllowExpression?: readonly ExpressionName[];
+	MirrorExpression?: AssetGroupBodyName;
 	FixedPosition: boolean;
 	Layer: readonly AssetLayer[];
 	ColorableLayerCount: number;
@@ -1054,7 +1205,7 @@ interface Asset {
 	Gender?: 'F' | 'M';
 	CraftGroup: string;
 	ColorSuffix: Record<string, string>;
-	ExpressionPrerequisite?: readonly string[];
+	ExpressionPrerequisite?: readonly AssetPrerequisite[];
 	TextMaxLength: null | Partial<Record<PropertyTextNames, number>>;
 	TextFont: null | string;
 
@@ -1088,11 +1239,23 @@ interface Pose {
 	MovePosition?: { Group: AssetGroupName; X: number; Y: number; }[];
 }
 
+type ActivityName = "Bite" | "Caress" | "Choke" | "Cuddle" | "FrenchKiss" |
+	"GagKiss" | "GaggedKiss" | "Grope" | "HandGag" | "Inject" | "Kick" |
+	"Kiss" | "Lick" | "MassageFeet" | "MassageHands" | "MasturbateFist" |
+	"MasturbateFoot" |"MasturbateHand" | "MasturbateItem" | "MasturbateTongue" |
+	"MoanGag" |"MoanGagAngry" | "MoanGagGiggle" | "MoanGagGroan" | "MoanGagTalk" |
+	"MoanGagWhimper" | "Nibble" | "Nod" | "PenetrateFast" | "PenetrateItem" |
+	"PenetrateSlow" | "Pet" | "Pinch" | "PoliteKiss" | "PourItem" | "Pull" |
+	"RestHead" | "RollItem" | "Rub" | "RubItem" | "ShockItem" | "SipItem" | "Sit" |
+	"Slap" | "Spank" | "SpankItem" | "Step" | "StruggleArms" | "StruggleLegs" |
+	"Suck" | "TakeCare" | "Tickle" | "TickleItem" | "Whisper" | "Wiggle"
+;
+
 interface Activity {
-	Name: string;
+	Name: ActivityName;
 	MaxProgress: number;
 	MaxProgressSelf?: number;
-	Prerequisite: string[];
+	Prerequisite: ActivityPrerequisite[];
 	Target: AssetGroupItemName[];
 	TargetSelf?: AssetGroupItemName[] | true;
 	/** Whether to reverse the prerequisite checks for that one */
@@ -1137,15 +1300,21 @@ interface InventoryItem {
 	Asset: Asset;
 }
 
+type SkillType = "Bondage" | "SelfBondage" | "LockPicking" | "Evasion" | "Willpower" | "Infiltration" | "Dressage";
+
 interface Skill {
-	Type: string;
+	Type: SkillType;
 	Level: number;
 	Progress: number;
 	Ratio?: number;
 }
 
+type ReputationType =
+	"Dominant" | "Kidnap" | "ABDL" | "Gaming" | "Maid" | "LARP" | "Asylum" | "Gambling" |
+	"HouseMaiestas" | "HouseVincula" | "HouseAmplector" | "HouseCorporis";
+
 interface Reputation {
-	Type: string;
+	Type: ReputationType;
 	Value: number;
 }
 
@@ -1242,7 +1411,7 @@ interface Character {
 	Type: CharacterType;
 	Name: string;
 	Nickname?: string;
-	AssetFamily: IAssetFamily | string;
+	AssetFamily: IAssetFamily;
 	AccountName: string;
 	Owner: string;
 	Lover: string;
@@ -1260,7 +1429,7 @@ interface Character {
 	Effect: EffectName[];
 	Tints: ResolvedTintDefinition[];
 	Attribute: AssetAttribute[];
-	FocusGroup: AssetGroup | null;
+	FocusGroup: AssetItemGroup | null;
 	Canvas: HTMLCanvasElement | null;
 	CanvasBlink: HTMLCanvasElement | null;
 	MustDraw: boolean;
@@ -1353,22 +1522,23 @@ interface Character {
 	DrawPose?: AssetPoseName[];
 	DrawAppearance?: Item[];
 	AppearanceLayers?: AssetLayer[];
-	Hooks: Map<string, Map<string, any>> | null;
-	RegisterHook: (hookName: string, hookInstance: string, callback: any) => boolean | any;
+	Hooks: Map<string, Map<string, () => void>> | null;
+	RegisterHook: (hookName: string, hookInstance: string, callback: () => void) => boolean;
 	UnregisterHook: (hookName: string, hookInstance: string) => boolean;
+	RunHooks: (hookName: string) => void;
 	HeightRatioProportion?: number;
-	GetGenders: () => string[];
+	GetGenders: () => ("M" | "F")[];
 	HasPenis: () => boolean;
 	HasVagina: () => boolean;
 	IsFlatChested: () => boolean;
 	// Properties created in other places
-	ArousalSettings?: CharacterArousalSettings;
+	ArousalSettings?: ArousalSettingsType;
 	AppearanceFull?: Item[];
 	// Online character properties
-	Title?: string;
-	LabelColor?: any;
-	Creation?: any;
-	Description?: any;
+	Title?: TitleName;
+	LabelColor?: string;
+	Creation?: number;
+	Description?: string;
 	OnlineSharedSettings?: CharacterOnlineSharedSettings;
 	Game?: {
 		LARP?: GameLARPParameters,
@@ -1393,32 +1563,6 @@ interface Character {
 }
 
 /**
- * The characters arrousal settings.
- * @see {@link Character.ArousalSettings}
- */
-interface CharacterArousalSettings {
-	Active: string;
-	Visible: string;
-	ShowOtherMeter: boolean;
-	AffectExpression: boolean;
-	AffectStutter: string;
-	VFX: string;
-	VFXVibrator: string;
-	VFXFilter: string;
-	Progress: number;
-	ProgressTimer: number;
-	VibratorLevel: number;
-	ChangeTime: number;
-	Activity: any[];
-	Zone: any[];
-	Fetish: any[];
-	OrgasmTimer?: number;
-	OrgasmStage?: number;
-	OrgasmCount?: number;
-	DisableAdvancedVibes: boolean;
-}
-
-/**
  * The characters online shared settings.
  * @see {@link Character.OnlineSharedSettings}
  */
@@ -1437,7 +1581,10 @@ type NPCArchetype =
 	/* Pandora NPCs */
 	"MemberNew"|"MemberOld"|"Cosplay"|"Mistress"|"Slave"|"Maid"|"Guard"|
 	/* Pandora Special */
-	"Victim"|"Target"|"Chest";
+	"Victim"|"Target"|"Chest" |
+	// Misc
+	"" | "Dominatrix" | "Nurse" | "Submissive" | "Mistress" | "Patient" | "Maid" | "Mistress" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"
+	;
 
 /** NPC Character extension */
 // FIXME: That one should find its way down to NPCCharacter, but
@@ -1466,6 +1613,13 @@ interface NPCCharacter {
 /** Asylum */
 interface NPCCharacter {
 	RunAway?: boolean;
+}
+
+/** Movie Studio */
+interface NPCCharacter {
+	TrialDone?: boolean;
+	CanGetLongDuster?: boolean;
+	OweFavor?: boolean;
 }
 
 /** Sarah */
@@ -1497,6 +1651,8 @@ interface Character {
 	KidnapStat?: [number, number, number, number];
 }
 
+type PandoraPrisonActivity = "Beat" | "Water" | "Transfer" | "Quickie" | "Strip" | "Chastity" | "Tickle" | "ChangeBondage";
+
 /** Pandora NPCs */
 interface Character {
 	Recruit?: number;
@@ -1508,11 +1664,13 @@ interface Character {
 	DrinkValue?: number;
 	TriggerIntro?: boolean;
 	FromPandora?: boolean;
+	// Pandora Prison
+	LastActivity?: PandoraPrisonActivity;
 }
 
 /** Magic School */
 interface Character {
-	House?: string;
+	House?: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis";
 }
 
 /** MovieStudio */
@@ -1539,18 +1697,18 @@ interface PlayerCharacter extends Character {
 		ColorActivities: boolean;
 		ColorEmotes: boolean;
 		ColorNames: boolean;
-		ColorTheme: string;
+		ColorTheme: ChatColorThemeType;
 		DisplayTimestamps: boolean;
-		EnterLeave: string;
-		FontSize: string;
-		MemberNumbers: string;
+		EnterLeave: ChatEnterLeaveType;
+		FontSize: ChatFontSizeType;
+		MemberNumbers: ChatMemberNumbersType;
 		MuStylePoses: boolean;
 		ShowActivities: boolean;
 		ShowAutomaticMessages: boolean;
 		ShowBeepChat: boolean;
 		ShowChatHelp: boolean;
 		ShrinkNonDialogue: boolean;
-		WhiteSpace: string;
+		WhiteSpace: "" | "Preserve";
 		/** @deprecated */
 		AutoBanBlackList?: any;
 		/** @deprecated */
@@ -1597,7 +1755,7 @@ interface PlayerCharacter extends Character {
 		ControllerActive: boolean;
 	};
 	GameplaySettings?: {
-		SensDepChatLog: string;
+		SensDepChatLog: SettingsSensDepName;
 		BlindDisableExamine: boolean;
 		DisableAutoRemoveLogin: boolean;
 		ImmersionLockSetting: boolean;
@@ -1619,11 +1777,11 @@ interface PlayerCharacter extends Character {
 	LastChatRoomBG?: string;
 	LastChatRoomPrivate?: boolean;
 	LastChatRoomSize?: number;
-	LastChatRoomLanguage?: string;
+	LastChatRoomLanguage?: ChatRoomLanguage;
 	LastChatRoomDesc?: string;
-	LastChatRoomAdmin?: any[];
-	LastChatRoomBan?: any[];
-	LastChatRoomBlockCategory?: string[];
+	LastChatRoomAdmin?: number[];
+	LastChatRoomBan?: number[];
+	LastChatRoomBlockCategory?: ChatRoomBlockCategory[];
 	LastChatRoomTimer?: any;
 	LastChatRoomSpace?: ChatRoomSpaceType;
 	RestrictionSettings?: {
@@ -1633,7 +1791,7 @@ interface PlayerCharacter extends Character {
 	};
 	OnlineSettings?: PlayerOnlineSettings;
 	GraphicsSettings?: {
-		Font: string;
+		Font: GraphicsFontName;
 		InvertRoom: boolean;
 		StimulationFlashes: boolean;
 		DoBlindFlash: boolean;
@@ -1672,9 +1830,9 @@ interface PlayerCharacter extends Character {
 		Test: NotificationSetting;
 	};
 	GhostList?: number[];
-	Wardrobe?: any[][];
+	Wardrobe?: ItemBundle[][];
 	WardrobeCharacterNames?: string[];
-	SavedExpressions?: ({ Group: AssetGroupName, CurrentExpression?: string }[] | null)[];
+	SavedExpressions?: ({ Group: ExpressionGroupName, CurrentExpression?: ExpressionName }[] | null)[];
 	SavedColors: HSVColor[];
 	FriendList?: number[];
 	FriendNames?: Map<number, string>;
@@ -1745,6 +1903,14 @@ interface AssetOverrideHeight {
 }
 
 /**
+ * The type for OverridePriority in extended items.
+ *
+ * Either a single number that will cause all of the asset's layer to
+ * inherit that priority, or a more precise specifier keyed by layer name.
+ */
+type AssetLayerOverridePriority = Record<string, number> | number;
+
+/**
  * Base properties of extended items derived from their respective {@link Asset} definition.
  *
  * Those are the properties the main game code enforces.
@@ -1775,7 +1941,7 @@ interface AssetDefinitionProperties {
 	 * The drawing priority of the item
 	 * @see {@link Asset.OverridePriority}
 	 */
-	OverridePriority?: number;
+	OverridePriority?: AssetLayerOverridePriority;
 	/**
 	 * The default color of the item
 	 * @see {@link Asset.DefaultColor}
@@ -1786,7 +1952,7 @@ interface AssetDefinitionProperties {
 	 * A list of allowed activities
 	 * @see {@link Asset.AllowActivity}
 	 */
-	AllowActivity?: string[];
+	AllowActivity?: ActivityName[];
 	/**
 	 * A list of groups allowed activities
 	 * @see {@link Asset.AllowActivityOn}
@@ -1862,7 +2028,8 @@ interface AssetDefinitionProperties {
 	SelfUnlock?: boolean;
 
 	/**
-	 * The timer for after how long until a lock should be removed
+	 * The timer for after how long until a lock should be removed.
+	 * Also used for timed emoticons.
 	 * @see {@link Asset.RemoveTimer}
 	 */
 	RemoveTimer?: number;
@@ -1890,7 +2057,7 @@ interface ItemPropertiesBase {
 	Type?: string | null;
 
 	/** A facial expression */
-	Expression?: string;
+	Expression?: ExpressionName;
 
 	/** Whether the asset affects should be overriden rather than extended */
 	OverrideAssetEffect?: boolean;
@@ -2075,334 +2242,7 @@ interface ItemPropertiesCustom {
 
 interface ItemProperties extends ItemPropertiesBase, AssetDefinitionProperties, ItemPropertiesCustom { }
 
-/**
- * An object containing the extended item definition for an asset.
- * @template Archetype, Config
- */
-interface ExtendedItemAssetConfig<Archetype extends ExtendedArchetype, Config> {
-	/** The extended item archetype that this asset uses. */
-	Archetype: Archetype;
-	/** The specific configuration for the item (type will vary based on the item's archetype) */
-	Config?: Config;
-	/** The group name and asset name of a configuration to copy - useful if multiple items share the same config */
-	CopyConfig?: { GroupName?: AssetGroupName, AssetName: string };
-}
-
-/**
- * Valid extended item configuration types
- */
-type AssetArchetypeConfig = TypedItemAssetConfig | ModularItemAssetConfig | VibratingItemAssetConfig | VariableHeightAssetConfig;
-
-/**
- * An object containing extended item definitions for a group.
- * Maps asset names within the group to their extended item configuration
- * @see {@link ExtendedItemAssetConfig}
- */
-type ExtendedItemGroupConfig = Record<string, AssetArchetypeConfig>;
-
-/**
- * An object containing extended item configurations keyed by group name.
- * @see {@link ExtendedItemAssetConfig}
- */
-type ExtendedItemConfig = Record<string, ExtendedItemGroupConfig>;
-
-/** Defines a single extended item option */
-interface ExtendedItemOption {
-	/** The name of the type - used for the preview icon and the translation key in the CSV */
-	Name: string;
-	/** The required bondage skill level for this option */
-	BondageLevel?: number;
-	/** The required self-bondage skill level for this option when using it on oneself */
-	SelfBondageLevel?: number;
-	/** The required prerequisites that must be met before this option can be selected */
-	Prerequisite?: string | string[];
-	/** A custom background for this option that overrides the default */
-	CustomBlindBackground?: string;
-	/** Whether the option permits locking - if not set, defaults to the AllowLock property of the parent asset */
-	AllowLock?: boolean;
-	/**
-	 * Whether or not it should be possible to change from this option to another
-	 * option while the item is locked (if set to `false`, the player must be able to unlock the item to change its type) -
-	 * defaults to `true`
-	 */
-	ChangeWhenLocked?: boolean;
-	/** The Property object to be applied when this option is used */
-	Property?: ItemProperties;
-	/**
-	 * Trigger this expression when changing to this option
-	 *
-	 * FIXME: **Currently broken!**
-	 */
-	Expression?: ExpressionTrigger[];
-	/** Whether or not the option should open a subscreen in the extended item menu */
-	HasSubscreen?: boolean;
-	/** Whether or not this option can be selected randomly */
-	Random?: boolean;
-	/** Whether or not this option can be selected by the wearer */
-	AllowSelfSelect?: boolean;
-	/** If the option has a subscreen, this can set a particular archetype to use */
-	Archetype?: ExtendedArchetype;
-	/** If the option has an archetype, sets the config to use */
-	ArchetypeConfig?: TypedItemConfig | ModularItemConfig | VibratingItemConfig | VariableHeightConfig;
-	/** A buy group to check for that option to be available */
-	PrerequisiteBuyGroup?: string;
-	/**
-	 * A unique (automatically assigned) identifier of the struct type
-	 * @todo consider making an {@link ExtendedItemOption} struct type wherein this field is mandatory once
-	 * more extended items have been assigned an arhcetype
-	 */
-	OptionType?: "ExtendedItemOption";
-}
-
-/**
- * An object containing data about the type change that triggered the chat message
- * @param {Character} C - A reference to the character wearing the item
- * @param {OptionType} previousOption - The previously selected type option
- * @param {OptionType} newOption - The newly selected type option
- * @param {number} previousIndex - The index of the previously selected type option in the item's options
- * config
- * @param {number} newIndex - The index of the newly selected type option in the item's options config
- * @template OptionType
- */
-interface ExtendedItemChatData<OptionType> {
-	C: Character;
-	previousOption: OptionType;
-	newOption: OptionType;
-	previousIndex: number;
-	newIndex: number;
-}
-
-/**
- * @param {OptionType} chatData - An object containing data about the type change that triggered the chat message
- * @returns {string} - The chat prefix that should be used for this type change
- * @template OptionType
- */
-type ExtendedItemChatCallback<OptionType> = (
-	chatData: ExtendedItemChatData<OptionType>,
-) => string;
-
-/**
- * @param {Character} C - The selected NPC
- * @param {OptionType} Option - The currently selected extended item option
- * @param {OptionType} PreviousOption - The previously selected extended item option
- * @returns {string} - The chat prefix that should be used for this type change
- * @template OptionType
- */
-type ExtendedItemNPCCallback<OptionType> = (
-	C: Character,
-	Option: OptionType,
-	PreviousOption: OptionType,
-) => string;
-
-/**
- * @param {Character} C - A reference to the character wearing the item
- * @param {Item} Item - The equipped item
- * @param {OptionType} Option - The newly selected option
- * @param {OptionType} CurrentOption - The currently selected option
- * @returns {string} - Returns a non-empty message string if the item failed validation, or an empty string otherwise
- * @template OptionType
- */
-type ExtendedItemValidateCallback<OptionType> = (
-	C: Character,
-	Item: Item,
-	Option: OptionType,
-	CurrentOption: OptionType,
-) => string;
-
-/**
- * @param {ExtendedItemValidateCallback<OptionType>} - The hooked validate function
- * @param {Character} C - A reference to the character wearing the item
- * @param {Item} Item - The equipped item
- * @param {OptionType} Option - The newly selected option
- * @param {OptionType} CurrentOption - The currently selected option
- * @returns {string} - Returns a non-empty message string if the item failed validation, or an empty string otherwise
- * @template OptionType
- */
-type ExtendedItemValidateScriptHookCallback<OptionType> = (
-	next: ExtendedItemValidateCallback<OptionType>,
-	C: Character,
-	Item: Item,
-	Option: OptionType,
-	CurrentOption: OptionType,
-) => string;
-
-/**
- * @param {Character} C - The character wearing the item
- * @param {OptionType} Option - The newly selected option
- * @param {OptionType} CurrentOption - The currently selected option
- * @return {void} - Nothing
- * @template OptionType
- */
- type ExtendedItemPublishActionCallback<OptionType> = (
-	C: Character,
-	CurrentOption: OptionType,
-	PreviousOption: OptionType,
-) => void;
-
 //#endregion
-
-//#region Modular items
-
-/** An object containing the extended item definition for a modular asset. */
-type ModularItemAssetConfig = ExtendedItemAssetConfig<"modular", ModularItemConfig>;
-
-/** An object defining all of the required configuration for registering a modular item */
-interface ModularItemConfig {
-	/** The module definitions for the item */
-	Modules?: ModularItemModuleBase[];
-	/**
-	 * The item's chatroom message setting. Determines the level of
-	 * granularity for chatroom messages when the item's module values change.
-	 */
-	ChatSetting?: ModularItemChatSetting;
-	/**
-	 * An optional array of chat tags that should be included in the dictionary of
-	 * the chatroom message when the item's type is changed.
-	 * Defaults to {@link CommonChatTags.SOURCE_CHAR} and {@link CommonChatTags.DEST_CHAR}
-	 */
-	ChatTags?: CommonChatTags[];
-	/**
-	 * A boolean indicating whether or not the item's type can be changed while the
-	 * item is locked (if set to false, the player must be able to unlock the item to change its type). Defaults to `true`
-	 */
-	ChangeWhenLocked?: boolean;
-	/** The optional text configuration for the item. Custom text keys can be configured within this object */
-	Dialog?: ModularItemDialogConfig;
-	/**
-	 * A recond containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
-	 * and parameters passed on to them. If undefined, these are ignored.
-	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
-	 */
-	ScriptHooks?: {
-		Load?: (next: () => void) => void;
-		Click?: (next: () => void) => void;
-		Draw?: (next: () => void) => void;
-		Exit?: () => void;
-		Validate?: ExtendedItemValidateScriptHookCallback<ModularItemOption>;
-	};
-	/**
-	 * To-be initialized properties independent of the selected item module(s).
-	 * Relevant if there are properties that are (near) exclusively managed by {@link ModularItemConfig.ScriptHooks} functions.
-	 */
-	BaselineProperty?: ItemProperties;
-	/** A boolean indicating whether or not images should be drawn for the module selection screen. */
-	DrawImages?: boolean;
-}
-
-interface ModularItemDialogConfig {
-	/**
-	 * The key for the text that will be displayed on the base modular item screen (usually a prompt for the player to
-	 * configure modules). Defaults to `"<groupName><assetName>Select"`
-	 */
-	Select?: string;
-	/**
-	 * A prefix for text keys for the display names of the item's modules. This will be suffixed with the module name to
-	 * get the final key (i.e. `"<modulePrefix><moduleName>"`). Defaults to `"<groupName><assetName>Module"`.
-	 */
-	ModulePrefix?: string;
-	/**
-	 * A prefix for text keys for the display names of the item's options. This will be suffixed with the option key
-	 * (i.e. `"<optionPrefix><optionKey>"`. The option key is the module key followed by the option's index within its
-	 * parent module (e.g. `"a3"`). Defaults to `"<groupName><assetName>Option"`.
-	 */
-	OptionPrefix?: string;
-	/**
-	 * A prefix for text keys for chat messages triggered
-	 */
-	ChatPrefix?: string | ExtendedItemChatCallback<ModularItemOption>;
-}
-
-/** A (partially parsed) object describing a single module for a modular item. */
-interface ModularItemModuleBase {
-	/** The name of this module - this is usually a human-readable string describing what the
-	 * module represents (e.g. Straps). It is used for display text keys, and should be unique across all of the modules
-	 * for the item.
-	 */
-	Name: string;
-	/** The unique key for this module - this is used as a prefix to designate option names. Each
-	 * options in the module will be named with the module's key, followed by the index of the option within the module's
-	 * Options array. Keys should be alphabetical only (a-z, A-Z)
-	 */
-	Key: string;
-	/** The list of option definitions that can be chosen within this module. */
-	Options: ModularItemOptionBase[];
-	/** Whether or not this module can be selected by the wearer */
-	AllowSelfSelect?: boolean;
-	/** A unique (automatically assigned) identifier of the struct type */
-	OptionType?: "ModularItemModule";
-	/** A boolean indicating whether or not images should be drawn within this particular module. */
-	DrawImages?: boolean;
-}
-
-/** An object describing a single module for a modular item. */
-interface ModularItemModule extends ModularItemModuleBase {
-	/** A unique (automatically assigned) identifier of the struct type */
-	OptionType: "ModularItemModule";
-	/** The list of option definitions that can be chosen within this module. */
-	Options: ModularItemOption[];
-	/** A boolean indicating whether or not images should be drawn within this particular module. */
-	DrawImages: boolean;
-}
-
-/** A (partially parsed) object describing a single option within a module for a modular item. */
-interface ModularItemOptionBase {
-	/** The additional difficulty associated with this option - defaults to 0 */
-	Difficulty?: number;
-	/** The required bondage skill level for this option */
-	BondageLevel?: number;
-	/** The required self-bondage skill level for this option when using it on oneself */
-	SelfBondageLevel?: number;
-	/** The required prerequisites that must be met before this option can be selected */
-	Prerequisite?: string | string[];
-	/** A custom background for this option that overrides the default */
-	CustomBlindBackground?: string;
-	/** A list of groups that this option blocks - defaults to [] */
-	Block?: AssetGroupItemName[];
-	/** A list of groups that this option hides - defaults to [] */
-	Hide?: AssetGroupName[];
-	/** A list of items that this option hides */
-	HideItem?: string[];
-	/** The Property object to be applied when this option is used */
-	Property?: ItemProperties;
-	/** Whether the option permits locking - if not set, defaults to the AllowLock property of the parent asset */
-	AllowLock?: boolean;
-	/**
-	 * Whether or not it should be possible to change from this option to another
-	 * option while the item is locked (if set to `false`, the player must be able to unlock the item to change its type) -
-	 * defaults to `true`
-	 */
-	ChangeWhenLocked?: boolean;
-	/** Whether or not the option should open a subscreen in the extended item menu */
-	HasSubscreen?: boolean;
-	/** Override height, uses the highest priority of all modules*/
-	OverrideHeight?: AssetOverrideHeight;
-	/** Whether or not this option can be selected by the wearer */
-	AllowSelfSelect?: boolean;
-	/** Whether that option moves the character up */
-	HeightModifier?: number;
-	/** Whether that option applies effects */
-	Effect?: EffectName[];
-	/** Whether the option forces a given pose */
-	SetPose?: AssetPoseName;
-	/** A list of activities enabled by that module */
-	AllowActivity?: string[];
-	/** A buy group to check for that module to be available */
-	PrerequisiteBuyGroup?: string;
-	/** The name of the option; automatically set to {@link ModularItemModule.Key} + the option's index */
-	Name?: string;
-	/** A unique (automatically assigned) identifier of the struct type */
-	OptionType?: "ModularItemOption";
-	/** Trigger this expression when changing to this option */
-	Expression?: ExpressionTrigger[];
-}
-
-/** An object describing a single option within a module for a modular item. */
-interface ModularItemOption extends ModularItemOptionBase {
-	/** The name of the option; automatically set to {@link ModularItemModule.Key} + the option's index */
-	Name: string;
-	/** A unique (automatically assigned) identifier of the struct type */
-	OptionType: "ModularItemOption";
-}
 
 /** A struct with drawing data for a given module. */
 interface ModularItemDrawData {
@@ -2460,11 +2300,6 @@ interface ModularItemData {
 	/** A lookup for the click functions for each of the item's modules */
 	clickFunctions: Record<string, () => void>;
 	/**
-	 * A boolean indicating whether or not the item's type can be changed while the
-	 * item is locked (if set to `false`, the player must be able to unlock the item to change its type). Defaults to `true`
-	 */
-	changeWhenLocked: boolean;
-	/**
 	 * A recond containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
 	 * and parameters passed on to them. If undefined, these are ignored.
 	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
@@ -2497,89 +2332,21 @@ interface ModularItemData {
  * The currentOption is currently active option within the relevant module.
  * The prefix is the dialog prefix for the buttons text.
  */
-type ModularItemButtonDefinition = [ModularItemOption | ModularItemModule, ModularItemOption, string]
+type ModularItemButtonDefinition = [
+	moduleOrOption: ModularItemOption | ModularItemModule,
+	currentOption: ModularItemOption,
+	prefix: string,
+];
 
 //#endregion
 
-//#region Typed items
+//#region Typed Items
 
-/** An object containing the extended item definition for a modular asset. */
-type TypedItemAssetConfig = ExtendedItemAssetConfig<"typed", TypedItemConfig>;
-
-/** An object defining all of the required configuration for registering a typed item */
-interface TypedItemConfig {
-	/** The list of extended item options available for the item */
-	Options?: ExtendedItemOption[];
-	/** The optional text configuration for the item. Custom text keys can be configured within this object */
-	Dialog?: TypedItemDialogConfig;
-	/**
-	 * An optional array of chat tags that should be included in the dictionary of
-	 * the chatroom message when the item's type is changed.
-	 * Defaults to {@link CommonChatTags.SOURCE_CHAR} and {@link CommonChatTags.DEST_CHAR}
-	 */
-	ChatTags?: CommonChatTags[];
-	/**
-	 * The chat message setting for the item. This can be provided to allow
-	 * finer-grained chatroom message keys for the item. Defaults to {@link TypedItemChatSetting.TO_ONLY}
-	 */
-	ChatSetting?: TypedItemChatSetting;
-	/** A boolean indicating whether or not images should be drawn in this item's extended item menu. Defaults to `true` */
-	DrawImages?: boolean;
-	/**
-	 * A boolean indicating whether or not the item's type can be changed while the
-	 * item is locked (if set to `false`, the player must be able to unlock the item to change its type). Defaults to `true`
-	 */
-	ChangeWhenLocked?: boolean;
-	/**
-	 * Contains custom dictionary entries in the event that the base ones do not suffice.
-	 */
-	Dictionary?: TypedItemDictionaryCallback[];
-	/**
-	 * A recond containing functions that are run on load, click, draw, exit, validate and publishaction,
-	 * with the original archetype function and parameters passed on to them. If undefined, these are ignored.
-	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
-	 */
-	ScriptHooks?: {
-		Load?: (next: () => void) => void,
-		Click?: (next: () => void) => void,
-		Draw?: (next: () => void) => void,
-		Exit?: () => void,
-		Validate?: ExtendedItemValidateScriptHookCallback<ExtendedItemOption>,
-		PublishAction?: ExtendedItemPublishActionCallback<ExtendedItemOption>,
-	};
-	/**
-	 * To-be initialized properties independent of the selected item module(s).
-	 * Relevant if there are properties that are (near) exclusively managed by {@link TypedItemConfig.ScriptHooks} functions.
-	 */
-	BaselineProperty?: ItemProperties;
-}
-
-interface TypedItemDialogConfig {
-	/**
-	 * The key for the text that will be displayed at the top of the extended item screen
-	 * (usually a prompt for the player to select a type). Defaults to `"<groupName><assetName>Select"`
-	 */
-	Load?: string;
-	/**
-	 * A prefix for text keys for the display names of the item's individual types. This
-	 * will be suffixed with the option name to get the final key (i.e. `"<typePrefix><optionName>"`). Defaults to
-	 * `"<groupName><assetName>"`
-	 */
-	TypePrefix?: string;
-	/**
-	 * A prefix for text keys for chat messages triggered by the item. Chat message keys
-	 * will include the name of the new option, and depending on the chat setting, the name of the previous option:
-	 * - For chat setting `FROM_TO`: `<chatPrefix><oldOptionName>To<newOptionName>`
-	 * - For chat setting `TO_ONLY`: `<chatPrefix><newOptionName>`
-	 * Defaults to `"<GroupName><AssetName>Set"`
-	 */
-	ChatPrefix?: string | ExtendedItemChatCallback<ExtendedItemOption>;
-	/**
-	 * A prefix for text keys for NPC dialog. This will be suffixed with the option name
-	 * to get the final NPC dialogue key (i.e. `"<npcPrefix><optionName>"`. Defaults to `"<groupName><assetName>"`
-	 */
-	NpcPrefix?: string | ExtendedItemNPCCallback<ExtendedItemOption>;
-}
+/**
+ * Callback for custom functions used for setting the `DialogFocusItem.Type` attribute.
+ * Relevant for typed items that lack an archetype.
+ */
+type TypedItemSetTypeCallback = (NewType: string) => void;
 
 /**
  * An object containing typed item configuration for an asset. Contains all of the necessary information for the item's
@@ -2622,11 +2389,6 @@ interface TypedItemData {
 	/** A boolean indicating whether or not images should be drawn in this item's extended item menu. Defaults to `true` */
 	drawImages?: boolean;
 	/**
-	 * A boolean indicating whether or not the item's type can be changed while the
-	 * item is locked (if set to false, the player must be able to unlock the item to change its type). Defaults to `true`
-	 */
-	changeWhenLocked?: boolean;
-	/**
 	 * A recond containing functions that are run on load, click, draw, exit, validate and publishaction,
 	 * with the original archetype function and parameters passed on to them. If undefined, these are ignored.
 	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
@@ -2646,19 +2408,7 @@ interface TypedItemData {
 	BaselineProperty: ItemProperties | null;
 }
 
-/**
- * @param {object} chatData - An object containing data about the type change that triggered the chat message
- * @param {Character} chatData.C - A reference to the character wearing the item
- * @param {ExtendedItemOption} chatData.previousOption - The previously selected type option
- * @param {ExtendedItemOption} chatData.newOption - The newly selected type option
- * @param {number} chatData.previousIndex - The index of the previously selected type option in the item's options
- * config
- * @param {number} chatData.newIndex - The index of the newly selected type option in the item's options config
- * @returns {[{ Tag: string, Text: string }]} - The dictionary entry to append to the dictionary.
- */
-type TypedItemDictionaryCallback = (
-	chatData: ExtendedItemChatData<ExtendedItemOption>
-) => ChatMessageDictionaryEntry;
+//#region Validation
 
 /**
  * A parameter object containing information used to validate and sanitize character appearance update diffs. An
@@ -2723,35 +2473,9 @@ interface AppearanceValidationWrapper {
 	valid: boolean;
 }
 
-/**
- * Callback for custom functions used for setting the `DialogFocusItem.Type` attribute.
- * Relevant for typed items that lack an archetype.
- */
-type TypedItemSetTypeCallback = (NewType: string) => void;
-
 //#endregion
 
-//#region Vibrating Items
-
-/** An object containing the extended item definition for a vibrating asset. */
-type VibratingItemAssetConfig = ExtendedItemAssetConfig<"vibrating", VibratingItemConfig>;
-
-/** An object defining all of the required configuration for registering a vibrator item */
-interface VibratingItemConfig {
-	/** The list of vibrator mode sets that are available on this item */
-	Options?: VibratorModeSet[];
-	/**
-	 * A record containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
-	 * and parameters passed on to them. If undefined, these are ignored.
-	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
-	 */
-	ScriptHooks?: {
-		Load?: (next: () => void) => void;
-		Click?: (next: () => void) => void;
-		Draw?: (next: () => void) => void;
-		Exit?: () => void;
-	};
-}
+//#region Vibrating items
 
 interface VibratingItemData {
 	/** A key uniquely identifying the asset */
@@ -2791,56 +2515,6 @@ interface StateAndIntensity {
 
 //#region Variable Height items
 
-/** An object containing the extended item definition for a variable height asset. */
-type VariableHeightAssetConfig = ExtendedItemAssetConfig<"variableheight", VariableHeightConfig>;
-
-interface VariableHeightConfig {
-	/** The highest Y co-ordinate that can be set  */
-	MaxHeight: number;
-	/** The lowest Y co-ordinate that can be set  */
-	MinHeight: number;
-	/** Settings for the range input element the user can use to change the height */
-	Slider: VariableHeightSliderConfig;
-	/** A record containing various dialog keys used by the extended item screen */
-	Dialog: VariableHeightDialogConfig;
-	/**
-	 * An array of the chat message tags that should be included in the item's
-	 * chatroom messages. Defaults to [{@link CommonChatTags.SOURCE_CHAR}, {@link CommonChatTags.DEST_CHAR}]
-	 */
-	ChatTags?: CommonChatTags[];
-	/** The function that handles finding the current variable height setting */
-	GetHeightFunction?: Function;
-	/** The function that handles applying the height setting to the character */
-	SetHeightFunction?: Function;
-	/** The default properties for the item, if not provided from an extended item option */
-	Property?: ItemProperties;
-}
-
-interface VariableHeightSliderConfig {
-	/** The name of a supported thumbnail image in \CSS\Styles.css that will show the current position on the slider */
-	Icon: string;
-	/** The Y co-ordinate of the topmost point of the slider */
-	Top: number;
-	/** The height in pixels of the slider */
-	Height: number;
-}
-
-interface VariableHeightDialogConfig {
-	/**
-	 * A prefix for text keys for chat messages triggered by the item. Chat message keys
-	 * will include the name of the new option, and depending on the chat setting, the name of the previous option:
-	 * - For chat setting `FROM_TO`: `<chatPrefix><oldOptionName>To<newOptionName>`
-	 * - For chat setting `TO_ONLY`: `<chatPrefix><newOptionName>`
-	 * Defaults to `"<GroupName><AssetName>Set"`
-	 */
-	ChatPrefix?: string | ExtendedItemChatCallback<ExtendedItemOption>;
-	/**
-	 * A prefix for text keys for NPC dialog. This will be suffixed with the option name
-	 * to get the final NPC dialogue key (i.e. `"<npcPrefix><optionName>"`. Defaults to `"<groupName><assetName>"`
-	 */
-	NpcPrefix?: string | ExtendedItemNPCCallback<ExtendedItemOption>;
-}
-
 /**
  * An object containing typed item configuration for an asset. Contains all of the necessary information for the item's
  * load, draw & click handlers.
@@ -2873,9 +2547,9 @@ interface VariableHeightData {
 	 */
 	chatTags: CommonChatTags[];
 	/** The function that handles finding the current variable height setting */
-	getHeight: Function;
+	getHeight: (property: ItemProperties) => number;
 	/** The function that handles applying the height setting to the character */
-	setHeight: Function;
+	setHeight: (property: ItemProperties, height: number, maxHeight: number, minHeight: number) => void;
 	/** The list of extended item options the current option was selected from, if applicable */
 	parentOptions: ExtendedItemOption[];
 }
@@ -2894,13 +2568,30 @@ interface ICommand {
 	Clear?: false;
 }
 
-type StruggleKnownMinigames = "Strength" | "Flexibility" | "Dexterity" | "LockPick";
+// #region Struggle Minigame
+
+type StruggleKnownMinigames = "Strength" | "Flexibility" | "Dexterity" | "Loosen" | "LockPick";
 
 interface StruggleMinigame {
 	Setup: (C: Character, PrevItem: Item, NextItem: Item) => void;
 	Draw: (C: Character) => void;
 	HandleEvent?: (EventType: "KeyDown"|"Click") => void;
+	DisablingCraftedProperty?: CraftingPropertyType;
 }
+
+interface StruggleCompletionData {
+	Progress: number;
+	PrevItem: Item;
+	NextItem?: Item;
+	Skill: number;
+	Attempts: number;
+	Interrupted: boolean;
+	Auto?: boolean;
+}
+
+type StruggleCompletionCallback = (character: Character, game: StruggleKnownMinigames, data: StruggleCompletionData) => void;
+
+// #endregion
 
 //#region Poker Minigame
 
@@ -2961,11 +2652,11 @@ interface GamePokerParameters {
 type OnlineGameStatus = "" | "Running";
 
 interface GameLARPParameters {
-	Status: OnlineGameStatus;
-	Class: string;
-	Team: string;
-	TimerDelay: number;
-	Level: {
+	Status?: OnlineGameStatus;
+	Class?: string;
+	Team?: string;
+	TimerDelay?: number;
+	Level?: {
 		Name: string;
 		Level: number;
 		Progress: number;
@@ -2979,7 +2670,7 @@ interface GameLARPOption {
 
 interface GameMagicBattleParameters {
 	Status: OnlineGameStatus;
-	House: string;
+	House: "Independent" | "NotPlaying" | "HouseMaiestas" | "HouseVincula" | "HouseAmplector" | "HouseCorporis";
 	TeamType: "FreeForAll" | "House";
 }
 
@@ -3012,7 +2703,7 @@ interface AudioChatAction {
 	IsAction: (data: IChatRoomMessage) => boolean;
 
 	/** Extracts the actual sound effect from the chat message */
-	GetSoundEffect: (data: IChatRoomMessage, metadata: any) => (AudioSoundEffect | string | null);
+	GetSoundEffect: (data: IChatRoomMessage, metadata: IChatRoomMessageMetadata) => (AudioSoundEffect | string | null);
 }
 
 // #endregion
@@ -3160,6 +2851,8 @@ interface DynamicBeforeDrawOverrides {
 	Pose?: AssetPoseName;
 }
 
+type DynamicDrawTextEffect = "burn";
+
 /**
  * A dynamic BeforeDraw callback
  */
@@ -3170,23 +2863,35 @@ type DynamicBeforeDrawCallback = (data: DynamicDrawingData) => DynamicBeforeDraw
  */
 type DynamicAfterDrawCallback = (data: DynamicDrawingData) => void;
 
+
+interface DynamicScriptCallbackData {
+	C: Character;
+	Item: Item;
+	PersistentData: () => any;
+}
+
 /**
  * A dynamic ScriptDraw callback
  */
-type DynamicScriptDrawCallback = (data: {C: Character, Item: Item, PersistentData: <T>() => T}) => void;
+type DynamicScriptDrawCallback = (data: DynamicScriptCallbackData) => void;
 
 // #endregion
 
 //#region Infiltration/Pandora
 
+type InfiltrationMissionType = "Rescue" | "Kidnap" | "Retrieve" | "CatBurglar" | "ReverseMaid" | "Steal";
+
 type InfiltrationTargetType = "NPC" | "USBKey" | "BDSMPainting" | "GoldCollar" | "GeneralLedger" | "SilverVibrator" | "DiamondRing" | "SignedPhoto" | "PandoraPadlockKeys";
 
 interface InfiltrationMissionTarget {
 	Type: InfiltrationTargetType;
-	Found: boolean;
-	Fail: boolean;
 	Name: string;
-	PrivateRoom: boolean;
+	/** Whether the target was found */
+	Found?: boolean;
+	/** Whether the mission failed */
+	Fail?: boolean;
+	/** Whether this is an Rescue NPC mission from having a Private Room character kidnapped */
+	PrivateRoom?: boolean;
 }
 
 type PandoraDirection = "North" | "South" | "East" | "West";
@@ -3204,7 +2909,7 @@ interface PandoraBaseRoom {
 	Path: (PandoraBaseRoom | PandoraSpecialRoom)[];
 	PathMap: PandoraBaseRoom[];
 	Direction: string[];
-	DirectionMap: string[];
+	DirectionMap: PandoraFloorDirection[];
 
 	/* SearchRoom */
 	SearchSquare?: {
@@ -3499,7 +3204,90 @@ interface DialogSelfMenuOptionType {
 
 // #end region
 
-// #region WheelFortune
+// #region Notification
+
+type NotificationAudioType = 0 | 1 | 2;
+type NotificationAlertType = 0 | 1 | 3 | 2;
+type NotificationEventType = "ChatMessage" | "ChatJoin" | "Beep" | "Disconnect" | "Test" | "Larp";
+
+interface NotificationSetting {
+	AlertType: NotificationAlertType,
+	Audio: NotificationAudioType,
+}
+
+interface NotificationData {
+	body?: string,
+	character?: Character,
+	useCharAsIcon?: boolean,
+	memberNumber?: number,
+	characterName?: string,
+	chatRoomName?: string,
+}
+
+// #end region
+
+// #region preference
+
+type ChatColorThemeType = "Light" | "Dark" | "Light2" | "Dark2";
+type ChatEnterLeaveType = "Normal" | "Smaller" | "Hidden";
+type ChatMemberNumbersType = "Always" | "Never" | "OnMouseover";
+type ChatFontSizeType = "Small" | "Medium" | "Large";
+
+type ArousalActiveName = "Inactive" | "NoMeter" | "Manual" | "Hybrid" | "Automatic";
+type ArousalVisibleName = "All" | "Access" | "Self";
+type ArousalAffectStutterName = "None" | "Arousal" | "Vibration" | "All";
+
+type SettingsSensDepName = "SensDepLight" | "Normal" | "SensDepNames" | "SensDepTotal" | "SensDepExtreme";
+type SettingsVFXName = "VFXInactive" | "VFXSolid" | "VFXAnimatedTemp" | "VFXAnimated";
+type SettingsVFXVibratorName = "VFXVibratorInactive" | "VFXVibratorSolid" | "VFXVibratorAnimated";
+type SettingsVFXFilterName = "VFXFilterLight" | "VFXFilterMedium" | "VFXFilterHeavy";
+
+type GraphicsFontName =
+	"Arial" | "TimesNewRoman" | "Papyrus" | "ComicSans" | "Impact" | "HelveticaNeue" | "Verdana" |
+	"CenturyGothic" | "Georgia" | "CourierNew" | "Copperplate"
+	;
+
+type PreferenceSubscreenName =
+	"General" | "Difficulty" | "Restriction" | "Chat" | "CensoredWords" | "Audio" | "Arousal" |
+	"Security" | "Online" | "Visibility" | "Immersion" | "Graphics" | "Controller" | "Notifications" |
+	"Gender" | "Scripts"
+	;
+
+type FetishName =
+	"Bondage" | "Gagged" | "Blindness" | "Deafness" | "Chastity" | "Exhibitionist" | "Masochism" |
+	"Sadism" | "Rope" | "Latex" | "Leather" | "Metal" | "Tape" | "Nylon" | "Lingerie" | "Pet" |
+	"Pony" | "ABDL" | "Forniphilia"
+	;
+
+interface ArousalActivety { Name: ActivityName, Self: number, Other: number }
+interface ArousalZone { Name: AssetGroupName, Factor: number, Orgasm?: boolean }
+interface ArousalFetish { Name: FetishName, Factor: number }
+
+interface ArousalSettingsType {
+	Active: ArousalActiveName;
+	Visible: ArousalVisibleName;
+	ShowOtherMeter: boolean;
+	AffectExpression: boolean;
+	AffectStutter: ArousalAffectStutterName;
+	VFX: SettingsVFXName;
+	VFXVibrator: SettingsVFXVibratorName;
+	VFXFilter: SettingsVFXFilterName;
+	Progress: number;
+	ProgressTimer: number;
+	VibratorLevel: number;
+	ChangeTime: number;
+	Activity: ArousalActivety[];
+	Zone: ArousalZone[];
+	Fetish: ArousalFetish[];
+	OrgasmTimer?: number;
+	OrgasmStage?: number;
+	OrgasmCount?: number;
+	DisableAdvancedVibes: boolean;
+}
+
+// #end region
+
+// #region fortune wheel
 
 /** A union of valid wheel of fortune button colors */
 type WheelFortuneColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple" | "Red" | "Yellow";
@@ -3507,11 +3295,11 @@ type WheelFortuneColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple
 /** Base type for fortune wheel options */
 interface WheelFortuneOptionType {
     /** A single-character UTF16 string with the option's ID */
-    ID: string,
+    ID: string;
     /** The color of the option button */
-    Color: WheelFortuneColor,
+    Color: WheelFortuneColor;
     /** An optional script that will be executed whenever the option is picked */
-    Script?: () => void,
+    Script?: () => void;
 }
 
 // #end region

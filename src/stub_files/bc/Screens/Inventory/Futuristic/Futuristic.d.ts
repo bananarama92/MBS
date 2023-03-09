@@ -50,7 +50,12 @@ declare function InventoryItemFuturisticExitAccessDenied(): void;
  * @returns {string} - Returns false and sets DialogExtendedMessage, if the chosen option is not possible.
  */
 declare function InventoryItemFuturisticValidate(C: Character, Item?: Item): string;
-declare function InventoryItemFuturisticPublishAccessDenied(C: any): void;
+/**
+ * Publish a chat message for denied access.
+ *
+ * @param {Character} C - The character that got denied access.
+ */
+declare function InventoryItemFuturisticPublishAccessDenied(C: Character): void;
 declare var FuturisticAccessDeniedMessage: string;
 declare var FuturisticAccessCollarGroups: string[];
 declare var FuturisticAccessArmGroups: string[];

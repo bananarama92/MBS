@@ -21,11 +21,12 @@ declare function ValidationCreateDiffParams(C: Character, sourceMemberNumber: nu
 declare function ValidationResolveAppearanceDiff(groupName: AssetGroupName, previousItem: Item | null, newItem: Item | null, params: AppearanceUpdateParameters): ItemDiffResolution;
 /**
  * Check whether newArray is different from oldArray.
- * @param {any[]} oldArray
- * @param {any[]} newArray
- * @returns
+ * @template T
+ * @param {T[]} oldArray
+ * @param {T[]} newArray
+ * @returns {boolean}
  */
-declare function ValidationHasArrayPropertyBeenModified(oldArray: any[], newArray: any[]): boolean;
+declare function ValidationHasArrayPropertyBeenModified<T>(oldArray: T[], newArray: T[]): boolean;
 /**
  * Resolves an appearance diff for the ItemScript group. This group has special rules and permissions which don't
  * necessarily apply to or behave like other groups.
@@ -275,11 +276,11 @@ declare function ValidationFindBlockCycles(appearance: Item[]): string[][];
 /**
  * Finds the groups, from a provided list of groups, that are blocked by a given item.
  * @param {Item} item - The item to check
- * @param {AssetGroupName[]} groupNames - A list of group names that should be used to filter the final block list
+ * @param {readonly AssetGroupName[]} groupNames - A list of group names that should be used to filter the final block list
  * @returns {AssetGroupName[]} - A subset of the provided group names representing the groups that are blocked by the given
  * item.
  */
-declare function ValidationGetBlockedGroups(item: Item, groupNames: AssetGroupName[]): AssetGroupName[];
+declare function ValidationGetBlockedGroups(item: Item, groupNames: readonly AssetGroupName[]): AssetGroupName[];
 /**
  * Finds the groups from the provided appearance array that block a given item due to prerequisites. In this situation,
  * an item is considered to be blocking if the target item can't be added with it, but can without it.
@@ -304,10 +305,10 @@ declare function ValidationHasScriptPermission(character: Character, property: S
  * Checks whether a character permits any of the given permission levels to modify the given item property.
  * @param {Character} character - The character to check
  * @param {ScriptPermissionProperty} property - The name of the property to check
- * @param {ScriptPermissionLevel[]} permissionLevels - The permission levels to check
+ * @param {readonly ScriptPermissionLevel[]} permissionLevels - The permission levels to check
  * @returns {boolean} TRUE if the character permits modifications to the provided property
  */
-declare function ValidationHasSomeScriptPermission(character: Character, property: ScriptPermissionProperty, permissionLevels: ScriptPermissionLevel[]): boolean;
+declare function ValidationHasSomeScriptPermission(character: Character, property: ScriptPermissionProperty, permissionLevels: readonly ScriptPermissionLevel[]): boolean;
 declare const ValidationCombinationNumberRegex: RegExp;
 declare const ValidationPasswordRegex: RegExp;
 declare const ValidationDefaultCombinationNumber: "0000";

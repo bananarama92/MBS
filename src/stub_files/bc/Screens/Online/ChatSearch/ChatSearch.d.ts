@@ -129,10 +129,10 @@ declare function ChatSearchResponse(data: string): void;
 declare function ChatSearchCensor(): void;
 /**
  * Handles the reception of the server data when it responds to the search query
- * @param {any[]} data - Response from the server, contains the room list matching the query
+ * @param {readonly any[]} data - Response from the server, contains the room list matching the query
  * @returns {void} - Nothing
  */
-declare function ChatSearchResultResponse(data: any[]): void;
+declare function ChatSearchResultResponse(data: readonly any[]): void;
 /**
  * Automatically join a room, for example due to leashes or reconnect
  * @returns {void} - Nothing
@@ -207,7 +207,8 @@ declare var ChatSearchResultOffset: number;
 declare var ChatSearchRoomsPerPage: number;
 declare var ChatSearchMessage: string;
 declare var ChatSearchLeaveRoom: string;
-declare var ChatSearchLeaveSpace: string;
+/** @type {ModuleType} */
+declare var ChatSearchLeaveSpace: ModuleType;
 /** @type {null | Item[]} */
 declare var ChatSearchSafewordAppearance: null | Item[];
 /** @type {null | AssetPoseName[]} */
@@ -229,7 +230,8 @@ declare var ChatSearchFilterUnhideConfirm: {
 declare var ChatSearchRejoinIncrement: number;
 /** @type {null | string} */
 declare var ChatSearchReturnToScreen: null | string;
-declare var ChatSearchLanguage: string;
-declare var ChatSearchLanguageTemp: string;
+/** @type {ChatRoomLanguage | ""} */
+declare var ChatSearchLanguage: ChatRoomLanguage | "";
+/** @type {ChatRoomLanguage | ""} */
+declare var ChatSearchLanguageTemp: ChatRoomLanguage | "";
 declare var ChatSearchFilterTermsTemp: string;
-declare var ChatRoomJoinLeash: string;

@@ -80,7 +80,7 @@ declare function DrawCharacter(C: Character, X: number, Y: number, Zoom: number,
 /**
  * Draws an asset group zone outline over the character
  * @param {Character} C - Character for which to draw the zone
- * @param {readonly number[][]} Zone - Zone to be drawn
+ * @param {readonly [number, number, number, number][]} Zone - Zone to be drawn
  * @param {number} Zoom - Height ratio of the character
  * @param {number} X - Position of the character on the X axis
  * @param {number} Y - Position of the character on the Y axis
@@ -90,7 +90,7 @@ declare function DrawCharacter(C: Character, X: number, Y: number, Zoom: number,
  * @param {string} FillColor - If non-empty, the color to fill the rectangle with
  * @returns {void} - Nothing
  */
-declare function DrawAssetGroupZone(C: Character, Zone: readonly number[][], Zoom: number, X: number, Y: number, HeightRatio: number, Color: string, Thickness?: number, FillColor?: string): void;
+declare function DrawAssetGroupZone(C: Character, Zone: readonly [number, number, number, number][], Zoom: number, X: number, Y: number, HeightRatio: number, Color: string, Thickness?: number, FillColor?: string): void;
 /**
  * Return a semi-transparent copy of a canvas
  * @param {HTMLCanvasElement} Canvas - source

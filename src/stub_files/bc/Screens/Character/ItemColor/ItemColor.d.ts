@@ -118,6 +118,12 @@ declare function ItemColorNextLayer(colorGroup: ColorGroup): void;
  */
 declare function ItemColorPreviousLayer(colorGroup: ColorGroup): void;
 /**
+ * @param {Item} item
+ * @param {readonly AssetLayer[]} colorableLayers
+ * @returns {ColorGroup[]}
+ */
+declare function ItemColorGetGroups(item: Item, colorableLayers: readonly AssetLayer[]): ColorGroup[];
+/**
  * Builds the item color UI's current state based on the provided character, item and position parameters. This only rebuilds the state if
  * needed.
  * @param {Character} c - The character being colored
@@ -145,17 +151,17 @@ declare function ItemColorIsSimple(item: Item): boolean;
 /**
  * Fetches the color button text key for the provided item color. If the item's color is already a string, the color string is returned.
  * Otherwise, returns "Many" or "Default" as appropriate.
- * @param {string|string[]} color - The item color
+ * @param {string | readonly string[]} color - The item color
  * @returns {string} - The appropriate color button key for the provided item color(s)
  */
-declare function ItemColorGetColorButtonTextKey(color: string | string[]): string;
+declare function ItemColorGetColorButtonTextKey(color: string | readonly string[]): string;
 /**
  * Fetches the color button text for the provided item color. If the item's color is already a string, the color string is returned.
  * Otherwise, returns "Many" or "Default" as appropriate.
- * @param {string|string[]} color - The item color
+ * @param {string | readonly string[]} color - The item color
  * @returns {string} - The appropriate color button text for the provided item color(s), translated to the current game language
  */
-declare function ItemColorGetColorButtonText(color: string | string[]): string;
+declare function ItemColorGetColorButtonText(color: string | readonly string[]): string;
 /**
  * Registers an exit callback to the item color UI which will be called when the UI is exited.
  * @param {itemColorExitListener} callback - The exit listener to register

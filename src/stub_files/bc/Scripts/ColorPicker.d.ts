@@ -9,6 +9,12 @@ declare function ColorPickerAttachEventListener(): void;
  */
 declare function ColorPickerRemoveEventListener(): void;
 /**
+ * Helper to guard for TouchEvents
+ * @param {Event} event
+ * @returns {event is TouchEvent}
+ */
+declare function isTouchEvent(event: Event): event is TouchEvent;
+/**
  * When the touch/mouse event begins to be registered. On mobile we only fire it once
  * @param {MouseEvent|TouchEvent} Event - The touch/mouse event
  * @returns {void} - Nothing

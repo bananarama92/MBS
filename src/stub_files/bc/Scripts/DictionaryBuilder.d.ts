@@ -78,6 +78,8 @@ declare class DictionaryBuilder {
     /** @type {DictionaryBuilder[]} */
     _children: DictionaryBuilder[];
     _targetIndex: number;
+    /** @type {boolean} */
+    _condition: boolean;
     /**
      * Creates and enters a child {@link ConditionalDictionaryBuilder}, whose entries are only added if the provided
      * condition is truthy.
@@ -190,12 +192,9 @@ declare class ConditionalDictionaryBuilder extends DictionaryBuilder {
     constructor(parent: DictionaryBuilder, condition: boolean);
     /** @type {DictionaryBuilder} */
     _parent: DictionaryBuilder;
-    /** @type {boolean} */
-    _condition: boolean;
     /**
      * Returns the parent {@link DictionaryBuilder instance}. Used to effectively end input to this builder.
      * @returns {DictionaryBuilder} - The parent builder
      */
     endif(): DictionaryBuilder;
-    _addEntry(entry: any): boolean;
 }

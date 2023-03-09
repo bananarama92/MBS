@@ -327,7 +327,8 @@ declare var PlatformDrawUpArrow: any[];
 declare var PlatformButtons: any;
 declare var PlatformRunDirection: string;
 declare var PlatformRunTime: number;
-declare var PlatformLastTouch: any;
+/** @type {null | TouchList} */
+declare var PlatformLastTouch: null | TouchList;
 declare var PlatformImmunityTime: number;
 declare var PlatformSaveMode: boolean;
 declare var PlatformJumpPhase: string;

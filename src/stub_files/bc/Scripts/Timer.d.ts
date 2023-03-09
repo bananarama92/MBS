@@ -42,7 +42,7 @@ declare function TimerProcess(Timestamp: number): void;
 /**
  * Returns a string of the time remaining on a given timer (Hours, minutes, seconds)
  * @param {number} s - Time to convert to a string in ms
- * @Returns -  The time string in the HH:MM:SS format
+ * @returns {string} -  The time string in the HH:MM:SS format
  */
 declare function TimermsToTime(s: number): string;
 declare var CurrentTime: number;

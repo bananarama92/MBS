@@ -18,8 +18,4 @@ declare function AssetsItemBreastFuturisticBraBeforeDraw(data: DynamicDrawingDat
 /** @type {DynamicAfterDrawCallback} */
 declare function AssetsItemBreastFuturisticBraAfterDraw({ C, A, X, Y, Property, drawCanvas, drawCanvasBlink, AlphaMasks, L, G, Color }: DynamicDrawingData): void;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemBreastFuturisticBraScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemBreastFuturisticBraScriptDraw(data: DynamicScriptCallbackData): void;

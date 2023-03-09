@@ -19,9 +19,10 @@ declare function ChatBlockItemClick(): void;
  */
 declare function ChatBlockItemExit(): void;
 declare var ChatBlockItemBackground: string;
-declare var ChatBlockItemList: string[];
-/** @type {string[]} */
-declare var ChatBlockItemCategory: string[];
+/** @type {ChatRoomBlockCategory[]} */
+declare var ChatBlockItemList: ChatRoomBlockCategory[];
+/** @type {ChatRoomBlockCategory[]} */
+declare var ChatBlockItemCategory: ChatRoomBlockCategory[];
 declare var ChatBlockItemEditable: boolean;
 /** @type { { Screen?: string; } } */
 declare var ChatBlockItemReturnData: {

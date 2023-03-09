@@ -31,9 +31,9 @@ declare function GameMagicBattleDrawIcon(C: Character, X: number, Y: number, Zoo
 declare function GameMagicBattleLoad(): void;
 /**
  * Returns the team setup for the online magic battle.
- * @returns {string} - "FreeForAll" or "House", depending on the team setup
+ * @returns {"FreeForAll" | "House"} - "FreeForAll" or "House", depending on the team setup
  */
-declare function GameMagicBattleGetTeamType(): string;
+declare function GameMagicBattleGetTeamType(): "FreeForAll" | "House";
 /**
  * Runs and draws the Magic Battle game.
  * @returns {void} - Nothing
@@ -148,5 +148,12 @@ declare var GameMagicBattleTurnDone: boolean;
 declare var GameMagicBattleTurnTimer: null | number;
 /** @type {null | Character} */
 declare var GameMagicBattleFocusCharacter: null | Character;
-declare var GameMagicBattleLog: any[];
-declare var GameMagicBattleButton: any[];
+/** @type {Pick<IChatRoomGameResponse, "Sender" | "Data">[]} */
+declare var GameMagicBattleLog: Pick<IChatRoomGameResponse, "Sender" | "Data">[];
+/** @type {{ X: number, Y: number, W: number, H: number}[]} */
+declare var GameMagicBattleButton: {
+    X: number;
+    Y: number;
+    W: number;
+    H: number;
+}[];

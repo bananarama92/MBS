@@ -39,10 +39,10 @@ declare function CommandParse(msg: string): void;
 declare function CommandHelp(low: string, timeout?: number): void;
 /**
  * Prints out the help for commands
- * @param {Optional<ICommand, 'Action'>[]} Commands - list of commands
+ * @param {Optional<ICommand, 'Action'>[]} CommandList - list of commands
  * @param {number} Timeout - total time to display the help message in ms
  */
-declare function CommandPrintHelpFor(Commands: Optional<ICommand, 'Action'>[], Timeout: number): void;
+declare function CommandPrintHelpFor(CommandList: Optional<ICommand, 'Action'>[], Timeout: number): void;
 /**
  * Finds command and executes it from the message
  * @param {string} msg - User input

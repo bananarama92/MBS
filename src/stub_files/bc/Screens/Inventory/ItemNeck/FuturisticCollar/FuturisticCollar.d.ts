@@ -1,3 +1,4 @@
+declare function InventoryItemNeckFuturisticCollarInit(Item: any, C: any, Refresh: any): void;
 declare function InventoryItemNeckFuturisticCollarLoad(): void;
 declare function InventoryItemNeckFuturisticCollarDraw(): void;
 declare function InventoryItemNeckFuturisticCollarExit(): void;

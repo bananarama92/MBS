@@ -97,11 +97,11 @@ declare function CharacterAppearanceBuildCanvas(C: Character): void;
 /**
  * Returns a value from the character current appearance
  * @param {Character} C - The character to get values from
- * @param {AssetGroupName} Group - The name of the group, whose values we want to get
+ * @param {string} Group - The name of the group, whose values we want to get
  * @param {string} Type - The name of the value, we want to get
  * @returns {*} - The return value
  */
-declare function CharacterAppearanceGetCurrentValue(C: Character, Group: AssetGroupName, Type: string): any;
+declare function CharacterAppearanceGetCurrentValue(C: Character, Group: string, Type: string): any;
 /**
  * Repositions the character horizonally to centre them, since shorter characters will shrink towards the left
  * @param {Character} C - The character to reposition
@@ -176,25 +176,24 @@ declare function AppearancePreviewUseCharacter(assetGroup: AssetGroup): boolean;
 /**
  * Sets an item in the character appearance
  * @param {Character} C - The character whose appearance should be changed
- * @param {AssetGroupName} Group - The name of the corresponding groupr for the item
- * @param {Asset | null} ItemAsset - The asset collection of the item to be changed
- * @param {string | readonly string[]} [NewColor] - The new color (as "#xxyyzz" hex value) for that item
+ * @param {string} Group - The name of the corresponding groupr for the item
+ * @param {Asset|null} ItemAsset - The asset collection of the item to be changed
+ * @param {string|string[]} [NewColor] - The new color (as "#xxyyzz" hex value) for that item
  * @param {number} [DifficultyFactor=0] - The difficulty, on top of the base asset difficulty, that should be assigned
  * to the item
  * @param {number} [ItemMemberNumber=-1] - The member number of the player adding the item - defaults to -1
  * @param {boolean} [Refresh=true] - Determines, wether the character should be redrawn after the item change
  * @returns {void} - Nothing
  */
-declare function CharacterAppearanceSetItem(C: Character, Group: AssetGroupName, ItemAsset: Asset | null, NewColor?: string | readonly string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): void;
+declare function CharacterAppearanceSetItem(C: Character, Group: string, ItemAsset: Asset | null, NewColor?: string | string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): void;
 /**
- * Cycle in the appearance assets to find the next item in a group and wear it
+ * Cycle in the appearance assets to find the next item in a group
  * @param {Character} C - The character whose assets are used
- * @param {AssetGroupName} Group - The name of the group to cycle
+ * @param {string} Group - The name of the group to cycle
  * @param {boolean} [Forward=true] - Sets the direction of the cycling
- * @param {boolean} [Description = false] - Determines, wether the description of the item should be returned or not.
- * @returns {string} - The Description of the worn item
+ * @returns {Asset|null} - The next item to select, or null if there's none applicable
  */
-declare function CharacterAppearanceNextItem(C: Character, Group: AssetGroupName, Forward?: boolean, Description?: boolean): string;
+declare function CharacterAppearanceNextItem(C: Character, Group: string, Forward?: boolean): Asset | null;
 /**
  * Find the next color for the item
  * @param {Character} C - The character whose items are cycled
@@ -283,10 +282,10 @@ declare function AppearanceItemParse(stringified: any): any;
  * @param {Character} C - The character the appearance is being changed for
  * @param {Item} Item - The currently selected item
  * @param {AssetGroupName} AssetGroup - The focused group
- * @param {string} CurrentMode - The mode to revert to on exiting the color picker
+ * @param {"" | "Wardrobe" | "Cloth" | "Color"} CurrentMode - The mode to revert to on exiting the color picker
  * @returns {void}
  */
-declare function AppearanceItemColor(C: Character, Item: Item, AssetGroup: AssetGroupName, CurrentMode: string): void;
+declare function AppearanceItemColor(C: Character, Item: Item, AssetGroup: AssetGroupName, CurrentMode: "" | "Wardrobe" | "Cloth" | "Color"): void;
 /**
  * Combine two sets of appearance changes from the same base, favouring the newer changes where conflicting
  * @param {readonly Item[]} BaseAppearance - The previous appearance before either of the other two sets of changes were made
@@ -324,7 +323,12 @@ declare var CharacterAppearanceHeaderTextTime: number;
 declare var CharacterAppearanceBackup: null | string;
 /** @type {null | string} */
 declare var CharacterAppearanceInProgressBackup: null | string;
-declare var CharacterAppearanceAssets: any[];
+/**
+ * The list of all assets (owned or available)
+ *
+ * @type {Asset[]}
+ */
+declare var CharacterAppearanceAssets: Asset[];
 /** @type {AssetGroupName} */
 declare var CharacterAppearanceColorPickerGroupName: AssetGroupName;
 declare var CharacterAppearanceColorPickerBackup: string;
@@ -332,14 +336,18 @@ declare var CharacterAppearanceColorPickerRefreshTimer: any;
 /** @type {Character | null} */
 declare var CharacterAppearanceSelection: Character | null;
 declare var CharacterAppearanceReturnRoom: string;
-declare var CharacterAppearanceReturnModule: string;
+/** @type {ModuleType} */
+declare var CharacterAppearanceReturnModule: ModuleType;
 declare var CharacterAppearanceWardrobeOffset: number;
 declare var CharacterAppearanceWardrobeText: string;
 declare var CharacterAppearanceWardrobeName: string;
 declare var CharacterAppearanceForceUpCharacter: number;
-declare var CharacterAppearancePreviousEmoticon: string;
-declare var CharacterAppearanceMode: string;
-declare var CharacterAppearanceMenuMode: string;
+/** @type {"" | ExpressionNameMap["Emoticon"]} */
+declare var CharacterAppearancePreviousEmoticon: "" | ExpressionNameMap["Emoticon"];
+/** @type {"" | "Wardrobe" | "Cloth" | "Color"} */
+declare var CharacterAppearanceMode: "" | "Wardrobe" | "Cloth" | "Color";
+/** @type {"" | "Wardrobe" | "Cloth" | "Color"} */
+declare var CharacterAppearanceMenuMode: "" | "Wardrobe" | "Cloth" | "Color";
 /** @type {null | Item} */
 declare var CharacterAppearanceCloth: null | Item;
 /** @type {string[]} */

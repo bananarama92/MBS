@@ -40,6 +40,7 @@ declare function InformationSheetLoadCharacter(C: Character): void;
 declare var InformationSheetBackground: string;
 /** @type {null | Character} */
 declare var InformationSheetSelection: null | Character;
-declare var InformationSheetPreviousModule: string;
+/** @type {"" | ModuleType} */
+declare var InformationSheetPreviousModule: "" | ModuleType;
 declare var InformationSheetPreviousScreen: string;
 declare var InformationSheetSecondScreen: boolean;

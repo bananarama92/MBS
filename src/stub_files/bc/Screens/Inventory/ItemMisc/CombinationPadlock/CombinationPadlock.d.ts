@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemMiscCombinationPadlockInit(Item: Item, C: Character): void;
 declare function InventoryItemMiscCombinationPadlockLoad(): void;
 declare function InventoryItemMiscCombinationPadlockModifyInput(e: any): void;
 declare function InventoryItemMiscCombinationPadlockDraw(): void;

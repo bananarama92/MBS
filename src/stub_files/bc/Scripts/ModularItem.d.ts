@@ -9,6 +9,12 @@
  */
 declare function ModularItemRegister(asset: Asset, config: ModularItemConfig | undefined): void;
 /**
+ * Initialize the modular item properties
+ * @type {ExtendedItemInitCallback}
+ * @see {@link ExtendedItemInit}
+ */
+declare function ModularItemInit(Item: Item, C: Character, Refresh?: boolean): void;
+/**
  * Creates an asset's extended item load function
  * @param {ModularItemData} data - The modular item data for the asset
  * @returns {void} - Nothing

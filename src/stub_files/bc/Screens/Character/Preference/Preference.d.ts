@@ -7,42 +7,42 @@
 /**
  * Compares the arousal preference level and returns TRUE if that level is met, or an higher level is met
  * @param {Character} C - The player who performs the sexual activity
- * @param {string} Level - The name of the level ("Inactive", "NoMeter", "Manual", "Hybrid", "Automatic")
+ * @param {ArousalActiveName} Level - The name of the level ("Inactive", "NoMeter", "Manual", "Hybrid", "Automatic")
  * @returns {boolean} - Returns TRUE if the level is met or more
  */
-declare function PreferenceArousalAtLeast(C: Character, Level: string): boolean;
+declare function PreferenceArousalAtLeast(C: Character, Level: ArousalActiveName): boolean;
 /**
  * Gets the effect of a sexual activity on the player
  * @param {Character} C - The player who performs the sexual activity
- * @param {string} Type - The type of the activity that is performed
+ * @param {ActivityName} Type - The type of the activity that is performed
  * @param {boolean} Self - Determines, if the current player is giving (false) or receiving (true)
  * @returns {number} - Returns the love factor of the activity for the character (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceGetActivityFactor(C: Character, Type: string, Self: boolean): number;
+declare function PreferenceGetActivityFactor(C: Character, Type: ActivityName, Self: boolean): number;
 /**
  * Gets the factor of a fetish for the player
  * @param {Character} C - The character to query
- * @param {string} Type - The name of the fetish
+ * @param {FetishName} Type - The name of the fetish
  * @returns {number} - Returns the love factor of the fetish for the character (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceGetFetishFactor(C: Character, Type: string): number;
+declare function PreferenceGetFetishFactor(C: Character, Type: FetishName): number;
 /**
  * Sets the love factor of a sexual activity for the character
  * @param {Character} C - The character for whom the activity factor should be set
- * @param {string} Type - The type of the activity that is performed
+ * @param {ActivityName} Type - The type of the activity that is performed
  * @param {boolean} Self - Determines, if the current player is giving (false) or receiving (true)
  * @param {number} Factor - The factor of the sexual activity (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceSetActivityFactor(C: Character, Type: string, Self: boolean, Factor: number): void;
+declare function PreferenceSetActivityFactor(C: Character, Type: ActivityName, Self: boolean, Factor: number): void;
 /**
  * Gets the corresponding arousal zone definition from a player's preferences (if the group's activities are mirrored,
  * returns the arousal zone definition for the mirrored group).
  * @param {Character} C - The character for whom to get the arousal zone
  * @param {AssetGroupName} ZoneName - The name of the zone to get
- * @returns {null|any} - Returns the arousal zone preference object, or null if a corresponding zone definition could
- * not be found.
+ * @returns {undefined | ArousalZone} - Returns the arousal zone preference object,
+ * or undefined if a corresponding zone definition could not be found.
  */
-declare function PreferenceGetArousalZone(C: Character, ZoneName: AssetGroupName): null | any;
+declare function PreferenceGetArousalZone(C: Character, ZoneName: AssetGroupName): undefined | ArousalZone;
 /**
  * Gets the love factor of a zone for the character
  * @param {Character} C - The character for whom the love factor of a particular zone should be gotten
@@ -53,11 +53,11 @@ declare function PreferenceGetZoneFactor(C: Character, ZoneName: AssetGroupName)
 /**
  * Sets the love factor for a specific body zone on the player
  * @param {Character} C - The character, for whom the love factor of a particular zone should be set
- * @param {AssetGroupName} Zone - The name of the zone, the factor should be set for
+ * @param {string} Zone - The name of the zone, the factor should be set for
  * @param {number} Factor - The factor of the zone (0 is horrible, 2 is normal, 4 is great)
  * @returns {void} - Nothing
  */
-declare function PreferenceSetZoneFactor(C: Character, Zone: AssetGroupName, Factor: number): void;
+declare function PreferenceSetZoneFactor(C: Character, Zone: string, Factor: number): void;
 /**
  * Determines, if a player can reach on orgasm from a particular zone
  * @param {Character} C - The character whose ability to orgasm we check
@@ -68,11 +68,11 @@ declare function PreferenceGetZoneOrgasm(C: Character, ZoneName: AssetGroupName)
 /**
  * Sets the ability to induce an orgasm for a given zone*
  * @param {Character} C - The characterfor whom we set the ability to órgasm from a given zone
- * @param {AssetGroupName} Zone - The name of the zone to set the ability to orgasm for
+ * @param {AssetGroupItemName} ZoneName - The name of the zone to set the ability to orgasm for
  * @param {boolean} CanOrgasm - Sets, if the character can cum from the given zone (true) or not (false)
  * @returns {void} - Nothing
  */
-declare function PreferenceSetZoneOrgasm(C: Character, Zone: AssetGroupName, CanOrgasm: boolean): void;
+declare function PreferenceSetZoneOrgasm(C: Character, ZoneName: AssetGroupItemName, CanOrgasm: boolean): void;
 /**
  * Gets a color code for a given arousal factor
  * @param {number} Factor - The factor that should be translated in a color code
@@ -351,10 +351,10 @@ declare function PreferenceVisibilityHideChange(): void;
 declare function PreferenceVisibilityBlockChange(): void;
 /**
  * Adds or removes the current item to/from the list based on the new state of the corresponding checkbox
- * @param {Array} List - The list to add or remove the item from
+ * @param {ItemBundle[]} List - The list to add or remove the item from
  * @param {boolean} CheckSetting - The new true/false setting of the checkbox
  */
-declare function PreferenceVisibilityCheckboxChanged(List: any[], CheckSetting: boolean): void;
+declare function PreferenceVisibilityCheckboxChanged(List: ItemBundle[], CheckSetting: boolean): void;
 /**
  * Saves changes to the settings, disposes of large lists & exits the visibility preference screen.
  * @param {boolean} SaveChanges - If TRUE, update HiddenItems and BlockItems for the account
@@ -490,47 +490,58 @@ declare function PreferencePageChangeClick(Left: number, Top: number, TotalPages
  * @param {number} Top - The top offset of the button
  * @param {number} Width - The width of the button
  * @param {number} Height - The height of the button
- * @param {any[]} List - The preference list that the button should be associated with
+ * @param {string[]} List - The preference list that the button should be associated with
  * @param {number} Index - The current preference index for the given preference list
  * @returns {void} - Nothing
  */
-declare function PreferenceDrawBackNextButton(Left: number, Top: number, Width: number, Height: number, List: any[], Index: number): void;
+declare function PreferenceDrawBackNextButton(Left: number, Top: number, Width: number, Height: number, List: string[], Index: number): void;
 /**
  * Returns the index of the previous preference list item (and wraps back to the end of the list if currently at 0)
- * @param {any[]} List - The preference list
+ * @param {readonly any[]} List - The preference list
  * @param {number} Index - The current preference index for the given list
  * @returns {number} - The index of the previous item in the array, or the last item in the array if currently at 0
  */
-declare function PreferenceGetPreviousIndex(List: any[], Index: number): number;
+declare function PreferenceGetPreviousIndex(List: readonly any[], Index: number): number;
 /**
  * Returns the index of the next preference list item (and wraps back to the start of the list if currently at the end)
- * @param {any[]} List - The preference list
+ * @param {readonly any[]} List - The preference list
  * @param {number} Index - The current preference index for the given list
  * @returns {number} - The index of the next item in the array, or 0 if the array is currently at the last item
  */
-declare function PreferenceGetNextIndex(List: any[], Index: number): number;
+declare function PreferenceGetNextIndex(List: readonly any[], Index: number): number;
 declare var PreferenceBackground: string;
 declare var PreferenceMessage: string;
 declare var PreferenceSafewordConfirm: boolean;
-declare var PreferenceColorPick: string;
-declare var PreferenceSubscreen: string;
-declare var PreferenceSubscreenList: string[];
+/** @type {"InputCharacterLabelColor" | ""} */
+declare var PreferenceColorPick: "InputCharacterLabelColor" | "";
+/** @type {PreferenceSubscreenName | ""} */
+declare var PreferenceSubscreen: PreferenceSubscreenName | "";
+/** @type {PreferenceSubscreenName[]} */
+declare var PreferenceSubscreenList: PreferenceSubscreenName[];
 declare var PreferencePageCurrent: number;
-declare var PreferenceChatColorThemeList: string[];
+/** @type {ChatColorThemeType[]} */
+declare var PreferenceChatColorThemeList: ChatColorThemeType[];
 declare var PreferenceChatColorThemeIndex: number;
-declare var PreferenceChatEnterLeaveList: string[];
+/** @type {ChatEnterLeaveType[]} */
+declare var PreferenceChatEnterLeaveList: ChatEnterLeaveType[];
 declare var PreferenceChatEnterLeaveIndex: number;
-declare var PreferenceChatMemberNumbersList: string[];
+/** @type {ChatMemberNumbersType[]} */
+declare var PreferenceChatMemberNumbersList: ChatMemberNumbersType[];
 declare var PreferenceChatMemberNumbersIndex: number;
-declare var PreferenceChatFontSizeList: string[];
+/** @type {ChatFontSizeType[]} */
+declare var PreferenceChatFontSizeList: ChatFontSizeType[];
 declare var PreferenceChatFontSizeIndex: number;
-declare var PreferenceSettingsSensDepList: string[];
+/** @type {SettingsSensDepName[]} */
+declare var PreferenceSettingsSensDepList: SettingsSensDepName[];
 declare var PreferenceSettingsSensDepIndex: number;
-declare var PreferenceSettingsVFXList: string[];
+/** @type {SettingsVFXName[]} */
+declare var PreferenceSettingsVFXList: SettingsVFXName[];
 declare var PreferenceSettingsVFXIndex: number;
-declare var PreferenceSettingsVFXVibratorList: string[];
+/** @type {SettingsVFXVibratorName[]} */
+declare var PreferenceSettingsVFXVibratorList: SettingsVFXVibratorName[];
 declare var PreferenceSettingsVFXVibratorIndex: number;
-declare var PreferenceSettingsVFXFilterList: string[];
+/** @type {SettingsVFXFilterName[]} */
+declare var PreferenceSettingsVFXFilterList: SettingsVFXFilterName[];
 declare var PreferenceSettingsVFXFilterIndex: number;
 declare var PreferenceSettingsVolumeList: number[];
 declare var PreferenceSettingsSensitivityList: number[];
@@ -538,20 +549,23 @@ declare var PreferenceSettingsDeadZoneList: number[];
 declare var PreferenceSettingsVolumeIndex: number;
 declare var PreferenceSettingsSensitivityIndex: number;
 declare var PreferenceSettingsDeadZoneIndex: number;
-declare var PreferenceArousalActiveList: string[];
+/** @type {ArousalActiveName[]} */
+declare var PreferenceArousalActiveList: ArousalActiveName[];
 declare var PreferenceArousalActiveIndex: number;
-declare var PreferenceArousalVisibleList: string[];
+/** @type {ArousalVisibleName[]} */
+declare var PreferenceArousalVisibleList: ArousalVisibleName[];
 declare var PreferenceArousalVisibleIndex: number;
-declare var PreferenceArousalAffectStutterList: string[];
+/** @type {ArousalAffectStutterName[]} */
+declare var PreferenceArousalAffectStutterList: ArousalAffectStutterName[];
 declare var PreferenceArousalAffectStutterIndex: number;
-/** @type {null | string[]} */
-declare var PreferenceArousalActivityList: null | string[];
+/** @type {null | ActivityName[]} */
+declare var PreferenceArousalActivityList: null | ActivityName[];
 declare var PreferenceArousalActivityIndex: number;
 declare var PreferenceArousalActivityFactorSelf: number;
 declare var PreferenceArousalActivityFactorOther: number;
 declare var PreferenceArousalZoneFactor: number;
-/** @type {null | string[]} */
-declare var PreferenceArousalFetishList: null | string[];
+/** @type {null | FetishName[]} */
+declare var PreferenceArousalFetishList: null | FetishName[];
 declare var PreferenceArousalFetishIndex: number;
 declare var PreferenceArousalFetishFactor: number;
 declare var PreferenceVisibilityGroupList: any[];
@@ -570,8 +584,10 @@ declare var PreferenceVisibilityResetClicked: boolean;
 /** @type {null | number} */
 declare var PreferenceDifficultyLevel: null | number;
 declare var PreferenceDifficultyAccept: boolean;
-declare var PreferenceGraphicsFontList: string[];
-declare var PreferenceGraphicsPowerModes: string[];
+/** @type {GraphicsFontName[]} */
+declare var PreferenceGraphicsFontList: GraphicsFontName[];
+/** @type {WebGLPowerPreference[]} */
+declare var PreferenceGraphicsPowerModes: WebGLPowerPreference[];
 declare var PreferenceGraphicsFontIndex: number;
 /** @type {null | number} */
 declare var PreferenceGraphicsAnimationQualityIndex: null | number;

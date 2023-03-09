@@ -220,8 +220,8 @@ declare var KidnapLeagueTrainer: null | NPCCharacter;
 declare var KidnapLeagueRandomKidnapper: null | NPCCharacter;
 declare var KidnapLeagueRandomKidnapperScenario: string;
 declare var KidnapLeagueRandomKidnapperDifficulty: number;
-/** @type {null | string} */
-declare var KidnapLeagueArchetype: null | string;
+/** @type {null | "" | "Maid" | "Mistress"} */
+declare var KidnapLeagueArchetype: null | "" | "Maid" | "Mistress";
 declare var KidnapLeagueWillPayForFreedom: boolean;
 declare var KidnapLeagueRandomActivityList: string[];
 declare var KidnapLeagueRandomActivity: string;

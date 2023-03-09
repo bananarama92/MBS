@@ -12,10 +12,6 @@ declare function InventoryItemPelvisObedienceBeltShockModule1Exit(): void;
 declare function InventoryObedienceBeltCheckPunish(Item: Item): "" | "Orgasm" | "StandUp";
 declare function AssetsItemPelvisObedienceBeltUpdate(data: any, LastTime: any): void;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemPelvisObedienceBeltScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemPelvisObedienceBeltScriptDraw(data: DynamicScriptCallbackData): void;
 /** @type {DynamicAfterDrawCallback} */
 declare function AssetsItemPelvisObedienceBeltAfterDraw({ C, A, X, Y, Property, drawCanvas, drawCanvasBlink, AlphaMasks, L, Color }: DynamicDrawingData): void;

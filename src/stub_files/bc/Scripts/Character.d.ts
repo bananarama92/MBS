@@ -1,11 +1,11 @@
 /**
  * Loads a character into the buffer, creates it if it does not exist
  * @param {number} CharacterID - ID of the character
- * @param {string} CharacterAssetFamily - Name of the asset family of the character
+ * @param {IAssetFamily} CharacterAssetFamily - Name of the asset family of the character
  * @param {CharacterType} [Type=CharacterType.ONLINE] - The character type
  * @returns {Character} - The newly loaded character
  */
-declare function CharacterReset(CharacterID: number, CharacterAssetFamily: string, Type?: CharacterType): Character;
+declare function CharacterReset(CharacterID: number, CharacterAssetFamily: IAssetFamily, Type?: CharacterType): Character;
 /**
  * Attributes a random name for the character, does not select a name in use
  * @param {Character} C - Character for which to attribute a name
@@ -183,6 +183,11 @@ declare function CharacterChangeMoney(C: Character, Value: number): void;
  */
 declare function CharacterRefresh(C: Character, Push?: boolean, RefreshDialog?: boolean): void;
 /**
+ * Refresh the character's dialog state.
+ *
+ * This function restore consistency between its state variables and the new character appearance,
+ * like making sure the focused items are still present and deselecting them otherwise.
+ *
  * @param {Character} C - Character to refresh
  * @returns {void} - Nothing
  */
@@ -287,13 +292,13 @@ declare function CharacterSetActivePose(C: Character, NewPose: AssetPoseName, Fo
  * Be careful that "Eyes" for this function means both eyes. Use Eyes1/Eyes2 to target the left or right one only.
  *
  * @param {Character} C - Character for which to set the expression of
- * @param {AssetGroupName | "Eyes1"} AssetGroup - Asset group for the expression
- * @param {string} Expression - Name of the expression to use
+ * @param {AssetGroupBodyName | "Eyes1"} AssetGroup - Asset group for the expression
+ * @param {ExpressionName} Expression - Name of the expression to use
  * @param {number} [Timer] - Optional: time the expression will last
  * @param {string|string[]} [Color] - Optional: color of the expression to set
  * @returns {void} - Nothing
  */
-declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupName | "Eyes1", Expression: string, Timer?: number, Color?: string | string[]): void;
+declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: ExpressionName, Timer?: number, Color?: string | string[]): void;
 /**
  * Resets the character's facial expression to the default
  * @param {Character} C - Character for which to reset the expression of
@@ -321,24 +326,24 @@ declare function CharacterDecompressWardrobe(Wardrobe: Array<Array<any>> | strin
 /**
  * Checks if the character is wearing an item that has a specific attribute
  * @param {Character} C - The character to test for
- * @param {string} Attribute - The name of the attribute that must be allowed
+ * @param {AssetAttribute} Attribute - The name of the attribute that must be allowed
  * @returns {boolean} - TRUE if at least one item has that attribute
  */
-declare function CharacterHasItemWithAttribute(C: Character, Attribute: string): boolean;
+declare function CharacterHasItemWithAttribute(C: Character, Attribute: AssetAttribute): boolean;
 /**
  * Checks if the character is wearing an item that allows for a specific activity
  * @param {Character} C - The character to test for
- * @param {string} Activity - The name of the activity that must be allowed
+ * @param {ActivityName} Activity - The name of the activity that must be allowed
  * @returns {Item[]} - A list of items allowing that activity
  */
-declare function CharacterItemsForActivity(C: Character, Activity: string): Item[];
+declare function CharacterItemsForActivity(C: Character, Activity: ActivityName): Item[];
 /**
  * Checks if the character is wearing an item that allows for a specific activity
  * @param {Character} C - The character to test for
- * @param {String} Activity - The name of the activity that must be allowed
+ * @param {ActivityName} Activity - The name of the activity that must be allowed
  * @returns {boolean} - TRUE if at least one item allows that activity
  */
-declare function CharacterHasItemForActivity(C: Character, Activity: string): boolean;
+declare function CharacterHasItemForActivity(C: Character, Activity: ActivityName): boolean;
 /**
  * Checks if the character is edged or not. The character is edged if every equipped vibrating item on an orgasm zone has the "Edged" effect
  * @param {Character} C - The character to check

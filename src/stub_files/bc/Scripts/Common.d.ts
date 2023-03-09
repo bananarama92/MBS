@@ -1,9 +1,9 @@
 /**
  * Checks if a variable is a number
- * @param {unknown} n - Variable to check for
- * @returns {boolean} - Returns TRUE if the variable is a finite number
+ * @param {any} n - Variable to check for
+ * @returns {n is number} - Returns TRUE if the variable is a finite number
  */
-declare function CommonIsNumeric(n: unknown): boolean;
+declare function CommonIsNumeric(n: any): n is number;
 /**
  * Gets the current time as a string
  * @returns {string} - Returns the current date and time in a yyyy-mm-dd hh:mm:ss format
@@ -66,10 +66,10 @@ declare function CommonClick(event: MouseEvent | TouchEvent): void;
  * @param {number} Y - The Y position
  * @param {number} W - The width of the square
  * @param {number} H - The height of the square
- * @param {object} TL - Can give a specific touch event instead of the default one
+ * @param {TouchList} [TL] - Can give a specific touch event instead of the default one
  * @returns {boolean}
  */
-declare function CommonTouchActive(X: number, Y: number, W: number, H: number, TL: object): boolean;
+declare function CommonTouchActive(X: number, Y: number, W: number, H: number, TL?: TouchList): boolean;
 /**
  * Catches key presses on the main screen and forwards it to the current screen key down function if it exists, otherwise it sends it to the dialog key down function
  * @param {KeyboardEvent} event - The event that triggered this
@@ -107,11 +107,11 @@ declare function CommonCallFunctionByName(FunctionName: string, ...args: any[]):
 declare function CommonCallFunctionByNameWarn(FunctionName: string, ...args: any[]): any;
 /**
  * Sets the current screen and calls the loading script if needed
- * @param {string} NewModule - Module of the screen to display
+ * @param {ModuleType} NewModule - Module of the screen to display
  * @param {string} NewScreen - Screen to display
  * @returns {void} - Nothing
  */
-declare function CommonSetScreen(NewModule: string, NewScreen: string): void;
+declare function CommonSetScreen(NewModule: ModuleType, NewScreen: string): void;
 /**
  * Gets the current time in ms
  * @returns {number} - Date in ms
@@ -209,11 +209,12 @@ declare function CommonLimitFunction<FunctionType extends (...args: any) => any>
  * Creates a simple memoizer.
  * The memoized function does calculate its result exactly once and from that point on, uses
  * the result stored in a local cache to speed up things.
- * @template {Function} T
+ * @template {(...args: any) => any} T
  * @param {T} func - The function to memoize
+ * @param {((arg: any) => string)[]} argConvertors - A list of stringification functions for creating a memo, one for each function argument
  * @returns {MemoizedFunction<T>} - The result of the memoized function
  */
-declare function CommonMemoize<T extends Function>(func: T): MemoizedFunction<T>;
+declare function CommonMemoize<T extends (...args: any) => any>(func: T, argConvertors?: ((arg: any) => string)[]): MemoizedFunction<T>;
 /**
  * Take a screenshot of specified area in "photo mode" and open the image in a new tab
  * @param {number} Left - Position of the area to capture from the left of the canvas
@@ -323,12 +324,17 @@ declare function CommonIsObject(value: unknown): value is Record<string, unknown
  * @returns {value is number}
  */
 declare function CommonIsNonNegativeInteger(value: unknown): value is number;
+/**
+ * Return whether BC is running in a browser environment (as opposed to Node.js as used for the test suite).
+ * @returns {boolean}
+ */
+declare function IsBrowser(): boolean;
 /** @type {PlayerCharacter} */
 declare var Player: PlayerCharacter;
 /** @type {number|string} */
 declare var KeyPress: number | string;
-/** @type {string} */
-declare var CurrentModule: string;
+/** @type {ModuleType} */
+declare var CurrentModule: ModuleType;
 /** @type {string} */
 declare var CurrentScreen: string;
 /** @type {ScreenFunctions} */
@@ -345,11 +351,8 @@ declare var CommonPhotoMode: boolean;
 declare var GameVersion: string;
 declare const GameVersionFormat: RegExp;
 declare var CommonVersionUpdated: boolean;
-/** @type {null | { pageX: number, pageY: number }} */
-declare var CommonTouchList: null | {
-    pageX: number;
-    pageY: number;
-};
+/** @type {null | TouchList} */
+declare var CommonTouchList: null | TouchList;
 /**
  * An enum encapsulating possible chatroom message substitution tags. Character name substitution tags are interpreted
  * in chatrooms as follows (assuming the character name is Ben987):

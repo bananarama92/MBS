@@ -13,12 +13,6 @@ declare function AssetsItemPelvisFuturisticChastityBeltScriptUpdatePlayer(data: 
  */
 declare function AssetsItemPelvisFuturisticChastityBeltScriptTrigger(C: Character, Item: Item, ShockType: string, ReplacementWord?: string, NoShock?: boolean): void;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemPelvisFuturisticChastityBeltScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemPelvisFuturisticChastityBeltScriptDraw(data: DynamicScriptCallbackData): void;
 declare var FuturisticChastityBeltShockCooldownOrgasm: number;
-declare var FuturisticChastityBeltConfigure: boolean;
-declare var FuturisticChastityBeltSwitchModel: boolean;
 declare var InventoryItemPelvisFuturisticChastityBeltTamperZones: string[];

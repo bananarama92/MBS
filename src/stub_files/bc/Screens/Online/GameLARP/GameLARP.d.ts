@@ -202,16 +202,16 @@ declare function GameLARPBuildPlayerList(): void;
 declare function GameLARPLevelProgress(NewProgress: number): void;
 /**
  * Returns the class level for a LARP player, based on their LARP object
- * @param {object} LARP - The LARP object, coming from the Character.Game object
+ * @param {GameLARPParameters} LARP - The LARP object, coming from the Character.Game object
  * @returns {number} - The level between 0 and 10
  */
-declare function GameLARPGetClassLevel(LARP: object): number;
+declare function GameLARPGetClassLevel(LARP: GameLARPParameters): number;
 /**
  * Returns the class level progress for a LARP player, based on their LARP object
- * @param {object} LARP - The LARP object, coming from the Character.Game object
+ * @param {GameLARPParameters} LARP - The LARP object, coming from the Character.Game object
  * @returns {number} - The level progress between 0 and 1000
  */
-declare function GameLARPGetClassProgress(LARP: object): number;
+declare function GameLARPGetClassProgress(LARP: GameLARPParameters): number;
 /**
  * Moves forward in the LARP game. If there are less than 2 teams with free arms, the game is over.
  * @returns {boolean} - Returns TRUE if the game ends and runs the end scripts.
@@ -275,5 +275,5 @@ declare var GameLARPTurnTimer: null | number;
 declare var GameLARPTurnTimerDelay: number;
 /** @type {null | Character} */
 declare var GameLARPTurnFocusCharacter: null | Character;
-/** @type {null | string} */
-declare var GameLARPTurnFocusGroup: null | string;
+/** @type {null | AssetGroupName} */
+declare var GameLARPTurnFocusGroup: null | AssetGroupName;

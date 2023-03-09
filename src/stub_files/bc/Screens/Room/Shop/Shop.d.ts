@@ -142,8 +142,8 @@ declare var ShopRescueScenario: string;
 declare var ShopRescueScenarioList: string[];
 declare var ShopItemOffset: number;
 declare var ShopDemoItemPayment: number;
-/** @type {AssetGroupItemName | ""} */
-declare var ShopDemoItemGroup: AssetGroupItemName | "";
+/** @type {"" | AssetGroupItemName} */
+declare var ShopDemoItemGroup: "" | AssetGroupItemName;
 /** @type {AssetGroupItemName[]} */
 declare var ShopDemoItemGroupList: AssetGroupItemName[];
 /**

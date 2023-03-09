@@ -240,12 +240,12 @@ declare var GamblingSecondSub: null | NPCCharacter;
 /** @type {null | number} */
 declare var GamblingPlayerDice: null | number;
 declare var GamblingPolice: any;
-/** @type {null | string} */
-declare var GamblingNpcDice: null | string;
-/** @type {string[]} */
-declare var GamblingPlayerDiceStack: string[];
-/** @type {string[]} */
-declare var GamblingNpcDiceStack: string[];
+/** @type {null | number} */
+declare var GamblingNpcDice: null | number;
+/** @type {number[]} */
+declare var GamblingPlayerDiceStack: number[];
+/** @type {number[]} */
+declare var GamblingNpcDiceStack: number[];
 declare var GamblingPlayerSubState: number;
 /** Game-State of NPC */
 declare var GamblingNpcSubState: number;

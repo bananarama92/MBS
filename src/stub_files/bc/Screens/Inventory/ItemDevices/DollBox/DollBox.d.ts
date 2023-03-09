@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemDevicesDollBoxInit(Item: Item, C: Character, Refresh: boolean): void;
 declare function InventoryItemDevicesDollBoxLoad(): void;
 declare function InventoryItemDevicesDollBoxDraw(): void;
 declare function InventoryItemDevicesDollBoxClick(): void;

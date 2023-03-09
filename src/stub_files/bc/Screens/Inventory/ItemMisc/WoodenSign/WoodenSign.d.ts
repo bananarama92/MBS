@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemMiscWoodenSignInit(Item: Item, C: Character, Refresh?: boolean): void;
 declare function InventoryItemMiscWoodenSignLoad(): void;
 declare function InventoryItemMiscWoodenSignDraw(): void;
 declare function InventoryItemMiscWoodenSignClick(): void;

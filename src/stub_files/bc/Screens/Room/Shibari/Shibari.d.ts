@@ -31,10 +31,10 @@ declare function ShibariIsRescueScenario(ScenarioName: string): boolean;
 declare function ShibariIsTeacherRestrained(): boolean;
 /**
  * Checks if the player can be trained in a given skill type.
- * @param {string} SkillType - Name of the skill to check for.
+ * @param {SkillType} SkillType - Name of the skill to check for.
  * @returns {boolean} - Returns TRUE if the player can receive a training.
  */
-declare function ShibariCanTrainSkill(SkillType: string): boolean;
+declare function ShibariCanTrainSkill(SkillType: SkillType): boolean;
 /**
  * Checks if the player can pay for a training.
  * @returns {boolean} - Returns TRUE if the player can pay for the requested training.
@@ -115,16 +115,16 @@ declare function ShibariGetRope(): void;
 declare function ShibariCompleteRescue(): void;
 /**
  * Calculates the training price, it is linked to the current skill level of the player
- * @param {string} SkillType - Name of the skill to calculate the price of
+ * @param {SkillType} SkillType - Name of the skill to calculate the price of
  * @returns {void} - Nothing
  */
-declare function ShibariCalculateTrainingPrice(SkillType: string): void;
+declare function ShibariCalculateTrainingPrice(SkillType: SkillType): void;
 /**
  * Triggered when the player pays to get trained in a given skill.
- * @param {string} SkillType - Name of the skill being bought
+ * @param {SkillType} SkillType - Name of the skill being bought
  * @returns {void} - Nothing
  */
-declare function ShibariPayForTraining(SkillType: string): void;
+declare function ShibariPayForTraining(SkillType: SkillType): void;
 declare var ShibariBackground: string;
 /** @type {null | NPCCharacter} */
 declare var ShibariTeacher: null | NPCCharacter;

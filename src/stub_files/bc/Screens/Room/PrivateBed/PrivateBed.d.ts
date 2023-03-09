@@ -29,10 +29,10 @@ declare function PrivateBedRun(): void;
  * @param {Character} Source - The source character.
  * @param {Character} Target - The target character.
  * @param {AssetGroup} Group - The zone / group to target.
- * @param {String} Activity - The activity to do.
+ * @param {ActivityName} Activity - The activity to do.
  * @returns {boolean} - TRUE if the activity could start.
  */
-declare function PrivateBedActivityStart(Source: Character, Target: Character, Group: AssetGroup, Activity: string): boolean;
+declare function PrivateBedActivityStart(Source: Character, Target: Character, Group: AssetGroup, Activity: ActivityName): boolean;
 /**
  * Checks if the activity if valid for the group/zone on the target character.
  * @param {Character} Source - The source character.
@@ -67,9 +67,10 @@ declare function PrivateBedOrgasm(C: Character): void;
 declare var PrivateBedBackground: string;
 /** @type {Character[]} */
 declare var PrivateBedCharacter: Character[];
-declare var PrivateBedActivity: string;
-/** @type {string[]} */
-declare var PrivateBedActivityList: string[];
+/** @type {ActivityName} */
+declare var PrivateBedActivity: ActivityName;
+/** @type {ActivityName[]} */
+declare var PrivateBedActivityList: ActivityName[];
 /** @type {string[]} */
 declare var PrivateBedLog: string[];
 declare var PrivateBedActivityDelay: number;

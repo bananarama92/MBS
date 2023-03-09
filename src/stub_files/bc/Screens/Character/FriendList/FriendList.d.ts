@@ -50,7 +50,7 @@ declare function FriendListChatSearch(room: string): void;
  * MemberName: string;
  * MemberNumber: number;
  * ChatRoomName: string | null;
- * ChatRoomSpace: string | null;
+ * ChatRoomSpace: ChatRoomSpaceType | null;
  * Private?: boolean
  * Type: "Submissive" | "Friend";
  * }[]} data - An array of data, we receive from the server
@@ -71,7 +71,7 @@ declare function FriendListLoadFriendList(data: {
     MemberName: string;
     MemberNumber: number;
     ChatRoomName: string | null;
-    ChatRoomSpace: string | null;
+    ChatRoomSpace: ChatRoomSpaceType | null;
     Private?: boolean;
     Type: "Submissive" | "Friend";
 }[]): void;
@@ -86,10 +86,10 @@ declare var FriendListBackground: string;
 declare var FriendListContent: string;
 /** @type {number[]} */
 declare var FriendListConfirmDelete: number[];
-/** @type {null | { Screen: string, Module: string, IsInChatRoom?: boolean, hasScrolledChat?: boolean }} */
+/** @type {null | { Screen: string, Module: ModuleType, IsInChatRoom?: boolean, hasScrolledChat?: boolean }} */
 declare var FriendListReturn: null | {
     Screen: string;
-    Module: string;
+    Module: ModuleType;
     IsInChatRoom?: boolean;
     hasScrolledChat?: boolean;
 };

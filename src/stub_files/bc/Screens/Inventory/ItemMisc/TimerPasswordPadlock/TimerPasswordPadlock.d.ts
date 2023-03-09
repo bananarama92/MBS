@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemMiscTimerPasswordPadlockInit(Item: Item, C: Character): void;
 declare function InventoryItemMiscTimerPasswordPadlockLoad(): void;
 declare function InventoryItemMiscTimerPasswordPadlockDraw(): void;
 declare function InventoryItemMiscTimerPasswordPadlockClick(): void;

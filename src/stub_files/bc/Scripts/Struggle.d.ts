@@ -1,4 +1,8 @@
 /**
+ * Get the list of struggle minigames.
+ */
+declare function StruggleGetMinigames(): [StruggleKnownMinigames, StruggleMinigame][];
+/**
  * Main handler for drawing the struggle minigame screen
  *
  * This function is responsible for drawing either the minigame themselves, or
@@ -17,6 +21,11 @@ declare function StruggleMinigameDraw(C: Character): boolean;
  */
 declare function StruggleProgressGetOperation(C: Character, PrevItem: Item, NextItem: Item): string;
 /**
+ * We can loosen if the item allows it, if enough time was spent and if the challenge is between 1 and 9
+ * @returns {boolean} - TRUE if it's allowed
+ */
+declare function StruggleAllowLoosen(): boolean;
+/**
  * Handles the minigames' KeyDown event.
  *
  * Only applicable for the Strength minigame.
@@ -34,20 +43,25 @@ declare function StruggleMinigameClick(): boolean;
 /**
  * Handle the common progress and drawing of the minigame
  *
- * This function draws the minigame common UI, updates the progress if it should
- * do so automatically, and checks if the minigame should abort.
+ * This function draws the minigame common UI, and updates the progress if it should
+ * do so automatically.
  *
- * @param {Character} C
  * @param {number} [Offset]
  */
-declare function StruggleMinigameDrawCommon(C: Character, Offset?: number): void;
+declare function StruggleMinigameDrawCommon(Offset?: number): void;
 /**
- * Check if the minigame should be interrupted.
+ * Check if the minigame has been interrupted and we should bail out
  *
  * @param {Character} C
  * @returns {boolean}
  */
 declare function StruggleMinigameCheckCancel(C: Character): boolean;
+/**
+ * Helper used to tell if something interrupted the minigame.
+ * @param {Character} C
+ * @returns {boolean}
+ */
+declare function StruggleMinigameWasInterrupted(C: Character): boolean;
 /**
  * Handles making the character's expression when struggling.
  *
@@ -61,6 +75,12 @@ declare function StruggleMinigameHandleExpression(Decrease?: boolean): void;
  */
 declare function StruggleProgressCheckEnd(C: Character): void;
 /**
+ * Check if there's a struggling minigame started.
+ *
+ * @returns {boolean}
+ */
+declare function StruggleMinigameIsRunning(): boolean;
+/**
  * Starts the given struggle minigame.
  *
  * This function initializes the common state and calls the requested minigame
@@ -70,8 +90,9 @@ declare function StruggleProgressCheckEnd(C: Character): void;
  * @param {StruggleKnownMinigames} MiniGame
  * @param {Item} PrevItem
  * @param {Item} NextItem
+ * @param {StruggleCompletionCallback} Completion
  */
-declare function StruggleMinigameStart(C: Character, MiniGame: StruggleKnownMinigames, PrevItem: Item, NextItem: Item): void;
+declare function StruggleMinigameStart(C: Character, MiniGame: StruggleKnownMinigames, PrevItem: Item, NextItem: Item, Completion: StruggleCompletionCallback): void;
 /**
  * Stop the struggle minigame and reset it so it can be reentered.
  *
@@ -132,6 +153,23 @@ declare function StruggleStrengthGetDifficulty(C: Character, PrevItem: Item, Nex
     auto: number;
     timer: number;
 };
+/**
+ * Loosen minigame main drawing routine.
+ * @param {Character} C - The character for whom the struggle dialog is drawn. That can be the player or another character.
+ * @returns {void} - Nothing
+ */
+declare function StruggleLoosenDraw(C: Character): void;
+/**
+ * Loosen minigame main setup.
+* @returns {void} - Nothing
+*/
+declare function StruggleLoosenSetup(): void;
+/**
+ * Handle events for the loosen minigame
+ * @param {"Click"|"KeyDown"} EventType
+ * @returns {void}
+ */
+declare function StruggleLoosenHandleEvent(EventType: "Click" | "KeyDown"): void;
 /**
  * Starts the dialog progress bar for struggling out of bondage and keeps the items that needs to be added / swapped / removed.
  * First the challenge level is calculated based on the base item difficulty, the skill of the rigger and the escapee and modified, if
@@ -258,6 +296,9 @@ declare var StruggleProgressOperation: string;
 declare var StruggleProgressSkill: number;
 declare var StruggleProgressLastKeyPress: number;
 declare var StruggleProgressChallenge: number;
+declare var StruggleLoosenSpeed: number;
+declare var StruggleLoosenAngle: number;
+declare var StruggleLoosenHoleAngle: number;
 /**
  * The struggle minigame progress
  *
@@ -282,6 +323,11 @@ declare var StruggleProgressPrevItem: Item | null;
  * @type {Item | null}
  */
 declare var StruggleProgressNextItem: Item | null;
+/**
+ * A function called when the struggle minigame completes
+ * @type {StruggleCompletionCallback}
+ */
+declare var StruggleExitFunction: StruggleCompletionCallback;
 /** @type {null | { X: number, Y: number, Size: number, Velocity: number }[]} */
 declare var StruggleProgressFlexCircles: null | {
     X: number;

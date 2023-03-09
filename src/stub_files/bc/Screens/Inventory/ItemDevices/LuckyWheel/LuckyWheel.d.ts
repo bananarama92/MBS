@@ -24,11 +24,7 @@ declare function InventoryItemDevicesLuckyWheelUpdate(): void;
 declare function InventoryItemDevicesLuckyWheelTrigger(): void;
 declare function InventoryItemDevicesLuckyWheelStoppedTurning(C: any, Item: any, Angle: any): void;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemDevicesLuckyWheelScriptDraw({ C, PersistentData, Item }: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemDevicesLuckyWheelScriptDraw({ C, PersistentData, Item }: DynamicScriptCallbackData): void;
 /** @type {DynamicAfterDrawCallback} */
 declare function AssetsItemDevicesLuckyWheelAfterDraw({ C, PersistentData, A, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color, Opacity }: DynamicDrawingData): void;
 declare var ItemDevicesLuckyWheelMinTexts: number;

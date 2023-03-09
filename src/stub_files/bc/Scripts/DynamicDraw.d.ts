@@ -178,11 +178,11 @@ declare namespace DynamicDrawTextCurve {
 }
 /**
  * An enum encapsulating the available drawing effects that can be applied to dynamic text.
+ * @type {{ BURN: "burn" }}
  */
-type DynamicDrawTextEffect = string;
-declare namespace DynamicDrawTextEffect {
-    const BURN: string;
-}
+declare const DynamicDrawTextEffect: {
+    BURN: "burn";
+};
 /**
  * The default options that are used for dynamic text drawing.
  * @type {DynamicDrawOptions}

@@ -7,15 +7,34 @@
  */
 declare function ExtendedItemGetXY(Asset: Asset, ShowImages?: boolean): [number, number][][];
 /**
- * Loads the item extension properties
- * @param {readonly ExtendedItemOption[]} Options - An Array of type definitions for each allowed extended type. The first item
- *     in the array should be the default option.
- * @param {string} DialogKey - The dialog key for the message to display prompting the player to select an extended
- *     type
- * @param {ItemProperties | null} BaselineProperty - To-be initialized properties independent of the selected item types
+ * Initialize the extended item properties
+ * @param {Item} Item - The item in question
+ * @param {Character} C - The character that has the item equiped
+ * @param {boolean} Refresh - Whether the character and relevant item should be refreshed
+ * @param {null | ExtendedArchetype} Archetype - The item's archetype; defaults to {@link Asset.Archetype}.
+ * A value should generally only be provided here if one is initializing an archetypical subscreen.
+ * @param {string} Type - The item's type. Only relevant in the case of {@link VariableHeightData}
  * @returns {void} Nothing
  */
-declare function ExtendedItemLoad(Options: readonly ExtendedItemOption[], DialogKey: string, BaselineProperty?: ItemProperties | null): void;
+declare function ExtendedItemInit(Item: Item, C: Character, Refresh?: boolean, Archetype?: null | ExtendedArchetype, Type?: string): void;
+/**
+ * Helper init function for extended items without an archetype.
+ * Note that on the long term this function should ideally be removed in favor of adding appropriate archetypes.
+ * @param {Item} Item - The item in question
+ * @param {Character} C - The character that has the item equiped
+ * @param {ItemProperties} Properties - A record that maps property keys to their default value.
+ *        The type of each value is used for basic validation.
+ * @param {boolean} Refresh - Whether the character and relevant item should be refreshed
+ * @returns {void} Nothing
+ */
+declare function ExtendedItemInitNoArch(Item: Item, C: Character, Properties: ItemProperties, Refresh?: boolean): void;
+/**
+ * Loads the item's extended item menu
+ * @param {string} DialogKey - The dialog key for the message to display prompting the player to select an extended
+ *     type
+ * @returns {void} Nothing
+ */
+declare function ExtendedItemLoad(DialogKey: string): void;
 /**
  * Draws the extended item type selection screen
  * @param {readonly ExtendedItemOption[]} Options - An Array of type definitions for each allowed extended type. The first item
@@ -24,10 +43,10 @@ declare function ExtendedItemLoad(Options: readonly ExtendedItemOption[], Dialog
  *     The full dialog key will be <Prefix><Option.Name>
  * @param {number} [OptionsPerPage] - The number of options displayed on each page
  * @param {boolean} [ShowImages=true] - Denotes whether images should be shown for the specific item
- * @param {[number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
+ * @param {readonly [number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
  * @returns {void} Nothing
  */
-declare function ExtendedItemDraw(Options: readonly ExtendedItemOption[], DialogPrefix: string, OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: [number, number][]): void;
+declare function ExtendedItemDraw(Options: readonly ExtendedItemOption[], DialogPrefix: string, OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: readonly [number, number][]): void;
 /**
  * Draw a single button in the extended item type selection screen.
  * @param {ExtendedItemOption | ModularItemOption | ModularItemModule} Option - The new extended item option
@@ -103,14 +122,16 @@ declare function ExtendedItemSetOption(C: Character, item: Item, previousPropert
  */
 declare function ExtendedItemHandleOptionClick(C: Character, Options: readonly ExtendedItemOption[], Option: ExtendedItemOption): void;
 /**
- * Checks whether the player meets the requirements for an extended type option. This will check against their Bondage
+ * Checks whether the character meets the requirements for an extended type option. This will check against their Bondage
  * skill if applying the item to another character, or their Self Bondage skill if applying the item to themselves.
+ * @param {Item} item - The item in question
+ * @param {Character} C - The character in question
  * @param {ExtendedItemOption|ModularItemOption} Option - The selected type definition
  * @param {ExtendedItemOption|ModularItemOption} CurrentOption - The current type definition
  * @returns {string|null} null if the player meets the option requirements. Otherwise a string message informing them
  * of the requirements they do not meet
  */
-declare function ExtendedItemRequirementCheckMessage(Option: ExtendedItemOption | ModularItemOption, CurrentOption: ExtendedItemOption | ModularItemOption): string | null;
+declare function ExtendedItemRequirementCheckMessage(item: Item, C: Character, Option: ExtendedItemOption | ModularItemOption, CurrentOption: ExtendedItemOption | ModularItemOption): string | null;
 /**
  * Checks whether the player is able to select an option based on it's self-selection criteria (whether or not the
  * wearer may select the option)
@@ -172,9 +193,9 @@ declare function ExtendedItemSetOffset(Offset: number): void;
  * @param {Character} C - The target character
  * @param {Asset} asset - The asset for the typed item
  * @param {CommonChatTags} tag - The tag to map to a dictionary entry
- * @returns {object} - The constructed dictionary entry for the tag
+ * @returns {ChatMessageDictionaryEntry} - The constructed dictionary entry for the tag
  */
-declare function ExtendedItemMapChatTagToDictionaryEntry(C: Character, asset: Asset, tag: CommonChatTags): object;
+declare function ExtendedItemMapChatTagToDictionaryEntry(C: Character, asset: Asset, tag: CommonChatTags): ChatMessageDictionaryEntry;
 /**
  * Construct an array of inventory icons for a given asset and type
  * @param {Character} C - The target character
@@ -196,10 +217,9 @@ declare function ExtendedItemCreateNpcDialogFunction(Asset: Asset, FunctionPrefi
  * Creates an asset's extended item validation function.
  * @param {string} functionPrefix - The prefix of the new `Validate` function
  * @param {null | ExtendedItemValidateScriptHookCallback<any>} ValidationCallback - A custom validation callback
- * @param {boolean} changeWhenLocked - whether or not the item's type can be changed while the item is locked
  * @returns {void} Nothing
  */
-declare function ExtendedItemCreateValidateFunction(functionPrefix: string, ValidationCallback: null | ExtendedItemValidateScriptHookCallback<any>, changeWhenLocked: boolean): void;
+declare function ExtendedItemCreateValidateFunction(functionPrefix: string, ValidationCallback: null | ExtendedItemValidateScriptHookCallback<any>): void;
 /**
  * Helper click function for creating custom buttons, including extended item permission support.
  * @param {string} Name - The name of the button and its pseudo-type
@@ -246,9 +266,10 @@ declare function ExtendedItemDrawHeader(X?: number, Y?: number, Item?: Item): vo
  * @template {ExtendedArchetype} Archetype
  * @param {Item} Item - The item whose data should be extracted
  * @param {Archetype} Archetype - The archetype corresponding to the lookup table
+ * @param {string} Type - The item's type. Only relevant in the case of {@link VariableHeightData}
  * @returns {null | ExtendedDataLookupStruct[Archetype]} The item's data or `null` if the lookup failed
  */
-declare function ExtendedItemGetData<Archetype extends ExtendedArchetype>(Item: Item, Archetype: Archetype): ExtendedDataLookupStruct[Archetype];
+declare function ExtendedItemGetData<Archetype extends ExtendedArchetype>(Item: Item, Archetype: Archetype, Type?: string): ExtendedDataLookupStruct[Archetype];
 /**
  * Utility file for handling extended items
  */

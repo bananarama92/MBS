@@ -21,19 +21,19 @@ declare function ActivityTranslate(CachePath: string): void;
 declare function ActivityDictionaryText(KeyWord: string): string;
 /**
  * Resolve a group name to the correct group for activities
- * @param {string} family - The asset family for the named group
+ * @param {IAssetFamily} family - The asset family for the named group
  * @param {AssetGroupName} groupname - The name of the group to resolve
  * @returns {AssetGroup | null} - The resolved group
  */
-declare function ActivityGetGroupOrMirror(family: string, groupname: AssetGroupName): AssetGroup | null;
+declare function ActivityGetGroupOrMirror(family: IAssetFamily, groupname: AssetGroupName): AssetGroup | null;
 /**
  * Gets all groups that mirror or are mirrored by the given group name for activities. The returned array includes the
  * named group.
- * @param {string} family - The asset family for the named group
+ * @param {IAssetFamily} family - The asset family for the named group
  * @param {AssetGroupName} groupName - The name of the group to resolve
  * @returns {AssetGroup[]} - The group and all groups from the same family that mirror or are mirrored by it
  */
-declare function ActivityGetAllMirrorGroups(family: string, groupName: AssetGroupName): AssetGroup[];
+declare function ActivityGetAllMirrorGroups(family: IAssetFamily, groupName: AssetGroupName): AssetGroup[];
 /**
  * Check if any activities are possible for a character's given group.
  * @param {Character} char - The character on which the check is done
@@ -59,13 +59,13 @@ declare function ActivityHasValidTarget(char: Character, act: Activity, group: A
 declare function ActivityCheckPermissions(activity: Activity, character: Character | PlayerCharacter, onOther: boolean): boolean;
 /**
  * Check that that a given prerequisite is met.
- * @param {string} prereq - The prerequisite to consider
+ * @param {ActivityPrerequisite} prereq - The prerequisite to consider
  * @param {Character|PlayerCharacter} acting - The character performing the activity
  * @param {Character|PlayerCharacter} acted - The character being acted on
  * @param {AssetGroup} group - The group being acted on
  * @returns {boolean} whether the given activity's prerequisite are satisfied
  */
-declare function ActivityCheckPrerequisite(prereq: string, acting: Character | PlayerCharacter, acted: Character | PlayerCharacter, group: AssetGroup): boolean;
+declare function ActivityCheckPrerequisite(prereq: ActivityPrerequisite, acting: Character | PlayerCharacter, acted: Character | PlayerCharacter, group: AssetGroup): boolean;
 /**
  * Check that an activity's prerequisites are met.
  * @param {Activity} activity - The activity to consider
@@ -80,10 +80,10 @@ declare function ActivityCheckPrerequisites(activity: Activity, acting: Characte
  * @param {ItemActivity[]} allowed
  * @param {Character} acting
  * @param {Character} acted
- * @param {string} needsItem
+ * @param {ActivityName} needsItem
  * @param {Activity} activity
  */
-declare function ActivityGenerateItemActivitiesFromNeed(allowed: ItemActivity[], acting: Character, acted: Character, needsItem: string, activity: Activity): boolean;
+declare function ActivityGenerateItemActivitiesFromNeed(allowed: ItemActivity[], acting: Character, acted: Character, needsItem: ActivityName, activity: Activity): boolean;
 /**
  * Builds the allowed activities on a group given the character's settings.
  * @param {Character} character - The character for which to build the activity dialog options
@@ -94,23 +94,23 @@ declare function ActivityAllowedForGroup(character: Character, groupname: AssetG
 /**
  * Returns TRUE if an activity can be done
  * @param {Character} C - The character to evaluate
- * @param {string} Activity - The name of the activity
+ * @param {ActivityName} Activity - The name of the activity
  * @param {AssetGroupName} Group - The name of the group
  * @return {boolean} - TRUE if the activity can be done
  */
-declare function ActivityCanBeDone(C: Character, Activity: string, Group: AssetGroupName): boolean;
+declare function ActivityCanBeDone(C: Character, Activity: ActivityName, Group: AssetGroupName): boolean;
 /**
  * Calculates the effect of an activity performed on a zone
  * @param {Character} S - The character performing the activity
  * @param {Character} C - The character on which the activity is performed
- * @param {string|Activity} A - The activity performed
+ * @param {ActivityName | Activity} A - The activity performed
  * @param {AssetGroupName} Z - The group/zone name where the activity was performed
  * @param {number} [Count=1] - If the activity is done repeatedly, this defines the number of times, the activity is done.
  * If you don't want an activity to modify arousal, set this parameter to '0'
  * @param {Asset} [Asset] - The asset used to perform the activity
  * @return {void} - Nothing
  */
-declare function ActivityEffect(S: Character, C: Character, A: string | Activity, Z: AssetGroupName, Count?: number, Asset?: Asset): void;
+declare function ActivityEffect(S: Character, C: Character, A: ActivityName | Activity, Z: AssetGroupName, Count?: number, Asset?: Asset): void;
 /**
  * Used for arousal events that are not activities, such as stimulation events
  * @param {Character} S - The character performing the activity
@@ -139,13 +139,13 @@ declare function ActivitySetArousal(C: Character, Progress: number): void;
 /**
  * Sets an activity progress on a timer, activities are capped at MaxProgress
  * @param {Character} C - The character for which to set the timer for
- * @param {object} Activity - The activity for which the timer is for
+ * @param {null | Activity} Activity - The activity for which the timer is for
  * @param {AssetGroupName | "ActivityOnOther"} Zone - The target zone of the activity
  * @param {number} Progress - Progress to set
  * @param {Asset} [Asset] - The asset used to perform the activity
  * @return {void} - Nothing
  */
-declare function ActivitySetArousalTimer(C: Character, Activity: object, Zone: AssetGroupName | "ActivityOnOther", Progress: number, Asset?: Asset): void;
+declare function ActivitySetArousalTimer(C: Character, Activity: null | Activity, Zone: AssetGroupName | "ActivityOnOther", Progress: number, Asset?: Asset): void;
 /**
  * Draws the arousal progress bar at the given coordinates for every orgasm timer.
  * @param {number} X - Position on the X axis
@@ -246,10 +246,10 @@ declare function ActivityArousalItem(Source: Character, Target: Character, Asset
 /**
  * Checks if the character is wearing an item tagged with the fetish type name and returns the love factor for it
  * @param {Character} C - The character to validate
- * @param {string} Type - The fetish type name
+ * @param {FetishName} Type - The fetish type name
  * @return {number} - From -2 (hate it) to 2 (adore it) based on the player preferences
  */
-declare function ActivityFetishItemFactor(C: Character, Type: string): number;
+declare function ActivityFetishItemFactor(C: Character, Type: FetishName): number;
 /**
  * Loops in all fetishes for a character and calculates the total fetish factor
  * @param {Character} C - The character to validate

@@ -1,10 +1,7 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemMiscHighSecurityPadlockInit(Item: Item, C: Character): void;
 declare function InventoryItemMiscHighSecurityPadlockLoad(): void;
-/**
- * @param {Character} C
- * @param {Item} Item
- * @returns {boolean}
- */
-declare function InventoryItemMiscHighSecurityPadlockPlayerHasKeys(C: Character, Item: Item): boolean;
+declare function InventoryItemMiscHighSecurityPadlockPlayerHasKeys(C: any, Item: any): boolean;
 declare function InventoryItemMiscHighSecurityPadlockDraw(): void;
 declare function InventoryItemMiscHighSecurityPadlockClick(): void;
 declare function InventoryItemMiscHighSecurityPadlockExit(): void;

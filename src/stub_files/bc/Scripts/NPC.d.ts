@@ -21,10 +21,10 @@ declare function NPCTraitReverse(Trait: string): string;
 /**
  * Returns the weight value of the specified option (The higher the value, the higher the chances the option will be picked, an opposite trait will always result as an option that's not picked)
  * @param {string} Dialog - Specified dialog line with the affecting traits.
- * @param {readonly NPCTrait[]} NPCTrait - List of traits of the NPC.
+ * @param {readonly NPCTrait[]} Trait - List of traits of the NPC.
  * @returns {number} - Weight of the dialog option
  */
-declare function NPCTraitGetOptionValue(Dialog: string, NPCTrait: readonly NPCTrait[]): number;
+declare function NPCTraitGetOptionValue(Dialog: string, Trait: readonly NPCTrait[]): number;
 /**
  * Finds and keeps the best possible option for a specified NPC dialog group. A group is a list of similar options where each option is influenced by a specified trait.
  * @param {NPCCharacter} C - NPC to get the dialog of
@@ -100,6 +100,6 @@ declare function NPCInteraction(): void;
 /**
  * List for all possible pairs of NPC traits. A pair defines opposites.
  * @constant
- * @type {string[][]}
+ * @type {[string, string][]}
  */
-declare var NPCTrait: string[][];
+declare var NPCTrait: [string, string][];

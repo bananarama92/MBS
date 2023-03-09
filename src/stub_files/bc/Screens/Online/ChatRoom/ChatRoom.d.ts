@@ -45,16 +45,16 @@ declare function ChatRoomCanRemoveGhost(): boolean;
 declare function DialogCanChangeClothes(): boolean;
 /**
  * Checks if the specified owner option is available.
- * @param {string} Option - The option to check for availability
+ * @param {ChatRoomOwnershipOption} Option - The option to check for availability
  * @returns {boolean} - TRUE if the current ownership option is the specified one.
  */
-declare function ChatRoomOwnershipOptionIs(Option: string): boolean;
+declare function ChatRoomOwnershipOptionIs(Option: ChatRoomOwnershipOption): boolean;
 /**
  * Checks if the specified lover option is available.
- * @param {string} Option - The option to check for availability
+ * @param {ChatRoomLovershipOption} Option - The option to check for availability
  * @returns {boolean} - TRUE if the current lover option is the specified one.
  */
-declare function ChatRoomLovershipOptionIs(Option: string): boolean;
+declare function ChatRoomLovershipOptionIs(Option: ChatRoomLovershipOption): boolean;
 /**
  * Checks if the player can take a drink from the current character's tray.
  * @returns {boolean} - TRUE if the current character is wearing a drinks tray and the player can interact.
@@ -277,14 +277,14 @@ declare function ChatRoomClearAllElements(): void;
 /**
  * Starts the chatroom selection screen.
  * @param {ChatRoomSpaceType} Space - Name of the chatroom space
- * @param {string} Game - Name of the chatroom game to play
+ * @param {ChatRoomGame} Game - Name of the chatroom game to play
  * @param {string} LeaveRoom - Name of the room to go back to when exiting chatsearch.
  * @param {string} LeaveSpace - Name of the space to go back to when exiting chatsearch.
  * @param {string} Background - Name of the background to use in chatsearch.
  * @param {string[]} BackgroundTagList - List of available backgrounds in the chatroom space.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomStart(Space: ChatRoomSpaceType, Game: string, LeaveRoom: string, LeaveSpace: string, Background: string, BackgroundTagList: string[]): void;
+declare function ChatRoomStart(Space: ChatRoomSpaceType, Game: ChatRoomGame, LeaveRoom: string, LeaveSpace: string, Background: string, BackgroundTagList: string[]): void;
 /**
  * Create the list of chat room menu buttons
  * @returns {void} - Nothing
@@ -479,6 +479,11 @@ declare function ChatRoomAttemptStandMinigameEnd(): void;
  */
 declare function ChatRoomCanLeave(): boolean;
 /**
+ * Make the player exit from the current chatroom
+ * @param {boolean} clearCharacters - Whether the online character cache should be cleared
+ */
+declare function ChatRoomLeave(clearCharacters?: boolean): void;
+/**
  * Handles keyboard shortcuts in the chatroom screen.
  * @param {KeyboardEvent} event - The event that triggered this
  * @returns {void} - Nothing.
@@ -647,9 +652,9 @@ declare function ChatRoomMessageRunExtractors(data: IChatRoomMessage, sender: Ch
  * @param {IChatRoomMessage} data - The recieved message
  * @param {Character} sender - The actual message sender character object
  * @param {string} msg - The escaped message, likely different from data.Contents
- * @param {any} metadata - The message metadata, only available for post-handlers
+ * @param {IChatRoomMessageMetadata} [metadata] - The message metadata, only available for post-handlers
  */
-declare function ChatRoomMessageRunHandlers(type: "pre" | "post", data: IChatRoomMessage, sender: Character, msg: string, metadata: any): string | boolean;
+declare function ChatRoomMessageRunHandlers(type: "pre" | "post", data: IChatRoomMessage, sender: Character, msg: string, metadata?: IChatRoomMessageMetadata): string | boolean;
 /**
  * Handles the reception of a chatroom message.
  *
@@ -664,10 +669,10 @@ declare function ChatRoomMessage(data: IChatRoomMessage): void;
  * @param {IChatRoomMessage} data
  * @param {string} msg
  * @param {Character} SenderCharacter
- * @param {object} metadata
+ * @param {IChatRoomMessageMetadata} metadata
  * @returns {void}
  */
-declare function ChatRoomMessageDisplay(data: IChatRoomMessage, msg: string, SenderCharacter: Character, metadata: object): void;
+declare function ChatRoomMessageDisplay(data: IChatRoomMessage, msg: string, SenderCharacter: Character, metadata: IChatRoomMessageMetadata): void;
 /**
  * Whether to replace message details which reveal information about an unseen/unheard character
  * @param {Character} C - The character whose identity should remain unknown
@@ -743,22 +748,22 @@ declare function ChatRoomSyncReorderPlayers(data: object): void;
 declare function ChatRoomSyncSingle(data: object): void;
 /**
  * Updates a single character's expression in the chatroom.
- * @param {object} data - Data object containing the new character expression data.
+ * @param {IChatRoomSyncExpressionMessage} data - Data object containing the new character expression data.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomSyncExpression(data: object): void;
+declare function ChatRoomSyncExpression(data: IChatRoomSyncExpressionMessage): void;
 /**
  * Updates a single character's pose in the chatroom.
- * @param {object} data - Data object containing the new character pose data.
+ * @param {IChatRoomSyncPoseMessage} data - Data object containing the new character pose data.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomSyncPose(data: object): void;
+declare function ChatRoomSyncPose(data: IChatRoomSyncPoseMessage): void;
 /**
  * Updates a single character's arousal progress in the chatroom.
- * @param {object} data - Data object containing the new character arousal data.
+ * @param {IChatRoomSyncArousalMessage} data - Data object containing the new character arousal data.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomSyncArousal(data: object): void;
+declare function ChatRoomSyncArousal(data: IChatRoomSyncArousalMessage): void;
 /**
  * Updates a single item on a specific character in the chatroom.
  * @param {object} data - Data object containing the data pertaining to the singular item to update.
@@ -792,6 +797,10 @@ declare function ChatRoomStruggleAssist(): void;
  * @returns {void} - Nothing.
  */
 declare function ChatRoomGiveLockpicks(): void;
+/**
+ * Triggered when the player grabs another player's leash
+ * @returns {void} - Nothing.
+ */
 declare function ChatRoomHoldLeash(): void;
 /**
  * Handle the reply to a leash being held
@@ -894,16 +903,16 @@ declare function ChatRoomAllowItem(data: object): void;
 declare function DialogChangeClothes(): void;
 /**
  * Triggered when the player selects an ownership dialog option. (It can change money and reputation)
- * @param {string} RequestType - Type of request being performed.
+ * @param {"Propose" | "Accept"} RequestType - Type of request being performed.
  * @returns {void} - Nothing
  */
-declare function ChatRoomSendOwnershipRequest(RequestType: string): void;
+declare function ChatRoomSendOwnershipRequest(RequestType: "Propose" | "Accept"): void;
 /**
  * Triggered when the player selects an lovership dialog option. (It can change money and reputation)
- * @param {string} RequestType - Type of request being performed.
+ * @param {"Propose" | "Accept" | "Break"} RequestType - Type of request being performed.
  * @returns {void} - Nothing
  */
-declare function ChatRoomSendLovershipRequest(RequestType: string): void;
+declare function ChatRoomSendLovershipRequest(RequestType: "Propose" | "Accept" | "Break"): void;
 /**
  * Triggered when the player picks a drink from a character's maid tray.
  * @param {string} DrinkType - Drink chosen.
@@ -1032,10 +1041,10 @@ declare function DialogPhotoPlayer(): void;
  * @param {number} Top - Position of the area to capture from the top of the canvas
  * @param {number} Width - Width of the area to capture
  * @param {number} Height - Height of the area to capture
- * @param {any} Characters - The characters that will be included in the screenshot
+ * @param {readonly Character[]} Characters - The characters that will be included in the screenshot
  * @returns {void} - Nothing
  */
-declare function ChatRoomPhoto(Left: number, Top: number, Width: number, Height: number, Characters: any): void;
+declare function ChatRoomPhoto(Left: number, Top: number, Width: number, Height: number, Characters: readonly Character[]): void;
 /**
  * Returns whether the most recent chat message is on screen
  * @returns {boolean} - TRUE if the screen has focus and the chat log is scrolled to the bottom
@@ -1106,14 +1115,14 @@ declare function ChatRoomOwnerPresenceRule(RuleName: LogNameType["OwnerRule"], T
 declare function ChatRoomPronounSubstitutions(C: Character, key: string, hideIdentity: boolean): CommonSubtituteSubstitution[];
 /**
  * An enum for the options for chat room spaces
+ * @type {{ MIXED: "X", FEMALE_ONLY: "", MALE_ONLY: "M", ASYLUM: "Asylum" }}
  */
-type ChatRoomSpaceType = string;
-declare namespace ChatRoomSpaceType {
-    const MIXED: string;
-    const FEMALE_ONLY: string;
-    const MALE_ONLY: string;
-    const ASYLUM: string;
-}
+declare const ChatRoomSpaceType: {
+    MIXED: "X";
+    FEMALE_ONLY: "";
+    MALE_ONLY: "M";
+    ASYLUM: "Asylum";
+};
 declare var ChatRoomBackground: string;
 /** @type {null | ChatRoom} */
 declare let ChatRoomData: null | ChatRoom;
@@ -1125,21 +1134,33 @@ declare var ChatRoomLastMessage: string[];
 declare var ChatRoomLastMessageIndex: number;
 /** @type {null | number} */
 declare var ChatRoomTargetMemberNumber: null | number;
-declare var ChatRoomOwnershipOption: string;
-declare var ChatRoomLovershipOption: string;
+/** @type {ChatRoomOwnershipOption} */
+declare var ChatRoomOwnershipOption: ChatRoomOwnershipOption;
+/** @type {ChatRoomLovershipOption} */
+declare var ChatRoomLovershipOption: ChatRoomLovershipOption;
 declare var ChatRoomPlayerCanJoin: boolean;
 declare var ChatRoomMoneyForOwner: number;
 /** @type {number[]} */
 declare var ChatRoomQuestGiven: number[];
-declare var ChatRoomSpace: string;
-declare var ChatRoomGame: string;
+/** @type {ChatRoomSpaceType} */
+declare var ChatRoomSpace: ChatRoomSpaceType;
+/** @type {ChatRoomGame} */
+declare var ChatRoomGame: ChatRoomGame;
 /** @type {null | number} */
 declare var ChatRoomMoveTarget: null | number;
 declare var ChatRoomHelpSeen: boolean;
 declare var ChatRoomAllowCharacterUpdate: boolean;
 declare var ChatRoomStruggleAssistBonus: number;
 declare var ChatRoomStruggleAssistTimer: number;
+/**
+ * The timer started when a slowed player attempts to leave
+ * @type {number}
+ */
 declare var ChatRoomSlowtimer: number;
+/**
+ * Whether someone attempted to stop the player in the middle of a slow-leave
+ * @type {boolean}
+ */
 declare var ChatRoomSlowStop: boolean;
 declare var ChatRoomChatHidden: boolean;
 declare var ChatRoomCharacterCount: number;
@@ -1151,7 +1172,8 @@ declare var ChatRoomLastName: string;
 declare var ChatRoomLastBG: string;
 declare var ChatRoomLastPrivate: boolean;
 declare var ChatRoomLastSize: number;
-declare var ChatRoomLastLanguage: string;
+/** @type {ChatRoomLanguage} */
+declare var ChatRoomLastLanguage: ChatRoomLanguage;
 declare var ChatRoomLastDesc: string;
 /** @type {number[]} */
 declare var ChatRoomLastAdmin: number[];
@@ -1160,24 +1182,35 @@ declare var ChatRoomLastBan: number[];
 /** @type {string[]} */
 declare var ChatRoomLastBlockCategory: string[];
 declare var ChatRoomLastSpace: string;
-/** @type {null | { Name: string, Description: string, Background: string, Private: boolean, Space: string, Game: string, Admin: number[], Limit: string, Language: string, BlockCategory: string[] }} */
+/** @type {null | { Name: string, Description: string, Background: string, Private: boolean, Space: string, Game: ChatRoomGame, Admin: number[], Limit: string, Language: ChatRoomLanguage, BlockCategory: ChatRoomBlockCategory[] }} */
 declare var ChatRoomNewRoomToUpdate: null | {
     Name: string;
     Description: string;
     Background: string;
     Private: boolean;
     Space: string;
-    Game: string;
+    Game: ChatRoomGame;
     Admin: number[];
     Limit: string;
-    Language: string;
-    BlockCategory: string[];
+    Language: ChatRoomLanguage;
+    BlockCategory: ChatRoomBlockCategory[];
 };
 declare var ChatRoomNewRoomToUpdateTimer: number;
-/** @type {number[]} */
+/**
+ * The list of MemberNumbers whose characters we're holding the leash of
+ * @type {number[]}
+ */
 declare var ChatRoomLeashList: number[];
-/** @type {null | number} */
-declare var ChatRoomLeashPlayer: null | number;
+/**
+ * The MemberNumber of the character holding our leash
+ * @type {number|null}
+ */
+declare var ChatRoomLeashPlayer: number | null;
+/**
+ * The room name to join when being leashed
+ * @type {string}
+ */
+declare var ChatRoomJoinLeash: string;
 declare var ChatRoomTargetDirty: boolean;
 /**
  * Chances of a chat message popping up reminding you of some stimulation.
@@ -1241,7 +1274,11 @@ declare namespace ChatRoomArousalMsg_ChanceGagMod {
     export { Gag_4 as Gag };
 }
 declare var ChatRoomHideIconState: number;
-declare var ChatRoomMenuButtons: any[];
+/**
+ * The list of buttons in the top-right
+ * @type {string[]}
+ * */
+declare var ChatRoomMenuButtons: string[];
 declare let ChatRoomFontSize: number;
 declare namespace ChatRoomFontSizes {
     const Small: number;
@@ -1262,13 +1299,15 @@ declare function ChatRoomListOperationTriggers(): {
         add: boolean;
     }[];
 }[];
-/**
- * Chat room resize manager object: Handles resize events for the chat log.
- * @constant
- * @type {object} - The chat room resize manager object. Contains the functions and properties required to handle
- *     resize events.
- */
-declare let ChatRoomResizeManager: object;
+declare namespace ChatRoomResizeManager {
+    const atStart: boolean;
+    const timer: null | number;
+    const timeOut: number;
+    const ChatRoomScrollPercentage: number;
+    const ChatLogScrolledToEnd: boolean;
+    function ChatRoomResizeEvent(): void;
+    function ChatRoomResizeEventsEnd(): void;
+}
 declare let ChatRoomStatusDeadKeys: string[];
 /** @type {ChatRoomMessageExtractor[]} */
 declare var ChatRoomMessageExtractors: ChatRoomMessageExtractor[];

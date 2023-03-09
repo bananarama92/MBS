@@ -80,18 +80,18 @@ declare var PrisonBackground: string;
 /** @type {null | number} */
 declare var PrisonNextEventTimer: null | number;
 declare var PrisonNextEvent: boolean;
-/** @type {null | boolean} */
-declare var PrisonerMetalCuffsKey: null | boolean;
-/** @type {null | boolean} */
-declare var PrisonerMetalPadlockKey: null | boolean;
-/** @type {null | boolean} */
-declare var PrisonerIntricatePadlockKey: null | boolean;
-/** @type {null | boolean} */
-declare var PrisonerSleepingPills: null | boolean;
-/** @type {null | boolean} */
-declare var PrisonerSpankingToys: null | boolean;
-/** @type {null | InventoryItem[]} */
-declare var PrisonerConfiscatedHandhelds: null | InventoryItem[];
+/** @type {boolean} */
+declare var PrisonerMetalCuffsKey: boolean;
+/** @type {boolean} */
+declare var PrisonerMetalPadlockKey: boolean;
+/** @type {boolean} */
+declare var PrisonerIntricatePadlockKey: boolean;
+/** @type {boolean} */
+declare var PrisonerSleepingPills: boolean;
+/** @type {boolean} */
+declare var PrisonerSpankingToys: boolean;
+/** @type {InventoryItem[] | null} */
+declare var PrisonerConfiscatedHandhelds: InventoryItem[] | null;
 declare var PrisonBehavior: number;
 /** @type {null | NPCCharacter} */
 declare var PrisonMaid: null | NPCCharacter;

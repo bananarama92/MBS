@@ -13,8 +13,4 @@ declare function InventoryItemNeckAccessoriesCollarAutoShockUnitClick(OriginalFu
 /** @type {DynamicBeforeDrawCallback} */
 declare function AssetsItemNeckAccessoriesCollarAutoShockUnitBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
 /** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarAutoShockUnitScriptDraw(data: {
-    C: Character;
-    Item: Item;
-    PersistentData: <T>() => T;
-}): void;
+declare function AssetsItemNeckAccessoriesCollarAutoShockUnitScriptDraw(data: DynamicScriptCallbackData): void;

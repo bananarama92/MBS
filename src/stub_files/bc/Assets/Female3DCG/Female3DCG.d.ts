@@ -28,14 +28,14 @@ declare var PoseFemale3DCGNames: AssetPoseName[];
 declare var ActivityFemale3DCG: Activity[];
 /**
  * Display order for activities.
- * @type string[]
+ * @type {ActivityName[]}
  */
-declare let ActivityFemale3DCGOrdering: string[];
+declare let ActivityFemale3DCGOrdering: ActivityName[];
 /**
  * 3D Custom Girl based fetishes
- * @type {{Name: string; GetFactor(C: Character): number; }[]}
+ * @type {{Name: FetishName; GetFactor(C: Character): number; }[]}
  */
 declare var FetishFemale3DCG: {
-    Name: string;
+    Name: FetishName;
     GetFactor(C: Character): number;
 }[];

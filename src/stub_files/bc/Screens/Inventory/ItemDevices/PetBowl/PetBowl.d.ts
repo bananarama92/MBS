@@ -1,3 +1,5 @@
+/** @type {ExtendedItemInitCallback} */
+declare function InventoryItemDevicesPetBowlInit(Item: Item, C: Character, Refresh: boolean): void;
 /**
  * Loads the extended item properties
  * @returns {void} - Nothing

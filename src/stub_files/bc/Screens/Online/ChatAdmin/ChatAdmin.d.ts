@@ -35,14 +35,16 @@ declare var ChatAdminBackgroundIndex: number;
 declare var ChatAdminBackgroundSelect: string;
 declare var ChatAdminPrivate: boolean;
 declare var ChatAdminLocked: boolean;
-declare var ChatAdminGame: string;
-declare var ChatAdminGameList: string[];
+/** @type {ChatRoomGame} */
+declare var ChatAdminGame: ChatRoomGame;
+/** @type {ChatRoomGame[]} */
+declare var ChatAdminGameList: ChatRoomGame[];
 /** @type {null | string} */
 declare var ChatAdminBackgroundSelected: null | string;
-/** @type {null | { Name: string, Language: string, Description: string, Limit: string, AdminList: string, BanList: string, Private: boolean, Locked: boolean }} */
+/** @type {null | { Name: string, Language: ChatRoomLanguage, Description: string, Limit: string, AdminList: string, BanList: string, Private: boolean, Locked: boolean }} */
 declare var ChatAdminTemporaryData: null | {
     Name: string;
-    Language: string;
+    Language: ChatRoomLanguage;
     Description: string;
     Limit: string;
     AdminList: string;
@@ -50,7 +52,8 @@ declare var ChatAdminTemporaryData: null | {
     Private: boolean;
     Locked: boolean;
 };
-/** @type {string[]} */
-declare var ChatAdminBlockCategory: string[];
+/** @type {ChatRoomBlockCategory[]} */
+declare var ChatAdminBlockCategory: ChatRoomBlockCategory[];
 declare var ChatAdminInitialLoad: boolean;
-declare var ChatAdminLanguage: string;
+/** @type {ChatRoomLanguage} */
+declare var ChatAdminLanguage: ChatRoomLanguage;
