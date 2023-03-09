@@ -10,7 +10,7 @@ import { runTests } from "testing";
 export { runTests, MBS_VERSION };
 
 console.log(`MBS: Initializing MBS version ${MBS_VERSION}`);
-waitFor(() => GameVersion !== undefined && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));
+waitFor(() => typeof GameVersion !== "undefined" && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));
 waitFor(settingsMBSLoaded).then(validateHookHashes);
 
 import "settings";

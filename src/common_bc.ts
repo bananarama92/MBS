@@ -159,8 +159,9 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
 /** Return whether all vanilla BC online settings are loaded. */
 export function settingsLoaded(): boolean {
     return (
-        Player?.OnlineSettings !== undefined
-        && Player?.OnlineSharedSettings !== undefined
+        typeof Player !== "undefined"
+        && Player.OnlineSettings !== undefined
+        && Player.OnlineSharedSettings !== undefined
     );
 }
 
