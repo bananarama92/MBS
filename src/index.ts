@@ -17,3 +17,4 @@ import "settings";
 import "fortune_wheel";
 import "crafting";
 import "window_register";
+import "beta_patch";
