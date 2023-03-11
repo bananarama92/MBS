@@ -38,6 +38,8 @@ jobs:
         with:
           ref: ${{ matrix.branch }}
       - run: npm install
+      - run: npm list
+      - run: npm list --all
       - run: npm run build
       - run: npm run typecheck
       - run: npm run lint
