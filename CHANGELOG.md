@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.5.3
+* Port forward a BC R90Beta2 crash fix to R90Beta1 (xref https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4023)
+* Remove an unused function
+
 ## v0.5.2
 * Fix the name of the `MiniGame` module
 * Ensure that colors are always copied when creating items
