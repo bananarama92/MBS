@@ -15,7 +15,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -43,7 +43,7 @@ jobs:
       - run: npm run lint
       - run: |
           mkdir ./dist/"${{ matrix.branch }}"
-          mv ./src/loader.user.js ./src/dev_loader.user.js ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
+          mv ./package-lock.json ./src/loader.user.js ./src/dev_loader.user.js ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
       - uses: actions/upload-artifact@v3
         with:
           name: artifact
@@ -68,3 +68,9 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+      - name: Attach wheels to GitHub release
+        if: github.event_name == 'release'
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: 'dist/main/*'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
