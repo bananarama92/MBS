@@ -5,7 +5,7 @@ import progress from "rollup-plugin-progress";
 import serve from "rollup-plugin-serve";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 
 /* global process */
 
