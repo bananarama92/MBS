@@ -225,7 +225,7 @@ export abstract class FWSelectedObject<T extends FWObject<WheelFortuneOptionType
      * Return whether the {@link FWSelectedItemSet.name} and any other attributes are valid.
      * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
      */
-    isValid(selectedIndex: null | number = null): boolean {
+    isValid(selectedIndex: null | number = null): this is ThisType<this> & { name: string } {
         if (this.name === null) {
             return false;
         }
@@ -368,7 +368,7 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
      * Return whether the {@link FWSelectedItemSet.name} and any other attributes are valid.
      * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
      */
-    isValid(selectedIndex: null | number = null): this is typeof this & { itemList: readonly FWItem[] } {
+    isValid(selectedIndex: null | number = null): this is ThisType<this> & { name: string, itemList: readonly FWItem[] } {
         return super.isValid(selectedIndex) && this.itemList !== null;
     }
 
@@ -579,7 +579,7 @@ type FWItemSetKwargTypes = {
 type WheelFortuneItemSetKwargTypesParsed = Required<FWItemSetKwargTypes> & { flags: Readonly<Set<FortuneWheelFlags>> };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
-export class FWItemSet extends FWObject<FWItemSetOption> {
+export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpleItemSet, "flags"> {
     /** The to-be equipped items */
     readonly itemList: readonly FWItem[];
     /** Which items should be removed from the user */
@@ -797,7 +797,7 @@ type FWCommandKwargTypes = {
 };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
-export class FWCommand extends FWObject<FWCommandOption> {
+export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleCommand {
     // @ts-ignore: false positive; narrowing of superclass attribute type
     readonly custom: true;
     // @ts-ignore: false positive; narrowing of superclass attribute type

@@ -18,7 +18,7 @@ import {
 } from "common_bc";
 
 /** Check whether MBS has just been upgraded for the user in question. */
-function detectUpgrade(versionString?: string): versionString is string {
+function detectUpgrade(versionString?: string): boolean {
     if (versionString === undefined) {
         console.log("MBS: Detecting first-time MBS initialization");
         return false;
@@ -105,14 +105,12 @@ function initMBSSettings(): void {
     }
 
     // Load saved settings and check whether MBS has been upgraded
-    const settings: MBSProtoSettings = { Version: MBS_VERSION };
     const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS ?? "");
-    let s: Partial<MBSProtoSettings> = (data == null) ? null : JSON.parse(data);
-    s = (s !== null && typeof s === "object") ? s : {};
-    if (detectUpgrade(s.Version)) {
+    let settings: null | MBSProtoSettings = (data == null) ? null : JSON.parse(data);
+    settings = (settings !== null && typeof settings === "object") ? settings : {};
+    if (detectUpgrade(settings.Version)) {
         showChangelog();
     }
-    Object.assign(settings, s);
 
     // Check the crafting cache
     if (typeof settings.CraftingCache !== "string") {

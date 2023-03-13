@@ -110,7 +110,7 @@ type FortuneWheelColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple
 /** The (unparsed) MBS settings */
 interface MBSProtoSettings {
     /** The MBS version */
-    readonly Version: string,
+    Version?: string,
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache?: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
@@ -124,7 +124,7 @@ interface MBSProtoSettings {
 /** The MBS settings */
 interface MBSSettings {
     /** The MBS version */
-    readonly Version: string,
+    readonly Version: typeof import("common").MBS_VERSION,
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
