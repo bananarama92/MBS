@@ -13,6 +13,7 @@ import {
     randomElement,
     BCX_MOD_API,
     validateInt,
+    includes,
 } from "common";
 import { pushMBSSettings } from "settings";
 import { fromItemBundles } from "item_bundle";
@@ -639,11 +640,11 @@ export class FWItemSet extends FWObject<FWItemSetOption> {
             throw new TypeError(`Invalid "wheelList" type: ${typeof kwargs.wheelList}`);
         }
 
-        if (!Object.values(StripLevel).includes(<StripLevel>kwargs.stripLevel)) {
+        if (!(includes(Object.values(StripLevel), kwargs.stripLevel))) {
             kwargs.stripLevel = StripLevel.UNDERWEAR;
         }
 
-        if (!Object.values(StripLevel).includes(<StripLevel>kwargs.equipLevel)) {
+        if (!(includes(Object.values(StripLevel), kwargs.equipLevel))) {
             kwargs.stripLevel = StripLevel.UNDERWEAR;
         }
 

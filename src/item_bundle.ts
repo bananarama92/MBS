@@ -4,12 +4,11 @@
 
 import { cloneDeep, clone } from "lodash-es";
 
-import { isArray } from "common";
+import { isArray, entries } from "common";
 import { getBaselineProperty } from "type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
 type PropMappingType = {[T in keyof ItemProperties]: PropValidator<T>};
-type PropEntries = [keyof ItemProperties, PropValidator<keyof ItemProperties>][];
 
 /** Validation function for the {@link ItemProperties.OverrideHeight} property. */
 function validateOverrideHeight(property: unknown, asset: Asset): property is AssetOverrideHeight {
@@ -77,10 +76,11 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
         return {};
     }
     const ret: ItemProperties = {};
-    for (const [name, validate] of <PropEntries>Object.entries(PROP_MAPPING)) {
-        const value = properties[name];
+    const propMapping = <Record<keyof ItemProperties, PropValidator<any>>>PROP_MAPPING;
+    for (const [name, validate] of entries(propMapping)) {
+        const value: any = properties[name];
         if (value != null && validate(value, asset)) {
-            ret[name] = <any>value;
+            ret[name] = value;
         }
     }
     return ret;

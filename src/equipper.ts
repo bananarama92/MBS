@@ -6,7 +6,7 @@ import { cloneDeep, sortBy } from "lodash-es";
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { BCX_MOD_API, waitFor, isArray } from "common";
+import { BCX_MOD_API, waitFor, isArray, entries, includes } from "common";
 import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
 
 /**
@@ -251,7 +251,7 @@ function canUnlock(item: Item, character: Character): boolean {
         case "HighSecurityPadlock": {
             const memberIDs = item?.Property?.MemberNumberListKeys ?? "";
             const memberIDList = memberIDs.split(",").map(Number);
-            return blockKeyUse ? false : memberIDList.includes(<number>character.MemberNumber);
+            return blockKeyUse ? false : includes(memberIDList, character.MemberNumber);
         }
         default:
             return false;
@@ -337,7 +337,7 @@ export function fortuneWheelEquip(
                 "Blocked via Club Slave Collar": isClubSlave && asset.Group.Category === "Appearance",
             };
 
-            const equipFailure = Object.entries(equipChecks).filter(tup => tup[1]);
+            const equipFailure = entries(equipChecks).filter(tup => tup[1]);
             if (equipFailure.length !== 0) {
                 equipFailureRecord[asset.Description] = equipFailure.map(tup => tup[0]);
             } else {

@@ -8,6 +8,8 @@ import {
     waitFor,
     padArray,
     isArray,
+    entries,
+    fromEntries,
 } from "common";
 import {
     FWItemSet,
@@ -114,7 +116,7 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
 }
 
 /** Return a record with all new MBS fortune wheel item sets. */
-function generateItems(): FortuneWheelItems {
+function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>> {
     const protoRecord: Record<FortuneWheelNames, FWItemBase[]> = {
         leash_candy: [
             {
@@ -661,7 +663,7 @@ function generateItems(): FortuneWheelItems {
         ],
     };
 
-    const ret = Object.fromEntries(Object.entries(protoRecord).map(([setName, itemList]) => {
+    const ret = fromEntries(entries(protoRecord).map(([setName, itemList]) => {
         const itemListNew: readonly FWItem[] = Object.freeze(itemList.map(protoItem => {
             let craft: undefined | CraftingItem = undefined;
             if (protoItem.Craft !== null && typeof protoItem.Craft === "object") {
@@ -697,11 +699,11 @@ function generateItems(): FortuneWheelItems {
         }));
         return [setName, itemListNew];
     }));
-    return Object.freeze(<FortuneWheelItems>ret);
+    return Object.freeze(ret);
 }
 
 /** A read-only record with the raw MBS fortune wheel items. */
-export let FORTUNE_WHEEL_ITEMS: FortuneWheelItems;
+export let FORTUNE_WHEEL_ITEMS: Readonly<Record<FortuneWheelNames, readonly FWItem[]>>;
 
 /** A read-only list with the fully fledged MBS fortune wheel item sets. */
 export let FORTUNE_WHEEL_ITEM_SETS: readonly FWItemSet[];

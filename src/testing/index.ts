@@ -1,5 +1,6 @@
 "use strict";
 
+import { entries } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import * as testing_tools from "./testing_tools";
 import * as test_common from "./test_common";
@@ -21,7 +22,7 @@ export function runTests(): boolean {
     };
 
     const excDict: Record<string, Error> = {};
-    for (const [name, callback] of Object.entries(tests)) {
+    for (const [name, callback] of entries(tests)) {
         try {
             callback();
         } catch (error) {

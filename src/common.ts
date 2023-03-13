@@ -258,7 +258,7 @@ export function generateIDs(
     indices: readonly number[],
 ): string[] {
     validateInt(start, "start", 0, 2**16);
-    if (!Array.isArray(indices)) {
+    if (!isArray(indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }
 
@@ -389,6 +389,26 @@ export class Version {
 }
 
 /** A more readonly-friendly version of {@link Array.isArray}. */
-export function isArray(arg: any): arg is readonly any[] {
+export function isArray(arg: unknown): arg is readonly unknown[] {
     return Array.isArray(arg);
+}
+
+/** A version of {@link Object.keys} more aimed at records with literal string keys. */
+export function keys<KT extends string>(arg: Record<KT, unknown>): KT[] {
+    return <KT[]>Object.keys(arg);
+}
+
+/** A version of {@link Object.entries} more aimed at records with literal string keys. */
+export function entries<KT extends string, VT>(arg: Partial<Record<KT, VT>>): [KT, VT][] {
+    return <[KT, VT][]>Object.entries(arg);
+}
+
+/** A version of {@link Object.fromEntries} more aimed at records with literal string keys. */
+export function fromEntries<KT extends string, VT>(arg: Iterable<readonly [KT, VT]>): Record<KT, VT> {
+    return <Record<KT, VT>>Object.fromEntries(arg);
+}
+
+/** A version of {@link Array.includes} that serves as a type guard. */
+export function includes<T>(arg: readonly T[], value: unknown): value is T {
+    return arg.includes(<T>value);
 }
