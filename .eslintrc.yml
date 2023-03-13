@@ -9,7 +9,6 @@ plugins: ["@typescript-eslint"]
 ignorePatterns: [
   "dist/",
   "src/stub_files/bc/*",
-  "src/beta_patch.ts",
 ]
 overrides: []
 parserOptions:
