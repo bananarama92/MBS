@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.5.4
+* Port forward a few more BC R90Beta3 bug fixes to R90Beta2 (xref https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4030, https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4031 and https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4033)
+
 ## v0.5.3
 * Port forward a BC R90Beta2 crash fix to R90Beta1 (xref https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4023)
 * Remove an unused function
