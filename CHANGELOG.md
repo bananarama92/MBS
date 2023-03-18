@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.5.5
+* Revert the https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4030 port-forward patch.
+
 ## v0.5.4
 * Port forward a few more BC R90Beta3 bug fixes to R90Beta2 (xref https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4030, https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4031 and https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4033)
 
