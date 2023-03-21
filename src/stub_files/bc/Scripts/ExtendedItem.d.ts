@@ -88,7 +88,7 @@ declare function ExtendedItemClick(Options: readonly ExtendedItemOption[], Optio
  * Used for:
  *  1. Removing the cache from memory
  *  2. Calling item-appropriate `Exit` functions
- *  3. Setting {@link DialogFocusItem} back to `null`
+ *  3. Setting {@link DialogFocusItem} and {@link ExtendedItemSubscreen} back to `null`
  * @returns {void} - Nothing
  */
 declare function ExtendedItemExit(): void;

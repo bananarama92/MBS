@@ -214,8 +214,7 @@ type DynamicDrawOptions = {
     fontFamily?: string;
     /**
      * - The text alignment to use. Can be any valid
-     * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/text-align text alignment}. Not applicable to the {@link DynamicDrawTextArc }
-     * function. Defaults to "center".
+     * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/text-align text alignment}. Not applicable to the {@link DynamicDrawTextArc }function. Defaults to "center".
      */
     textAlign?: CanvasTextAlign;
     /**

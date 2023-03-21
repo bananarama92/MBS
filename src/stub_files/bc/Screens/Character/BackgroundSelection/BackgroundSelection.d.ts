@@ -72,8 +72,8 @@ declare function BackgroundSelectionExit(SetBackground: boolean): void;
 declare var BackgroundSelectionBackground: string;
 /** @type {string[]} */
 declare var BackgroundSelectionList: string[];
-/** @type {string[]} */
-declare var BackgroundSelectionTagList: string[];
+/** @type {BackgroundTag[]} */
+declare var BackgroundSelectionTagList: BackgroundTag[];
 declare var BackgroundSelectionIndex: number;
 declare var BackgroundSelectionSelect: string;
 declare var BackgroundSelectionSelectName: string;

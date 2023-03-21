@@ -22,15 +22,19 @@ declare function ButtonExists(X: number, Y: number): boolean;
 declare function ControllerAxis(axes: readonly number[]): void;
 /**
  * Returns TRUE if current screen is a game that handles the controller, sends the input to that screen
- * @param {any} Buttons - The raw button data
+ * @param {readonly { pressed: boolean }[]} Buttons - The raw button data
  * @return {boolean}
  */
-declare function ControllerManagedByGame(Buttons: any): boolean;
+declare function ControllerManagedByGame(Buttons: readonly {
+    pressed: boolean;
+}[]): boolean;
 /**
  * handles button input
- * @param {any} buttons raw buttons data
+ * @param {readonly { pressed: boolean }[]} buttons raw buttons data
  */
-declare function ControllerButton(buttons: any): void;
+declare function ControllerButton(buttons: readonly {
+    pressed: boolean;
+}[]): void;
 /**
  * handles keyboard inputs in controller mode
  * @returns {void} Nothing

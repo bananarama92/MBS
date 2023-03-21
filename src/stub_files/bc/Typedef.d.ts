@@ -216,7 +216,12 @@ type EffectName =
 	"Unlock-MetalPadlock" | "Unlock-OwnerPadlock" | "Unlock-OwnerTimerPadlock" |
 	"Unlock-LoversPadlock" | "Unlock-LoversTimerPadlock" |
 	"Unlock-MistressPadlock" | "Unlock-MistressTimerPadlock" |
-	"Unlock-PandoraPadlock" | "Unlock-MetalCuffs" | "Unlock-" |
+	"Unlock-PandoraPadlock" |
+
+	"Unlock-MetalCuffs" | "Unlock-EscortAnkleCuffs" |
+
+	// XXX: only for lockpicks?
+	"Unlock-" |
 
 	"ProtrudingMouth" | "Wiggling" |
 	""
@@ -315,6 +320,8 @@ type CraftingStatusType = 0 | 1 | 2;
 
 type ItemColorMode = "Default" | "ColorPicker";
 
+type CharacterHook = "BeforeSortLayers" | "AfterLoadCanvas";
+
 // NOTE: `NPCArchetype` is for NPC's only
 type TitleName =
 	NPCArchetype | "None" | "Mistress" | "ClubSlave" | "Maid" | "HeadMaid" | "BondageMaid" | "Kidnapper" |
@@ -358,6 +365,42 @@ type ActivityPrerequisite =
 type AnimationDataTypes = "AssetGroup" | "" | "DynamicPlayerCanvas" | "PersistentData" | "Rebuild" | "RefreshTime" | "RefreshRate";
 
 type ModuleType = "Character" | "Cutscene" | "MiniGame" | "Online" | "Room";
+
+type BackgroundTag =
+	"Filter by tag" | "Indoor" | "Outdoor" | "Aquatic" | "Special Events" | "SciFi & Fantasy" |
+	"Club & College" | "Regular house" | "Dungeon" | "Asylum"
+	;
+
+type ChatColorThemeType = "Light" | "Dark" | "Light2" | "Dark2";
+type ChatEnterLeaveType = "Normal" | "Smaller" | "Hidden";
+type ChatMemberNumbersType = "Always" | "Never" | "OnMouseover";
+type ChatFontSizeType = "Small" | "Medium" | "Large";
+
+type ArousalActiveName = "Inactive" | "NoMeter" | "Manual" | "Hybrid" | "Automatic";
+type ArousalVisibleName = "All" | "Access" | "Self";
+type ArousalAffectStutterName = "None" | "Arousal" | "Vibration" | "All";
+
+type SettingsSensDepName = "SensDepLight" | "Normal" | "SensDepNames" | "SensDepTotal" | "SensDepExtreme";
+type SettingsVFXName = "VFXInactive" | "VFXSolid" | "VFXAnimatedTemp" | "VFXAnimated";
+type SettingsVFXVibratorName = "VFXVibratorInactive" | "VFXVibratorSolid" | "VFXVibratorAnimated";
+type SettingsVFXFilterName = "VFXFilterLight" | "VFXFilterMedium" | "VFXFilterHeavy";
+
+type GraphicsFontName =
+	"Arial" | "TimesNewRoman" | "Papyrus" | "ComicSans" | "Impact" | "HelveticaNeue" | "Verdana" |
+	"CenturyGothic" | "Georgia" | "CourierNew" | "Copperplate"
+	;
+
+type PreferenceSubscreenName =
+	"General" | "Difficulty" | "Restriction" | "Chat" | "CensoredWords" | "Audio" | "Arousal" |
+	"Security" | "Online" | "Visibility" | "Immersion" | "Graphics" | "Controller" | "Notifications" |
+	"Gender" | "Scripts"
+	;
+
+type FetishName =
+	"Bondage" | "Gagged" | "Blindness" | "Deafness" | "Chastity" | "Exhibitionist" | "Masochism" |
+	"Sadism" | "Rope" | "Latex" | "Leather" | "Metal" | "Tape" | "Nylon" | "Lingerie" | "Pet" |
+	"Pony" | "ABDL" | "Forniphilia"
+	;
 
 //#endregion
 
@@ -588,7 +631,7 @@ interface FocusGroupDictionaryEntry {
 	 */
 	Tag?: "FocusAssetGroup";
 	/** The group name representing focused group for the purposes of the sent message */
-	FocusGroupName: AssetGroupName;
+	FocusGroupName: AssetGroupItemName;
 }
 
 /**
@@ -718,7 +761,7 @@ interface ActivityCounterDictionaryEntry {
  */
 interface AssetGroupNameDictionaryEntry {
 	Tag?: "FocusAssetGroup";
-	AssetGroupName: AssetGroupName;
+	AssetGroupName: AssetGroupItemName;
 }
 
 /**
@@ -982,6 +1025,13 @@ interface AssetScriptGroup extends AssetGroup {
 	AllowExpression?: undefined;
 }
 
+/** Mapped type for mapping group names to their respective {@link AssetGroup} subtype */
+type AssetGroupMap = (
+	{[k in AssetGroupBodyName]: AssetAppearanceGroup}
+	& {[k in AssetGroupItemName]: AssetItemGroup}
+	& {[k in AssetGroupScriptName]: AssetScriptGroup}
+);
+
 /** An object defining a drawable layer of an asset */
 interface AssetLayer {
 	/** The name of the layer - may be null if the asset only contains a single default layer */
@@ -1115,7 +1165,7 @@ interface Asset {
 	Hide?: readonly AssetGroupName[];
 	HideItem?: readonly string[];
 	HideItemExclude: readonly string[];
-	HideItemAttribute: AssetAttribute[];
+	HideItemAttribute: readonly AssetAttribute[];
 	Require: readonly AssetGroupBodyName[];
 	SetPose?: readonly AssetPoseName[];
 	AllowPose: readonly AssetPoseName[] | null;
@@ -1197,7 +1247,7 @@ interface Asset {
 	Layer: readonly AssetLayer[];
 	ColorableLayerCount: number;
 	Archetype?: ExtendedArchetype;
-	Attribute: AssetAttribute[];
+	Attribute: readonly AssetAttribute[];
 	PreviewIcons: readonly InventoryIcon[];
 	Tint: readonly TintDefinition[];
 	AllowTint: boolean;
@@ -1522,10 +1572,10 @@ interface Character {
 	DrawPose?: AssetPoseName[];
 	DrawAppearance?: Item[];
 	AppearanceLayers?: AssetLayer[];
-	Hooks: Map<string, Map<string, () => void>> | null;
-	RegisterHook: (hookName: string, hookInstance: string, callback: () => void) => boolean;
-	UnregisterHook: (hookName: string, hookInstance: string) => boolean;
-	RunHooks: (hookName: string) => void;
+	Hooks: Map<CharacterHook, Map<string, () => void>> | null;
+	RegisterHook: (hookName: CharacterHook, hookInstance: string, callback: () => void) => boolean;
+	UnregisterHook: (hookName: CharacterHook, hookInstance: string) => boolean;
+	RunHooks: (hookName: CharacterHook) => void;
 	HeightRatioProportion?: number;
 	GetGenders: () => ("M" | "F")[];
 	HasPenis: () => boolean;
@@ -3228,40 +3278,33 @@ interface NotificationData {
 
 // #region preference
 
-type ChatColorThemeType = "Light" | "Dark" | "Light2" | "Dark2";
-type ChatEnterLeaveType = "Normal" | "Smaller" | "Hidden";
-type ChatMemberNumbersType = "Always" | "Never" | "OnMouseover";
-type ChatFontSizeType = "Small" | "Medium" | "Large";
+interface ActivityEnjoyment {
+	/** The relevant activity type */
+	Name: ActivityName,
+	/** The arousal factor for when the activity is performed on the player character */
+	Self: ArousalFactor,
+	/** The arousal factor for when the activity is performed on someone else */
+	Other: ArousalFactor,
+}
 
-type ArousalActiveName = "Inactive" | "NoMeter" | "Manual" | "Hybrid" | "Automatic";
-type ArousalVisibleName = "All" | "Access" | "Self";
-type ArousalAffectStutterName = "None" | "Arousal" | "Vibration" | "All";
+interface ArousalZone {
+	/** The relevant zone */
+	Name: AssetGroupName,
+	/** The arousal factor associated with the zone */
+	Factor: ArousalFactor,
+	/** Whether one can orgasm from stimulating the zone */
+	Orgasm: boolean,
+}
 
-type SettingsSensDepName = "SensDepLight" | "Normal" | "SensDepNames" | "SensDepTotal" | "SensDepExtreme";
-type SettingsVFXName = "VFXInactive" | "VFXSolid" | "VFXAnimatedTemp" | "VFXAnimated";
-type SettingsVFXVibratorName = "VFXVibratorInactive" | "VFXVibratorSolid" | "VFXVibratorAnimated";
-type SettingsVFXFilterName = "VFXFilterLight" | "VFXFilterMedium" | "VFXFilterHeavy";
+interface ArousalFetish {
+	/** The name of the fetish */
+	Name: FetishName,
+	/** The arousal factor associated with the fetish */
+	Factor: ArousalFactor,
+}
 
-type GraphicsFontName =
-	"Arial" | "TimesNewRoman" | "Papyrus" | "ComicSans" | "Impact" | "HelveticaNeue" | "Verdana" |
-	"CenturyGothic" | "Georgia" | "CourierNew" | "Copperplate"
-	;
-
-type PreferenceSubscreenName =
-	"General" | "Difficulty" | "Restriction" | "Chat" | "CensoredWords" | "Audio" | "Arousal" |
-	"Security" | "Online" | "Visibility" | "Immersion" | "Graphics" | "Controller" | "Notifications" |
-	"Gender" | "Scripts"
-	;
-
-type FetishName =
-	"Bondage" | "Gagged" | "Blindness" | "Deafness" | "Chastity" | "Exhibitionist" | "Masochism" |
-	"Sadism" | "Rope" | "Latex" | "Leather" | "Metal" | "Tape" | "Nylon" | "Lingerie" | "Pet" |
-	"Pony" | "ABDL" | "Forniphilia"
-	;
-
-interface ArousalActivety { Name: ActivityName, Self: number, Other: number }
-interface ArousalZone { Name: AssetGroupName, Factor: number, Orgasm?: boolean }
-interface ArousalFetish { Name: FetishName, Factor: number }
+/** The factor of the sexual activity (0 is horrible, 2 is normal, 4 is great) */
+type ArousalFactor = 0 | 1 | 2 | 3 | 4;
 
 interface ArousalSettingsType {
 	Active: ArousalActiveName;
@@ -3276,7 +3319,7 @@ interface ArousalSettingsType {
 	ProgressTimer: number;
 	VibratorLevel: number;
 	ChangeTime: number;
-	Activity: ArousalActivety[];
+	Activity: ActivityEnjoyment[];
 	Zone: ArousalZone[];
 	Fetish: ArousalFetish[];
 	OrgasmTimer?: number;
@@ -3300,6 +3343,36 @@ interface WheelFortuneOptionType {
     Color: WheelFortuneColor;
     /** An optional script that will be executed whenever the option is picked */
     Script?: () => void;
+}
+
+// #end region
+
+// #region drawing
+
+/** Drawing options for an item's preview box */
+interface PreviewDrawOptions {
+	/** The character using the item (used to calculate dynamic item descriptions/previews) */
+	C?: Character;
+	/** The preview box description. */
+	Description?: string;
+	/** The background color to draw the preview box in - defaults to white */
+	Background?: string;
+	/** The foreground (text) color to draw the description in - defaults to black */
+	Foreground?: string;
+	/** Whether or not to add vibration effects to the item - defaults to false */
+	Vibrating?: boolean;
+	/** Whether or not to draw a border around the preview box */
+	Border?: boolean;
+	/** Whether or not the button should enable hover behavior (background color change) */
+	Hover?: boolean;
+	/** The background color that should be used on mouse hover, if any */
+	HoverBackground?: string;
+	/** Whether or not the element is disabled (prevents hover functionality) */
+	Disabled?: boolean;
+	/** A list of images to draw in the top-left of the preview box */
+	Icons?: readonly InventoryIcon[];
+	/** The crafted properties of the item */
+	Craft?: CraftingItem;
 }
 
 // #end region

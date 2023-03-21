@@ -97,11 +97,11 @@ declare function CharacterAppearanceBuildCanvas(C: Character): void;
 /**
  * Returns a value from the character current appearance
  * @param {Character} C - The character to get values from
- * @param {string} Group - The name of the group, whose values we want to get
+ * @param {AssetGroupName} Group - The name of the group, whose values we want to get
  * @param {string} Type - The name of the value, we want to get
  * @returns {*} - The return value
  */
-declare function CharacterAppearanceGetCurrentValue(C: Character, Group: string, Type: string): any;
+declare function CharacterAppearanceGetCurrentValue(C: Character, Group: AssetGroupName, Type: string): any;
 /**
  * Repositions the character horizonally to centre them, since shorter characters will shrink towards the left
  * @param {Character} C - The character to reposition
@@ -176,7 +176,7 @@ declare function AppearancePreviewUseCharacter(assetGroup: AssetGroup): boolean;
 /**
  * Sets an item in the character appearance
  * @param {Character} C - The character whose appearance should be changed
- * @param {string} Group - The name of the corresponding groupr for the item
+ * @param {AssetGroupName} Group - The name of the corresponding groupr for the item
  * @param {Asset|null} ItemAsset - The asset collection of the item to be changed
  * @param {string|string[]} [NewColor] - The new color (as "#xxyyzz" hex value) for that item
  * @param {number} [DifficultyFactor=0] - The difficulty, on top of the base asset difficulty, that should be assigned
@@ -185,15 +185,15 @@ declare function AppearancePreviewUseCharacter(assetGroup: AssetGroup): boolean;
  * @param {boolean} [Refresh=true] - Determines, wether the character should be redrawn after the item change
  * @returns {void} - Nothing
  */
-declare function CharacterAppearanceSetItem(C: Character, Group: string, ItemAsset: Asset | null, NewColor?: string | string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): void;
+declare function CharacterAppearanceSetItem(C: Character, Group: AssetGroupName, ItemAsset: Asset | null, NewColor?: string | string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): void;
 /**
  * Cycle in the appearance assets to find the next item in a group
  * @param {Character} C - The character whose assets are used
- * @param {string} Group - The name of the group to cycle
+ * @param {AssetGroupName} Group - The name of the group to cycle
  * @param {boolean} [Forward=true] - Sets the direction of the cycling
  * @returns {Asset|null} - The next item to select, or null if there's none applicable
  */
-declare function CharacterAppearanceNextItem(C: Character, Group: string, Forward?: boolean): Asset | null;
+declare function CharacterAppearanceNextItem(C: Character, Group: AssetGroupName, Forward?: boolean): Asset | null;
 /**
  * Find the next color for the item
  * @param {Character} C - The character whose items are cycled

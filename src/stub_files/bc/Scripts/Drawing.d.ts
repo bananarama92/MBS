@@ -437,60 +437,20 @@ declare function DrawProcessHoverElements(): void;
  * @param {number} X - Position of the preview box on the X axis
  * @param {number} Y - Position of the preview box on the Y axis
  * @param {Asset} A - The asset to draw the preview for
- * @param {object} [Options] - Additional optional drawing options
- * @param {Character} [Options.C] - The character using the item (used to calculate dynamic item descriptions/previews)
- * @param {string} [Options.Description] - The preview box description
- * @param {string} [Options.Background] - The background color to draw the preview box in - defaults to white
- * @param {string} [Options.Foreground] - The foreground (text) color to draw the description in - defaults to black
- * @param {boolean} [Options.Vibrating] - Whether or not to add vibration effects to the item - defaults to false
- * @param {boolean} [Options.Border] - Whether or not to draw a border around the preview box
- * @param {boolean} [Options.Hover] - Whether or not the button should enable hover behavior (background color change)
- * @param {string} [Options.HoverBackground] - The background color that should be used on mouse hover, if any
- * @param {boolean} [Options.Disabled] - Whether or not the element is disabled (prevents hover functionality)
- * @param {readonly InventoryIcon[]} [Options.Icons] - A list of small icons to display in the top-left corner
- * @param {object} [Options.Craft] - The crafted properties of the item
+ * @param {PreviewDrawOptions} [Options] - Additional optional drawing options
  * @returns {void} - Nothing
  */
-declare function DrawAssetPreview(X: number, Y: number, A: Asset, Options?: {
-    C?: Character;
-    Description?: string;
-    Background?: string;
-    Foreground?: string;
-    Vibrating?: boolean;
-    Border?: boolean;
-    Hover?: boolean;
-    HoverBackground?: string;
-    Disabled?: boolean;
-    Icons?: readonly InventoryIcon[];
-    Craft?: object;
-}): void;
+declare function DrawAssetPreview(X: number, Y: number, A: Asset, Options?: PreviewDrawOptions): void;
 /**
  * Draws an item preview box for the provided image path
  * @param {number} X - Position of the preview box on the X axis
  * @param {number} Y - Position of the preview box on the Y axis
  * @param {string} Path - The path of the image to draw
  * @param {string} Description - The preview box description
- * @param {object} [Options] - Additional optional drawing options
- * @param {string} [Options.Background] - The background color to draw the preview box in - defaults to white
- * @param {string} [Options.Foreground] - The foreground (text) color to draw the description in - defaults to black
- * @param {boolean} [Options.Vibrating] - Whether or not to add vibration effects to the item - defaults to false
- * @param {boolean} [Options.Border] - Whether or not to draw a border around the preview box
- * @param {boolean} [Options.Hover] - Whether or not the button should enable hover behavior (background color change)
- * @param {string} [Options.HoverBackground] - The background color that should be used on mouse hover, if any
- * @param {boolean} [Options.Disabled] - Whether or not the element is disabled (prevents hover functionality)
- * @param {readonly InventoryIcon[]} [Options.Icons] - A list of images to draw in the top-left of the preview box
+ * @param {PreviewDrawOptions} [Options] - Additional optional drawing options
  * @returns {void} - Nothing
  */
-declare function DrawPreviewBox(X: number, Y: number, Path: string, Description: string, Options?: {
-    Background?: string;
-    Foreground?: string;
-    Vibrating?: boolean;
-    Border?: boolean;
-    Hover?: boolean;
-    HoverBackground?: string;
-    Disabled?: boolean;
-    Icons?: readonly InventoryIcon[];
-}): void;
+declare function DrawPreviewBox(X: number, Y: number, Path: string, Description: string, Options?: PreviewDrawOptions): void;
 /**
  * Draws a list of small icons over a preview box
  * @param {readonly InventoryIcon[]} icons - An array of icon names
@@ -505,10 +465,10 @@ declare function DrawPreviewIcons(icons: readonly InventoryIcon[], X: number, Y:
  * @param {number} Y - Position of the preview box on the Y axis
  * @param {HTMLCanvasElement} Canvas - The canvas element containing the image to draw
  * @param {string} Description - The preview box description
- * @param {object} Options - Additional optional drawing options
+ * @param {PreviewDrawOptions} Options - Additional optional drawing options
  * @returns {void} - Nothing
  */
-declare function DrawCanvasPreview(X: number, Y: number, Canvas: HTMLCanvasElement, Description: string, Options: object): void;
+declare function DrawCanvasPreview(X: number, Y: number, Canvas: HTMLCanvasElement, Description: string, Options: PreviewDrawOptions): void;
 /**
  * Returns a rectangular subsection of a canvas
  * @param {HTMLCanvasElement} Canvas - The source canvas to take a section of

@@ -16,55 +16,55 @@ declare function PreferenceArousalAtLeast(C: Character, Level: ArousalActiveName
  * @param {Character} C - The player who performs the sexual activity
  * @param {ActivityName} Type - The type of the activity that is performed
  * @param {boolean} Self - Determines, if the current player is giving (false) or receiving (true)
- * @returns {number} - Returns the love factor of the activity for the character (0 is horrible, 2 is normal, 4 is great)
+ * @returns {ArousalFactor} - Returns the love factor of the activity for the character (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceGetActivityFactor(C: Character, Type: ActivityName, Self: boolean): number;
+declare function PreferenceGetActivityFactor(C: Character, Type: ActivityName, Self: boolean): ArousalFactor;
 /**
  * Gets the factor of a fetish for the player
  * @param {Character} C - The character to query
  * @param {FetishName} Type - The name of the fetish
- * @returns {number} - Returns the love factor of the fetish for the character (0 is horrible, 2 is normal, 4 is great)
+ * @returns {ArousalFactor} - Returns the love factor of the fetish for the character (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceGetFetishFactor(C: Character, Type: FetishName): number;
+declare function PreferenceGetFetishFactor(C: Character, Type: FetishName): ArousalFactor;
 /**
  * Sets the love factor of a sexual activity for the character
  * @param {Character} C - The character for whom the activity factor should be set
  * @param {ActivityName} Type - The type of the activity that is performed
  * @param {boolean} Self - Determines, if the current player is giving (false) or receiving (true)
- * @param {number} Factor - The factor of the sexual activity (0 is horrible, 2 is normal, 4 is great)
+ * @param {ArousalFactor} Factor - The factor of the sexual activity (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceSetActivityFactor(C: Character, Type: ActivityName, Self: boolean, Factor: number): void;
+declare function PreferenceSetActivityFactor(C: Character, Type: ActivityName, Self: boolean, Factor: ArousalFactor): void;
 /**
  * Gets the corresponding arousal zone definition from a player's preferences (if the group's activities are mirrored,
  * returns the arousal zone definition for the mirrored group).
  * @param {Character} C - The character for whom to get the arousal zone
- * @param {AssetGroupName} ZoneName - The name of the zone to get
- * @returns {undefined | ArousalZone} - Returns the arousal zone preference object,
- * or undefined if a corresponding zone definition could not be found.
+ * @param {AssetGroupItemName} ZoneName - The name of the zone to get
+ * @returns {null | ArousalZone} - Returns the arousal zone preference object,
+ * or null if a corresponding zone definition could not be found.
  */
-declare function PreferenceGetArousalZone(C: Character, ZoneName: AssetGroupName): undefined | ArousalZone;
+declare function PreferenceGetArousalZone(C: Character, ZoneName: AssetGroupItemName): null | ArousalZone;
 /**
  * Gets the love factor of a zone for the character
  * @param {Character} C - The character for whom the love factor of a particular zone should be gotten
- * @param {AssetGroupName} ZoneName - The name of the zone to get the love factor for
- * @returns {number} - Returns the love factor of a zone for the character (0 is horrible, 2 is normal, 4 is great)
+ * @param {AssetGroupItemName} ZoneName - The name of the zone to get the love factor for
+ * @returns {ArousalFactor} - Returns the love factor of a zone for the character (0 is horrible, 2 is normal, 4 is great)
  */
-declare function PreferenceGetZoneFactor(C: Character, ZoneName: AssetGroupName): number;
+declare function PreferenceGetZoneFactor(C: Character, ZoneName: AssetGroupItemName): ArousalFactor;
 /**
  * Sets the love factor for a specific body zone on the player
  * @param {Character} C - The character, for whom the love factor of a particular zone should be set
- * @param {string} Zone - The name of the zone, the factor should be set for
- * @param {number} Factor - The factor of the zone (0 is horrible, 2 is normal, 4 is great)
+ * @param {AssetGroupItemName} Zone - The name of the zone, the factor should be set for
+ * @param {ArousalFactor} Factor - The factor of the zone (0 is horrible, 2 is normal, 4 is great)
  * @returns {void} - Nothing
  */
-declare function PreferenceSetZoneFactor(C: Character, Zone: string, Factor: number): void;
+declare function PreferenceSetZoneFactor(C: Character, Zone: AssetGroupItemName, Factor: ArousalFactor): void;
 /**
  * Determines, if a player can reach on orgasm from a particular zone
  * @param {Character} C - The character whose ability to orgasm we check
- * @param {AssetGroupName} ZoneName - The name of the zone to check
+ * @param {AssetGroupItemName} ZoneName - The name of the zone to check
  * @returns {boolean} - Returns true if the zone allows orgasms for a character, false otherwise
  */
-declare function PreferenceGetZoneOrgasm(C: Character, ZoneName: AssetGroupName): boolean;
+declare function PreferenceGetZoneOrgasm(C: Character, ZoneName: AssetGroupItemName): boolean;
 /**
  * Sets the ability to induce an orgasm for a given zone*
  * @param {Character} C - The characterfor whom we set the ability to órgasm from a given zone
@@ -301,6 +301,18 @@ declare function PreferenceSubscreenOnlineClick(): void;
  */
 declare function PreferenceSubscreenArousalClick(): void;
 /**
+ * Increment the passed arousal factor.
+ * @param {ArousalFactor} factor
+ * @returns {ArousalFactor}
+ */
+declare function PreferenceIncrementArousalFactor(factor: ArousalFactor): ArousalFactor;
+/**
+ * Decrement the passed arousal factor.
+ * @param {ArousalFactor} factor
+ * @returns {ArousalFactor}
+ */
+declare function PreferenceDecrementArousalFactor(factor: ArousalFactor): ArousalFactor;
+/**
  * Handles the click events in the security settings dialog for a player.  Redirected from the main Click function.
  * @returns {void} - Nothing
  */
@@ -490,25 +502,25 @@ declare function PreferencePageChangeClick(Left: number, Top: number, TotalPages
  * @param {number} Top - The top offset of the button
  * @param {number} Width - The width of the button
  * @param {number} Height - The height of the button
- * @param {string[]} List - The preference list that the button should be associated with
+ * @param {readonly string[]} List - The preference list that the button should be associated with
  * @param {number} Index - The current preference index for the given preference list
  * @returns {void} - Nothing
  */
-declare function PreferenceDrawBackNextButton(Left: number, Top: number, Width: number, Height: number, List: string[], Index: number): void;
+declare function PreferenceDrawBackNextButton(Left: number, Top: number, Width: number, Height: number, List: readonly string[], Index: number): void;
 /**
  * Returns the index of the previous preference list item (and wraps back to the end of the list if currently at 0)
- * @param {readonly any[]} List - The preference list
+ * @param {readonly unknown[]} List - The preference list
  * @param {number} Index - The current preference index for the given list
  * @returns {number} - The index of the previous item in the array, or the last item in the array if currently at 0
  */
-declare function PreferenceGetPreviousIndex(List: readonly any[], Index: number): number;
+declare function PreferenceGetPreviousIndex(List: readonly unknown[], Index: number): number;
 /**
  * Returns the index of the next preference list item (and wraps back to the start of the list if currently at the end)
- * @param {readonly any[]} List - The preference list
+ * @param {readonly unknown[]} List - The preference list
  * @param {number} Index - The current preference index for the given list
  * @returns {number} - The index of the next item in the array, or 0 if the array is currently at the last item
  */
-declare function PreferenceGetNextIndex(List: readonly any[], Index: number): number;
+declare function PreferenceGetNextIndex(List: readonly unknown[], Index: number): number;
 declare var PreferenceBackground: string;
 declare var PreferenceMessage: string;
 declare var PreferenceSafewordConfirm: boolean;
@@ -561,13 +573,17 @@ declare var PreferenceArousalAffectStutterIndex: number;
 /** @type {null | ActivityName[]} */
 declare var PreferenceArousalActivityList: null | ActivityName[];
 declare var PreferenceArousalActivityIndex: number;
-declare var PreferenceArousalActivityFactorSelf: number;
-declare var PreferenceArousalActivityFactorOther: number;
-declare var PreferenceArousalZoneFactor: number;
+/** @type {ArousalFactor} */
+declare var PreferenceArousalActivityFactorSelf: ArousalFactor;
+/** @type {ArousalFactor} */
+declare var PreferenceArousalActivityFactorOther: ArousalFactor;
+/** @type {ArousalFactor} */
+declare var PreferenceArousalZoneFactor: ArousalFactor;
 /** @type {null | FetishName[]} */
 declare var PreferenceArousalFetishList: null | FetishName[];
 declare var PreferenceArousalFetishIndex: number;
-declare var PreferenceArousalFetishFactor: number;
+/** @type {ArousalFactor} */
+declare var PreferenceArousalFetishFactor: ArousalFactor;
 declare var PreferenceVisibilityGroupList: any[];
 declare var PreferenceVisibilityGroupIndex: number;
 declare var PreferenceVisibilityAssetIndex: number;

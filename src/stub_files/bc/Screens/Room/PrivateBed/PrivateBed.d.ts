@@ -28,20 +28,20 @@ declare function PrivateBedRun(): void;
  * Starts an arousal action on a character.
  * @param {Character} Source - The source character.
  * @param {Character} Target - The target character.
- * @param {AssetGroup} Group - The zone / group to target.
+ * @param {AssetItemGroup} Group - The zone / group to target.
  * @param {ActivityName} Activity - The activity to do.
  * @returns {boolean} - TRUE if the activity could start.
  */
-declare function PrivateBedActivityStart(Source: Character, Target: Character, Group: AssetGroup, Activity: ActivityName): boolean;
+declare function PrivateBedActivityStart(Source: Character, Target: Character, Group: AssetItemGroup, Activity: ActivityName): boolean;
 /**
  * Checks if the activity if valid for the group/zone on the target character.
  * @param {Character} Source - The source character.
  * @param {Character} Target - The target character.
  * @param {AssetGroup} Group - The zone / group to target.
  * @param {Activity} Activity - The activity to do.
- * @returns {boolean} - TRUE if the activity is valid for the group
+ * @returns {Group is AssetItemGroup} - TRUE if the activity is valid for the group
  */
-declare function PrivateBedGroupActivityIsValid(Source: Character, Target: Character, Group: AssetGroup, Activity: Activity): boolean;
+declare function PrivateBedGroupActivityIsValid(Source: Character, Target: Character, Group: AssetGroup, Activity: Activity): Group is AssetItemGroup;
 /**
  * Starts a random activity for a source NPC
  * @param {Character} Source - The source character.

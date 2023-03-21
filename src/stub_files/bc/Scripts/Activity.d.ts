@@ -22,10 +22,10 @@ declare function ActivityDictionaryText(KeyWord: string): string;
 /**
  * Resolve a group name to the correct group for activities
  * @param {IAssetFamily} family - The asset family for the named group
- * @param {AssetGroupName} groupname - The name of the group to resolve
- * @returns {AssetGroup | null} - The resolved group
+ * @param {AssetGroupItemName} groupname - The name of the group to resolve
+ * @returns {AssetItemGroup | null} - The resolved group
  */
-declare function ActivityGetGroupOrMirror(family: IAssetFamily, groupname: AssetGroupName): AssetGroup | null;
+declare function ActivityGetGroupOrMirror(family: IAssetFamily, groupname: AssetGroupItemName): AssetItemGroup | null;
 /**
  * Gets all groups that mirror or are mirrored by the given group name for activities. The returned array includes the
  * named group.
@@ -37,10 +37,10 @@ declare function ActivityGetAllMirrorGroups(family: IAssetFamily, groupName: Ass
 /**
  * Check if any activities are possible for a character's given group.
  * @param {Character} char - The character on which the check is done
- * @param {AssetGroupName} groupname - The group to check access on
+ * @param {AssetGroupItemName} groupname - The group to check access on
  * @returns {boolean} Whether any activity is possible
  */
-declare function ActivityPossibleOnGroup(char: Character, groupname: AssetGroupName): boolean;
+declare function ActivityPossibleOnGroup(char: Character, groupname: AssetGroupItemName): boolean;
 /**
  * Check whether a given activity can be performed on a group
  * @param {Character} char - The character being targeted
@@ -87,42 +87,42 @@ declare function ActivityGenerateItemActivitiesFromNeed(allowed: ItemActivity[],
 /**
  * Builds the allowed activities on a group given the character's settings.
  * @param {Character} character - The character for which to build the activity dialog options
- * @param {AssetGroupName} groupname - The group to check
+ * @param {AssetGroupItemName} groupname - The group to check
  * @return {ItemActivity[]} - The list of allowed activities
  */
-declare function ActivityAllowedForGroup(character: Character, groupname: AssetGroupName): ItemActivity[];
+declare function ActivityAllowedForGroup(character: Character, groupname: AssetGroupItemName): ItemActivity[];
 /**
  * Returns TRUE if an activity can be done
  * @param {Character} C - The character to evaluate
  * @param {ActivityName} Activity - The name of the activity
- * @param {AssetGroupName} Group - The name of the group
+ * @param {AssetGroupItemName} Group - The name of the group
  * @return {boolean} - TRUE if the activity can be done
  */
-declare function ActivityCanBeDone(C: Character, Activity: ActivityName, Group: AssetGroupName): boolean;
+declare function ActivityCanBeDone(C: Character, Activity: ActivityName, Group: AssetGroupItemName): boolean;
 /**
  * Calculates the effect of an activity performed on a zone
  * @param {Character} S - The character performing the activity
  * @param {Character} C - The character on which the activity is performed
  * @param {ActivityName | Activity} A - The activity performed
- * @param {AssetGroupName} Z - The group/zone name where the activity was performed
+ * @param {AssetGroupItemName} Z - The group/zone name where the activity was performed
  * @param {number} [Count=1] - If the activity is done repeatedly, this defines the number of times, the activity is done.
  * If you don't want an activity to modify arousal, set this parameter to '0'
  * @param {Asset} [Asset] - The asset used to perform the activity
  * @return {void} - Nothing
  */
-declare function ActivityEffect(S: Character, C: Character, A: ActivityName | Activity, Z: AssetGroupName, Count?: number, Asset?: Asset): void;
+declare function ActivityEffect(S: Character, C: Character, A: ActivityName | Activity, Z: AssetGroupItemName, Count?: number, Asset?: Asset): void;
 /**
  * Used for arousal events that are not activities, such as stimulation events
  * @param {Character} S - The character performing the activity
  * @param {Character} C - The character on which the activity is performed
  * @param {number} Amount - The base amount of arousal to add
- * @param {AssetGroupName} Z - The group/zone name where the activity was performed
+ * @param {AssetGroupItemName} Z - The group/zone name where the activity was performed
  * @param {number} [Count=1] - If the activity is done repeatedly, this defines the number of times, the activity is done.
  * If you don't want an activity to modify arousal, set this parameter to '0'
  * @param {Asset} [Asset] - The asset used to perform the activity
  * @return {void} - Nothing
  */
-declare function ActivityEffectFlat(S: Character, C: Character, Amount: number, Z: AssetGroupName, Count?: number, Asset?: Asset): void;
+declare function ActivityEffectFlat(S: Character, C: Character, Amount: number, Z: AssetGroupItemName, Count?: number, Asset?: Asset): void;
 /**
  * Syncs the player arousal with everyone in chatroom
  * @param {Character} C - The character for which to sync the arousal data
@@ -140,12 +140,12 @@ declare function ActivitySetArousal(C: Character, Progress: number): void;
  * Sets an activity progress on a timer, activities are capped at MaxProgress
  * @param {Character} C - The character for which to set the timer for
  * @param {null | Activity} Activity - The activity for which the timer is for
- * @param {AssetGroupName | "ActivityOnOther"} Zone - The target zone of the activity
+ * @param {AssetGroupItemName | "ActivityOnOther"} Zone - The target zone of the activity
  * @param {number} Progress - Progress to set
  * @param {Asset} [Asset] - The asset used to perform the activity
  * @return {void} - Nothing
  */
-declare function ActivitySetArousalTimer(C: Character, Activity: null | Activity, Zone: AssetGroupName | "ActivityOnOther", Progress: number, Asset?: Asset): void;
+declare function ActivitySetArousalTimer(C: Character, Activity: null | Activity, Zone: AssetGroupItemName | "ActivityOnOther", Progress: number, Asset?: Asset): void;
 /**
  * Draws the arousal progress bar at the given coordinates for every orgasm timer.
  * @param {number} X - Position on the X axis

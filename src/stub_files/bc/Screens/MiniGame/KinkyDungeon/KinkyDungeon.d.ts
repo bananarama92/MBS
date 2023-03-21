@@ -143,7 +143,7 @@ declare function xmur3(str: any): () => number;
  * @returns A function that returns a random number between 0 and 1.
  */
 declare function sfc32(a: any, b: any, c: any, d: any): () => number;
-declare function sfc32(a: number, b: number, c: number, d: number): Function;
+declare function sfc32(a: number, b: number, c: number, d: number): () => number;
 /**
  *
  * @param {string} Path
@@ -539,7 +539,7 @@ declare let mouseDown: boolean;
  */
 declare let KinkyDungeonGameKey: object;
 declare let KinkyDungeonSeed: string;
-declare let KDRandom: Function;
+declare let KDRandom: () => number;
 /**
  * @type {Map<string, HTMLAudioElement>}
  */

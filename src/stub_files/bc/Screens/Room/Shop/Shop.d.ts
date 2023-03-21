@@ -88,10 +88,10 @@ declare function ShopCanShow(groupList: string): boolean;
 declare function ShopCanSell(asset: Asset): boolean;
 /**
  * Sets the current asset group the player is shopping for
- * @param {AssetGroupName} ItemGroup - Name of the asset group to look for
+ * @param {AssetGroupItemName} ItemGroup - Name of the asset group to look for
  * @returns {void} - Nothing
  */
-declare function ShopStart(ItemGroup: AssetGroupName): void;
+declare function ShopStart(ItemGroup: AssetGroupItemName): void;
 /**
  * Triggered when the player rescues the shop vendor
  * @returns {void} - Nothing

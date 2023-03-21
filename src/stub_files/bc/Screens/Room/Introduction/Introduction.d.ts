@@ -62,10 +62,10 @@ declare function IntroductionClick(): void;
 declare function IntroductionChangeMaidOpinion(Bonus: string): void;
 /**
  * Gives focus on certain body parts with its zone
- * @param {AssetGroupName} NewZone - Zone to set as the new focus group
+ * @param {AssetGroupItemName} NewZone - Zone to set as the new focus group
  * @returns {void} - Nothing
  */
-declare function IntroductionSetZone(NewZone: AssetGroupName): void;
+declare function IntroductionSetZone(NewZone: AssetGroupItemName): void;
 /**
  * Clears the body part focus zones
  * @returns {void} - Nothing

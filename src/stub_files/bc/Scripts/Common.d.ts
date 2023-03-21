@@ -160,10 +160,10 @@ declare function CommonConvertStringToArray(s: string): number[];
 declare function CommonStringShuffle(string: string): string;
 /**
  * Converts an array to a string separated by commas (equivalent of .join(","))
- * @param {readonly any[]} Arr - Array to convert to a joined string
+ * @param {readonly unknown[]} Arr - Array to convert to a joined string
  * @returns {string} - String of all the array items joined together
  */
-declare function CommonConvertArrayToString(Arr: readonly any[]): string;
+declare function CommonConvertArrayToString(Arr: readonly unknown[]): string;
 /**
  * Checks whether two item colors are equal. An item color may either be a string or an array of strings.
  * @param {string | readonly string[]} C1 - The first color to check
