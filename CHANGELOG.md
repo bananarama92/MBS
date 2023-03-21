@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.5.6
+* Drop support for R89
+* Attach build artifacts whenever creating a new release
+* Bump dev dependencies
+* Add more conveniently typed variations of a few stdlib functions
+* Misc improvements to the player settings parsing
+
 ## v0.5.5
 * Revert the https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4030 port-forward patch.
 
