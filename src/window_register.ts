@@ -18,6 +18,7 @@ import * as item_bundle from "item_bundle";
 import * as settings from "settings";
 import * as screen_abc from "screen_abc";
 import * as testing from "testing";
+import * as backport from "backport";
 
 import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { FWCommandScreen } from "fortune_wheel_command";
@@ -38,8 +39,10 @@ waitFor(settingsMBSLoaded).then(() => {
         screen_abc: Object.freeze(screen_abc),
         sanity_checks: Object.freeze(sanity_checks),
         testing: Object.freeze(testing),
+        port_forward: Object.freeze(backport),
         runTests: testing.runTests,
         MBS_VERSION: common.MBS_VERSION,
+        MBS_MOD_API: common.MBS_MOD_API,
     });
     const backgrounds = {
         [`${FWItemSetScreen.screen}Background`]: `${FWItemSetScreen.background}`,
