@@ -74,5 +74,5 @@ jobs:
         if: github.event_name == 'release'
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'dist/main/*'
+          files: 'dist/main/package-lock.json;dist/main/mbs.js;dist/main/mbs.js.map'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
