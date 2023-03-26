@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.5.7
+* backport a number of BC R91 bug fixes
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4044
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4047
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4048
+
 ## v0.5.6
 * Drop support for R89
 * Attach build artifacts whenever creating a new release
