@@ -39,7 +39,11 @@ function ChatRoomSyncExpression(data: IChatRoomSyncExpressionMessage): void {
     if (!character) return;
 
     // Changes the facial expression if the group exists and allows it
-    const item = character.Appearance.find(i => i.Asset.Group.Name === data.Group && i.Asset.Group.AllowExpression && i.Asset.Group.AllowExpression.includes(<ExpressionName>data.Name));
+    const item = character.Appearance.find(i => (
+        i.Asset.Group.Name === data.Group
+		&& i.Asset.Group.AllowExpression
+		&& (data.Name == null || i.Asset.Group.AllowExpression.includes(data.Name))
+    ));
     if (!item) return;
 
     if (!item.Property) item.Property = {};
@@ -113,9 +117,10 @@ waitFor(settingsMBSLoaded).then(() => {
         });
     }
 
-    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046} */
+    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046} & {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4049} */
     if (MBS_MOD_API.getOriginalHash("ChatRoomSyncExpression") === "621A7AF9") {
         backportIDs.add(4046);
+        backportIDs.add(4049);
         MBS_MOD_API.hookFunction("ChatRoomSyncExpression", 11, (args) => {
             return ChatRoomSyncExpression(...<[IChatRoomSyncExpressionMessage]>args);
         });
