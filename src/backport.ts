@@ -63,6 +63,68 @@ function ChatRoomSyncExpression(data: IChatRoomSyncExpressionMessage): void {
 }
 
 /**
+ * Applies hooks to a character based on conditions
+ * Future hooks go here
+ * @param {Character} C - The character to check
+ * @param {boolean} IgnoreHooks - Whether to remove some hooks from the player (such as during character dialog).
+ * @returns {boolean} - If a hook was applied or removed
+ */
+function CharacterCheckHooks(C: Character, IgnoreHooks: boolean): boolean {
+    let refresh = false;
+    if (C && C.DrawAppearance) {
+        if (!IgnoreHooks && Player.Effect.includes("VRAvatars") && C.Effect.includes("HideRestraints")) {
+            // Then when that character enters the virtual world, register a hook to strip out restraint layers (if needed):
+            const hideRestraintsHook = () => {
+                C.DrawAppearance = C.DrawAppearance?.filter((Layer) => !(Layer.Asset && Layer.Asset.IsRestraint));
+                C.DrawPose = C.DrawPose?.filter((Pose) => (Pose != "TapedHands"));
+            };
+
+            if (C.RegisterHook("BeforeSortLayers", "HideRestraints", hideRestraintsHook))
+                refresh = true;
+
+        } else if (C.UnregisterHook("BeforeSortLayers", "HideRestraints"))
+            refresh = true;
+
+
+        if (C.DrawAppearance.some(a => a.Asset && a.Asset.NotVisibleOnScreen && a.Asset.NotVisibleOnScreen.length > 0))
+            refresh = true;
+
+        // Hook for layer visibility
+        // Visibility is a string individual layers have. If an item has any layers with visibility, it should have the LayerVisibility: true property
+        // We basically check the player's items and see if any are visible that have the LayerVisibility property.
+        const LayerVisibility = C.DrawAppearance.some(a => a.Asset && a.Asset.LayerVisibility);
+
+        if (LayerVisibility) {
+            // Fancy logic is to use a different hook for when the character is focused
+            const layerVisibilityHook = () => {
+                const inDialog = (CurrentCharacter != null);
+                C.AppearanceLayers = C.AppearanceLayers?.filter((Layer) => (
+                    !Layer.Visibility ||
+					(Layer.Visibility == "Player" && C.IsPlayer()) ||
+					(Layer.Visibility == "AllExceptPlayerDialog" && !(inDialog && C.IsPlayer())) ||
+					(Layer.Visibility == "Others" && !C.IsPlayer()) ||
+					(Layer.Visibility == "OthersExceptDialog" && !(inDialog && !C.IsPlayer())) ||
+					(Layer.Visibility == "Owner" && C.IsOwnedByPlayer()) ||
+					(Layer.Visibility == "Lovers" && C.IsLoverOfPlayer()) ||
+					(Layer.Visibility == "Mistresses" && LogQuery("ClubMistress", "Management"))
+                ));
+            };
+
+            if (C.RegisterHook("AfterLoadCanvas", "LayerVisibilityDialog", layerVisibilityHook)) {
+                refresh = true;
+            }
+        } else if (C.UnregisterHook("AfterLoadCanvas", "LayerVisibility")) {
+            refresh = true;
+        }
+    }
+
+    if (refresh)
+        CharacterLoadCanvas(C);
+
+    return refresh;
+}
+
+/**
  * Actual action to perform.
  * @param data - The chat message to handle.
  * @param sender - The character that sent the message.
@@ -104,7 +166,7 @@ waitFor(settingsMBSLoaded).then(() => {
         sensDepHandlerCallback: (<ChatRoomMessageHandler>ChatRoomMessageHandlers.find(i => i.Description === "Hide anything per sensory deprivation rules")).Callback,
     });
 
-    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4044} */
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4044} */
     if (MBS_MOD_API.getOriginalHash("StruggleLockPickSetup") === "19282793") {
         backportIDs.add(4044);
         MBS_MOD_API.hookFunction("StruggleLockPickSetup", 11, (args, next) => {
@@ -117,7 +179,7 @@ waitFor(settingsMBSLoaded).then(() => {
         });
     }
 
-    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046} & {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4049} */
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046} & {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4049} */
     if (MBS_MOD_API.getOriginalHash("ChatRoomSyncExpression") === "621A7AF9") {
         backportIDs.add(4046);
         backportIDs.add(4049);
@@ -126,18 +188,33 @@ waitFor(settingsMBSLoaded).then(() => {
         });
     }
 
-    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4047} */
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4047} */
     const injectActivity = ActivityFemale3DCG.find(a => a.Name === "Inject");
     if (injectActivity && isEqual(injectActivity.Prerequisite, ["ZoneAccessible", "UseHands", "Needs-InjectItem"])) {
         backportIDs.add(4047);
         injectActivity.Prerequisite = ["ZoneAccessible", "UseHands", "Needs-Inject"];
     }
 
-    /** Port-forward of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4048} */
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4048} */
     const sensDepHandler = ChatRoomMessageHandlers.find(i => i.Description === "Hide anything per sensory deprivation rules");
     if (sensDepHandler && getCRC32Hash(sensDepHandler.Callback) === "815C2377") {
         backportIDs.add(4048);
         sensDepHandler.Callback = sensDepMessageHandlerCallback;
+    }
+
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4057} */
+    if (MBS_MOD_API.getOriginalHash("CharacterCheckHooks") === "B87E8792") {
+        backportIDs.add(4057);
+        MBS_MOD_API.hookFunction("CharacterCheckHooks", 11, (args) => {
+            return CharacterCheckHooks(...<[Character, boolean]>args);
+        });
+    }
+
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4062} */
+    if (typeof InventoryItemMiscLoversTimerPadlockInit === "undefined") {
+        backportIDs.add(4062);
+        const w: typeof window & { InventoryItemMiscLoversTimerPadlockInit?: typeof InventoryItemMiscLoversTimerPadlocInit } = window;
+        w["InventoryItemMiscLoversTimerPadlockInit"] = InventoryItemMiscLoversTimerPadlocInit;
     }
 
     console.log("MBS: Initializing R91 bug fix backports", backportIDs);

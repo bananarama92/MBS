@@ -1,5 +1,6 @@
 /** @type {ExtendedItemInitCallback} */
 declare function InventoryItemMiscLoversTimerPadlocInit(Item: Item, C: Character): void;
+declare let InventoryItemMiscLoversTimerPadlockInit: undefined | typeof InventoryItemMiscLoversTimerPadlocInit;
 declare function InventoryItemMiscLoversTimerPadlockLoad(): void;
 declare function InventoryItemMiscLoversTimerPadlockDraw(): void;
 declare function InventoryItemMiscLoversTimerPadlockClick(): void;
