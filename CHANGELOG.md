@@ -1,7 +1,13 @@
 # MBS Changelog
 
+## v0.5.8
+* Backport even more BC R91 bug fixes
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4049
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4057
+    - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4062
+
 ## v0.5.7
-* backport a number of BC R91 bug fixes
+* Backport a number of BC R91 bug fixes
     - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4044
     - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4046
     - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4047
