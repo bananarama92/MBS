@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.5.9
+* Fix a bug that could cause MBS to crash if zero flags were selected for a particular fortune wheel item set.
+
 ## v0.5.8
 * Backport even more BC R91 bug fixes
     - https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4049
