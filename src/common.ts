@@ -262,10 +262,8 @@ export function generateIDs(
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }
 
-    const stop = start + Math.max(...indices) + 1;
-    if (stop > 2**16) {
-        throw new RangeError("Insufficient available UTF16 characters");
-    }
+    const stop = start + Math.max(0, ...indices) + 1;
+    validateInt(stop, "stop", start + 1, 2**16);
 
     const charcodeRange = range(start, stop);
     return indices.map(i => String.fromCharCode(charcodeRange[i]));

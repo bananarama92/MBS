@@ -262,6 +262,10 @@ export function test_generateIDs(): void {
             args: [2**10, [0, 4, 1]],
             output: ["Ѐ", "Є", "Ё"],
         },
+        {
+            args: [0, []],
+            output: [],
+        },
     ];
     passesList.forEach(({ args, output }, i) => {
         const outputObsered = assertPasses(`${name}:${PASSES}:${i}`, () => generateIDs(...args));

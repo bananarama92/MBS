@@ -115,7 +115,7 @@ function itemsArgSortDFS(
         for (const group of node.block) {
             data.push(itemsArgSortDFS(graph, graph.get(group)));
         }
-        node.priority = 1 + Math.max(...data.map(i => i[0]));
+        node.priority = 1 + Math.max(0, ...data.map(i => i[0]));
         node.blocksSubSet = node.superSet && data.some(i => i[1]);
         return [node.priority, node.blocksSubSet];
     }

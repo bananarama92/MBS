@@ -48,7 +48,7 @@ function copyHairColor(item: Item, character: Character, indices: readonly numbe
     }
 
     // Ensure that the item's color is stored as an array
-    const colorLength = Math.max(...indices);
+    const colorLength = Math.max(0, ...indices);
     let color: string[];
     if (typeof item.Color === "string") {
         item.Color = color = padArray([item.Color], colorLength, "Default");
