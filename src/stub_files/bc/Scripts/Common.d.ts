@@ -139,7 +139,23 @@ declare function CommonColorIsValid(Color?: null | string | readonly (null | str
  */
 declare function CommonEmailIsValid(Email: string): boolean;
 /**
+ * Remove item from list on given index and returns it
+ * @template T
+ * @param {T[]} list
+ * @param {number} index
+ * @returns {undefined|T}
+ */
+declare function CommonRemoveItemFromList<T>(list: T[], index: number): T;
+/**
+ * Removes random item from list and returns it
+ * @template T
+ * @param {T[]} list
+ * @returns {T}
+ */
+declare function CommonRemoveRandomItemFromList<T>(list: T[]): T;
+/**
  * Get a random item from a list while making sure not to pick the previous one.
+ * Function expects unique values in the list. If there are multiple instances of ItemPrevious, it may still return it.
  * @template T
  * @param {T} ItemPrevious - Previously selected item from the given list
  * @param {readonly T[]} ItemList - List for which to pick a random item from
@@ -270,11 +286,12 @@ declare function CommonCompareVersion(Current: string, Other: string): -1 | 0 | 
 declare function CommonDeepEqual(obj1: any, obj2: any): boolean;
 /**
  * Adds all items from the source array to the destination array if they aren't already included
- * @param {*[]} dest - The destination array
- * @param {readonly *[]} src - The source array
- * @returns {*[]} - The destination array
+ * @template T
+ * @param {T[]} dest - The destination array
+ * @param {readonly T[]} src - The source array
+ * @returns {T[]} - The destination array
  */
-declare function CommonArrayConcatDedupe(dest: any[], src: readonly any[]): any[];
+declare function CommonArrayConcatDedupe<T>(dest: T[], src: readonly T[]): T[];
 /**
  * Common function for removing a padlock from an item and publishing a corresponding chat message (must be called with
  * the item's group focused)
@@ -329,6 +346,28 @@ declare function CommonIsNonNegativeInteger(value: unknown): value is number;
  * @returns {boolean}
  */
 declare function IsBrowser(): boolean;
+/**
+ * A version of {@link Array.isArray} more friendly towards readonly arrays.
+ * @param {unknown} arg - The to-be validated object
+ * @returns {arg is readonly unknown[]} Whether the passed object is a (potentially readonly) array
+ */
+declare function CommonIsArray(arg: unknown): arg is readonly unknown[];
+/**
+ * A {@link Object.keys} variant annotated to return respect literal key types
+ * @template {string} T
+ * @param {Partial<Record<T, unknown>>} record A record with string-based keys
+ * @returns {T[]} The keys in the passed record
+ */
+declare function CommonKeys<T extends string>(record: Partial<Record<T, unknown>>): T[];
+/**
+ * A {@link Array.includes} version annotated to return a type guard.
+ * @template T
+ * @param {readonly T[]} array The array in question
+ * @param {unknown} searchElement The value to search for
+ * @param {number} [fromIndex] Zero-based index at which to start searching
+ * @returns {searchElement is T} Whether the array contains the passed element
+ */
+declare function CommonIncludes<T>(array: readonly T[], searchElement: unknown, fromIndex?: number): searchElement is T;
 /** @type {PlayerCharacter} */
 declare var Player: PlayerCharacter;
 /** @type {number|string} */

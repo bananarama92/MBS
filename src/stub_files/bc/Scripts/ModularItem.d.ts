@@ -10,47 +10,39 @@
 declare function ModularItemRegister(asset: Asset, config: ModularItemConfig | undefined): void;
 /**
  * Initialize the modular item properties
- * @type {ExtendedItemInitCallback}
- * @see {@link ExtendedItemInit}
+ * @param {ModularItemData} Data - The item's extended item data
+ * @param {Item} Item - The item in question
+ * @param {Character} C - The character that has the item equiped
+ * @param {boolean} Refresh - Whether the character and relevant item should be refreshed and pushed to the server
+ * @returns {boolean} Whether properties were initialized or not
  */
-declare function ModularItemInit(Item: Item, C: Character, Refresh?: boolean): void;
+declare function ModularItemInit(Data: ModularItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
 /**
- * Creates an asset's extended item load function
- * @param {ModularItemData} data - The modular item data for the asset
- * @returns {void} - Nothing
+ * @param {ModularItemData} data
  */
-declare function ModularItemCreateLoadFunction(data: ModularItemData): void;
+declare function ModularItemLoad(data: ModularItemData): void;
 /**
- * Creates an asset's extended item draw function
- * @param {ModularItemData} data - The modular item data for the asset
- * @returns {void} - Nothing
+ * @param {ModularItemData} data
  */
-declare function ModularItemCreateDrawFunction(data: ModularItemData): void;
+declare function ModularItemClick(data: ModularItemData): void;
 /**
- * Creates an asset's extended item click function
- * @param {ModularItemData} data - The modular item data for the asset
- * @returns {void} - Nothing
+ * @param {ModularItemData} data
  */
-declare function ModularItemCreateClickFunction(data: ModularItemData): void;
-/**
- * Creates an asset's extended item exit function
- * @param {ModularItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function ModularItemCreateExitFunction(data: ModularItemData): void;
+declare function ModularItemDraw(data: ModularItemData): void;
 /**
  * Parse and convert the passed item modules inplace. Returns the originally passed object.
  * @param {readonly ModularItemModuleBase[]} Modules - An object describing a single module for a modular item.
+ * @param {boolean | undefined} [ChangeWhenLocked] - See {@link ModularItemConfig.ChangeWhenLocked}
  * @returns {ModularItemModule[]} - The updated modules; same object as `Modules`.
  */
-declare function ModularItemUpdateModules(Modules: readonly ModularItemModuleBase[]): ModularItemModule[];
+declare function ModularItemUpdateModules(Modules: readonly ModularItemModuleBase[], ChangeWhenLocked?: boolean | undefined): ModularItemModule[];
 /**
  * Generates an asset's modular item data
  * @param {Asset} asset - The asset to generate modular item data for
  * @param {ModularItemConfig} config - The item's extended item configuration
  * @returns {ModularItemData} - The generated modular item data for the asset
  */
-declare function ModularItemCreateModularData(asset: Asset, { Modules, ChatSetting, ChatTags, ChangeWhenLocked, Dialog, ScriptHooks, BaselineProperty, DrawImages, }: ModularItemConfig): ModularItemData;
+declare function ModularItemCreateModularData(asset: Asset, { Modules, ChatSetting, ChatTags, ChangeWhenLocked, DialogPrefix, ScriptHooks, Dictionary, BaselineProperty, DrawImages, }: ModularItemConfig): ModularItemData;
 /**
  * Generates drawing data for a given module. This includes button positions, whether pagination is necessary, and the
  * total page count for that module.
@@ -75,7 +67,7 @@ declare function ModularItemCreateDrawBaseFunction(data: ModularItemData): () =>
  * @param {number} currentOptionIndex - The currently selected option index for the module
  * @returns {ModularItemButtonDefinition} - A button definition array representing the provided option
  */
-declare function ModularItemMapOptionToButtonDefinition(option: ModularItemOption, module: ModularItemModule, { dialogOptionPrefix }: ModularItemData, currentOptionIndex: number): ModularItemButtonDefinition;
+declare function ModularItemMapOptionToButtonDefinition(option: ModularItemOption, module: ModularItemModule, { dialogPrefix }: ModularItemData, currentOptionIndex: number): ModularItemButtonDefinition;
 /**
  * Draws a module screen from the provided button definitions and modular item data.
  * @param {string} moduleName - The name of the module whose page is being drawn
@@ -189,18 +181,21 @@ declare function ModularItemSetType(module: ModularItemModule, index: number, da
  * @param {ModularItemData} data - The modular item data
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
+ * @param {null | DynamicPropertyCallback} dynamicProperty - An optional callback for dynamically setting the item's properties.
+ * Executed after the conventional properties have been assigned.
  * @returns {void} Nothing
  */
-declare function ModularItemSetOption(C: Character, Item: Item, previousModuleValues: readonly number[], newModuleValues: readonly number[], data: ModularItemData, push?: boolean): void;
+declare function ModularItemSetOption(C: Character, Item: Item, previousModuleValues: readonly number[], newModuleValues: readonly number[], data: ModularItemData, push?: boolean, dynamicProperty?: null | DynamicPropertyCallback): void;
 /**
  * Publishes the chatroom message for a modular item when one of its modules has changed.
- * @param {ModularItemModule} module - The module that changed
- * @param {number} previousIndex - The index of the previously selected option within the module
- * @param {number} index - The index of the newly chosen option within the module
- * @param {ModularItemData} data - The modular item's data
+ * @param {ModularItemData} data
+ * @param {Character} C
+ * @param {Item} item
+ * @param {ModularItemOption} newOption
+ * @param {ModularItemOption} previousOption
  * @returns {void} - Nothing
  */
-declare function ModularItemChatRoomMessage(module: ModularItemModule, previousIndex: number, index: number, { asset, chatSetting, chatTags, chatMessagePrefix }: ModularItemData): void;
+declare function ModularItemPublishAction(data: ModularItemData, C: Character, item: Item, newOption: ModularItemOption, previousOption: ModularItemOption): void;
 /**
  * Generates an array of all types available for an asset based on its modular item data, filtered by the provided
  * predicate function, if needed.
@@ -233,26 +228,13 @@ declare function ModularItemGenerateLayerAllowTypes(layer: AssetLayer, data: Mod
  */
 declare function ModularItemGenerateValidationProperties(data: ModularItemData): void;
 /**
- * Check whether a specific module is active for a given modular item.
- * @param {string} Module - The to be compared module
- * @param {Item | null} Item - The item in question; defaults to {@link DialogFocusItem}
- * @returns {boolean} whether the specific module is active
- */
-declare function ModularItemModuleIsActive(Module: string, Item?: Item | null): boolean;
-/**
  * Hide an HTML element if a given module is not active.
+ * @param {ModularItemData} Data - The modular item data
  * @param {string} ID - The id of the element
  * @param {string} Module - The module that must be active
  * @returns {boolean} Whether the module is active or not
  */
-declare function ModularItemHideElement(ID: string, Module: string): boolean;
-/**
- * Return {@link ModularItemData.chatMessagePrefix} if it's a string or call it using chat data based on a fictional modular item option.
- * @param {string} Name - The name of the pseudo-type
- * @param {ModularItemData} Data - The extended item data
- * @returns {string} The dialogue prefix for the custom chatroom messages
- */
-declare function ModularItemCustomChatPrefix(Name: string, Data: ModularItemData): string;
+declare function ModularItemHideElement(Data: ModularItemData, ID: string, Module: string): boolean;
 /**
  * ModularItem.js
  * --------------

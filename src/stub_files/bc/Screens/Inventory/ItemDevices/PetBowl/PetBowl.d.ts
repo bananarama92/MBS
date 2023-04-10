@@ -1,28 +1,16 @@
-/** @type {ExtendedItemInitCallback} */
-declare function InventoryItemDevicesPetBowlInit(Item: Item, C: Character, Refresh: boolean): void;
-/**
- * Loads the extended item properties
- * @returns {void} - Nothing
- */
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemDevicesPetBowlInit(C: Character, Item: Item, Refresh: boolean): boolean;
+/** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemDevicesPetBowlLoad(): void;
-/**
- * Draw handler for the extended item screen
- * @returns {void} - Nothing
- */
+/** @type {ExtendedItemCallbacks.Draw} */
 declare function InventoryItemDevicesPetBowlDraw(): void;
-/**
- * Click handler for the extended item screen
- * @returns {void} - Nothing
- */
+/** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryItemDevicesPetBowlClick(): void;
-/**
- * Exits the extended item screen and cleans up inputs and text
- * @returns {void} - Nothing
- */
+/** @type {ExtendedItemCallbacks.Exit} */
 declare function InventoryItemDevicesPetBowlExit(): void;
 /**
  * Post-render drawing function. Draws custom text in a slight arc to mimic the
  * curvature of the bowl.
- * @type {DynamicAfterDrawCallback}
+ * @type {ExtendedItemCallbacks.AfterDraw}
  */
-declare function AssetsItemDevicesPetBowlAfterDraw({ C, A, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color }: DynamicDrawingData): void;
+declare function AssetsItemDevicesPetBowlAfterDraw({ C, A, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color }: DynamicDrawingData<Record<string, unknown>>): void;

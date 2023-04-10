@@ -1,4 +1,4 @@
-/** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemMouthFuturisticHarnessPanelGagScriptDraw(data: DynamicScriptCallbackData): void;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemMouthFuturisticHarnessPanelGagBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticHarnessPanelGagScriptDraw(data: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
+/** @type {ExtendedItemCallbacks.BeforeDraw<FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticHarnessPanelGagBeforeDraw(data: DynamicDrawingData<FuturisticPanelGagPersistentData>): DynamicBeforeDrawOverrides;

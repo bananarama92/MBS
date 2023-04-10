@@ -19,6 +19,12 @@ declare function MovieStudioCanGetGavel(): boolean;
  */
 declare function MovieStudioCanGetLongDuster(): boolean;
 /**
+ * Returns TRUE if the daily movie is of the current type
+ * @param {string} Type - The daily movie type
+ * @returns {boolean} - TRUE if the daily movie matches
+ */
+declare function MovieStudioDailyMovieIs(Type: string): boolean;
+/**
  * When the player fails the movie, we jump back to the director
  * @returns {void} - Nothing
  */
@@ -59,7 +65,7 @@ declare function MovieStudioPlayerDressBack(): void;
  * @param {string} Cloth - The clothes to wear
  * @returns {void} - Nothing
  */
-declare function MovieStudioChange(Cloth: string): void;
+declare function MovieStudioChange(Cloth: string, C: any): void;
 /**
  * When the movie scene progresses, we assign the new values
  * @param {string} Movie - The movie type
@@ -76,10 +82,29 @@ declare function MovieStudioProgress(Movie: string, Scene: string, Role: string)
 declare function MovieStudioDoActivity(Activity: string): void;
 /**
  * Changes a parameter for an actor
+ * @param {string} Name - The name of the actor
  * @param {string} Param - The parameter to change
+ * @param {string} Value - The value to alter
  * @returns {void} - Nothing
  */
-declare function MovieStudioChangeParameter(Name: any, Param: string, Value: any): void;
+declare function MovieStudioChangeParameter(Name: string, Param: string, Value: string): void;
+/**
+ * Add a parameter for an actor
+ * @param {string} Name - The name of the actor
+ * @param {string} Param - The parameter to change
+ * @param {string} Value - The value to alter
+ * @returns {void} - Nothing
+ */
+declare function MovieStudioAlterParameter(Name: string, Param: string, Value: string): void;
+/**
+ * Returns TRUE if a parameter value for an actor is between a from and a to value
+ * @param {string} Name - The name of the actor
+ * @param {string} Param - The parameter to get
+ * @param {string} FromValue - From that value
+ * @param {string} ToValue - To that value
+ * @returns {Boolean} - TRUE if between
+ */
+declare function MovieStudioParameterValueBetween(Name: string, Param: string, FromValue: string, ToValue: string): boolean;
 /**
  * Tests if an activity can be done
  * @param {string} Activity - The activity to test
@@ -125,3 +150,4 @@ declare var MovieStudioActivity: string[];
 declare var MovieStudioMoney: number;
 /** @type {null | Item[]} */
 declare var MovieStudioOriginalClothes: null | Item[];
+declare var MovieStudioDailyMovie: string;

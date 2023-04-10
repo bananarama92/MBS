@@ -1,4 +1,4 @@
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemNeckRestraintsCollarLeashBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemNeckRestraintsChainLeashBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw} */
+declare function AssetsItemNeckRestraintsCollarLeashBeforeDraw(data: DynamicDrawingData<Record<string, unknown>>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw} */
+declare function AssetsItemNeckRestraintsChainLeashBeforeDraw(data: DynamicDrawingData<Record<string, unknown>>): DynamicBeforeDrawOverrides;

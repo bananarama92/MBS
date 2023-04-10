@@ -1,6 +1,12 @@
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryClothCheerleaderTopInit(C: Character, Item: Item, Refresh: boolean): boolean;
+/** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryClothCheerleaderTopLoad(): void;
+/** @type {ExtendedItemCallbacks.Draw} */
 declare function InventoryClothCheerleaderTopDraw(): void;
+/** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryClothCheerleaderTopClick(): void;
+/** @type {ExtendedItemCallbacks.Exit} */
 declare function InventoryClothCheerleaderTopExit(): void;
 /**
  * @param {DynamicDrawingData} data

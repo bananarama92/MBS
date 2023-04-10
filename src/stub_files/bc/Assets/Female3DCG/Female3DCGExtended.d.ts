@@ -22,7 +22,7 @@ declare const ExtendedArchetype: {
 };
 /**
  * An object containing all extended item configurations.
- * @type {ExtendedItemConfig}
+ * @type {ExtendedItemMainConfig}
  * @const
  */
-declare var AssetFemale3DCGExtended: ExtendedItemConfig;
+declare var AssetFemale3DCGExtended: ExtendedItemMainConfig;

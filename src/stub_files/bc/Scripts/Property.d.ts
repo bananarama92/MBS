@@ -7,37 +7,35 @@
 declare function PropertyGetID(Name: string, Item?: Item): string;
 /**
  * Load function for items with opacity sliders. Constructs the opacity slider.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {string} thumbIcon The icon to use for the range input's "thumb" (handle).
  * @returns {HTMLInputElement} - The new or pre-existing range input element of the opacity slider
  */
-declare function PropertyOpacityLoad(OriginalFunction?: null | (() => void), thumbIcon?: string): HTMLInputElement;
+declare function PropertyOpacityLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), thumbIcon?: string): HTMLInputElement;
 /**
  * Draw function for items with opacity sliders. Draws the opacity slider and further opacity-related information.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {number} XOffset - An offset for all text and slider X coordinates
  * @param {number} YOffset - An offset for all text and slider Y coordinates
  * @param {string} LabelKeyword - The keyword of the opacity label
  * @returns {void} Nothing
  */
-declare function PropertyOpacityDraw(OriginalFunction?: null | (() => void), XOffset?: number, YOffset?: number, LabelKeyword?: string): void;
+declare function PropertyOpacityDraw(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), XOffset?: number, YOffset?: number, LabelKeyword?: string): void;
 /**
  * Exit function for items with opacity sliders. Updates the items opacity, deletes the slider and (optionally) refreshes the character and item.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
+ * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {boolean} Refresh - Whether character parameters and the respective item should be refreshed or not
  * @returns {boolean} Whether the opacity was updated or not
  */
-declare function PropertyOpacityExit(Refresh?: boolean): boolean;
+declare function PropertyOpacityExit(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), Refresh?: boolean): boolean;
 /**
  * Validation function for items with opacity sliders.
- * @template {ExtendedItemOption | ModularItemOption} OptionType
- * @param {ExtendedItemValidateCallback<OptionType>} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @param {Character} C - The character to validate the option
- * @param {Item} Item - The equipped item
- * @param {OptionType} Option - The selected option
- * @param {OptionType} CurrentOption - The currently selected option
- * @returns {string} - Set and returns {@link DialogExtendedMessage} if the chosen option is not possible.
+ * @type {ExtendedItemScriptHookCallbacks.Validate<ExtendedItemData<any>, any>}
  */
-declare function PropertyOpacityValidate<OptionType extends ExtendedItemOption | ModularItemOption>(OriginalFunction: ExtendedItemValidateCallback<OptionType>, C: Character, Item: Item, Option: OptionType, CurrentOption: OptionType): string;
+declare function PropertyOpacityValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any) => string, C: Character, Item: Item, Option: any, CurrentOption: any): string;
 /**
  * Helper fuction for publishing shock-related actions.
  * @param {Character} C - The shocked character; defaults to the {@link CharacterGetCurrent} output
@@ -61,28 +59,32 @@ declare function PropertyAutoPunishParseMessage(Sensitivity: 0 | 1 | 2 | 3, msg:
 declare function PropertyAutoPunishDetectSpeech(Item: Item, LastMessageLen?: number | null): boolean;
 /**
  * Load function for items with text input fields.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {PropertyTextEventListenerRecord} EventListeners - A record with custom event listeners for one or more input fields.
  * @returns {HTMLInputElement[]} An array with the new or pre-existing text input elements
  */
-declare function PropertyTextLoad(OriginalFunction?: null | (() => void), EventListeners?: PropertyTextEventListenerRecord): HTMLInputElement[];
+declare function PropertyTextLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), EventListeners?: PropertyTextEventListenerRecord): HTMLInputElement[];
 /**
  * Draw handler for extended item screens with text input fields.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {number} X - Center point of the text input field(s) on the X axis
  * @param {number} Y - Center point of the first text input field on the Y axis
  * @param {number} YSpacing - The spacing of Y coordinates between multiple input fields
  * @returns {HTMLInputElement[]} An array with all text input elements
  */
-declare function PropertyTextDraw(OriginalFunction?: null | (() => void), X?: number, Y?: number, YSpacing?: number): HTMLInputElement[];
+declare function PropertyTextDraw(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), X?: number, Y?: number, YSpacing?: number): HTMLInputElement[];
 /**
  * Exit function for items with text input fields.
+ * @param {null | ExtendedItemData<any>} Data - The items extended item data
+ * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @param {boolean} Refresh - Whether character parameters and the respective item should be refreshed or not
  * @param {string} TextChange - The action tag for changing (but not removing) the text
  * @param {string} TextRemove - The action tag for the complete removal of the text
  * @returns {void} Nothing
  */
-declare function PropertyTextExit(Refresh?: boolean, TextChange?: string, TextRemove?: string): void;
+declare function PropertyTextExit(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), Refresh?: boolean, TextChange?: string, TextRemove?: string): void;
 /**
  * Validation function for items with text input fields.
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point.

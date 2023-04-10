@@ -1,12 +1,4 @@
-/**
- * Draw the item extension screen
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
- */
-declare function InventoryItemArmsPrisonLockdownSuitDraw(OriginalFunction: () => void): void;
-/**
- * Catches the item extension clicks
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
- */
-declare function InventoryItemArmsPrisonLockdownSuitClick(OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<ModularItemData>} */
+declare function InventoryItemArmsPrisonLockdownSuitDrawHook(Data: ModularItemData, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<ModularItemData>} */
+declare function InventoryItemArmsPrisonLockdownSuitClickHook(Data: ModularItemData, OriginalFunction: () => void): void;

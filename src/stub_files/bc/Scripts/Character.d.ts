@@ -207,7 +207,7 @@ declare function CharacterIsNaked(C: Character): boolean;
 /**
  * Checks if a character is in underwear
  * @param {Character} C - Character to inspect the appearance of
- * @returns {boolean} - Returns TRUE if the given character is in underwear
+ * @returns {boolean} - Returns TRUE if the given character is at most in underwear (can be naked)
  */
 declare function CharacterIsInUnderwear(C: Character): boolean;
 /**
@@ -279,11 +279,11 @@ declare function CharacterFullRandomRestrain(C: Character, Ratio?: "FEW" | "LOT"
 /**
  * Sets a new pose for the character
  * @param {Character} C - Character for which to set the pose
- * @param {AssetPoseName} NewPose - Name of the pose to set as active
+ * @param {null | AssetPoseName} NewPose - Name of the pose to set as active or `null` to return to the default pose
  * @param {boolean} [ForceChange=false] - TRUE if the set pose(s) should overwrite current active pose(s)
  * @returns {void} - Nothing
  */
-declare function CharacterSetActivePose(C: Character, NewPose: AssetPoseName, ForceChange?: boolean): void;
+declare function CharacterSetActivePose(C: Character, NewPose: null | AssetPoseName, ForceChange?: boolean): void;
 /**
  * Sets a specific facial expression on the character's specified AssetGroup.
  *

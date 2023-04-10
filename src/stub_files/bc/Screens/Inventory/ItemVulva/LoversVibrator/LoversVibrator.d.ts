@@ -1,12 +1,4 @@
-/**
- * Custom draw function.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemVulvaLoversVibratorDrawHook(OriginalFunction: () => void): void;
-/**
- * Custom click function.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemVulvaLoversVibratorClickHook(OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<VibratingItemData>} */
+declare function InventoryItemVulvaLoversVibratorDrawHook(Data: VibratingItemData, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<VibratingItemData>} */
+declare function InventoryItemVulvaLoversVibratorClickHook(Data: VibratingItemData, OriginalFunction: () => void): void;

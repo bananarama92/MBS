@@ -1,7 +1,12 @@
-declare function InventoryItemNeckFuturisticCollarInit(Item: any, C: any, Refresh: any): void;
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemNeckFuturisticCollarInit(C: Character, Item: Item, Refresh: boolean): boolean;
+/** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemNeckFuturisticCollarLoad(): void;
+/** @type {ExtendedItemCallbacks.Draw} */
 declare function InventoryItemNeckFuturisticCollarDraw(): void;
+/** @type {ExtendedItemCallbacks.Exit} */
 declare function InventoryItemNeckFuturisticCollarExit(): void;
+/** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryItemNeckFuturisticCollarClick(): void;
 /**
  * @param {Character} C
@@ -15,11 +20,7 @@ declare function InventoryItemNeckFuturisticCollarCanLock(C: Character, LockType
  * @returns
  */
 declare function InventoryItemNeckFuturisticCollarGetItems(C: Character, OnlyUnlockable?: boolean): Item[];
-/**
- * @param {Character} C
- * @param {Item} Item
- * @returns {string}
- */
+/** @type {ExtendedItemCallbacks.Validate<any>} */
 declare function InventoryItemNeckFuturisticCollarValidate(C: Character, Item: Item): string;
 /**
  * @param {Character} C
@@ -30,10 +31,10 @@ declare function InventoryItemNeckFuturisticCollarLockdown(C: Character, LockTyp
  * @param {Character} C
  * @param {Item} Item
  * @param {Item} LockItem
- * @param {*} Attempt
+ * @param {boolean} Attempt
  * @returns {boolean}
  */
-declare function InventoryItemNeckFuturisticCollarCanUnlock(C: Character, Item: Item, LockItem: Item, Attempt: any): boolean;
+declare function InventoryItemNeckFuturisticCollarCanUnlock(C: Character, Item: Item, LockItem: Item, Attempt: boolean): boolean;
 /**
  * @param {Character} C
  */

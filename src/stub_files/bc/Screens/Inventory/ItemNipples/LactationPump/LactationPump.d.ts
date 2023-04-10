@@ -1,2 +1,2 @@
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemNipplesLactationPumpBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw} */
+declare function AssetsItemNipplesLactationPumpBeforeDraw(data: DynamicDrawingData<Record<string, unknown>>): DynamicBeforeDrawOverrides;

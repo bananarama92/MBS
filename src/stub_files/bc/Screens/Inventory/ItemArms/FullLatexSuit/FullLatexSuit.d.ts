@@ -1,14 +1,6 @@
-/**
- * Draw the item extension screen.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemArmsFullLatexSuitDraw(OriginalFunction: () => void): void;
-/**
- * Catches the item extension clicks.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemArmsFullLatexSuitClick(OriginalFunction: () => void): void;
-/** @type {(C: Character) => void} */
-declare function InventoryItemArmsFullLatexSuitSetWand(C: Character): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<TypedItemData>} */
+declare function InventoryItemArmsFullLatexSuitDrawHook(Data: TypedItemData, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<TypedItemData>} */
+declare function InventoryItemArmsFullLatexSuitClickHook(Data: TypedItemData, OriginalFunction: () => void): void;
+/** @type {(Data: TypedItemData, C: Character) => void} */
+declare function InventoryItemArmsFullLatexSuitSetWand(Data: TypedItemData, C: Character): void;

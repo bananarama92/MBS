@@ -15,26 +15,26 @@ declare function AssetActivityMirrorGroupSet(group: AssetGroup): void;
  * Adds a new asset to the main list
  * @param {AssetGroup} Group
  * @param {AssetDefinition} AssetDef
- * @param {ExtendedItemConfig} ExtendedConfig
+ * @param {ExtendedItemMainConfig} ExtendedConfig
  * @returns {void} - Nothing
  */
-declare function AssetAdd(Group: AssetGroup, AssetDef: AssetDefinition, ExtendedConfig: ExtendedItemConfig): void;
+declare function AssetAdd(Group: AssetGroup, AssetDef: AssetDefinition, ExtendedConfig: ExtendedItemMainConfig): void;
 /**
  * Constructs extended item functions for an asset, if extended item configuration exists for the asset.
  * @param {Asset} A - The asset to configure
- * @param {ExtendedItemConfig} ExtendedConfig - The extended item configuration object for the asset's family
+ * @param {ExtendedItemMainConfig} ExtendedConfig - The extended item configuration object for the asset's family
  * @returns {void} - Nothing
  */
-declare function AssetBuildExtended(A: Asset, ExtendedConfig: ExtendedItemConfig): void;
+declare function AssetBuildExtended(A: Asset, ExtendedConfig: ExtendedItemMainConfig): void;
 /**
  * Finds the extended item configuration for the provided group and asset name, if any exists
- * @param {ExtendedItemConfig} ExtendedConfig - The full extended item configuration object
+ * @param {ExtendedItemMainConfig} ExtendedConfig - The full extended item configuration object
  * @param {AssetGroupName} GroupName - The name of the asset group to find extended configuration for
  * @param {string} AssetName - The name of the asset to find extended configuration fo
  * @returns {AssetArchetypeConfig | undefined} - The extended asset configuration object for the specified asset, if
  * any exists, or undefined otherwise
  */
-declare function AssetFindExtendedConfig(ExtendedConfig: ExtendedItemConfig, GroupName: AssetGroupName, AssetName: string): AssetArchetypeConfig | undefined;
+declare function AssetFindExtendedConfig(ExtendedConfig: ExtendedItemMainConfig, GroupName: AssetGroupName, AssetName: string): AssetArchetypeConfig | undefined;
 /**
  * Builds the layer array for an asset based on the asset definition. One layer is created for each drawable part of
  * the asset (excluding the lock). If the asset definition contains no layer definitions, a default layer definition
@@ -109,9 +109,9 @@ declare function AssetLoadDescription(Family: IAssetFamily): void;
  * Loads a specific asset file
  * @param {readonly AssetGroupDefinition[]} Groups
  * @param {IAssetFamily} Family
- * @param {ExtendedItemConfig} ExtendedConfig
+ * @param {ExtendedItemMainConfig} ExtendedConfig
  */
-declare function AssetLoad(Groups: readonly AssetGroupDefinition[], Family: IAssetFamily, ExtendedConfig: ExtendedItemConfig): void;
+declare function AssetLoad(Groups: readonly AssetGroupDefinition[], Family: IAssetFamily, ExtendedConfig: ExtendedItemMainConfig): void;
 /** Reset and load all the assets */
 declare function AssetLoadAll(): void;
 /**
@@ -181,6 +181,13 @@ declare function AssetGetInventoryPath(A: Asset): string;
  * @returns {AssetLayer[]} - The newly sorted asset layers
  */
 declare function AssetLayerSort(layers: AssetLayer[]): AssetLayer[];
+/**
+ * Convert {@link AssetDefinition} default color into a {@link Asset} default color list
+ * @param {number} colorableLayerCount The number of colorable layers
+ * @param {string | readonly string[]} [color] See {@link AssetDefinition.DefaultColor}
+ * @returns {string[]} See {@link Asset.DefaultColor}
+ */
+declare function AssetParseDefaultColor(colorableLayerCount: number, color?: string | readonly string[]): string[];
 /** @type {Asset[]} */
 declare var Asset: Asset[];
 /** @type {AssetGroup[]} */

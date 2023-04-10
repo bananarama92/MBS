@@ -1,10 +1,14 @@
-/** @type {ExtendedItemInitCallback} */
-declare function InventoryItemDevicesFuturisticCrateDevice1Init(Item: Item, C: Character, Refresh: boolean): void;
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemDevicesFuturisticCrateDevice1Init(C: Character, Item: Item, Refresh: boolean): boolean;
 declare function InventoryItemDevicesFuturisticCrateDevice1Load(): void;
 declare function InventoryItemDevicesFuturisticCrateDevice1Draw(): void;
 declare function InventoryItemDevicesFuturisticCrateDevice1Click(): void;
 declare function InventoryItemDevicesFuturisticCrateDevice1Exit(): void;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemDevicesFuturisticCrateBeforeDraw({ PersistentData, L, X, Y, Property }: DynamicDrawingData): DynamicBeforeDrawOverrides;
-/** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemDevicesFuturisticCrateScriptDraw(data: DynamicScriptCallbackData): void;
+/**
+ * @typedef {FuckMachinePersistentData} FuturisticCratePersistentData
+ */
+/** @type {ExtendedItemCallbacks.BeforeDraw<FuturisticCratePersistentData>} */
+declare function AssetsItemDevicesFuturisticCrateBeforeDraw({ PersistentData, L, X, Y, Property }: DynamicDrawingData<FuckMachinePersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticCratePersistentData>} */
+declare function AssetsItemDevicesFuturisticCrateScriptDraw(data: DynamicScriptCallbackData<FuckMachinePersistentData>): void;
+type FuturisticCratePersistentData = FuckMachinePersistentData;

@@ -1,15 +1,7 @@
-/**
- * Custom draw function.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemMouthFuturisticPanelGagDraw(OriginalFunction: () => void): void;
-/**
- * Custom click function.
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} - Nothing
- */
-declare function InventoryItemMouthFuturisticPanelGagClick(OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<ModularItemData>} */
+declare function InventoryItemMouthFuturisticPanelGagDrawHook(Data: ModularItemData, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<ModularItemData>} */
+declare function InventoryItemMouthFuturisticPanelGagClickHook(Data: ModularItemData, OriginalFunction: () => void): void;
 /**
  * Send message for an automatic gag inflation.
  * @param {Character} C - The selected character
@@ -36,9 +28,17 @@ declare function InventoryItemMouthFuturisticPanelGagTriggerGetOptions(C: Charac
  * @return {void}
  */
 declare function InventoryItemMouthFuturisticPanelGagTrigger(C: Character, Item: Item, Deflate: boolean): void;
-/**  @type {DynamicScriptDrawCallback} */
-declare function AssetsItemMouthFuturisticPanelGagScriptUpdatePlayer(data: DynamicScriptCallbackData): void;
-/** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemMouthFuturisticPanelGagScriptDraw(data: DynamicScriptCallbackData): void;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemMouthFuturisticPanelGagBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
+/**
+ * @typedef {{ LastMessageLen?: number, UpdateTime?: number, ChangeTime?: number }} FuturisticPanelGagPersistentData
+ */
+/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticPanelGagScriptUpdatePlayer(data: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
+/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticPanelGagScriptDraw(data: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
+/** @type {ExtendedItemCallbacks.BeforeDraw<FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticPanelGagBeforeDraw(data: DynamicDrawingData<FuturisticPanelGagPersistentData>): DynamicBeforeDrawOverrides;
+type FuturisticPanelGagPersistentData = {
+    LastMessageLen?: number;
+    UpdateTime?: number;
+    ChangeTime?: number;
+};

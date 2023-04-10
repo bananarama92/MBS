@@ -519,6 +519,12 @@ declare function PrivateStopTrial(ChangeRep: number): void;
  */
 declare function PrivateShowTrialHours(): void;
 /**
+ * Runs the currently selected activity
+ * @param {number} LoveFactor - Amount of love to be added or removed from the NPC.
+ * @returns {void} - Nothing.
+ */
+declare function PrivateActivityRun(LoveFactor: number): void;
+/**
  * Checks if the player is owned. (In general)
  * @returns {boolean} - Returns TRUE if the player has an owner.
  */
@@ -533,12 +539,6 @@ declare function PrivateCanRestrainOther(): boolean;
  * @returns {void} - Nothing.
  */
 declare function PrivateStartActivity(): void;
-/**
- * Runs the currently selected activity
- * @param {number} LoveFactor - Amount of love to be added or removed from the NPC.
- * @returns {void} - Nothing.
- */
-declare function PrivateActivityRun(LoveFactor: number): void;
 /**
  * Set the no change rule for the player.
  * @param {number} Minutes - The number of minutes to apply the rule for

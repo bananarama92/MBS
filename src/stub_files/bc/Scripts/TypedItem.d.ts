@@ -12,43 +12,16 @@ declare function TypedItemRegister(asset: Asset, config: TypedItemConfig | undef
  * @param {TypedItemConfig} config - The item's extended item configuration
  * @returns {TypedItemData} - The generated typed item data for the asset
  */
-declare function TypedItemCreateTypedItemData(asset: Asset, { Options, Dialog, ChatTags, Dictionary, ChatSetting, DrawImages, ChangeWhenLocked, ScriptHooks, BaselineProperty, }: TypedItemConfig): TypedItemData;
+declare function TypedItemCreateTypedItemData(asset: Asset, { Options, DialogPrefix, ChatTags, Dictionary, ChatSetting, DrawImages, ChangeWhenLocked, ScriptHooks, BaselineProperty, }: TypedItemConfig): TypedItemData;
 /**
- * Creates an asset's extended item load function
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
+ *
+ * @param {TypedItemData} data
+ * @param {Character} C
+ * @param {Item} item
+ * @param {TypedItemOption} newOption
+ * @param {TypedItemOption} previousOption
  */
-declare function TypedItemCreateLoadFunction({ options, functionPrefix, dialog, scriptHooks, BaselineProperty }: TypedItemData): void;
-/**
- * Creates an asset's extended item draw function
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function TypedItemCreateDrawFunction({ options, functionPrefix, dialog, drawImages, scriptHooks }: TypedItemData): void;
-/**
- * Creates an asset's extended item click function
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function TypedItemCreateClickFunction({ options, functionPrefix, drawImages, scriptHooks }: TypedItemData): void;
-/**
- * Creates an asset's extended item exit function
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function TypedItemCreateExitFunction({ functionPrefix, scriptHooks }: TypedItemData): void;
-/**
- * Creates an asset's extended item chatroom message publishing function
- * @param {TypedItemData} typedItemData - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function TypedItemCreatePublishFunction(typedItemData: TypedItemData): void;
-/**
- * Creates an asset's extended item PublishAction function
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {void} - Nothing
- */
-declare function TypedItemCreatePublishActionFunction({ scriptHooks, functionPrefix }: TypedItemData): void;
+declare function TypedItemPublishAction(data: TypedItemData, C: Character, item: Item, newOption: TypedItemOption, previousOption: TypedItemOption): void;
 /**
  * Generates an asset's AllowType property based on its typed item data.
  * @param {TypedItemData} data - The typed item's data
@@ -96,23 +69,16 @@ declare function TypedItemGenerateAllowLockType({ asset, options }: TypedItemDat
 declare function TypedItemSetAllowLockType(asset: Asset, allowLockType: readonly string[], typeCount: number): void;
 /**
  * @param {Asset} asset - The asset whose subscreen is being registered
- * @param {TypedItemConfig} config - The parent item's typed item configuration
+ * @param {TypedItemData} data - The parent item's typed item data
  */
-declare function TypedItemRegisterSubscreens(asset: Asset, config: TypedItemConfig): void;
-/**
- * Constructs the chat message dictionary for the typed item based on the items configuration data.
- * @param {ExtendedItemChatData<ExtendedItemOption>} ChatData - The chat data that triggered the message.
- * @param {TypedItemData} data - The typed item data for the asset
- * @returns {ChatMessageDictionary} - The dictionary for the item based on its required chat tags
- */
-declare function TypedItemBuildChatMessageDictionary(ChatData: ExtendedItemChatData<ExtendedItemOption>, { asset, chatTags, dictionary }: TypedItemData): ChatMessageDictionary;
+declare function TypedItemRegisterSubscreens(asset: Asset, data: TypedItemData): void;
 /**
  * Returns the options configuration array for a typed item
  * @param {AssetGroupName} groupName - The name of the asset group
  * @param {string} assetName - The name of the asset
- * @returns {ExtendedItemOption[]|null} - The options array for the item, or null if no typed item data was found
+ * @returns {TypedItemOption[]|null} - The options array for the item, or null if no typed item data was found
  */
-declare function TypedItemGetOptions(groupName: AssetGroupName, assetName: string): ExtendedItemOption[] | null;
+declare function TypedItemGetOptions(groupName: AssetGroupName, assetName: string): TypedItemOption[] | null;
 /**
  * Returns a list of typed item option names available for the given asset, or an empty array if the asset is not typed
  * @param {AssetGroupName} groupName - The name of the asset group
@@ -126,21 +92,22 @@ declare function TypedItemGetOptionNames(groupName: AssetGroupName, assetName: s
  * @param {AssetGroupName} groupName - The name of the asset group
  * @param {string} assetName - The name of the asset
  * @param {string} optionName - The name of the option
- * @returns {ExtendedItemOption|null} - The named option configuration object, or null if none was found
+ * @returns {TypedItemOption|null} - The named option configuration object, or null if none was found
  */
-declare function TypedItemGetOption(groupName: AssetGroupName, assetName: string, optionName: string): ExtendedItemOption | null;
+declare function TypedItemGetOption(groupName: AssetGroupName, assetName: string, optionName: string): TypedItemOption | null;
 /**
  * Validates a selected option. A typed item may provide a custom validation function. Returning a non-empty string from
  * the validation function indicates that the new option is not compatible with the character's current state (generally
  * due to prerequisites or other requirements).
+ * @template {ExtendedItemOption} T
  * @param {Character} C - The character on whom the item is equipped
  * @param {Item} item - The item whose options are being validated
- * @param {ExtendedItemOption|ModularItemOption} option - The new option
- * @param {ExtendedItemOption|ModularItemOption} previousOption - The previously applied option
+ * @param {T} option - The new option
+ * @param {T} previousOption - The previously applied option
  * @returns {string|undefined} - undefined or an empty string if the validation passes. Otherwise, returns a string
  * message informing the player of the requirements that are not met.
  */
-declare function TypedItemValidateOption(C: Character, item: Item, option: ExtendedItemOption | ModularItemOption, previousOption: ExtendedItemOption | ModularItemOption): string | undefined;
+declare function TypedItemValidateOption<T extends ExtendedItemOption>(C: Character, item: Item, option: T, previousOption: T): string | undefined;
 /**
  * Sets a typed item's type and properties to the option whose name matches the provided option name parameter.
  * @param {Character} C - The character on whom the item is equipped
@@ -154,24 +121,27 @@ declare function TypedItemValidateOption(C: Character, item: Item, option: Exten
 declare function TypedItemSetOptionByName(C: Character, itemOrGroupName: Item | AssetGroupName, optionName: string, push?: boolean): string | undefined;
 /**
  * Sets a typed item's type and properties to the option provided.
+ * @template {TypedItemOption | VibratingItemOption} T
  * @param {Character} C - The character on whom the item is equipped
  * @param {Item} item - The item whose type to set
- * @param {readonly ExtendedItemOption[]} options - The typed item options for the item
- * @param {ExtendedItemOption} option - The option to set
+ * @param {readonly T[]} options - The typed item options for the item
+ * @param {T} option - The option to set
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
  * @returns {string|undefined} - undefined or an empty string if the type was set correctly. Otherwise, returns a string
  * informing the player of the requirements that are not met.
  */
-declare function TypedItemSetOption(C: Character, item: Item, options: readonly ExtendedItemOption[], option: ExtendedItemOption, push?: boolean): string | undefined;
+declare function TypedItemSetOption<T extends TypedItemOption | VibratingItemOption>(C: Character, item: Item, options: readonly T[], option: T, push?: boolean): string | undefined;
 /**
  * Finds the currently set option on the given typed item
+ * @template {TypedItemOption | VibratingItemOption} T
  * @param {Item} item - The equipped item
- * @param {readonly ExtendedItemOption[]} options - The list of available options for the item
- * @returns {ExtendedItemOption} - The option which is currently applied to the item, or the first item in the options
+ * @param {readonly T[]} options - The list of available options for the item
+ * @param {"Type" | "Mode"} typeField - The name of the item property field containing the item's type (or equivalent thereof)
+ * @returns {T} - The option which is currently applied to the item, or the first item in the options
  * array if no type is set.
  */
-declare function TypedItemFindPreviousOption(item: Item, options: readonly ExtendedItemOption[]): ExtendedItemOption;
+declare function TypedItemFindPreviousOption<T extends TypedItemOption | VibratingItemOption>(item: Item, options: readonly T[], typeField?: "Type" | "Mode"): T;
 /**
  * Sets a typed item's type to a random option, respecting prerequisites and option validation.
  * @param {Character} C - The character on whom the item is equipped
@@ -183,18 +153,60 @@ declare function TypedItemFindPreviousOption(item: Item, options: readonly Exten
  */
 declare function TypedItemSetRandomOption(C: Character, itemOrGroupName: Item | AssetGroupName, push?: boolean): string | undefined;
 /**
- * Return {@link TypedItemData.dialog.chatPrefix} if it's a string or call it using chat data based on a fictional extended item option.
- * @param {string} Name - The name of the pseudo-type
- * @param {TypedItemData} Data - The extended item data
- * @returns {string} The dialogue prefix for the custom chatroom messages
- */
-declare function TypedItemCustomChatPrefix(Name: string, Data: TypedItemData): string;
-/**
  * Initialize the typed item properties
- * @type {ExtendedItemInitCallback}
- * @see {@link ExtendedItemInit}
+ * @param {TypedItemData} Data - The item's extended item data
+ * @param {Item} Item - The item in question
+ * @param {Character} C - The character that has the item equiped
+ * @param {boolean} Refresh - Whether the character and relevant item should be refreshed and pushed to the server
+ * @returns {boolean} Whether properties were initialized or not
  */
-declare function TypedItemInit(Item: Item, C: Character, Refresh?: boolean): void;
+declare function TypedItemInit(Data: TypedItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
+/**
+ * Draws the extended item type selection screen
+ * @param {readonly (TypedItemOption | VibratingItemOption)[]} Options - An Array of type definitions for each allowed extended type. The first item
+ *     in the array should be the default option.
+ * @param {string} DialogPrefix - The prefix to the dialog keys for the display strings describing each extended type.
+ *     The full dialog key will be <Prefix><Option.Name>
+ * @param {number} [OptionsPerPage] - The number of options displayed on each page
+ * @param {boolean} [ShowImages=true] - Denotes whether images should be shown for the specific item
+ * @param {readonly [number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
+ * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
+ * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
+ * @returns {void} Nothing
+ */
+declare function TypedItemDraw(Options: readonly (TypedItemOption | VibratingItemOption)[], DialogPrefix: string, OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: readonly [number, number][], IgnoreSubscreen?: boolean): void;
+/**
+ * Handles clicks on the extended item type selection screen
+ * @param {readonly (TypedItemOption | VibratingItemOption)[]} Options - An Array of type definitions for each allowed extended type. The first item
+ *     in the array should be the default option.
+ * @param {number} [OptionsPerPage] - The number of options displayed on each page
+ * @param {boolean} [ShowImages=true] - Denotes whether images are shown for the specific item
+ * @param {[number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
+ * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
+ * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
+ * @returns {void} Nothing
+ */
+declare function TypedItemClick(Options: readonly (TypedItemOption | VibratingItemOption)[], OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: [number, number][], IgnoreSubscreen?: boolean): void;
+/**
+ * Handler function called when an option on the type selection screen is clicked
+ * @template {TypedItemOption | VibratingItemOption} T
+ * @param {Character} C - The character wearing the item
+ * @param {readonly (T)[]} Options - An Array of type definitions for each allowed extended type. The first item
+ *     in the array should be the default option.
+ * @param {T} Option - The selected type definition
+ * @returns {void} Nothing
+ */
+declare function TypedItemHandleOptionClick<T extends TypedItemOption | VibratingItemOption>(C: Character, Options: readonly T[], Option: T): void;
+/**
+ * Handler function for setting the type of an typed item
+ * @template {TypedItemOption | VibratingItemOption} T
+ * @param {Character} C - The character wearing the item
+ * @param {readonly T[]} Options - An Array of type definitions for each allowed extended type. The first item
+ *     in the array should be the default option.
+ * @param {T} Option - The selected type definition
+ * @returns {void} Nothing
+ */
+declare function TypedItemSetType<T extends TypedItemOption | VibratingItemOption>(C: Character, Options: readonly T[], Option: T): void;
 /**
  * TypedItem.js
  * ------------

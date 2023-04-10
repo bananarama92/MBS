@@ -1,2 +1,2 @@
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemArmsHempRopeBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw} */
+declare function AssetsItemArmsHempRopeBeforeDraw(data: DynamicDrawingData<Record<string, unknown>>): DynamicBeforeDrawOverrides;

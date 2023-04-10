@@ -295,10 +295,10 @@ declare function DialogLeave(): void;
 declare function DialogRemove(): void;
 /**
  * Generic dialog function to remove any dialog from a specific group
- * @param {AssetGroupName} GroupName - All dialog options are removed from this group
+ * @param {string} GroupName - All dialog options are removed from this group
  * @returns {void} - Nothing
  */
-declare function DialogRemoveGroup(GroupName: AssetGroupName): void;
+declare function DialogRemoveGroup(GroupName: string): void;
 /**
  * Generic function that sets timers for expression changes, if the player'S expressions have been altered by the dialog
  * @returns {void} - Nothing

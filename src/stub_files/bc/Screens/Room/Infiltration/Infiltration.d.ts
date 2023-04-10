@@ -34,6 +34,11 @@ declare function InfiltrationCatBurglarHasMoney(): boolean;
  */
 declare function InfiltrationReverseMaidCanComplete(): boolean;
 /**
+ * Returns TRUE if the player has captured at least 1 infiltrator from Pandora and has reached 5 infiltration
+ * @returns (boolean) - TRUE if successful
+ */
+declare function InfiltrationPrivatePrisonerPresent(): boolean;
+/**
  * Loads the infiltration screen by generating the supervisor.
  * @returns {void} - Nothing
  */
@@ -162,6 +167,11 @@ declare function InfiltrationStartNPCRescue(): void;
  * @returns {void} - Nothing
  */
 declare function InfiltrationDressMaid(Rep: string): void;
+/**
+ * Takes captured infiltrator for brainwashing.
+ * @returns {void} - Nothing
+ */
+declare function InfiltrationPrivatePrisonerBrainwash(): void;
 declare var InfiltrationBackground: string;
 /** @type {NPCCharacter} */
 declare var InfiltrationSupervisor: NPCCharacter;
@@ -177,3 +187,5 @@ declare var InfiltrationTarget: InfiltrationMissionTarget | null;
 declare var InfiltrationCollectRansom: boolean;
 /** @type {NPCCharacter} */
 declare var InfiltrationKidnapper: NPCCharacter;
+/** @type {NPCCharacter} */
+declare var InfiltrationPrivatePandoraInfiltrator: NPCCharacter;

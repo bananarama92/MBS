@@ -1,16 +1,15 @@
+/** @type {ExtendedItemScriptHookCallbacks.Draw<ModularItemData>} */
+declare function InventoryItemNeckAccessoriesCollarAutoShockUnitDraw(Data: ModularItemData, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<ModularItemData>} */
+declare function InventoryItemNeckAccessoriesCollarAutoShockUnitClick(Data: ModularItemData, OriginalFunction: () => void): void;
 /**
- * Draw the item extension screen
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
+ * @typedef {{ ChangeTime?: number, LastMessageLen?: number }} AutoShockUnitPersistentData
  */
-declare function InventoryItemNeckAccessoriesCollarAutoShockUnitDraw(OriginalFunction: () => void): void;
-/**
- * Catches the item extension clicks
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
- */
-declare function InventoryItemNeckAccessoriesCollarAutoShockUnitClick(OriginalFunction: () => void): void;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarAutoShockUnitBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
-/** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarAutoShockUnitScriptDraw(data: DynamicScriptCallbackData): void;
+/** @type {ExtendedItemCallbacks.BeforeDraw<AutoShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarAutoShockUnitBeforeDraw(data: DynamicDrawingData<AutoShockUnitPersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.ScriptDraw<AutoShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarAutoShockUnitScriptDraw(data: DynamicScriptCallbackData<AutoShockUnitPersistentData>): void;
+type AutoShockUnitPersistentData = {
+    ChangeTime?: number;
+    LastMessageLen?: number;
+};

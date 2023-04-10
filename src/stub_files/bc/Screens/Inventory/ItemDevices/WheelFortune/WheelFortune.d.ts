@@ -1,16 +1,10 @@
-/**
- * Wheel of Fortune Game loader
- */
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemDevicesWheelFortuneInit(C: Character, item: Item, refresh: boolean): boolean;
+/** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemDevicesWheelFortuneLoad(): void;
-/**
- * Wheel of Fortune Game draw engine
- */
+/** @type {ExtendedItemCallbacks.Draw} */
 declare function InventoryItemDevicesWheelFortuneDraw(): void;
-/**
- * Wheel of Fortune Game clicks
- */
+/** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryItemDevicesWheelFortuneClick(): void;
-/**
- * Wheel of Fortune Game clicks
- */
+/** @type {ExtendedItemCallbacks.Exit} */
 declare function InventoryItemDevicesWheelFortuneExit(): void;

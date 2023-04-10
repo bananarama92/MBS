@@ -313,7 +313,8 @@ type CraftingPropertyType =
 type AssetAttribute =
 	"Skirt" |
 	"ShortHair" | "SmallEars" | "NoEars" | "NoseRing" | "HoodieFix" |
-	"CanAttachMittens"
+	"CanAttachMittens" |
+	"PenisLayer" | "PenisCover"
 	;
 
 type CraftingStatusType = 0 | 1 | 2;
@@ -347,7 +348,8 @@ type AssetPrerequisite =
 	"AccessBreastSuitZip" | "AccessVulva" | "AccessButt" | "AccessMouth" | "HoodEmpty" | "EyesEmpty" |
 	"VulvaNotBlockedByBelt" | "VulvaEmpty" | "ClitEmpty" | "ButtEmpty" | "NakedFeet" | "NakedHands" |
 	"DisplayFrame" | "GasMask" | "NotMasked" | "RemotesAllowed" | "GagUnique" | "GagCorset" |
-	"NotProtrudingFromMouth" | "NeedsNippleRings" | "GagFlat" | "BlockedMouth"
+	"NotProtrudingFromMouth" | "NeedsNippleRings" | "GagFlat" | "BlockedMouth" | "AccessFullPenis" |
+	"NoChastityCage"
 	;
 
 type ActivityPrerequisite =
@@ -494,7 +496,7 @@ type IChatRoomSyncExpressionMessage = IChatRoomSyncExpressionMessageMap<Expressi
 
 interface IChatRoomSyncPoseMessage {
 	MemberNumber: number;
-	Pose: AssetPoseName[] | AssetPoseName;
+	Pose: AssetPoseName[];
 }
 
 interface IChatRoomSyncArousalMessage {
@@ -1208,7 +1210,10 @@ interface Asset {
 	AllowHideItem?: readonly string[];
 	AllowType?: readonly string[];
 	AllowTighten?: boolean;
-	DefaultColor?: ItemColor;
+	/**
+	 * The default color of the item: an array of length {@link Asset.ColorableLayerCount} consisting of `"Default"` and/or valid color hex codes.
+	 */
+	DefaultColor: readonly string[];
 	Opacity: number;
 	MinOpacity: number;
 	MaxOpacity: number;
@@ -1245,6 +1250,7 @@ interface Asset {
 	MirrorExpression?: AssetGroupBodyName;
 	FixedPosition: boolean;
 	Layer: readonly AssetLayer[];
+	/** The number of colorable layers. Guaranteed to be >= 1 */
 	ColorableLayerCount: number;
 	Archetype?: ExtendedArchetype;
 	Attribute: readonly AssetAttribute[];
@@ -1371,14 +1377,14 @@ interface Reputation {
 interface Ownership {
 	Name: string;
 	MemberNumber: number;
-	Stage: number;
+	Stage: 0 | 1;
 	Start: number;
 }
 
 interface Lovership {
 	Name: string;
 	MemberNumber?: number;
-	Stage?: number;
+	Stage?: 0 | 1 | 2;
 	Start?: number;
 	// Bad data sometimes received from server
 	BeginDatingOfferedByMemberNumber?: unknown;
@@ -1491,7 +1497,7 @@ interface Character {
 	WhiteList: number[];
 	HeightModifier: number;
 	MemberNumber?: number;
-	ItemPermission?: number;
+	ItemPermission?: 0 | 1 | 2 | 3 | 4 | 5;
 	Ownership?: Ownership;
 	Lovership?: Lovership[];
 	CanTalk: () => boolean;
@@ -1652,7 +1658,8 @@ interface NPCCharacter extends Character {
 	Archetype?: NPCArchetype;
 	Trait?: NPCTrait[];
 	Event?: NPCTrait[];
-	Love?: number;
+	Affection?: number;
+	Domination?: number;
 }
 
 /** College */
@@ -1670,6 +1677,9 @@ interface NPCCharacter {
 	TrialDone?: boolean;
 	CanGetLongDuster?: boolean;
 	OweFavor?: boolean;
+	KissCount?: number;
+	MasturbateCount?: number;
+	ClothesTaken?: boolean;
 }
 
 /** Sarah */
@@ -1938,6 +1948,297 @@ interface NPCTrait {
 
 //#region Extended items
 
+/** A record containing various dialog keys used by the extended item screen */
+interface ExtendedItemDialog<
+	OptionType extends ExtendedItemOption
+> {
+	/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
+	header: string;
+	/** The dialogue prefix for the name of each module */
+	module?: string;
+	/** The dialogue prefix for the name of each option */
+	option?: string;
+	/** The dialogue prefix that will be used for each of the item's chatroom messages */
+	chat?: string | ExtendedItemChatCallback<OptionType>;
+	/** The prefix used for dialog keys representing an NPC's reactions to item type changes */
+	npc?: string | ExtendedItemNPCCallback<OptionType>;
+}
+
+
+/** A record containing various dialog keys used by the extended item screen */
+interface ExtendedItemCapsDialog<
+	OptionType extends ExtendedItemOption
+> {
+	/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
+	Header?: string;
+	/** The dialogue prefix for the name of each module */
+	Module?: string;
+	/** The dialogue prefix for the name of each option */
+	Option?: string;
+	/** The dialogue prefix that will be used for each of the item's chatroom messages */
+	Chat?: string | ExtendedItemChatCallback<OptionType>;
+	/** The prefix used for dialog keys representing an NPC's reactions to item type changes */
+	Npc?: string | ExtendedItemNPCCallback<OptionType>;
+}
+
+/** Basic callback for extended item script hooks */
+type ExtendedItemScriptHookCallback<DataType extends ExtendedItemData<any>, T extends any[], RT=void> = (
+	data: DataType,
+	originalFunction: null | ((...args: T) => RT),
+	...args: T,
+) => RT;
+
+/** Basic callback for extended item functions */
+type ExtendedItemCallback<T extends any[], RT=void> = (
+	...args: T,
+) => RT;
+
+/** An interface-based version of {@link ExtendedItemScriptHookCallbacks} with decapitalized keys */
+interface ExtendedItemScriptHookStruct<
+	DataType extends ExtendedItemData<any>,
+	OptionType extends ExtendedItemOption
+> {
+	load?: ExtendedItemScriptHookCallbacks.Load<DataType>,
+	draw?: ExtendedItemScriptHookCallbacks.Draw<DataType>,
+	click?: ExtendedItemScriptHookCallbacks.Click<DataType>,
+	exit?: ExtendedItemScriptHookCallbacks.Exit<DataType>,
+	validate?: ExtendedItemScriptHookCallbacks.Validate<DataType, OptionType>,
+	publishAction?: ExtendedItemScriptHookCallbacks.PublishAction<DataType, OptionType>,
+	init?: ExtendedItemScriptHookCallbacks.Init<DataType>,
+}
+
+/** An interface-based version of {@link ExtendedItemScriptHookCallbacks} */
+interface ExtendedItemCapsScriptHooksStruct<
+	DataType extends ExtendedItemData<any>,
+	OptionType extends ExtendedItemOption
+> {
+	Load?: ExtendedItemScriptHookCallbacks.Load<DataType>,
+	Draw?: ExtendedItemScriptHookCallbacks.Draw<DataType>,
+	Click?: ExtendedItemScriptHookCallbacks.Click<DataType>,
+	Exit?: ExtendedItemScriptHookCallbacks.Exit<DataType>,
+	Validate?: ExtendedItemScriptHookCallbacks.Validate<DataType, OptionType>,
+	PublishAction?: ExtendedItemScriptHookCallbacks.PublishAction<DataType, OptionType>,
+	Init?: ExtendedItemScriptHookCallbacks.Init<DataType>,
+}
+
+/** An interface-based version of {@link ExtendedItemCallbacks} with decapitalized keys*/
+interface ExtendedItemCallbackStruct<
+	OptionType extends ExtendedItemOption
+> {
+	load?: ExtendedItemCallbacks.Load,
+	draw?: ExtendedItemCallbacks.Draw,
+	click?: ExtendedItemCallbacks.Click,
+	exit?: ExtendedItemCallbacks.Exit,
+	validate?: ExtendedItemCallbacks.Validate<OptionType>,
+	publishAction?: ExtendedItemCallbacks.PublishAction<OptionType>,
+	init?: ExtendedItemCallbacks.Init,
+}
+
+/** Namespace with item-specific functions typically called by extended items. */
+declare namespace ExtendedItemCallbacks {
+	/**
+	 * Callback for extended item `Load` functions.
+	 * `Load` functions are responsible for setting up the UI when initially opening the extended item menu.
+	 */
+	type Load = ExtendedItemCallback<[]>;
+	/**
+	 * Callback for extended item `Draw` functions.
+	 * `Draw` functions are responsible for drawing any UI elements within the extended item menu.
+	 */
+	type Draw = ExtendedItemCallback<[]>;
+	/**
+	 * Callback for extended item `Click` functions.
+	 * `Click` functions are responsible for managing any mouse clicks within the extended item menu.
+	 */
+	type Click = ExtendedItemCallback<[]>;
+	/**
+	 * Callback for extended item `Exit` functions.
+	 * `Exit` functions are responsible for cleaning up any UI elements when closing the extended item menu.
+	 */
+	type Exit = ExtendedItemCallback<[]>;
+	/**
+	 * Callback for extended item `Validate` functions.
+	 * `Validate` functions are responsible for validating any change in an item's properties.
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param newOption The newly selected extended item option
+	 * @param previousOption The previusly selected extended item option
+	 * @returns A non-empty message string if the item failed validation, or an empty string otherwise
+	 */
+	type Validate<
+		OptionType extends ExtendedItemOption
+	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType], string>;
+	/**
+	 * Callback for extended item `PublishAction` functions.
+	 * `PublishAction` functions are responsible for reporting any changes to an item's properties via a chat message.
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param newOption The newly selected extended item option
+	 * @param previousOption The previusly selected extended item option
+	 */
+	type PublishAction<
+		OptionType extends ExtendedItemOption
+	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType]>;
+	/**
+	 * Callback for extended item `Init` functions.
+	 * `Init` functions are responsible for setting the initial properties of an extended item.
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param refresh Whether the character and relevant item should be refreshed and pushed to the server
+	 * @returns Whether the items properties were actually updated or not
+	 */
+	type Init = ExtendedItemCallback<[C: Character, item: Item, refresh: boolean], boolean>;
+	/**
+	 * Callback for extended item `AfterDraw` functions.
+	 * Relevant for assets that define {@link Asset.DynamicAfterDraw}.
+	 * @param drawData The dynamic draw data
+	 */
+	type AfterDraw<
+		PersistentData extends Record<string, any> = Record<string, unknown>
+	> = ExtendedItemCallback<[drawData: DynamicDrawingData<PersistentData>]>;
+	/**
+	 * Callback for extended item `BeforeDraw` functions.
+	 * Relevant for assets that define {@link Asset.DynamicBeforeDraw}.
+	 * @param drawData The dynamic draw data
+	 * @returns A record with any and all to-be overriden draw data
+	 */
+	type BeforeDraw<
+		PersistentData extends Record<string, any> = Record<string, unknown>
+	> = ExtendedItemCallback<[drawData: DynamicDrawingData<PersistentData>], DynamicBeforeDrawOverrides>;
+	/**
+	 * Callback for extended item `ScriptDraw` functions.
+	 * Relevant for assets that define {@link Asset.DynamicScriptDraw}.
+	 * @param drawData The dynamic draw data
+	 */
+	type ScriptDraw<
+		PersistentData extends Record<string, any> = Record<string, unknown>
+	> = ExtendedItemCallback<[drawData: DynamicScriptCallbackData<PersistentData>]>;
+}
+
+/**
+ * Namespace with item-specific script hooks used for constructing typical extended items functions.
+ * @see {@link ExtendedItemCallbacks}
+ */
+declare namespace ExtendedItemScriptHookCallbacks {
+	/**
+	 * Callback for extended item `Load` script hooks.
+	 * `Load` functions are responsible for setting up the UI when initially opening the extended item menu.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 */
+	type Load<
+		DataType extends ExtendedItemData<any>
+	> = ExtendedItemScriptHookCallback<DataType, []>;
+	/**
+	 * Callback for extended item `Draw` script hooks.
+	 * `Draw` functions are responsible for drawing any UI elements within the extended item menu.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 */
+	type Draw<
+		DataType extends ExtendedItemData<any>
+	> = ExtendedItemScriptHookCallback<DataType, []>;
+	/**
+	 * Callback for extended item `Click` script hooks.
+	 * `Click` functions are responsible for managing any mouse clicks within the extended item menu.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 */
+	type Click<
+		DataType extends ExtendedItemData<any>
+	> = ExtendedItemScriptHookCallback<DataType, []>;
+	/**
+	 * Callback for extended item `Exit` script hooks.
+	 * `Exit` functions are responsible for cleaning up any UI elements when closing the extended item menu.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 */
+	type Exit<
+		DataType extends ExtendedItemData<any>
+	> = ExtendedItemScriptHookCallback<DataType, []>;
+	/**
+	 * Callback for extended item `Validate` script hooks.
+	 * `Validate` functions are responsible for validating any change in an item's properties.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param newOption The newly selected extended item option
+	 * @param previousOption The previusly selected extended item option
+	 * @returns A non-empty message string if the item failed validation, or an empty string otherwise
+	 */
+	type Validate<
+		DataType extends ExtendedItemData<any>,
+		OptionType extends ExtendedItemOption
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType], string>;
+	/**
+	 * Callback for extended item `PublishAction` script hooks.
+	 * `PublishAction` functions are responsible for reporting any changes to an item's properties via a chat message.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param newOption The newly selected extended item option
+	 * @param previousOption The previusly selected extended item option
+	 */
+	type PublishAction<
+		DataType extends ExtendedItemData<any>,
+		OptionType extends ExtendedItemOption
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType]>;
+	/**
+	 * Callback for extended item `Init` script hooks.
+	 * `Init` functions are responsible for setting the initial properties of an extended item.
+	 * @param data The items extended item data
+	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
+	 * @param C The character that has the item equiped
+	 * @param item The item in question
+	 * @param refresh Whether the character and relevant item should be refreshed and pushed to the server
+	 * @returns Whether the items properties were actually updated or not
+	 */
+	type Init<
+		DataType extends ExtendedItemData<any>
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, refresh: boolean], boolean>;
+}
+
+/**
+ * Abstract extended item data interface that all archetypical item data interfaces must implement.
+ * Archetypes are free to demand any appropriate subtype for a given property,
+ * _e.g._ `drawImages: false` if an archetype does have any images in its UI.
+ */
+interface ExtendedItemData<OptionType extends ExtendedItemOption> {
+	/**
+	 * The chat message setting for the item. This can be provided to allow
+	 * finer-grained chatroom message keys for the item.
+	 * If an archetype does not support multiple chat messages settings it should use the `"default"` literal string.
+	 */
+	chatSetting: string;
+	/** A record containing various dialog keys used by the extended item screen */
+	dialogPrefix: ExtendedItemDialog<OptionType>;
+	/**
+	 * A recond containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
+	 * and parameters passed on to them. If undefined, these are ignored.
+	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
+	 */
+	scriptHooks: ExtendedItemScriptHookStruct<any, OptionType>;
+	/** The asset reference */
+	asset: Asset;
+	/** A key uniquely identifying the asset */
+	key: string;
+	/** The common prefix used for all extended item functions associated with the asset */
+	functionPrefix: string;
+	/** An array of the chat message tags that should be included in the item's chatroom messages. */
+	chatTags: CommonChatTags[];
+	/** Contains custom dictionary entries in the event that the base ones do not suffice. */
+	dictionary: ExtendedItemDictionaryCallback<OptionType>[];
+	/** A boolean indicating whether or not images should be drawn in this item's extended item menu. */
+	drawImages: boolean;
+	/**
+	 * To-be initialized properties independent of the selected item module(s).
+	 * Relevant if there are properties that are (near) exclusively managed by {@link ExtendedItemData.scriptHooks} functions.
+	 */
+	baselineProperty: ItemProperties | null;
+}
+
 /** A struct-type that maps archetypes to their respective extended item data.  */
 interface ExtendedDataLookupStruct {
 	[ExtendedArchetype.TYPED]: TypedItemData;
@@ -2095,6 +2396,12 @@ interface AssetDefinitionProperties {
 	 * @see {@link Asset.CustomBlindBackground}
 	 */
 	CustomBlindBackground?: string;
+
+	/**
+	 * A list of fetishes affected by the item
+	 * @see {@link Asset.Fetish}
+	 */
+	Fetish?: FetishName[];
 }
 
 /**
@@ -2311,32 +2618,25 @@ interface ModularItemDrawData {
 /** An object containing modular item configuration for an asset. Contains all of the necessary information for the
  * item's load, draw & click handlers.
  */
-interface ModularItemData {
-	/** A reference to the asset that this configuration is tied to */
-	asset: Asset;
-	/** The item's chatroom message setting. Determines the level of
+interface ModularItemData extends ExtendedItemData<ModularItemOption> {
+	/**
+	 * The item's chatroom message setting. Determines the level of
 	 * granularity for chatroom messages when the item's module values change.
 	 */
 	chatSetting: ModularItemChatSetting;
-	/**
-	 * An array of the chat message tags that should be included in the item's
-	 * chatroom messages. Defaults to [{@link CommonChatTags.SOURCE_CHAR}, {@link CommonChatTags.DEST_CHAR}]
-	 */
-	chatTags: CommonChatTags[];
-	/** The identifying key for the asset, in the format "<GroupName><AssetName>" */
-	key: string;
 	/** The total number of types permitted by the item */
 	typeCount: number;
-	/** The prefix for generated functions */
-	functionPrefix: string;
-	/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
-	dialogSelectPrefix: string;
-	/** The dialogue prefix for the name of each module */
-	dialogModulePrefix: string;
-	/** The dialogue prefix for the name of each option */
-	dialogOptionPrefix: string;
-	/** The dialogue prefix that will be used for each of the item's chatroom messages */
-	chatMessagePrefix: string | ExtendedItemChatCallback<ModularItemOption>;
+	/** A record containing various dialog keys used by the extended item screen */
+	dialogPrefix: {
+		/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
+		header: string;
+		/** The dialogue prefix for the name of each module */
+		module: string;
+		/** The dialogue prefix for the name of each option */
+		option: string;
+		/** The dialogue prefix that will be used for each of the item's chatroom messages */
+		chat: string | ExtendedItemChatCallback<ModularItemOption>;
+	};
 	/** The module definitions for the modular item */
 	modules: ModularItemModule[];
 	/** Name of currently active module */
@@ -2354,23 +2654,7 @@ interface ModularItemData {
 	 * and parameters passed on to them. If undefined, these are ignored.
 	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
 	 */
-	scriptHooks?: {
-		load?: (next: () => void) => void,
-		click?: (next: () => void) => void,
-		draw?: (next: () => void) => void,
-		exit?: () => void,
-		validate?: ExtendedItemValidateScriptHookCallback<ModularItemOption>,
-	};
-	/**
-	 * To-be initialized properties independent of the selected item module(s).
-	 * Relevant if there are properties that are (near) exclusively managed by {@link ModularItemData.scriptHooks} functions.
-	 */
-	BaselineProperty: ItemProperties | null;
-	/**
-	 * A boolean indicating whether or not images should be drawn for the module selection screen.
-	 * Automatically generated based on {@link ModularItemModule.DrawImages} if not explicitly specified.
-	 */
-	drawImages: boolean;
+	scriptHooks: ExtendedItemScriptHookStruct<ModularItemData, ModularItemOption>;
 }
 
 /** A 3-tuple containing data for drawing a button in a modular item screen. A button definition takes the
@@ -2402,60 +2686,31 @@ type TypedItemSetTypeCallback = (NewType: string) => void;
  * An object containing typed item configuration for an asset. Contains all of the necessary information for the item's
  * load, draw & click handlers.
  */
-interface TypedItemData {
-	/** The asset reference */
-	asset: Asset;
+interface TypedItemData extends ExtendedItemData<TypedItemOption> {
 	/** The list of extended item options available for the item */
-	options: ExtendedItemOption[];
-	/** A key uniquely identifying the asset */
-	key: string;
-	/** The common prefix used for all extended item functions associated with the asset */
-	functionPrefix: string;
+	options: TypedItemOption[];
 	/** A record containing various dialog keys used by the extended item screen */
-	dialog: {
+	dialogPrefix: {
 		/** The dialog key for the item's load text (usually a prompt to select the type) */
-		load: string;
+		header: string;
 		/** The prefix used for dialog keys representing the display names of the item's types */
-		typePrefix: string;
+		option: string;
 		/** The prefix used for dialog keys representing the item's chatroom messages when its type is changed */
-		chatPrefix: string | ExtendedItemChatCallback<ExtendedItemOption>;
+		chat: string | ExtendedItemChatCallback<TypedItemOption>;
 		/** The prefix used for dialog keys representing an NPC's reactions to item type changes */
-		npcPrefix: string | ExtendedItemNPCCallback<ExtendedItemOption>;
+		npc: string | ExtendedItemNPCCallback<TypedItemOption>;
 	};
-	/**
-	 * An array of the chat message tags that should be included in the item's
-	 * chatroom messages. Defaults to [{@link CommonChatTags.SOURCE_CHAR}, {@link CommonChatTags.DEST_CHAR}]
-	 */
-	chatTags: CommonChatTags[];
-	/**
-	 * Contains custom dictionary entries in the event that the base ones do not suffice.
-	 */
-	dictionary?: TypedItemDictionaryCallback[];
 	/**
 	 * The chat message setting for the item. This can be provided to allow
 	 * finer-grained chatroom message keys for the item. Defaults to {@link TypedItemChatSetting.TO_ONLY}
 	 */
-	chatSetting?: TypedItemChatSetting;
-	/** A boolean indicating whether or not images should be drawn in this item's extended item menu. Defaults to `true` */
-	drawImages?: boolean;
+	chatSetting: TypedItemChatSetting;
 	/**
 	 * A recond containing functions that are run on load, click, draw, exit, validate and publishaction,
 	 * with the original archetype function and parameters passed on to them. If undefined, these are ignored.
 	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
 	 */
-	scriptHooks?: {
-		load?: (next: () => void) => void,
-		click?: (next: () => void) => void,
-		draw?: (next: () => void) => void,
-		exit?: () => void,
-		validate?: ExtendedItemValidateScriptHookCallback<ExtendedItemOption>,
-		publishAction?: ExtendedItemPublishActionCallback<ExtendedItemOption>,
-	};
-	/**
-	 * To-be initialized properties independent of the selected item module(s).
-	 * Relevant if there are properties that are (near) exclusively managed by {@link TypedItemData.scriptHooks} functions.
-	 */
-	BaselineProperty: ItemProperties | null;
+	scriptHooks: ExtendedItemScriptHookStruct<TypedItemData, TypedItemOption>;
 }
 
 //#region Validation
@@ -2527,28 +2782,28 @@ interface AppearanceValidationWrapper {
 
 //#region Vibrating items
 
-interface VibratingItemData {
-	/** A key uniquely identifying the asset */
-	key: string;
-	/** The asset reference */
-	asset: Asset;
+interface VibratingItemData extends ExtendedItemData<VibratingItemOption> {
 	/** The list of extended item options available for the item */
-	options: VibratorModeSet[];
-	/** The common prefix used for all extended item screen functions associated with the asset */
-	functionPrefix: string;
+	options: VibratingItemOption[];
+	/** The list with all groups of extended item options available for the item */
+	modeSet: VibratorModeSet[];
 	/** The common prefix used for all dynamic asset hook functions for the asset */
 	dynamicAssetsFunctionPrefix: string;
+	/** A record containing various dialog keys used by the extended item screen */
+	dialogPrefix: {
+		/** The dialog key for the item's load text (usually a prompt to select the type) */
+		header: string;
+		/** The prefix used for dialog keys representing the item's chatroom messages when its type is changed */
+		chat: string | ExtendedItemChatCallback<VibratingItemOption>;
+	};
 	/**
 	 * A record containing functions that are run on load, click, draw, exit, and validate, with the original archetype function
 	 * and parameters passed on to them. If undefined, these are ignored.
 	 * Note that scripthook functions must be loaded before `Female3DCGExtended.js` in `index.html`.
 	 */
-	scriptHooks: {
-		load?: (next: () => void) => void;
-		click?: (next: () => void) => void;
-		draw?: (next: () => void) => void;
-		exit?: () => void;
-	};
+	scriptHooks: ExtendedItemScriptHookStruct<VibratingItemData, VibratingItemOption>;
+	chatSetting: "default";
+	drawImages: false;
 }
 
 /**
@@ -2569,39 +2824,31 @@ interface StateAndIntensity {
  * An object containing typed item configuration for an asset. Contains all of the necessary information for the item's
  * load, draw & click handlers.
  */
-interface VariableHeightData {
-	/** The asset reference */
-	asset: Asset;
-	/** A key uniquely identifying the asset */
-	key: string;
-	/** The common prefix used for all extended item functions associated with the asset */
-	functionPrefix: string;
+interface VariableHeightData extends ExtendedItemData<VariableHeightOption> {
 	/** The highest Y co-ordinate that can be set  */
 	maxHeight: number;
 	/** The lowest Y co-ordinate that can be set  */
 	minHeight: number;
 	/** Settings for the range input element the user can use to change the height */
 	slider: VariableHeightSliderConfig;
-	/** The initial property to apply */
-	defaultProperty: ItemProperties;
 	/** A record containing various dialog keys used by the extended item screen */
-	dialog: {
+	dialogPrefix: {
+		/** The dialog key for the item's load text (usually a prompt to select the type) */
+		header: string,
 		/** The prefix used for dialog keys representing the item's chatroom messages when its type is changed */
-		chatPrefix: string | ExtendedItemChatCallback<ExtendedItemOption>;
+		chat: string | ExtendedItemChatCallback<VariableHeightOption>;
 		/** The prefix used for dialog keys representing an NPC's reactions to item type changes */
-		npcPrefix: string | ExtendedItemNPCCallback<ExtendedItemOption>;
+		npc: string | ExtendedItemNPCCallback<VariableHeightOption>;
 	};
-	/**
-	 * An array of the chat message tags that should be included in the item's
-	 * chatroom messages. Defaults to [{@link CommonChatTags.SOURCE_CHAR}, {@link CommonChatTags.DEST_CHAR}]
-	 */
-	chatTags: CommonChatTags[];
+	scriptHooks: ExtendedItemScriptHookStruct<VariableHeightData, VariableHeightOption>;
 	/** The function that handles finding the current variable height setting */
-	getHeight: (property: ItemProperties) => number;
+	getHeight: (property: ItemProperties) => number | null;
 	/** The function that handles applying the height setting to the character */
 	setHeight: (property: ItemProperties, height: number, maxHeight: number, minHeight: number) => void;
 	/** The list of extended item options the current option was selected from, if applicable */
-	parentOptions: ExtendedItemOption[];
+	parentOptions: TypedItemOption[];
+	drawImages: false;
+	chatSetting: "default";
 }
 
 //#endregion
@@ -2862,7 +3109,7 @@ interface CommonDrawCallbacks {
 	drawImageColorizeBlink: DrawImageColorizeCallback;
 }
 
-interface DynamicDrawingData {
+interface DynamicDrawingData<T extends Record<string, any> = Record<string, unknown>> {
 	C: Character;
 	X: number;
 	Y: number;
@@ -2881,7 +3128,7 @@ interface DynamicDrawingData {
 	drawCanvas: DrawCanvasCallback;
 	drawCanvasBlink: DrawCanvasCallback;
 	AlphaMasks: RectTuple[];
-	PersistentData: <T>() => T;
+	PersistentData: () => T;
 }
 
 /**
@@ -2903,27 +3150,11 @@ interface DynamicBeforeDrawOverrides {
 
 type DynamicDrawTextEffect = "burn";
 
-/**
- * A dynamic BeforeDraw callback
- */
-type DynamicBeforeDrawCallback = (data: DynamicDrawingData) => DynamicBeforeDrawOverrides;
-
-/**
- * A dynamic AfterDraw callback
- */
-type DynamicAfterDrawCallback = (data: DynamicDrawingData) => void;
-
-
-interface DynamicScriptCallbackData {
+interface DynamicScriptCallbackData<T extends Record<string, any> = Record<string, unknown>> {
 	C: Character;
 	Item: Item;
-	PersistentData: () => any;
+	PersistentData: () => T;
 }
-
-/**
- * A dynamic ScriptDraw callback
- */
-type DynamicScriptDrawCallback = (data: DynamicScriptCallbackData) => void;
 
 // #endregion
 
@@ -3174,10 +3405,10 @@ interface LogNameType {
 	Management: "ClubMistress" | "ClubSlave" | "ReleasedFromOwner" | "MistressWasPaid",
 	"NPC-Amanda": "AmandaLover" | "AmandaCollared" | "AmandaCollaredWithCurfew" | "AmandaMistress",
 	"NPC-AmandaSarah": "AmandaSarahLovers",
-	"NPC-Jennifer": "JenniferLover" | "JenniferCollared" | "JenniferMistress",
+	"NPC-Jennifer": "JenniferLover" | "JenniferCollared" | "JenniferMistress" | "JenniferCollaredWithCurfew",
 	"NPC-Sarah": "SarahLover" | "SarahCollared" | "SarahCollaredWithCurfew",
 	"NPC-SarahIntro": "SarahWillBePunished" | "SarahCameWithPlayer",
-	"NPC-Sidney": "SidneyLover" | "SidneyMistress" | "SidneyCollared",
+	"NPC-Sidney": "SidneyLover" | "SidneyMistress" | "SidneyCollared" | "SidneyCollaredWithCurfew",
 	// NOTE: A number of owner rules can have arbitrary suffices, and can thus not be expressed as string literals
 	OwnerRule: (
 		"BlockChange"

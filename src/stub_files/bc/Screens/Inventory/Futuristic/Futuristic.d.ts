@@ -7,22 +7,25 @@
 declare function FuturisticAccess(OriginalFunction: null | (() => void), DeniedFunction: () => void): boolean;
 /**
  * Hook script for injecting futuristic features into an archetypical item
+ * @param {null | ExtendedItemData<any>} Data - The extended item data (if any)
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @returns {boolean} - Whether the validation was successful or not.
  */
-declare function FuturisticAccessLoad(OriginalFunction?: null | (() => void)): boolean;
+declare function FuturisticAccessLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void)): boolean;
 /**
  * Hook script for injecting futuristic features into an archetypical item
+ * @param {null | ExtendedItemData<any>} Data - The extended item data (if any)
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @returns {boolean} - Whether the validation was successful or not.
  */
-declare function FuturisticAccessClick(OriginalFunction?: null | (() => void)): boolean;
+declare function FuturisticAccessClick(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void)): boolean;
 /**
  * Hook script for injecting futuristic features into an archetypical item
+ * @param {null | ExtendedItemData<any>} Data - The extended item data (if any)
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
  * @returns {boolean} - Whether the validation was successful or not.
  */
-declare function FuturisticAccessDraw(OriginalFunction?: null | (() => void)): boolean;
+declare function FuturisticAccessDraw(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void)): boolean;
 /**
  * Hook script for injecting futuristic features into an archetypical item
  * @returns {void} - Nothing
@@ -30,15 +33,9 @@ declare function FuturisticAccessDraw(OriginalFunction?: null | (() => void)): b
 declare function FuturisticAccessExit(): void;
 /**
  * Hook script for injecting futuristic features into a typed or modular item
- * @param {ExtendedItemValidateCallback<OptionType>} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @param {Character} C - The character to validate the option
- * @param {Item} Item - The equipped item
- * @param {OptionType} Option - The selected option
- * @param {OptionType} CurrentOption - The currently selected option
- * @returns {string} - Returns false and sets DialogExtendedMessage, if the chosen option is not possible.
- * @template OptionType
+ * @type {ExtendedItemScriptHookCallbacks.Validate<ExtendedItemData<any>, any>}
  */
-declare function FuturisticAccessValidate<OptionType>(OriginalFunction: ExtendedItemValidateCallback<OptionType>, C: Character, Item: Item, Option: OptionType, CurrentOption: OptionType): string;
+declare function FuturisticAccessValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any) => string, C: Character, Item: Item, Option: any, CurrentOption: any): string;
 declare function InventoryItemFuturisticLoadAccessDenied(): void;
 declare function InventoryItemFuturisticDrawAccessDenied(): void;
 declare function InventoryItemFuturisticClickAccessDenied(): void;

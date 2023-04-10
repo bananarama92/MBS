@@ -1,17 +1,17 @@
-/**
- * Draw the item extension screen
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
- */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawFunc(OriginalFunction: () => void): void;
-/**
- * Catches the item extension clicks
- * @param {() => void} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @returns {void} Nothing
- */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickFunc(OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
+declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
+declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
 declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-/** @type {DynamicBeforeDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData): DynamicBeforeDrawOverrides;
-/** @type {DynamicScriptDrawCallback} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData): void;
+/**
+ * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ */
+/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
+type ShockUnitPersistentData = {
+    ChangeTime?: number;
+    DisplayCount?: number;
+    LastTriggerCount?: number;
+};

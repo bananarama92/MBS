@@ -63,6 +63,12 @@ declare function TranslationAssetProcess(T: string[]): void;
  */
 declare function TranslationAsset(Family: IAssetFamily): void;
 /**
+ * Returns the translated language name for the given code.
+ * @param {string} code - The language code to get the human-readable name of.
+ * @param {boolean} [english] - Get the english name of it.
+ */
+declare function TranslationGetLanguageName(code: string, english?: boolean): string;
+/**
  * Changes the current language and save the new selected language to local storage
  * @returns {void} - Nothing
  */
