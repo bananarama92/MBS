@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.5.10
+* Update type annotations for R91Beta1
+* Add a few minor R91Beta1 fixes
+
 ## v0.5.9
 * Fix a bug that could cause MBS to crash if zero flags were selected for a particular fortune wheel item set.
 
