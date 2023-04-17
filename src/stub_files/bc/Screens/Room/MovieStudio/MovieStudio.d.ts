@@ -4,20 +4,25 @@
  */
 declare function MovieStudioCanPlayInMovie(): boolean;
 /**
- * Returns TRUE if the player can receive the camera as a payment
+ * Returns TRUE if the player can receive the camera as payment
  * @returns {boolean} - TRUE if the player can get the item
  */
 declare function MovieStudioCanGetCamera(): boolean;
 /**
- * Returns TRUE if the player can receive the gavel as a payment
+ * Returns TRUE if the player can receive the gavel as payment
  * @returns {boolean} - TRUE if the player can get the item
  */
 declare function MovieStudioCanGetGavel(): boolean;
 /**
- * Returns TRUE if the player can receive the long duster as a payment
+ * Returns TRUE if the player can receive the long duster as payment
  * @returns {boolean} - TRUE if the player can get the item
  */
 declare function MovieStudioCanGetLongDuster(): boolean;
+/**
+ * Returns TRUE if the player can receive the for sale sign as payment
+ * @returns {boolean} - TRUE if the player can get the item
+ */
+declare function MovieStudioCanGetForSaleSign(): boolean;
 /**
  * Returns TRUE if the daily movie is of the current type
  * @param {string} Type - The daily movie type
@@ -126,6 +131,11 @@ declare function MovieStudioGetGavel(): void;
  * @returns {void} - Nothing
  */
 declare function MovieStudioGetLongDuster(): void;
+/**
+ * Adds the for sale sign to the player inventory
+ * @returns {void} - Nothing
+ */
+declare function MovieStudioGetForSaleSign(): void;
 /**
  * Adds the movie salary to the player
  * @returns {void} - Nothing

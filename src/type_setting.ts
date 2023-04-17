@@ -2,7 +2,6 @@
 
 "use strict";
 
-import { includes } from "common";
 import { validateCharacter } from "common_bc";
 
 /**
@@ -58,20 +57,9 @@ const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> =
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
 function setTypeNoArch(item: Item, character: Character, type: string): void {
     if (item.Asset.Name === "FuturisticVibrator") {
-        if (GameVersion === "R90") {
-            const advancedModes = VibratorModeOptions[VibratorModeSet.ADVANCED].map(i => i.Name);
-            if (character.ArousalSettings?.DisableAdvancedVibes && includes(advancedModes, type)) {
-                return;
-            }
-
-            // @ts-expect-error
-            VibratorModeSetMode(item, type);
-            CharacterRefresh(character, false);
-        } else {
-            const options = VibratorModeGetOptions();
-            const option = options.find(o => o.Name === type) || VibratorModeOff;
-            TypedItemSetOption(character, item, options, option);
-        }
+        const options = VibratorModeGetOptions();
+        const option = options.find(o => o.Name === type) || VibratorModeOff;
+        TypedItemSetOption(character, item, options, option);
     } else {
         console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
     }

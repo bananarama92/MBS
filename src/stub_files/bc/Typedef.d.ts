@@ -314,7 +314,8 @@ type AssetAttribute =
 	"Skirt" |
 	"ShortHair" | "SmallEars" | "NoEars" | "NoseRing" | "HoodieFix" |
 	"CanAttachMittens" |
-	"PenisLayer" | "PenisCover"
+	"PenisLayer" | "PussyLayer" | "GenitaliaCover" |
+	"CagePlastic2" | "CageTechno" | "CageFlat"
 	;
 
 type CraftingStatusType = 0 | 1 | 2;
@@ -1125,7 +1126,7 @@ interface ResolvedTintDefinition extends TintDefinition {
 
 interface ExpressionTriggerBase<GroupName extends ExpressionGroupName> {
 	Group: GroupName;
-	Name: ExpressionNameMap[GroupName];
+	Name: null | ExpressionNameMap[GroupName];
 	Timer: number;
 }
 type ExpressionTriggerMap<T> = T extends ExpressionGroupName ? ExpressionTriggerBase<T> : never;
@@ -1676,6 +1677,7 @@ interface NPCCharacter {
 interface NPCCharacter {
 	TrialDone?: boolean;
 	CanGetLongDuster?: boolean;
+	CanGetForSaleSign?: boolean;
 	OweFavor?: boolean;
 	KissCount?: number;
 	MasturbateCount?: number;

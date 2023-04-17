@@ -1,5 +1,5 @@
-declare let InventoryItemMiscLoversTimerPadlockInit: undefined | ((C: Character, Item: Item) => boolean);
-declare function InventoryItemMiscLoversTimerPadlocInit(C: Character, Item: Item): boolean;
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemMiscLoversTimerPadlockInit(C: Character, Item: Item): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemMiscLoversTimerPadlockLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

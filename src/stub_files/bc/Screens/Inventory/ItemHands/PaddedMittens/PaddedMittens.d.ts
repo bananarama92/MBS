@@ -1,3 +1,5 @@
+/** @type {ExtendedItemCallbacks.Init} */
+declare function InventoryItemHandsPaddedMittensInit(C: Character, item: Item, refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemHandsPaddedMittensLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

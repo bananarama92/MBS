@@ -293,12 +293,12 @@ declare function CharacterSetActivePose(C: Character, NewPose: null | AssetPoseN
  *
  * @param {Character} C - Character for which to set the expression of
  * @param {AssetGroupBodyName | "Eyes1"} AssetGroup - Asset group for the expression
- * @param {ExpressionName} Expression - Name of the expression to use
+ * @param {null | ExpressionName} Expression - Name of the expression to use
  * @param {number} [Timer] - Optional: time the expression will last
  * @param {string|string[]} [Color] - Optional: color of the expression to set
  * @returns {void} - Nothing
  */
-declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: ExpressionName, Timer?: number, Color?: string | string[]): void;
+declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[]): void;
 /**
  * Resets the character's facial expression to the default
  * @param {Character} C - Character for which to reset the expression of
