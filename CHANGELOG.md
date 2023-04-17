@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.5.11
+* Add formal R91 support and drop R90 support
+* Fix certain wheel checks being skipped if an item is added without replacement
+
 ## v0.5.10
 * Update type annotations for R91Beta1
 * Add a few minor R91Beta1 fixes
