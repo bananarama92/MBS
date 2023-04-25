@@ -303,7 +303,7 @@ export function fortuneWheelEquip(
     const blockingItems = getBlockSuperset(
         itemList,
         character.Appearance.map(i => {
-            return { Group: i.Asset.Group.Name, Name: i.Asset.Name, Type: i.Property?.Type };
+            return { Group: i.Asset.Group.Name, Name: i.Asset.Name, Type: i.Property?.Type, NoEquip: true };
         }),
         character,
     );
@@ -313,7 +313,7 @@ export function fortuneWheelEquip(
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
     const isClubSlave = LogQuery("ClubSlave", "Management");
-    for (const {Name, Group, Equip} of <FWItem[]>[...blockingItems, ...itemList]) {
+    for (const {Name, Group, Equip, NoEquip} of <(FWItem & { NoEquip?: boolean })[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
         const equip = typeof Equip === "function" ? Equip(character) : true;
@@ -325,22 +325,21 @@ export function fortuneWheelEquip(
         } else if (!equip) {
             equipCallbackOutputs.add(Group);
             continue;
-        } else if (oldItem == null) {
-            continue;
         } else {
-            const equipChecks = {
-                "Locked item equipped": !canUnlock(oldItem, character),
-                "InventoryBlockedOrLimited": InventoryBlockedOrLimited(character, { Asset: asset }),
-                "InventoryAllow": !InventoryAllow(character, asset, asset.Prerequisite, false),
+            const equipChecks: Record<string, boolean> = {
                 "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, <AssetGroupItemName>Group, false),
-                "InventoryChatRoomAllow": !InventoryChatRoomAllow(asset.Category ?? []),
-                "Blocked via Club Slave Collar": isClubSlave && asset.Group.Category === "Appearance",
+                "Locked item equipped": oldItem == null ? false : !canUnlock(oldItem, character),
             };
+            if (!NoEquip) {
+                equipChecks["InventoryBlockedOrLimited"] = InventoryBlockedOrLimited(character, { Asset: asset });
+                equipChecks["InventoryChatRoomAllow"] = !InventoryChatRoomAllow(asset.Category ?? []);
+                equipChecks["Blocked via Club Slave Collar"] = isClubSlave && asset.Group.Category === "Appearance";
+            }
 
             const equipFailure = entries(equipChecks).filter(tup => tup[1]);
             if (equipFailure.length !== 0) {
                 equipFailureRecord[asset.Description] = equipFailure.map(tup => tup[0]);
-            } else {
+            } else if (oldItem != null) {
                 InventoryRemove(character, Group, false);
             }
         }
@@ -351,6 +350,9 @@ export function fortuneWheelEquip(
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const errList = equipFailureRecord[asset?.Description ?? Name];
         if (asset == null || errList !== undefined || equipCallbackOutputs.has(Group)) {
+            continue;
+        } else if (!InventoryAllow(character, asset, asset.Prerequisite, false)) {
+            equipFailureRecord[asset.Description] = ["InventoryAllow"];
             continue;
         }
 
