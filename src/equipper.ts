@@ -220,7 +220,9 @@ function canUnlock(item: Item, character: Character): boolean {
         if (lock == null) {
             return false;
         }
-        return !(lock.Asset.OwnerOnly || lock.Asset.LoverOnly || item.Asset.OwnerOnly || item.Asset.LoverOnly);
+
+        const fields = ["OwnerOnly", "LoverOnly", "FamilyOnly"] as const;
+        return !fields.some(i => lock.Asset[i] || item.Asset[i]);
     }
 
     const ruleState = BCX_MOD_API.getRuleState("block_keyuse_self");
