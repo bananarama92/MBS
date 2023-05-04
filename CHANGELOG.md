@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.5.12
+* Preliminary R92Beta1 compatibility changes
+
 ## v0.5.11
 * Add formal R91 support and drop R90 support
 * Fix certain wheel checks being skipped if an item is added without replacement
