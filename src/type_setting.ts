@@ -2,7 +2,8 @@
 
 "use strict";
 
-import { validateCharacter } from "common_bc";
+import { waitFor } from "common";
+import { validateCharacter, settingsMBSLoaded } from "common_bc";
 
 /**
  * Load and assign the type to the passed item without refreshing.
@@ -25,7 +26,7 @@ export function itemSetType(item: Item, character: Character, type: null | strin
         return;
     } else if (asset.Archetype) {
         const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
-        return setType(item, character, type);
+        return setType(character, item, type);
     } else {
         return setTypeNoArch(item, character, type);
     }
@@ -39,19 +40,34 @@ export function itemSetType(item: Item, character: Character, type: null | strin
  */
 export function getBaselineProperty(asset: Asset, character: Character, type: null | string): ItemProperties {
     const item: Item = { Asset: asset };
+    ExtendedItemInit(character, item, false);
     itemSetType(item, character, type);
     return item.Property ?? {};
 }
 
 /** Type-setting callback type for {@link ITEM_SET_TYPE_DICT} */
-type setTypeCallback = (item: Item, character: Character, type: string) => void;
+type setTypeCallback = (C: Character, item: Item, type: string) => void;
 
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
-const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({
-    typed: InventoryWearCraftTyped,
-    vibrating: InventoryWearCraftVibrating,
-    modular: InventoryWearCraftModular,
-    variableheight: () => { return; },
+let ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>>;
+waitFor(settingsMBSLoaded).then(() => {
+    if (typeof InventoryWearCraftTyped === "function") { // R91
+        ITEM_SET_TYPE_DICT = Object.freeze({
+            typed: (C, item, type) => InventoryWearCraftTyped(item, C, type),
+            vibrating: (C, item, type) => InventoryWearCraftVibrating(item, C, type),
+            modular: (C, item, type) => InventoryWearCraftModular(item, C, type),
+            variableheight: () => { return; },
+            text: () => { return; },
+        });
+    } else {
+        ITEM_SET_TYPE_DICT = Object.freeze({ // R92
+            typed: (...args) => TypedItemSetOptionByName(...args),
+            vibrating: (...args) => VibratorModeSetOptionByName(...args),
+            modular: (...args) => ModularItemSetOptionByName(...args),
+            variableheight: () => { return; },
+            text: () => { return; },
+        });
+    }
 });
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
