@@ -2,6 +2,17 @@
 
 import { validateInt } from "common";
 
+/** Check whether we have detected a gamepad. */
+function controllerIsActive(): boolean {
+    if (typeof ControllerIsActive === "function") { // R92
+        return ControllerIsActive();
+    } else if (typeof ControllerActive === "boolean") { // R91
+        return ControllerActive;
+    } else {
+        return false;
+    }
+}
+
 export abstract class MBSScreen {
     /** The name of the screen's background. */
     static readonly background: string = "Sheet";
@@ -37,7 +48,7 @@ export abstract class MBSScreen {
     /** Called when screen is loaded */
     load(): void {
         const prevScreen = CurrentScreen;
-        if (ControllerActive == true) {
+        if (controllerIsActive()) {
             ClearButtons();
         }
 
