@@ -72,7 +72,7 @@ jobs:
         uses: actions/deploy-pages@v2
       - name: Attach wheels to GitHub release
         if: github.event_name == 'release'
-        uses: AButler/upload-release-assets@v2.0
+        uses: AButler/upload-release-assets@v2.0.2
         with:
           files: 'dist/main/package-lock.json;dist/main/mbs.js;dist/main/mbs.js.map'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
