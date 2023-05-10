@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.5.13
+* Full R92Beta1 support
+* Various misc Github Actions related updates
+
 ## v0.5.12
 * Preliminary R92Beta1 compatibility changes
 
