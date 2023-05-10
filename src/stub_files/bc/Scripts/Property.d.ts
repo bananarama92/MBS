@@ -58,40 +58,19 @@ declare function PropertyAutoPunishParseMessage(Sensitivity: 0 | 1 | 2 | 3, msg:
  */
 declare function PropertyAutoPunishDetectSpeech(Item: Item, LastMessageLen?: number | null): boolean;
 /**
- * Load function for items with text input fields.
- * @param {null | ExtendedItemData<any>} Data - The items extended item data
- * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
- * @param {PropertyTextEventListenerRecord} EventListeners - A record with custom event listeners for one or more input fields.
- * @returns {HTMLInputElement[]} An array with the new or pre-existing text input elements
+ * Merge all passed item properties into the passed output, merging (and shallow copying) arrays if necessary.
+ * @param {ItemProperties} output - The to be updated properties
+ * @param {readonly ItemProperties[]} args - The additional item properties to be merged into the output
+ * @returns {ItemProperties} - The passed output modified inplace
  */
-declare function PropertyTextLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), EventListeners?: PropertyTextEventListenerRecord): HTMLInputElement[];
+declare function PropertyUnion(output: ItemProperties, ...args: readonly ItemProperties[]): ItemProperties;
 /**
- * Draw handler for extended item screens with text input fields.
- * @param {null | ExtendedItemData<any>} Data - The items extended item data
- * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
- * @param {number} X - Center point of the text input field(s) on the X axis
- * @param {number} Y - Center point of the first text input field on the Y axis
- * @param {number} YSpacing - The spacing of Y coordinates between multiple input fields
- * @returns {HTMLInputElement[]} An array with all text input elements
+ * Remove all passed item properties from the passed output, removing (and shallow copying) array entries if necessary.
+ * @param {ItemProperties} output - The to-be updated properties
+ * @param {readonly ItemProperties[]} args - The additional item properties to be removed from the output
+ * @returns {ItemProperties} - The passed output modified inplace
  */
-declare function PropertyTextDraw(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), X?: number, Y?: number, YSpacing?: number): HTMLInputElement[];
-/**
- * Exit function for items with text input fields.
- * @param {null | ExtendedItemData<any>} Data - The items extended item data
- * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
- * @param {boolean} Refresh - Whether character parameters and the respective item should be refreshed or not
- * @param {string} TextChange - The action tag for changing (but not removing) the text
- * @param {string} TextRemove - The action tag for the complete removal of the text
- * @returns {void} Nothing
- */
-declare function PropertyTextExit(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), Refresh?: boolean, TextChange?: string, TextRemove?: string): void;
-/**
- * Validation function for items with text input fields.
- * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point.
- * @param {Item} Item - The equipped item
- * @returns {boolean} - Whether the validation was successful
- */
-declare function PropertyTextValidate(OriginalFunction: null | (() => void), Item?: Item): boolean;
+declare function PropertyDifference(output: ItemProperties, ...args: readonly ItemProperties[]): ItemProperties;
 /**
  * Property.js
  * -----------
@@ -117,13 +96,3 @@ declare let PropertyAutoPunishHandled: Set<AssetGroupName>;
  * @type {readonly string[]}
  */
 declare const PropertyAutoPunishKeywords: readonly string[];
-/**
- * Throttled callback for handling text changes.
- * @type {PropertyTextEventListener}
- */
-declare const PropertyTextChange: PropertyTextEventListener;
-/**
- * Throttled callback for handling text changes that do not require a canvas.
- * @type {PropertyTextEventListener}
- */
-declare const PropertyTextChangeNoCanvas: PropertyTextEventListener;

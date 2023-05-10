@@ -278,13 +278,13 @@ declare function ChatRoomClearAllElements(): void;
  * Starts the chatroom selection screen.
  * @param {ChatRoomSpaceType} Space - Name of the chatroom space
  * @param {ChatRoomGame} Game - Name of the chatroom game to play
- * @param {string} LeaveRoom - Name of the room to go back to when exiting chatsearch.
- * @param {ModuleType} LeaveSpace - Name of the space to go back to when exiting chatsearch.
+ * @param {null | string} LeaveRoom - Name of the room to go back to when exiting chatsearch.
+ * @param {null | ModuleType} LeaveSpace - Name of the space to go back to when exiting chatsearch.
  * @param {string} Background - Name of the background to use in chatsearch.
  * @param {BackgroundTag[]} BackgroundTagList - List of available backgrounds in the chatroom space.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomStart(Space: ChatRoomSpaceType, Game: ChatRoomGame, LeaveRoom: string, LeaveSpace: ModuleType, Background: string, BackgroundTagList: BackgroundTag[]): void;
+declare function ChatRoomStart(Space: ChatRoomSpaceType, Game: ChatRoomGame, LeaveRoom: null | string, LeaveSpace: null | ModuleType, Background: string, BackgroundTagList: BackgroundTag[]): void;
 /**
  * Create the list of chat room menu buttons
  * @returns {void} - Nothing
@@ -727,18 +727,6 @@ declare function ChatRoomSyncRoomProperties(data: object): void;
  * @param {object} data - Object containing the member numbers of the swapped characters.
  * @returns {void} - Nothing.
  */
-declare function ChatRoomSyncSwapPlayers(data: object): void;
-/**
- * Handles the moving of a player by a room administrator.
- * @param {object} data - Object containing the member numbers of the swapped characters.
- * @returns {void} - Nothing.
- */
-declare function ChatRoomSyncMovePlayer(data: object): void;
-/**
- * Handles the swapping of two players by a room administrator.
- * @param {object} data - Object containing the member numbers of the swapped characters.
- * @returns {void} - Nothing.
- */
 declare function ChatRoomSyncReorderPlayers(data: object): void;
 /**
  * Updates a single character in the chatroom
@@ -903,10 +891,10 @@ declare function ChatRoomAllowItem(data: object): void;
 declare function DialogChangeClothes(): void;
 /**
  * Triggered when the player selects an ownership dialog option. (It can change money and reputation)
- * @param {"Propose" | "Accept"} RequestType - Type of request being performed.
+ * @param {"Propose" | "Accept" | "Release"} RequestType - Type of request being performed.
  * @returns {void} - Nothing
  */
-declare function ChatRoomSendOwnershipRequest(RequestType: "Propose" | "Accept"): void;
+declare function ChatRoomSendOwnershipRequest(RequestType: "Propose" | "Accept" | "Release"): void;
 /**
  * Triggered when the player selects an lovership dialog option. (It can change money and reputation)
  * @param {"Propose" | "Accept" | "Break"} RequestType - Type of request being performed.
@@ -927,14 +915,22 @@ declare function ChatRoomForbiddenWords(): void;
 /**
  * Sends a rule / restriction / punishment to the player's slave/lover client, it will be handled on the slave/lover's
  * side when received.
- * @param {string} RuleType - The rule selected.
+ * @param {LogNameType[keyof LogNameType]} RuleType - The rule selected.
  * @param {"Quest" | "Leave"} Option - If the rule is a quest or we should just leave the dialog.
  * @param {"Owner" | "Lover"} Sender - Type of the sender
  * @returns {void} - Nothing
  */
-declare function ChatRoomSendRule(RuleType: string, Option: "Quest" | "Leave", Sender: "Owner" | "Lover"): void;
-declare function ChatRoomGetLoverRule(RuleType: any): boolean;
-declare function ChatRoomGetOwnerRule(RuleType: any): boolean;
+declare function ChatRoomSendRule(RuleType: LogNameType[keyof LogNameType], Option: "Quest" | "Leave", Sender: "Owner" | "Lover"): void;
+/**
+ * @param {LogNameType["LoverRule"]} RuleType
+ * @returns {boolean}
+ */
+declare function ChatRoomGetLoverRule(RuleType: LogNameType["LoverRule"]): boolean;
+/**
+ * @param {LogNameType["OwnerRule"]} RuleType
+ * @returns {boolean}
+ */
+declare function ChatRoomGetOwnerRule(RuleType: LogNameType["OwnerRule"]): boolean;
 /**
  * Gets a rule from the current character
  * @param {LogNameType["OwnerRule" | "LoverRule"]} RuleType - The name of the rule to retrieve.
@@ -1016,10 +1012,10 @@ declare function ChatRoomGetLoadRules(C: Character | number): void;
 /**
  * Handles a response from another player containing the rules that the current player is allowed to read.
  * @param {Character} C - Character to set the rules on
- * @param {LogRecord[]} Rule - An array of rules that the current player can read.
+ * @param {readonly LogRecord[]} Rule - An array of rules that the current player can read.
  * @returns {void} - Nothing
  */
-declare function ChatRoomSetLoadRules(C: Character, Rule: LogRecord[]): void;
+declare function ChatRoomSetLoadRules(C: Character, Rule: readonly LogRecord[]): void;
 /**
  * Take a screenshot of all characters in the chatroom
  * @returns {void} - Nothing

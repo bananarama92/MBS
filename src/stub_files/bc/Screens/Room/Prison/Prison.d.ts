@@ -22,6 +22,12 @@ declare function PrisonCharacterAppearanceAvailable(C: any, AppearanceName: any,
 declare function PrisonCharacterAppearanceGroupAvailable(C: any, AppearanceGroup: any): boolean;
 declare function PrisonCellPlayerIn(): void;
 declare function PrisonCellPlayerOut(): void;
+/**
+ * @param {InventoryItem[]} items
+ */
+declare function PrisonSaveConfiscatedItems(items: InventoryItem[]): void;
+/** */
+declare function PrisonRestoreConfiscatedItems(): void;
 declare function PrisonMaidLeave(): void;
 declare function PrisonCellRelease(C: any): void;
 declare function PrisonHavySearch(C: any): void;
@@ -80,18 +86,6 @@ declare var PrisonBackground: string;
 /** @type {null | number} */
 declare var PrisonNextEventTimer: null | number;
 declare var PrisonNextEvent: boolean;
-/** @type {boolean} */
-declare var PrisonerMetalCuffsKey: boolean;
-/** @type {boolean} */
-declare var PrisonerMetalPadlockKey: boolean;
-/** @type {boolean} */
-declare var PrisonerIntricatePadlockKey: boolean;
-/** @type {boolean} */
-declare var PrisonerSleepingPills: boolean;
-/** @type {boolean} */
-declare var PrisonerSpankingToys: boolean;
-/** @type {InventoryItem[] | null} */
-declare var PrisonerConfiscatedHandhelds: InventoryItem[] | null;
 declare var PrisonBehavior: number;
 /** @type {null | NPCCharacter} */
 declare var PrisonMaid: null | NPCCharacter;

@@ -51,6 +51,7 @@ declare function MainHallHasOwnerOrLoverItemAndMaidsNotDisabled(): boolean;
 declare function MainHallHasNoOwnerOrLoverItemAndMaidsNotDisabled(): boolean;
 declare function MainHallHasOwnerItemAndMaidsNotDisabled(): boolean;
 declare function MainHallHasLoverItemAndMaidsNotDisabled(): boolean;
+declare function MainHallHasFamilyItemAndMaidsNotDisabled(): boolean;
 declare function MainHallHasSlaveCollarAndMaidsNotDisabled(): boolean;
 declare function MainHallPlayerNeedsHelpAndHasNoOwnerOrLoverItemAndMaidsNotDisabled(): boolean;
 /**
@@ -197,6 +198,7 @@ declare var MainHallIsMaid: boolean;
 declare var MainHallIsHeadMaid: boolean;
 declare var MainHallHasOwnerLock: boolean;
 declare var MainHallHasLoverLock: boolean;
+declare var MainHallHasFamilyLock: boolean;
 declare var MainHallHasSlaveCollar: boolean;
 /** The max number of known tips */
 declare var MainHallMaxTip: number;

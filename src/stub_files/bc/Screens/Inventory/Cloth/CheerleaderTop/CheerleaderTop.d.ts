@@ -1,17 +1,5 @@
-/** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryClothCheerleaderTopInit(C: Character, Item: Item, Refresh: boolean): boolean;
-/** @type {ExtendedItemCallbacks.Load} */
-declare function InventoryClothCheerleaderTopLoad(): void;
-/** @type {ExtendedItemCallbacks.Draw} */
-declare function InventoryClothCheerleaderTopDraw(): void;
-/** @type {ExtendedItemCallbacks.Click} */
-declare function InventoryClothCheerleaderTopClick(): void;
-/** @type {ExtendedItemCallbacks.Exit} */
-declare function InventoryClothCheerleaderTopExit(): void;
-/**
- * @param {DynamicDrawingData} data
- */
-declare function AssetsClothCheerleaderTopAfterDraw({ CA, C, A, G, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color }: DynamicDrawingData): void;
+/** @type {ExtendedItemScriptHookCallbacks.AfterDraw<TextItemData>} */
+declare function AssetsClothCheerleaderTopAfterDrawHook(data: TextItemData, originalFunction: (drawData: DynamicDrawingData<Record<string, unknown>>) => void, { CA, C, A, G, X, Y, L, drawCanvas, drawCanvasBlink, AlphaMasks, Color }: DynamicDrawingData<Record<string, unknown>>): void;
 declare namespace AssetsClothCheerleaderTopData {
     namespace _Small {
         const shearFactor: number;

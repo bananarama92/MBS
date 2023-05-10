@@ -28,8 +28,9 @@ declare function InventoryItemCreate(C: Character, Group: AssetGroupName, Name: 
 * @param {string} DelItemName - The name of the item to delete
 * @param {AssetGroupName} DelItemGroup - The group name of the item to delete
 * @param {boolean} [Push=true] - Set to TRUE to push to the server
+* @return {InventoryItem}
 */
-declare function InventoryDelete(C: Character, DelItemName: string, DelItemGroup: AssetGroupName, Push?: boolean): void;
+declare function InventoryDelete(C: Character, DelItemName: string, DelItemGroup: AssetGroupName, Push?: boolean): InventoryItem;
 /**
  * Deletes all currently-owned items from a given group.
  *
@@ -160,30 +161,6 @@ declare function InventoryCraftCount(C: Character, Property: CraftingPropertyTyp
 */
 declare function InventoryCraftPropertyIs(Item: Item, Property: CraftingPropertyType): boolean;
 /**
-* Helper function for `InventoryWearCraft` for handling Modular items
-* @param {Item} Item - The item being applied
-* @param {Character} C - The character that must wear the item
-* @param {string} Type - The type string for a modular item
-* @returns {void}
-*/
-declare function InventoryWearCraftModular(Item: Item, C: Character, Type: string): void;
-/**
-* Helper function for `InventoryWearCraft` for handling Typed items
-* @param {Item} Item - The item being applied
-* @param {Character} C - The character that must wear the item
-* @param {string} Type - The type string for a modular item
-* @returns {void}
-*/
-declare function InventoryWearCraftTyped(Item: Item, C: Character, Type: string): void;
-/**
-* Helper function for `InventoryWearCraft` for handling Vibrating items
-* @param {Item} Item - The item being applied
-* @param {Character} C - The character that must wear the item
-* @param {string} Type - The type string for a modular item
-* @returns {void}
-*/
-declare function InventoryWearCraftVibrating(Item: Item, C: Character, Type: string): void;
-/**
 * Sets the craft and type on the item, uses the achetype properties if possible
 * @param {Item} Item - The item being applied
 * @param {Character} C - The character that must wear the item
@@ -191,17 +168,18 @@ declare function InventoryWearCraftVibrating(Item: Item, C: Character, Type: str
 */
 declare function InventoryWearCraft(Item: Item, C: Character, Craft?: CraftingItem): void;
 /**
-* Makes the character wear an item on a body area
-* @param {Character} C - The character that must wear the item
-* @param {string} AssetName - The name of the asset to wear
-* @param {AssetGroupName} AssetGroup - The name of the asset group to wear
-* @param {string | string[]} [ItemColor] - The hex color of the item, can be undefined or "Default"
-* @param {number} [Difficulty] - The difficulty, on top of the base asset difficulty, to assign to the item
-* @param {number} [MemberNumber] - The member number of the character putting the item on - defaults to -1
-* @param {CraftingItem} [Craft] - The crafting properties of the item
-* @param {boolean} [Refresh] - Whether to refresh the character and push the changes to the server
-*/
-declare function InventoryWear(C: Character, AssetName: string, AssetGroup: AssetGroupName, ItemColor?: string | string[], Difficulty?: number, MemberNumber?: number, Craft?: CraftingItem, Refresh?: boolean): void;
+ * Makes the character wear an item on a body area
+ * @param {Character} C - The character that must wear the item
+ * @param {string} AssetName - The name of the asset to wear
+ * @param {AssetGroupName} AssetGroup - The name of the asset group to wear
+ * @param {string | string[]} [ItemColor] - The hex color of the item, can be undefined or "Default"
+ * @param {number} [Difficulty] - The difficulty, on top of the base asset difficulty, to assign to the item
+ * @param {number} [MemberNumber] - The member number of the character putting the item on - defaults to -1
+ * @param {CraftingItem} [Craft] - The crafting properties of the item
+ * @param {boolean} [Refresh] - Whether to refresh the character and push the changes to the server
+ * @returns {null | Item} - Thew newly created item or `null` if the asset does not exist
+ */
+declare function InventoryWear(C: Character, AssetName: string, AssetGroup: AssetGroupName, ItemColor?: string | string[], Difficulty?: number, MemberNumber?: number, Craft?: CraftingItem, Refresh?: boolean): null | Item;
 /**
 * Sets the difficulty to remove an item for a body area
 * @param {Character} C - The character that is wearing the item
@@ -307,7 +285,7 @@ declare function InventoryItemIsPickable(Item: Item): boolean;
  * @returns {undefined | (ItemProperties & Asset & AssetGroup)[Name]} - The value of the requested property for the given item. Returns undefined if the property or the
  * item itself does not exist.
  */
-declare function InventoryGetItemProperty<Name extends "Name" | "Gender" | "BuyGroup" | "ParentItem" | "Enable" | "Visible" | "NotVisibleOnScreen" | "Wear" | "Activity" | "AllowActivity" | "ActivityAudio" | "ActivityExpression" | "AllowActivityOn" | "PrerequisiteBuyGroups" | "Effect" | "Block" | "BlockRemotes" | "OpenPermission" | "OpenPermissionArm" | "OpenPermissionLeg" | "OpenPermissionChastity" | "Bonus" | "Expose" | "Hide" | "HideItem" | "HideItemExclude" | "Require" | "SetPose" | "AllowPose" | "HideForPose" | "PoseMapping" | "AllowActivePose" | "WhitelistActivePose" | "Value" | "Difficulty" | "SelfBondage" | "SelfUnlock" | "ExclusiveUnlock" | "Random" | "RemoveAtLogin" | "LayerVisibility" | "RemoveTime" | "RemoveTimer" | "MaxTimer" | "Alpha" | "Prerequisite" | "Extended" | "AlwaysExtend" | "AlwaysInteract" | "AllowLock" | "IsLock" | "PickDifficulty" | "OwnerOnly" | "LoverOnly" | "ExpressionTrigger" | "RemoveItemOnRemove" | "AllowEffect" | "AllowBlock" | "AllowHide" | "AllowHideItem" | "AllowType" | "AllowTighten" | "DefaultColor" | "Opacity" | "MinOpacity" | "MaxOpacity" | "Audio" | "Category" | "Fetish" | "ArousalZone" | "IsRestraint" | "BodyCosplay" | "OverrideBlinking" | "DialogSortOverride" | "DynamicDescription" | "DynamicPreviewImage" | "DynamicAllowInventoryAdd" | "DynamicName" | "DynamicGroupName" | "DynamicActivity" | "DynamicAudio" | "CharacterRestricted" | "AllowRemoveExclusive" | "InheritColor" | "DynamicBeforeDraw" | "DynamicAfterDraw" | "DynamicScriptDraw" | "HasType" | "AllowLockType" | "AllowColorize" | "AllowColorizeAll" | "AvailableLocations" | "OverrideHeight" | "FreezeActivePose" | "DrawLocks" | "AllowExpression" | "MirrorExpression" | "FixedPosition" | "CustomBlindBackground" | "Layer" | "Archetype" | "FuturisticRecolor" | "FuturisticRecolorDisplay" | "Attribute" | "HideItemAttribute" | "PreviewIcons" | "Tint" | "DefaultTint" | "CraftGroup" | "ExpressionPrerequisite" | "TextMaxLength" | "Type" | "Expression" | "OverrideAssetEffect" | "Mode" | "Intensity" | "State" | "HeightModifier" | "OverridePriority" | "ItemMemberNumber" | "LockedBy" | "LockMemberNumber" | "Password" | "LockPickSeed" | "CombinationNumber" | "MemberNumberListKeys" | "Hint" | "LockSet" | "RemoveItem" | "RemoveOnUnlock" | "ShowTimer" | "EnableRandomInput" | "MemberNumberList" | "InflateLevel" | "SuctionLevel" | "Text" | "Text2" | "Text3" | "LockButt" | "HeartRate" | "HeartIcon" | "AutoPunish" | "AutoPunishUndoTime" | "AutoPunishUndoTimeSetting" | "OriginalSetting" | "BlinkState" | "Option" | "PunishStruggle" | "PunishStruggleOther" | "PunishOrgasm" | "PunishStandup" | "PunishSpeech" | "PunishRequiredSpeech" | "PunishRequiredSpeechWord" | "PunishProhibitedSpeech" | "PunishProhibitedSpeechWords" | "NextShockTime" | "PublicModeCurrent" | "PublicModePermission" | "TriggerValues" | "AccessMode" | "ShockLevel" | "InsertedBeads" | "ShowText" | "TriggerCount" | "Iterations" | "Revert" | "Door" | "Padding" | "UnHide" | "Texts" | "TargetAngle" | "TextFont" | "Description" | "Group" | "ParentGroupName" | "WearTime" | "DrawingPriority" | "DrawingLeft" | "DrawingTop" | "ZoomModifier" | "ColorableLayerCount" | "AllowTint" | "ColorSuffix" | "Family" | "Asset" | "IsDefault" | "AllowNone" | "AllowCustomize" | "ColorSchema" | "ParentSize" | "ParentColor" | "Clothing" | "Underwear" | "Zone" | "MirrorGroup" | "DrawingFullAlpha" | "DrawingBlink" | "PreviewZone" | "MirrorActivitiesFrom" | "HasPreviewImages" | "IsAppearance" | "IsItem" | "IsScript">(Item: Item, PropertyName: Name, CheckGroup?: boolean): (ItemProperties & Asset & AssetGroup)[Name];
+declare function InventoryGetItemProperty<Name extends "Name" | "Gender" | "BuyGroup" | "ParentItem" | "Enable" | "Visible" | "NotVisibleOnScreen" | "Wear" | "Activity" | "AllowActivity" | "ActivityAudio" | "ActivityExpression" | "AllowActivityOn" | "PrerequisiteBuyGroups" | "Effect" | "Block" | "BlockRemotes" | "OpenPermission" | "OpenPermissionArm" | "OpenPermissionLeg" | "OpenPermissionChastity" | "Bonus" | "Expose" | "Hide" | "HideItem" | "HideItemExclude" | "Require" | "SetPose" | "AllowPose" | "HideForPose" | "PoseMapping" | "AllowActivePose" | "WhitelistActivePose" | "Value" | "Difficulty" | "SelfBondage" | "SelfUnlock" | "ExclusiveUnlock" | "Random" | "RemoveAtLogin" | "LayerVisibility" | "RemoveTime" | "RemoveTimer" | "MaxTimer" | "Alpha" | "Prerequisite" | "Extended" | "AlwaysExtend" | "AlwaysInteract" | "AllowLock" | "IsLock" | "PickDifficulty" | "OwnerOnly" | "LoverOnly" | "FamilyOnly" | "ExpressionTrigger" | "RemoveItemOnRemove" | "AllowEffect" | "AllowBlock" | "AllowHide" | "AllowHideItem" | "AllowType" | "AllowTighten" | "DefaultColor" | "Opacity" | "MinOpacity" | "MaxOpacity" | "Audio" | "Category" | "Fetish" | "ArousalZone" | "IsRestraint" | "BodyCosplay" | "OverrideBlinking" | "DialogSortOverride" | "DynamicDescription" | "DynamicPreviewImage" | "DynamicAllowInventoryAdd" | "DynamicName" | "DynamicGroupName" | "DynamicActivity" | "DynamicAudio" | "CharacterRestricted" | "AllowRemoveExclusive" | "InheritColor" | "DynamicBeforeDraw" | "DynamicAfterDraw" | "DynamicScriptDraw" | "HasType" | "AllowLockType" | "AllowColorize" | "AllowColorizeAll" | "AvailableLocations" | "OverrideHeight" | "FreezeActivePose" | "DrawLocks" | "AllowExpression" | "MirrorExpression" | "FixedPosition" | "CustomBlindBackground" | "Layer" | "Archetype" | "FuturisticRecolor" | "FuturisticRecolorDisplay" | "Attribute" | "HideItemAttribute" | "PreviewIcons" | "Tint" | "DefaultTint" | "CraftGroup" | "ExpressionPrerequisite" | "Text" | "PunishOrgasm" | "PunishStruggle" | "LockPickSeed" | "CombinationNumber" | "Password" | "Hint" | "LockSet" | "Padding" | "Type" | "Door" | "Expression" | "OverrideAssetEffect" | "Mode" | "Intensity" | "State" | "HeightModifier" | "OverridePriority" | "ItemMemberNumber" | "LockedBy" | "LockMemberNumber" | "MemberNumberListKeys" | "RemoveItem" | "RemoveOnUnlock" | "ShowTimer" | "EnableRandomInput" | "MemberNumberList" | "InflateLevel" | "SuctionLevel" | "Text2" | "Text3" | "LockButt" | "HeartRate" | "HeartIcon" | "AutoPunish" | "AutoPunishUndoTime" | "AutoPunishUndoTimeSetting" | "OriginalSetting" | "BlinkState" | "Option" | "PunishStruggleOther" | "PunishStandup" | "PunishSpeech" | "PunishRequiredSpeech" | "PunishRequiredSpeechWord" | "PunishProhibitedSpeech" | "PunishProhibitedSpeechWords" | "NextShockTime" | "PublicModeCurrent" | "PublicModePermission" | "TriggerValues" | "AccessMode" | "ShockLevel" | "InsertedBeads" | "ShowText" | "TriggerCount" | "Iterations" | "Revert" | "UnHide" | "Texts" | "TargetAngle" | "Underwear" | "Description" | "Group" | "ParentGroupName" | "WearTime" | "DrawingPriority" | "DrawingLeft" | "DrawingTop" | "ZoomModifier" | "ColorableLayerCount" | "AllowTint" | "ColorSuffix" | "Family" | "Asset" | "IsDefault" | "AllowNone" | "AllowCustomize" | "ColorSchema" | "ParentSize" | "ParentColor" | "Clothing" | "Zone" | "MirrorGroup" | "DrawingFullAlpha" | "DrawingBlink" | "PreviewZone" | "MirrorActivitiesFrom" | "HasPreviewImages" | "IsAppearance" | "IsItem" | "IsScript">(Item: Item, PropertyName: Name, CheckGroup?: boolean): (ItemProperties & Asset & AssetGroup)[Name];
 /**
  * Apply an item's expression trigger to a character if able
  * @param {Character} C - The character to update
@@ -332,6 +310,12 @@ declare function InventoryOwnerOnlyItem(Item: Item): boolean;
 * @returns {Boolean} - TRUE if lover only
 */
 declare function InventoryLoverOnlyItem(Item: Item): boolean;
+/**
+* Returns TRUE if the item has a FamilyOnly flag, such as the D/s family padlock
+* @param {Item} Item - The item from appearance that must be scanned
+* @returns {Boolean} - TRUE if family only
+*/
+declare function InventoryFamilyOnlyItem(Item: Item): boolean;
 /**
 * Returns TRUE if the character is wearing at least one restraint that's locked with an extra lock
 * @param {Character} C - The character to scan
@@ -359,6 +343,12 @@ declare function InventoryCharacterHasOwnerOnlyRestraint(C: Character): boolean;
 * @returns {Boolean} - TRUE if one lover only restraint is found
 */
 declare function InventoryCharacterHasLoverOnlyRestraint(C: Character): boolean;
+/**
+* Returns TRUE if the character is wearing at least one item that's a restraint with a FamilyOnly flag
+* @param {Character} C - The character to scan
+* @returns {Boolean} - TRUE if one family only restraint is found
+*/
+declare function InventoryCharacterHasFamilyOnlyRestraint(C: Character): boolean;
 /**
 * Returns TRUE if at least one item on the character can be locked
 * @param {Character} C - The character to scan

@@ -38,6 +38,26 @@ function validateOverrideHeight(property: unknown, asset: Asset): property is As
     );
 }
 
+/** Validation function for the {@link TextItemNames} properties. */
+function validateText(field: TextItemNames, property: unknown, asset: Asset): property is string {
+    if (typeof property !== "string" || !DynamicDrawTextRegex.test(property)) {
+        return false;
+    }
+
+    if (asset.TextMaxLength) { // R91
+        return property.length <= (asset.TextMaxLength[field] ?? -1);
+    } else if (typeof TextItemDataLookup === "object") { // R92
+        const key = `${asset.Group.Name}${asset.Name}`;
+        const [_, data] = entries(TextItemDataLookup).find(([k]) => k.includes(key)) ?? ["", null];
+        return (
+            data !== null
+            && property.length <= (data.maxLength[field] ?? -1)
+        );
+    } else {
+        return false;
+    }
+}
+
 /**
  * A record {@link ItemProperties} with validation functions.
  * Properties are limited to a subset that are not managed by the extended item type-setting machinery.
@@ -45,9 +65,9 @@ function validateOverrideHeight(property: unknown, asset: Asset): property is As
 const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     OverridePriority: (p, _) => Number.isInteger(p),
     Opacity: (p, a) => typeof p === "number" && p <= a.MaxOpacity && p >= a.MinOpacity,
-    Text: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text ?? -1),
-    Text2: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text2 ?? -1),
-    Text3: (p, a) => typeof p === "string" && DynamicDrawTextRegex.test(p) && p.length <= (a.TextMaxLength?.Text3 ?? -1),
+    Text: (p, a) => validateText("Text", p, a),
+    Text2: (p, a) => validateText("Text2", p, a),
+    Text3: (p, a) => validateText("Text3", p, a),
     ShowText: (p, _) => typeof p === "boolean",
     TriggerValues: (p, _) => typeof p === "string" && p.split(",").length === ItemVulvaFuturisticVibratorTriggers.length,
     AccessMode: (p, _) => typeof p === "string" && ItemVulvaFuturisticVibratorAccessModes.includes(<"" | "ProhibitSelf" | "LockMember">p),

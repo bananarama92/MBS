@@ -459,11 +459,11 @@ declare function PrivateLoadCharacter(C: number): boolean;
 /**
  * Triggered when a new character is added to the player's private room.
  * @param {NPCCharacter} Template - The base of the character, includes the name and appearance.
- * @param {NPCArchetype} [Archetype] - The type of character such as maid or mistress.
+ * @param {"" | NPCArchetype} [Archetype] - The type of character such as maid or mistress.
  * @param {boolean} [CustomData=false] - Whether or not the character has non-random traits.
  * @returns {NPCCharacter} - The new private room character.
  */
-declare function PrivateAddCharacter(Template: NPCCharacter, Archetype?: NPCArchetype, CustomData?: boolean): NPCCharacter;
+declare function PrivateAddCharacter(Template: NPCCharacter, Archetype?: "" | NPCArchetype, CustomData?: boolean): NPCCharacter;
 /**
  * Gets the index of a given private room character.
  * @returns {number} - Index of the NPC inside the private characters array.

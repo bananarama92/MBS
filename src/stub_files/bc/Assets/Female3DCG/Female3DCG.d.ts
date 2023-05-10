@@ -13,7 +13,7 @@ declare var AssetFemale3DCG: AssetGroupDefinition[];
 declare var PoseFemale3DCG: Pose[];
 /**
  * List of all available pose names in the game
- * @constant {string[]}
+ * @constant {AssetPoseName[]}
  */
 declare var PoseFemale3DCGNames: AssetPoseName[];
 /**

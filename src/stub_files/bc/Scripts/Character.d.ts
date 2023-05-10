@@ -13,6 +13,12 @@ declare function CharacterReset(CharacterID: number, CharacterAssetFamily: IAsse
  */
 declare function CharacterRandomName(C: Character): void;
 /**
+ * Substitute name and pronoun fields in dialog.
+ * @param {Character} C - Character for which to build the dialog
+ * @returns {void} - Nothing
+ */
+declare function CharacterDialogSubstitution(C: Character): void;
+/**
  * Builds the dialog objects from the character CSV file
  * @param {Character} C - Character for which to build the dialog
  * @param {readonly string[][]} CSV - Content of the CSV file

@@ -4,10 +4,10 @@
  * multiplicative nature of the item's types, and also converts the AllowModuleTypes property on any asset layers into
  * an AllowTypes property, if present.
  * @param {Asset} asset - The asset being registered
- * @param {ModularItemConfig | undefined} config - The item's modular item configuration
- * @returns {void} - Nothing
+ * @param {ModularItemConfig} config - The item's modular item configuration
+ * @returns {ModularItemData} - The generated extended item data for the asset
  */
-declare function ModularItemRegister(asset: Asset, config: ModularItemConfig | undefined): void;
+declare function ModularItemRegister(asset: Asset, config: ModularItemConfig): ModularItemData;
 /**
  * Initialize the modular item properties
  * @param {ModularItemData} Data - The item's extended item data
@@ -30,12 +30,13 @@ declare function ModularItemClick(data: ModularItemData): void;
  */
 declare function ModularItemDraw(data: ModularItemData): void;
 /**
- * Parse and convert the passed item modules inplace. Returns the originally passed object.
- * @param {readonly ModularItemModuleBase[]} Modules - An object describing a single module for a modular item.
- * @param {boolean | undefined} [ChangeWhenLocked] - See {@link ModularItemConfig.ChangeWhenLocked}
- * @returns {ModularItemModule[]} - The updated modules; same object as `Modules`.
+ * Parse the and pre-process the passed modules (and their options)
+ * @param {Asset} asset - The asset in question
+ * @param {readonly ModularItemModuleBase[]} modules - An object describing a single module for a modular item.
+ * @param {boolean | undefined} [changeWhenLocked] - See {@link ModularItemConfig.ChangeWhenLocked}
+ * @returns {ModularItemModule[]} - The updated modules and options
  */
-declare function ModularItemUpdateModules(Modules: readonly ModularItemModuleBase[], ChangeWhenLocked?: boolean | undefined): ModularItemModule[];
+declare function ModularItemUpdateModules(asset: Asset, modules: readonly ModularItemModuleBase[], changeWhenLocked?: boolean | undefined): ModularItemModule[];
 /**
  * Generates an asset's modular item data
  * @param {Asset} asset - The asset to generate modular item data for
@@ -173,19 +174,16 @@ declare function ModularItemDeconstructType(Type: string): string[] | null;
  */
 declare function ModularItemSetType(module: ModularItemModule, index: number, data: ModularItemData): void;
 /**
- * Sets a modular item's type and properties to the option provided.
+ * Sets a modular item's type and properties to the option whose name matches the provided option name parameter.
  * @param {Character} C - The character on whom the item is equipped
- * @param {Item} Item - The item whose type to set
- * @param {readonly number[]} previousModuleValues - The previous module values
- * @param {readonly number[]} newModuleValues - The new module values
- * @param {ModularItemData} data - The modular item data
+ * @param {Item | AssetGroupName} itemOrGroupName - The item whose type to set, or the group name for the item
+ * @param {string} optionNames - The name of the option to set
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
- * @param {null | DynamicPropertyCallback} dynamicProperty - An optional callback for dynamically setting the item's properties.
- * Executed after the conventional properties have been assigned.
- * @returns {void} Nothing
+ * @returns {string|undefined} - undefined or an empty string if the type was set correctly. Otherwise, returns a string
+ * informing the player of the requirements that are not met.
  */
-declare function ModularItemSetOption(C: Character, Item: Item, previousModuleValues: readonly number[], newModuleValues: readonly number[], data: ModularItemData, push?: boolean, dynamicProperty?: null | DynamicPropertyCallback): void;
+declare function ModularItemSetOptionByName(C: Character, itemOrGroupName: Item | AssetGroupName, optionNames: string, push?: boolean): string | undefined;
 /**
  * Publishes the chatroom message for a modular item when one of its modules has changed.
  * @param {ModularItemData} data

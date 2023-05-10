@@ -183,9 +183,9 @@ declare function AppearancePreviewUseCharacter(assetGroup: AssetGroup): boolean;
  * to the item
  * @param {number} [ItemMemberNumber=-1] - The member number of the player adding the item - defaults to -1
  * @param {boolean} [Refresh=true] - Determines, wether the character should be redrawn after the item change
- * @returns {void} - Nothing
+ * @returns {null | Item} - Thew newly created item or `null` if the asset does not exist
  */
-declare function CharacterAppearanceSetItem(C: Character, Group: AssetGroupName, ItemAsset: Asset | null, NewColor?: string | string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): void;
+declare function CharacterAppearanceSetItem(C: Character, Group: AssetGroupName, ItemAsset: Asset | null, NewColor?: string | string[], DifficultyFactor?: number, ItemMemberNumber?: number, Refresh?: boolean): null | Item;
 /**
  * Cycle in the appearance assets to find the next item in a group
  * @param {Character} C - The character whose assets are used
@@ -357,6 +357,7 @@ declare var AppearancePreviews: Character[];
 declare var AppearanceUseCharacterInPreviewsSetting: boolean;
 declare const CanvasUpperOverflow: 700;
 declare const CanvasLowerOverflow: 150;
+declare const CanvasDrawWidth: 500;
 declare const CanvasDrawHeight: number;
 declare namespace AppearancePermissionColors {
     const red: string[];

@@ -1,20 +1,35 @@
 /**
- *removes all buttons from the lists
+ * Register the gamepad connection/disconnection events.
  */
-declare function ClearButtons(): void;
+declare function ControllerStart(): void;
 /**
- * adds a button to the lists
- * @param {number} X X value of the button
- * @param {number} Y Y value of the button
+ * Check whether controller support is enabled.
+ *
+ * Uses the Player's configuration, with a workaround to allow
+ * the controller to activate on login.
  */
-declare function setButton(X: number, Y: number): void;
+declare function ControllerIsEnabled(): boolean;
 /**
- * checks, whether a button is already in the lists (I realize now, that I could have used .includes but it works)
- * @param {number} X X value of the button
- * @param {number} Y Y value of the button
- * @returns {boolean}
+ * Check whether we have detected a gamepad.
  */
-declare function ButtonExists(X: number, Y: number): boolean;
+declare function ControllerIsActive(): boolean;
+/**
+ * Main gamepad processing.
+ *
+ * This functions goes over gamepads and collects their inputs.
+ */
+declare function ControllerProcess(): void;
+/**
+ * Adds a point to the active points list.
+ *
+ * @param {number} X - The X coordinate of the point
+ * @param {number} Y - The Y coordinate of the point
+ */
+declare function ControllerAddActiveArea(X: number, Y: number): void;
+/**
+ * Removes all active points.
+ */
+declare function ControllerClearAreas(): void;
 /**
  * handles the sitck input
  * @param {readonly number[]} axes the raw data of all axes of the controller
@@ -30,11 +45,9 @@ declare function ControllerManagedByGame(Buttons: readonly {
 }[]): boolean;
 /**
  * handles button input
- * @param {readonly { pressed: boolean }[]} buttons raw buttons data
+ * @param {readonly GamepadButton[]} buttons raw buttons data
  */
-declare function ControllerButton(buttons: readonly {
-    pressed: boolean;
-}[]): void;
+declare function ControllerButton(buttons: readonly GamepadButton[]): void;
 /**
  * handles keyboard inputs in controller mode
  * @returns {void} Nothing
@@ -45,42 +58,36 @@ declare function ControllerSupportKeyDown(): void;
  */
 declare function ControllerClick(): void;
 /**
- * moves the pointer to either a button in a straight line above it or the closest one above
- * (all the commented stuff in the function is for debugging)
+ * Finds the closest point in a list, favoring the given direction.
+ *
+ * Used to navigate the active zones with a controller.
+ *
+ * @param {[X: number, Y: number]} point
+ * @param {[X: number, Y: number][]} points
+ * @param {"Up"|"Down"|"Left"|"Right"} direction
  */
-declare function ControllerUp(): void;
+declare function ControllerFindClosestPoint(point: [X: number, Y: number], points: [X: number, Y: number][], direction: "Up" | "Down" | "Left" | "Right"): number[];
 /**
- * same as ControllerUp()
+ * Moves the pointer throught the active zones in the direction wanted.
+ *
+ * @param {"Up"|"Down"|"Left"|"Right"} direction
  */
-declare function ControllerDown(): void;
+declare function ControllerMoveToActiveZone(direction: "Up" | "Down" | "Left" | "Right"): void;
 /**
- * same as ControllerUp()
+ * A list of points that can be interacted in the UI.
+ *
+ * @type {[X: number, Y: number][]}
  */
-declare function ControllerLeft(): void;
-/**
- * same as ControllerUp()
- */
-declare function ControllerRight(): void;
-/** @type {number[]} */
-declare var ControllerButtonsX: number[];
-/** @type {number[]} */
-declare var ControllerButtonsY: number[];
-declare var ControllerActive: boolean;
-declare var ControllerCurrentButton: number;
+declare var ControllerActiveAreas: [X: number, Y: number][];
+/** Number of detected controllers */
+declare var ControllerDetectedCount: number;
 declare var ControllerButtonsRepeat: boolean;
-declare var ControllerAxesRepeat: boolean;
-declare var ControllerIgnoreButton: boolean;
-declare var ControllerAxesRepeatTime: number;
 declare var ControllerA: number;
 declare var ControllerB: number;
 declare var ControllerX: number;
 declare var ControllerY: number;
 declare var ControllerTriggerRight: number;
 declare var ControllerTriggerLeft: number;
-declare var ControllerStart: number;
-declare var ControllerSelect: number;
-declare var ControllerDPadPressLeft: number;
-declare var ControllerDPadPressRight: number;
 declare var ControllerStickUpDown: number;
 declare var ControllerStickLeftRight: number;
 declare var ControllerStickRight: number;

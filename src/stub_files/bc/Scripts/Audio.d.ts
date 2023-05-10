@@ -78,9 +78,10 @@ declare function AudioGetSoundFromChatMessage(data: IChatRoomMessage, metadata: 
 /**
  * Processes the sound for vibrators
  * @param {IChatRoomMessage} data - Represents the chat message received
+ * @param {IChatRoomMessageMetadata} metadata - The metadata from the recieved message
  * @returns {[string, number]} - The name of the sound to play, followed by the noise modifier
  */
-declare function AudioVibratorSounds(data: IChatRoomMessage): [string, number];
+declare function AudioVibratorSounds(data: IChatRoomMessage, metadata: IChatRoomMessageMetadata): [string, number];
 /**
  * Processes the sound for shocks
  * @param {IChatRoomMessage} data - Represents the chat message received

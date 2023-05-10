@@ -39,10 +39,10 @@ declare function MagicSchoolLaboratorySpellPracticeEnd(): void;
 declare function MagicSchoolLaboratoryInHouse(House: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"): boolean;
 /**
  * Joins a specific magic house, sets the reputation to 1 and clear all other reputations
- * @param {"" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"} House - The house name
+ * @param {"" | MagicSchoolHouse} House - The house name
  * @returns {void} - Nothing
  */
-declare function MagicSchoolLaboratoryJoinHouse(House: "" | "Maiestas" | "Vincula" | "Amplector" | "Corporis"): void;
+declare function MagicSchoolLaboratoryJoinHouse(House: "" | MagicSchoolHouse): void;
 /**
  * Dresses the player as it's current magic school house
  * @returns {void} - Nothing
@@ -50,22 +50,22 @@ declare function MagicSchoolLaboratoryJoinHouse(House: "" | "Maiestas" | "Vincul
 declare function MagicSchoolLaboratoryDressHouse(): void;
 /**
  * Check if a NPC is a member of a magic house or not
- * @param {string} House - The house name
+ * @param {MagicSchoolHouse} House - The house name
  * @returns {boolean} - TRUE if a member, FALSE if not
  */
-declare function MagicSchoolLaboratoryFromHouse(House: string): boolean;
+declare function MagicSchoolLaboratoryFromHouse(House: MagicSchoolHouse): boolean;
 /**
  * Check if a NPC is a member of the player's house
- * @param {string} House - The house name
+ * @param {MagicSchoolHouse} House - The house name
  * @returns {boolean} - TRUE if from same house, FALSE if not
  */
-declare function MagicSchoolLaboratoryFromSameHouse(House: string): boolean;
+declare function MagicSchoolLaboratoryFromSameHouse(House: MagicSchoolHouse): boolean;
 /**
  * Check if a NPC is a member of the player's rival house
- * @param {string} House - The house name
+ * @param {MagicSchoolHouse} House - The house name
  * @returns {boolean} - TRUE if a rival, FALSE if not
  */
-declare function MagicSchoolLaboratoryFromRivalHouse(House: string): boolean;
+declare function MagicSchoolLaboratoryFromRivalHouse(House: MagicSchoolHouse): boolean;
 /**
  * Starts a practice battle against the school teacher
  * @param {number} Difficulty - The difficulty level from 0 to 10 (hardest)

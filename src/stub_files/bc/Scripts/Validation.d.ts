@@ -113,7 +113,7 @@ declare function ValidationItemWarningMessage(item: Item, { C, sourceMemberNumbe
  * @param {boolean} [remove] - Whether the lock change is a removal
  * @returns {boolean} - TRUE if the lock can be modified, FALSE otherwise
  */
-declare function ValidationIsLockChangePermitted(lock: Item, { C, fromOwner, fromLover }: AppearanceUpdateParameters, remove?: boolean): boolean;
+declare function ValidationIsLockChangePermitted(lock: Item, { C, fromOwner, fromLover, fromFamily }: AppearanceUpdateParameters, remove?: boolean): boolean;
 /**
  * Copies an item's lock-related properties from one Property object to another based on whether or not the source
  * character has permissions to modify the lock. Rolls back any invalid changes to their previous values.
@@ -181,7 +181,7 @@ declare function ValidationCanRemoveItem(previousItem: Item, params: AppearanceU
  * @return {boolean} - TRUE if the item can be added or removed based on the appearance update parameters, FALSE
  * otherwise
  */
-declare function ValidationCanAddOrRemoveItem(item: Item, { C, fromOwner, fromLover }: AppearanceUpdateParameters): boolean;
+declare function ValidationCanAddOrRemoveItem(item: Item, { C, fromOwner, fromLover, fromFamily }: AppearanceUpdateParameters): boolean;
 /**
  * Sanitizes the properties on an appearance item to ensure that no invalid properties are present. This removes invalid
  * locks, strips invalid values, and ensures property values are within the constraints defined by an item.

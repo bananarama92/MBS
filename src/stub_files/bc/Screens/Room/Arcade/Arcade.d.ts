@@ -75,6 +75,11 @@ declare function ArcadeKinkyDungeonStart(PlayerLevel: number): void;
  * @returns {void} - Nothing
  */
 declare function ArcadeKinkyDungeonEnd(): void;
+declare function ArcadeKinkyDungeonStartLoad(): Promise<void>;
+/**
+ * @returns {boolean} - False if the dungeon is not ready yet, true otherwise
+ */
+declare function ArcadeKinkyDungeonLoad(): boolean;
 declare var ArcadeBackground: string;
 /** @type {null | NPCCharacter} */
 declare var ArcadeEmployee: null | NPCCharacter;
@@ -84,3 +89,6 @@ declare var ArcadeAskedFor: any;
 declare var ArcadePrice: number;
 declare var ArcadeDeviousChallenge: boolean;
 declare var ArcadeCannotDoDeviousChallenge: boolean;
+declare var KinkyDungeonFiles: string[];
+declare var KinkyDungeonIsLoading: boolean;
+declare var KinkyDungeonReady: boolean;

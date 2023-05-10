@@ -336,6 +336,14 @@ declare function CommonCensor(S: string): string;
  */
 declare function CommonIsObject(value: unknown): value is Record<string, unknown>;
 /**
+ * Deep-clones an object
+ * @todo JSON serialization will break things like functions, Sets and Maps.
+ * @template T
+ * @param {T} obj
+ * @returns {T}
+ */
+declare function CommonCloneDeep<T>(obj: T): T;
+/**
  * Type guard which checks that a value is a non-negative (i.e. positive or zero) integer
  * @param {unknown} value - The value to test
  * @returns {value is number}
@@ -359,6 +367,14 @@ declare function CommonIsArray(arg: unknown): arg is readonly unknown[];
  * @returns {T[]} The keys in the passed record
  */
 declare function CommonKeys<T extends string>(record: Partial<Record<T, unknown>>): T[];
+/**
+ * A {@link Object.entries} variant annotated to return respect literal key types
+ * @template {string} KT
+ * @template VT
+ * @param {Partial<Record<KT, VT>>} record A record with string-based keys
+ * @returns {[KT, VT][]} The key/value pairs in the passed record
+ */
+declare function CommonEntries<KT extends string, VT>(record: Partial<Record<KT, VT>>): [KT, VT][];
 /**
  * A {@link Array.includes} version annotated to return a type guard.
  * @template T
@@ -387,11 +403,6 @@ declare var CommonIsMobile: boolean;
 declare var CommonCSVCache: Record<string, string[][]>;
 declare var CutsceneStage: number;
 declare var CommonPhotoMode: boolean;
-declare var GameVersion: string;
-declare const GameVersionFormat: RegExp;
-declare var CommonVersionUpdated: boolean;
-/** @type {null | TouchList} */
-declare var CommonTouchList: null | TouchList;
 /**
  * An enum encapsulating possible chatroom message substitution tags. Character name substitution tags are interpreted
  * in chatrooms as follows (assuming the character name is Ben987):
@@ -403,9 +414,9 @@ declare var CommonTouchList: null | TouchList;
  * Additionally, sending the following tags will ensure that asset names in messages are correctly translated by
  * recipients:
  * ASSET_NAME: (substituted with the localized name of the asset, if available)
- * @type {Record<"SOURCE_CHAR"|"DEST_CHAR"|"DEST_CHAR_NAME"|"TARGET_CHAR"|"TARGET_CHAR_NAME"|"ASSET_NAME", CommonChatTags>}
+ * @type {Record<"SOURCE_CHAR"|"DEST_CHAR"|"DEST_CHAR_NAME"|"TARGET_CHAR"|"TARGET_CHAR_NAME"|"ASSET_NAME"|"AUTOMATIC", CommonChatTags>}
  */
-declare const CommonChatTags: Record<"SOURCE_CHAR" | "DEST_CHAR" | "DEST_CHAR_NAME" | "TARGET_CHAR" | "TARGET_CHAR_NAME" | "ASSET_NAME", CommonChatTags>;
+declare const CommonChatTags: Record<"SOURCE_CHAR" | "DEST_CHAR" | "DEST_CHAR_NAME" | "TARGET_CHAR" | "TARGET_CHAR_NAME" | "ASSET_NAME" | "AUTOMATIC", CommonChatTags>;
 /**
  * A map of keys to common font stack definitions. Each stack definition is a
  * two-item array whose first item is an ordered list of fonts, and whose

@@ -10,7 +10,7 @@
 /**
  * An enum encapsulating the available extended item archetypes
  * MODULAR - Indicates that this item is modular, with several independently configurable modules
- * @type {{MODULAR: "modular", TYPED: "typed", VIBRATING: "vibrating", VARIABLEHEIGHT: "variableheight"}}
+ * @type {{MODULAR: "modular", TYPED: "typed", VIBRATING: "vibrating", VARIABLEHEIGHT: "variableheight", TEXT: "text"}}
  * @see {@link ModularItemConfig}
  * @see {@link TypedItemConfig}
  */
@@ -19,6 +19,7 @@ declare const ExtendedArchetype: {
     TYPED: "typed";
     VIBRATING: "vibrating";
     VARIABLEHEIGHT: "variableheight";
+    TEXT: "text";
 };
 /**
  * An object containing all extended item configurations.

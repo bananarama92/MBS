@@ -80,6 +80,11 @@ declare function ManagementOwnerAccepted(): boolean;
  */
 declare function ManagementOwnerRefused(): boolean;
 /**
+ * Helper function to check a group's unlockability.
+ * @param {AssetGroupItemName} groupName - The name of the group to unlock
+ */
+declare function ManagementCanUnlockGroup(groupName: AssetGroupItemName): boolean;
+/**
  * Checks if the mistress can remove the player's chastity bra
  * @returns {boolean} - TRUE if the mistress can remove the item. (Not owner locked while owned and has at least 25$.)
  */
@@ -89,6 +94,11 @@ declare function ManagementCanUnlockBra(): boolean;
  * @returns {boolean} - TRUE if the mistress can remove the item. (Not owner locked while owned and has at least 25$.)
  */
 declare function ManagementCanUnlockButt(): boolean;
+/**
+ * Checks if the mistress can remove the player's vulva piercing item with a chaste effect
+ * @returns {boolean} - TRUE if the mistress can remove the item. (Not owner locked while owned and has at least 25$.)
+ */
+declare function ManagementCanUnlockVulvaPiercings(): boolean;
 /**
  * Checks if the mistress can remove the player's vulva item with a chaste effect
  * @returns {boolean} - TRUE if the mistress can remove the item. (Not owner locked while owned and has at least 25$.)
@@ -264,6 +274,11 @@ declare function ManagementCannotBeClubSlaveOwnerLock(): boolean;
  * @returns {boolean} - TRUE if the player is wearing a lover-only restraint.
  */
 declare function ManagementCannotBeClubSlaveLoverLock(): boolean;
+/**
+ * Checks if the player cannot be a club slave due to her currently worn lover-only restraint(s).
+ * @returns {boolean} - TRUE if the player is wearing a lover-only restraint.
+ */
+declare function ManagementCannotBeClubSlaveFamilyLock(): boolean;
 /**
  * Checks if the player can kiss the current NPC.
  * @returns {boolean} - TRUE if both the NPC and the player can talk.
@@ -517,8 +532,8 @@ declare var ManagementCanReleaseChastity: boolean;
 declare var ManagementEmpty: boolean;
 /** @type {null | NPCCharacter} */
 declare var ManagementRandomGirl: null | NPCCharacter;
-/** @type {"" | "Maid"} */
-declare var ManagementRandomGirlArchetype: "" | "Maid";
+/** @type {"" | NPCArchetype} */
+declare var ManagementRandomGirlArchetype: "" | NPCArchetype;
 declare var ManagementRandomActivityCount: number;
 declare var ManagementRandomActivity: string;
 declare var ManagementRandomActivityList: string[];

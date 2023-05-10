@@ -35,10 +35,9 @@ declare function TimerInventoryRemoveSet(C: Character, AssetGroup: AssetGroupNam
 declare function TimerPrivateOwnerBeep(): void;
 /**
  * Main timer process
- * @param {number} Timestamp - Time in ms of the time when the function was called
  * @returns {void} - Nothing
  */
-declare function TimerProcess(Timestamp: number): void;
+declare function TimerProcess(): void;
 /**
  * Returns a string of the time remaining on a given timer (Hours, minutes, seconds)
  * @param {number} s - Time to convert to a string in ms

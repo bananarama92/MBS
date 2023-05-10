@@ -104,11 +104,11 @@ declare function CraftingItemListBuild(): void;
 /**
  * Validate and sanitinize crafting properties of the passed item inplace.
  * @param {CraftingItem} Craft - The crafted item properties or `null`
- * @param {Asset | null} Asset - The matching Asset. Will be extracted from the player inventory if `null`
+ * @param {Asset | null} asset - The matching Asset. Will be extracted from the player inventory if `null`
  * @param {boolean} Warn - Whether a warning should logged whenever the crafting validation fails
  * @return {CraftingStatusType} - One of the {@link CraftingStatusType} status codes; 0 denoting an unrecoverable validation error
  */
-declare function CraftingValidate(Craft: CraftingItem, Asset?: Asset | null, Warn?: boolean): CraftingStatusType;
+declare function CraftingValidate(Craft: CraftingItem, asset?: Asset | null, Warn?: boolean): CraftingStatusType;
 /** The background of the crafting screen. */
 declare var CraftingBackground: string;
 /**

@@ -49,7 +49,7 @@ export abstract class MBSScreen {
     load(): void {
         const prevScreen = CurrentScreen;
         if (controllerIsActive()) {
-            ClearButtons();
+            typeof ClearButtons === "function" ? ClearButtons() : ControllerClearAreas();
         }
 
         CurrentScreen = this.screen;

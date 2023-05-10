@@ -207,10 +207,10 @@ declare function ActivityTimerProgress(C: Character, Progress: number): void;
 /**
  * Set the current vibrator level for drawing purposes
  * @param {Character} C - Character for which the timer is progressing
- * @param {number} Level - Level from 0 to 4 (higher = more vibration)
+ * @param {0 | 1 | 2 | 3 | 4} Level - Level from 0 to 4 (higher = more vibration)
  * @returns {void} - Nothing
  */
-declare function ActivityVibratorLevel(C: Character, Level: number): void;
+declare function ActivityVibratorLevel(C: Character, Level: 0 | 1 | 2 | 3 | 4): void;
 /**
  * Calculates the progress one character does on another right away
  * @param {Character} Source - The character who performed the activity

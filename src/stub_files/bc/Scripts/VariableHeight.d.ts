@@ -1,21 +1,19 @@
 /**
  * Registers a variable height extended item. This automatically creates the item's load, draw and click functions.
  * @param {Asset} asset - The asset being registered
- * @param {VariableHeightConfig | undefined} config - The variable height configuration
- * @param {ItemProperties | undefined} property - The default properties to use
- * @param {TypedItemOption[]} [parentOptions=null] - The variable height configuration of the option's parent item, if any
- * @returns {void} - Nothing
+ * @param {VariableHeightConfig} config - The variable height configuration
+ * @param {null | ExtendedItemOption} parentOption - The extended item option of the super screen that this archetype was initialized from (if any)
+ * @returns {VariableHeightData} - The generated extended item data for the asset
  */
-declare function VariableHeightRegister(asset: Asset, config: VariableHeightConfig | undefined, property: ItemProperties | undefined, parentOptions?: TypedItemOption[]): void;
+declare function VariableHeightRegister(asset: Asset, config: VariableHeightConfig, parentOption?: null | ExtendedItemOption): VariableHeightData;
 /**
  * Generates an asset's variable height data
  * @param {Asset} asset - The asset to generate modular item data for
  * @param {VariableHeightConfig} config - The variable height configuration
- * @param {ItemProperties} property
- * @param {TypedItemOption[]} parentOptions
+ * @param {null | ExtendedItemOption} parentOption
  * @returns {VariableHeightData} - The generated variable height data for the asset
  */
-declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, Slider, DialogPrefix, ChatTags, Dictionary, GetHeightFunction, SetHeightFunction, ScriptHooks }: VariableHeightConfig, property: ItemProperties, parentOptions: TypedItemOption[]): VariableHeightData;
+declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, Slider, DialogPrefix, ChatTags, Dictionary, GetHeightFunction, SetHeightFunction, ScriptHooks, BaselineProperty }: VariableHeightConfig, parentOption?: null | ExtendedItemOption): VariableHeightData;
 /**
  * @param {VariableHeightData} data - The variable height data for the asset
  */
@@ -24,7 +22,7 @@ declare function VariableHeightLoad({ maxHeight, minHeight, slider, getHeight, s
  * @param {VariableHeightData} data - The variable height data for the asset
  * @returns {void} - Nothing
  */
-declare function VariableHeightDraw({ slider }: VariableHeightData): void;
+declare function VariableHeightDraw({ slider, drawImages, dialogPrefix }: VariableHeightData): void;
 /**
  * @param {VariableHeightData} data - The variable height data for the asset
  * @returns {void} - Nothing
@@ -69,6 +67,21 @@ declare function VariableHeightSetOverrideHeight(property: ItemProperties, heigh
  */
 declare function VariableHeightInit(Data: VariableHeightData, C: Character, Item: Item, Refresh: boolean): boolean;
 /**
+ * Dynamically construct the next and previous extended item option for the passed item
+ * @param {Item} item - The item in question
+ * @returns {{ newOption: VariableHeightOption, previousOption: VariableHeightOption }}
+ */
+declare function VariableHeightConstructOptions(item: Item): {
+    newOption: VariableHeightOption;
+    previousOption: VariableHeightOption;
+};
+/**
+ * Revert all item properties back to their previous state prior to opening the extended item menu
+ * @param {Character} C - The character in question
+ * @param {Item} item - The item in question
+ */
+declare function VariableHeightPropertyRevert(C: Character, item: Item): void;
+/**
  * The name of vertical slider element
  * @const {string}
  */
@@ -78,11 +91,6 @@ declare const VariableHeightSliderId: "VariableHeightSlider";
  * @const {string}
  */
 declare const VariableHeightNumerId: "VariableHeightNumber";
-/**
- * Tracks the original properties to revert back to if the user cancels their changes
- * @type ItemProperties
- */
-declare let VariableHeightPreviousProperty: ItemProperties;
 /**
  * A lookup for the variable height configurations for each registered variable height item
  * @const

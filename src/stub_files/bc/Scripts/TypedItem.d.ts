@@ -2,10 +2,10 @@
  * Registers a typed extended item. This automatically creates the item's load, draw and click functions. It will also
  * generate the asset's AllowType array.
  * @param {Asset} asset - The asset being registered
- * @param {TypedItemConfig | undefined} config - The item's typed item configuration
- * @returns {void} - Nothing
+ * @param {TypedItemConfig} config - The item's typed item configuration
+ * @returns {TypedItemData} - The generated extended item data for the asset
  */
-declare function TypedItemRegister(asset: Asset, config: TypedItemConfig | undefined): void;
+declare function TypedItemRegister(asset: Asset, config: TypedItemConfig): TypedItemData;
 /**
  * Generates an asset's typed item data
  * @param {Asset} asset - The asset to generate modular item data for
@@ -68,11 +68,6 @@ declare function TypedItemGenerateAllowLockType({ asset, options }: TypedItemDat
  */
 declare function TypedItemSetAllowLockType(asset: Asset, allowLockType: readonly string[], typeCount: number): void;
 /**
- * @param {Asset} asset - The asset whose subscreen is being registered
- * @param {TypedItemData} data - The parent item's typed item data
- */
-declare function TypedItemRegisterSubscreens(asset: Asset, data: TypedItemData): void;
-/**
  * Returns the options configuration array for a typed item
  * @param {AssetGroupName} groupName - The name of the asset group
  * @param {string} assetName - The name of the asset
@@ -120,19 +115,6 @@ declare function TypedItemValidateOption<T extends ExtendedItemOption>(C: Charac
  */
 declare function TypedItemSetOptionByName(C: Character, itemOrGroupName: Item | AssetGroupName, optionName: string, push?: boolean): string | undefined;
 /**
- * Sets a typed item's type and properties to the option provided.
- * @template {TypedItemOption | VibratingItemOption} T
- * @param {Character} C - The character on whom the item is equipped
- * @param {Item} item - The item whose type to set
- * @param {readonly T[]} options - The typed item options for the item
- * @param {T} option - The option to set
- * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
- * player) - defaults to false.
- * @returns {string|undefined} - undefined or an empty string if the type was set correctly. Otherwise, returns a string
- * informing the player of the requirements that are not met.
- */
-declare function TypedItemSetOption<T extends TypedItemOption | VibratingItemOption>(C: Character, item: Item, options: readonly T[], option: T, push?: boolean): string | undefined;
-/**
  * Finds the currently set option on the given typed item
  * @template {TypedItemOption | VibratingItemOption} T
  * @param {Item} item - The equipped item
@@ -163,50 +145,43 @@ declare function TypedItemSetRandomOption(C: Character, itemOrGroupName: Item | 
 declare function TypedItemInit(Data: TypedItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
 /**
  * Draws the extended item type selection screen
- * @param {readonly (TypedItemOption | VibratingItemOption)[]} Options - An Array of type definitions for each allowed extended type. The first item
+ * @param {TypedItemData | VibratingItemData} data - An Array of type definitions for each allowed extended type. The first item
  *     in the array should be the default option.
- * @param {string} DialogPrefix - The prefix to the dialog keys for the display strings describing each extended type.
- *     The full dialog key will be <Prefix><Option.Name>
  * @param {number} [OptionsPerPage] - The number of options displayed on each page
- * @param {boolean} [ShowImages=true] - Denotes whether images should be shown for the specific item
  * @param {readonly [number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
- * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
- * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
  * @returns {void} Nothing
  */
-declare function TypedItemDraw(Options: readonly (TypedItemOption | VibratingItemOption)[], DialogPrefix: string, OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: readonly [number, number][], IgnoreSubscreen?: boolean): void;
+declare function TypedItemDraw({ functionPrefix, options, drawImages, parentOption, dialogPrefix }: TypedItemData | VibratingItemData, OptionsPerPage?: number, XYPositions?: readonly [number, number][]): void;
 /**
  * Handles clicks on the extended item type selection screen
- * @param {readonly (TypedItemOption | VibratingItemOption)[]} Options - An Array of type definitions for each allowed extended type. The first item
- *     in the array should be the default option.
+ * @param {TypedItemData | VibratingItemData} data
  * @param {number} [OptionsPerPage] - The number of options displayed on each page
- * @param {boolean} [ShowImages=true] - Denotes whether images are shown for the specific item
  * @param {[number, number][]} [XYPositions] - An array with custom X & Y coordinates of the buttons
- * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
- * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
  * @returns {void} Nothing
  */
-declare function TypedItemClick(Options: readonly (TypedItemOption | VibratingItemOption)[], OptionsPerPage?: number, ShowImages?: boolean, XYPositions?: [number, number][], IgnoreSubscreen?: boolean): void;
+declare function TypedItemClick(data: TypedItemData | VibratingItemData, OptionsPerPage?: number, XYPositions?: [number, number][]): void;
 /**
  * Handler function called when an option on the type selection screen is clicked
  * @template {TypedItemOption | VibratingItemOption} T
+ * @param {ExtendedItemData<T> & { options: T[] }} data
  * @param {Character} C - The character wearing the item
- * @param {readonly (T)[]} Options - An Array of type definitions for each allowed extended type. The first item
- *     in the array should be the default option.
  * @param {T} Option - The selected type definition
  * @returns {void} Nothing
  */
-declare function TypedItemHandleOptionClick<T extends TypedItemOption | VibratingItemOption>(C: Character, Options: readonly T[], Option: T): void;
+declare function TypedItemHandleOptionClick<T extends TypedItemOption | VibratingItemOption>(data: ExtendedItemData<T> & {
+    options: T[];
+}, C: Character, Option: T): void;
 /**
  * Handler function for setting the type of an typed item
  * @template {TypedItemOption | VibratingItemOption} T
+ * @param {ExtendedItemData<T> & { options: T[] }} data
  * @param {Character} C - The character wearing the item
- * @param {readonly T[]} Options - An Array of type definitions for each allowed extended type. The first item
- *     in the array should be the default option.
- * @param {T} Option - The selected type definition
+ * @param {T} newOption - The selected type definition
  * @returns {void} Nothing
  */
-declare function TypedItemSetType<T extends TypedItemOption | VibratingItemOption>(C: Character, Options: readonly T[], Option: T): void;
+declare function TypedItemSetType<T extends TypedItemOption | VibratingItemOption>(data: ExtendedItemData<T> & {
+    options: T[];
+}, C: Character, newOption: T): void;
 /**
  * TypedItem.js
  * ------------

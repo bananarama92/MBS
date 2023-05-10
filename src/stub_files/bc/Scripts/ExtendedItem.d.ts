@@ -15,11 +15,20 @@ declare function ExtendedItemGetXY(Asset: Asset, ShowImages?: boolean): [number,
  */
 declare function ExtendedItemCreateCallback<T extends any[], RT>(data: ExtendedItemData<any>, name: string, originalFunction: ExtendedItemCallback<T, RT>): void;
 /**
+ * Construct the extended item's archetypical callbacks and place them in the main namespace.
  * @template {ExtendedItemOption} T
- * @param {ExtendedItemData<T>} data
- * @param {ExtendedItemCallbackStruct<T>} defaults
+ * @param {ExtendedItemData<T>} data - The extended item data
+ * @param {ExtendedItemCallbackStruct<T>} defaults - The default archetypical callbacks
  */
 declare function ExtendedItemCreateCallbacks<T extends ExtendedItemOption>(data: ExtendedItemData<T>, defaults: ExtendedItemCallbackStruct<T>): void;
+/**
+ * Convert that passed extended item config script hooks into their item data counterpart.
+ * @template {ExtendedItemData<any>} DataType
+ * @template {ExtendedItemOption} OptionType
+ * @param {ExtendedItemCapsScriptHooksStruct<DataType, OptionType>} scriptHooks - The extended item config script hooks
+ * @returns {ExtendedItemScriptHookStruct<DataType, OptionType>} - The extended item data script hooks
+ */
+declare function ExtendedItemParseScriptHooks<DataType extends ExtendedItemData<any>, OptionType extends ExtendedItemOption>(scriptHooks: ExtendedItemCapsScriptHooksStruct<DataType, OptionType>): ExtendedItemScriptHookStruct<DataType, OptionType>;
 /**
  * Initialize the extended item properties
  * @param {Item} Item - The item in question
@@ -41,13 +50,10 @@ declare function ExtendedItemInit(C: Character, Item: Item, Refresh?: boolean): 
 declare function ExtendedItemInitNoArch(C: Character, Item: Item, Properties: ItemProperties, Refresh?: boolean): boolean;
 /**
  * Loads the item's extended item menu
- * @param {string} DialogKey - The dialog key for the message to display prompting the player to select an extended
- *     type
- * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
- * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
+ * @param {ExtendedItemData<any>} data
  * @returns {void} Nothing
  */
-declare function ExtendedItemLoad(DialogKey: string, IgnoreSubscreen?: boolean): void;
+declare function ExtendedItemLoad({ functionPrefix, dialogPrefix, parentOption }: ExtendedItemData<any>): void;
 /**
  * Draw a single button in the extended item type selection screen.
  * @param {ExtendedItemOption | ModularItemModule} Option - The new extended item option
@@ -91,11 +97,9 @@ declare function ExtendedItemExit(): void;
  * @param {ItemProperties} newProperty - The option to set
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
- * @param {null | DynamicPropertyCallback} dynamicProperty - An optional callback for dynamically setting the item's properties.
- * Executed after the conventional properties have been assigned.
  * @returns {void} Nothing
  */
-declare function ExtendedItemSetOption(C: Character, item: Item, previousProperty: ItemProperties, newProperty: ItemProperties, push?: boolean, dynamicProperty?: null | DynamicPropertyCallback): void;
+declare function ExtendedItemSetProperty(C: Character, item: Item, previousProperty: ItemProperties, newProperty: ItemProperties, push?: boolean): void;
 /**
  * Checks whether the character meets the requirements for an extended type option. This will check against their Bondage
  * skill if applying the item to another character, or their Self Bondage skill if applying the item to themselves.
@@ -257,6 +261,37 @@ declare function ExtendedItemBuildChatMessageDictionary<OptionType extends Exten
  * @returns {string} The dialogue prefix for the custom chatroom messages
  */
 declare function ExtendedItemCustomChatPrefix(Name: string, Data: ExtendedItemData<any>): string;
+/**
+ * Register archetypical subscreens for the passed extended item options
+ * @param {Asset} asset - The asset whose subscreen is being registered
+ * @param {VariableHeightConfig | VibratingItemConfig | TextItemConfig} config - The subscreens extended item config
+ * @param {TypedItemOption | ModularItemOption} option - The parent item's extended item option
+ * @returns {null | VariableHeightData | VibratingItemData | TextItemData} - The subscreens extended item data or `null` if no archetypical subscreen is present
+ */
+declare function ExtendedItemRegisterSubscreen(asset: Asset, config: VariableHeightConfig | VibratingItemConfig | TextItemConfig, option: TypedItemOption | ModularItemOption): null | VariableHeightData | VibratingItemData | TextItemData;
+/**
+ * Gather and return all subscreen properties of the passed option.
+ * @param {Item} item - The item in question
+ * @param {ExtendedItemOption} option - The extended item option
+ * @returns {ItemProperties} - The item properties of the option's subscreen (if any)
+ */
+declare function ExtendedItemGatherSubscreenProperty(item: Item, option: ExtendedItemOption): ItemProperties;
+/**
+ * Sets an extended item's type and properties to the option provided.
+ * @template {ModularItemOption | TypedItemOption | VibratingItemOption} OptionType
+ * @param {ModularItemData | TypedItemData | VibratingItemData} data - The extended item data
+ * @param {Character} C - The character on whom the item is equipped
+ * @param {Item} item - The item whose type to set
+ * @param {OptionType} newOption - The to-be applied extended item option
+ * @param {OptionType} previousOption - The previously applied extended item option
+ * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
+ * player) - defaults to false.
+ * @returns {string|undefined} - undefined or an empty string if the option was set correctly. Otherwise, returns a string
+ * informing the player of the requirements that are not met.
+ */
+declare function ExtendedItemSetOption<OptionType extends TypedItemOption | ModularItemOption | VibratingItemOption>(data: ModularItemData | TypedItemData | VibratingItemData, C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push?: boolean): string | undefined;
+/** A temporary hack for registering extra archetypes for a single screen. */
+declare function ExtendedItemManualRegister(): void;
 /**
  * Utility file for handling extended items
  */

@@ -167,11 +167,13 @@ declare function ChatSearchGetFilterReasons(Room: {
  * Check if a room matches filtered-out terms and should thus be hidden.
  * Also used when deciding which terms need to be removed from the filter option in order to make a room be no longer hidden.
  * Only checks the room name, not the description.
- * @param {object} Room - the room object to check
+ * @param {{ Name: string }} Room - the room object to check
  * @param {string[]} Terms - list of terms to check
  * @returns {boolean} - true if room matches, false otherwise
  */
-declare function ChatSearchMatchesTerms(Room: object, Terms: string[]): boolean;
+declare function ChatSearchMatchesTerms(Room: {
+    Name: string;
+}, Terms: string[]): boolean;
 /**
  * Calculates starting offset for the ignored rooms list when displaying results in filter/permission mode.
  * @param {number} shownRooms - Number of rooms shown before the ignored rooms.
@@ -179,15 +181,15 @@ declare function ChatSearchMatchesTerms(Room: object, Terms: string[]): boolean;
  */
 declare function ChatSearchCalculateIgnoredRoomsOffset(shownRooms: number): number;
 declare var ChatSearchBackground: string;
-/** @type {{ Name: string, CreatorMemberNumber: number, MemberLimit: number, MemberCount: number, DisplayName: string, BlockCategory: string[], Game: string, Friends: { MemberName: string, MemberNumber: number, Type: string }[], Description: string, Creator: string, Order: number }[]} */
+/** @type {{ Name: string, CreatorMemberNumber: number, MemberLimit: number, MemberCount: number, DisplayName: string, BlockCategory: ChatRoomBlockCategory[], Game: ChatRoomGame, Friends: { MemberName: string, MemberNumber: number, Type: string }[], Description: string, Creator: string, Order: number }[]} */
 declare var ChatSearchResult: {
     Name: string;
     CreatorMemberNumber: number;
     MemberLimit: number;
     MemberCount: number;
     DisplayName: string;
-    BlockCategory: string[];
-    Game: string;
+    BlockCategory: ChatRoomBlockCategory[];
+    Game: ChatRoomGame;
     Friends: {
         MemberName: string;
         MemberNumber: number;
@@ -215,13 +217,15 @@ declare var ChatSearchSafewordAppearance: null | Item[];
 declare var ChatSearchSafewordPose: null | AssetPoseName[];
 /** @type {null | AssetPoseName[]} */
 declare var ChatSearchPreviousActivePose: null | AssetPoseName[];
-declare var ChatSearchTempHiddenRooms: any[];
-declare var ChatSearchMode: string;
+/** @type {number[]} */
+declare var ChatSearchTempHiddenRooms: number[];
+/** @type {"" | "Filter"} */
+declare var ChatSearchMode: "" | "Filter";
 declare var ChatSearchGhostPlayerOnClickActive: boolean;
 declare var ChatSearchShowHiddenRoomsActive: boolean;
 declare var ChatSearchFilterHelpActive: boolean;
-/** @type {{ Index: number, RoomLabel: string, MemberLabel: string, WordsLabel: string }} */
-declare var ChatSearchFilterUnhideConfirm: {
+/** @type {null | { Index: number, RoomLabel: string, MemberLabel: string, WordsLabel: string }} */
+declare var ChatSearchFilterUnhideConfirm: null | {
     Index: number;
     RoomLabel: string;
     MemberLabel: string;
@@ -230,8 +234,8 @@ declare var ChatSearchFilterUnhideConfirm: {
 declare var ChatSearchRejoinIncrement: number;
 /** @type {null | string} */
 declare var ChatSearchReturnToScreen: null | string;
-/** @type {ChatRoomLanguage | ""} */
-declare var ChatSearchLanguage: ChatRoomLanguage | "";
-/** @type {ChatRoomLanguage | ""} */
-declare var ChatSearchLanguageTemp: ChatRoomLanguage | "";
+/** @type {"" | ChatRoomLanguage} */
+declare var ChatSearchLanguage: "" | ChatRoomLanguage;
+/** @type {"" | ChatRoomLanguage} */
+declare var ChatSearchLanguageTemp: "" | ChatRoomLanguage;
 declare var ChatSearchFilterTermsTemp: string;

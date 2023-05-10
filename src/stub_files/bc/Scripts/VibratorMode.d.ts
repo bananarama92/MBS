@@ -1,17 +1,31 @@
 /**
  * Registers a vibrator item. This automatically creates the item's load, draw, click and scriptDraw functions.
  * @param {Asset} asset - The asset being registered
- * @param {VibratingItemConfig | undefined} config - The item's vibrator item configuration
- * @returns {void} - Nothing
+ * @param {VibratingItemConfig} config - The item's vibrator item configuration
+ * @param {null | ExtendedItemOption} parentOption - The extended item option of the super screen that this archetype was initialized from (if any)
+ * @returns {VibratingItemData} - The generated extended item data for the asset
  */
-declare function VibratorModeRegister(asset: Asset, config?: VibratingItemConfig | undefined): void;
+declare function VibratorModeRegister(asset: Asset, config: VibratingItemConfig, parentOption?: null | ExtendedItemOption): VibratingItemData;
+/**
+ * Sets an extended item's type and properties to the option provided.
+ * @param {VibratingItemData} data - The extended item data
+ * @param {Character} C - The character on whom the item is equipped
+ * @param {Item} item - The item whose type to set
+ * @param {VibratingItemOption} newOption - The to-be applied extended item option
+ * @param {VibratingItemOption} previousOption - The previously applied extended item option
+ * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
+ * player) - defaults to false.
+ * @returns {string|undefined} - undefined or an empty string if the option was set correctly. Otherwise, returns a string
+ * informing the player of the requirements that are not met.
+ */
+declare function VibratorModeSetOption(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption, push?: boolean): string | undefined;
 /**
  * Generates an asset's vibrating item data
  * @param {Asset} asset - The asset to generate vibrating item data for
  * @param {VibratingItemConfig} config - The item's extended item configuration
  * @returns {VibratingItemData} - The generated vibrating item data for the asset
  */
-declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix }: VibratingItemConfig): VibratingItemData;
+declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix }: VibratingItemConfig, parentOption?: any): VibratingItemData;
 /**
  * Gather all extended item options for a given list of modes.
  * @param {readonly VibratorModeSet[]} modeSet
@@ -20,19 +34,11 @@ declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, Ba
 declare function VibratorModeGetOptions(modeSet?: readonly VibratorModeSet[]): VibratingItemOption[];
 /**
  * Loads the vibrating item's extended item menu.
- * @param {string} prefix
- * @param {boolean} IgnoreSubscreen Whether loading subscreen draw functions should be ignored.
- * Should be set to true to avoid infinite recursions if the the subscreen also calls this function.
+ * @param {VibratingItemData} data
  */
-declare function VibratorModeLoad(prefix: string, IgnoreSubscreen?: boolean): void;
+declare function VibratorModeLoad({ dialogPrefix: { header } }: VibratingItemData): void;
 /** @type {ExtendedItemCallbacks.Validate<ExtendedItemOption>} */
 declare function VibratorModeValidate(C: Character, item: Item, option: ExtendedItemOption, currentOption: ExtendedItemOption): string;
-/**
- * Creates an asset's dynamic script draw function
- * @param {VibratingItemData} data - The vibrating item data for the asset
- * @returns {void} - Nothing
- */
-declare function VibratorModeCreateScriptDrawFunction({ dynamicAssetsFunctionPrefix }: VibratingItemData): void;
 /**
  * Publish a vibrator action and exit the dialog of applicable
  * @param {VibratingItemData} data
@@ -69,22 +75,18 @@ declare function VibratorModeSetEffect({ asset }: VibratingItemData): void;
 declare function VibratorModeGenerateCoords(modeSet: readonly VibratorModeSet[], Y?: number): [X: number, Y: number][];
 /**
  * Common draw function for vibrators
- * @param {readonly VibratorModeSet[]} modeSet - The vibrator mode sets for the item
+ * @param {VibratingItemData} data
  * @param {number} [Y] - The y-coordinate at which to start drawing the controls
- * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
- * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
  * @returns {void} - Nothing
  */
-declare function VibratorModeDraw(modeSet: readonly VibratorModeSet[], Y?: number, IgnoreSubscreen?: boolean): void;
+declare function VibratorModeDraw(data: VibratingItemData, Y?: number): void;
 /**
  * Common click function for vibrators
- * @param {readonly VibratorModeSet[]} modeSet - The vibrator mode sets for the item
+ * @param {VibratingItemData} data
  * @param {number} [Y] - The y-coordinate at which the extended item controls were drawn
- * @param {boolean} IgnoreSubscreen - Whether loading subscreen draw functions should be ignored.
- * Should be set to `true` to avoid infinite recursions if the the subscreen also calls this function.
  * @returns {void} - Nothing
  */
-declare function VibratorModeClick(modeSet: readonly VibratorModeSet[], Y?: number, IgnoreSubscreen?: boolean): void;
+declare function VibratorModeClick(data: VibratingItemData, Y?: number): void;
 /**
  * Gets a vibrator mode from VibratorModeOptions
  * @param {VibratorMode} ModeName - The name of the mode from VibratorMode, e.g. VibratorMode.OFF
@@ -204,13 +206,18 @@ declare function VibratorModeStateUpdateRest(C: Character, Arousal: number, Time
 declare function VibratorModePublish(C: Character, Item: Item, OldIntensity: number, Intensity: number): void;
 /**
  * Initialize the vibrating item properties
- * @param {VibratorModeSet[]} modeSet optional list with the names of all supported configuration sets.
+ * @param {VibratingItemData} data
  * @param {Item} Item - The item in question
  * @param {Character} C - The character that has the item equiped
  * @param {boolean} Refresh - Whether the character and relevant item should be refreshed and pushed to the server
  * @returns {boolean} Whether properties were initialized or not
  */
-declare function VibratorModeInit(modeSet: VibratorModeSet[], C: Character, Item: Item, Refresh?: boolean): boolean;
+declare function VibratorModeInit(data: VibratingItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
+/**
+ * An alias for {@link TypedItemSetOptionByName}.
+ * @type {typeof TypedItemSetOptionByName}
+ */
+declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean): string;
 /**
  * An enum for the possible vibrator modes
  * @readonly

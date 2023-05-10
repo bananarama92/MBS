@@ -326,8 +326,12 @@ declare var AsylumGGTSTaskTarget: null | Character;
 declare var AsylumGGTSLastTask: string;
 declare var AsylumGGTSTaskStart: number;
 declare var AsylumGGTSTaskEnd: number;
+/**
+ * The list of available tasks, partitioned by level.
+ */
 declare var AsylumGGTSTaskList: string[][];
 declare var AsylumGGTSLevelTime: number[];
-declare var AsylumGGTSPreviousPose: string;
+/** The last pose the character had. Used to enforce KeepPose rules */
+declare var AsylumGGTSPreviousPose: any[];
 declare var AsylumGGTSWordCheck: number;
 declare var AsylumGGTSSpeed: number;

@@ -19,12 +19,6 @@ declare function MagicPuzzleValidate(X: any, Y: any): void;
  */
 declare function MagicPuzzleAntiCheat(): void;
 /**
- * On mobile only, when the finger is dragged on the screen, we change the MouseX & MouseY to process the game
- * @param {TouchEvent} Event - contains the X & Y coordinates on where the finger is positioned
- * @returns {void} - Nothing
- */
-declare function MagicPuzzleTouchMove(Event: TouchEvent): void;
-/**
  * Runs the magic puzzle mini game
  * @returns {void} - Nothing
  */

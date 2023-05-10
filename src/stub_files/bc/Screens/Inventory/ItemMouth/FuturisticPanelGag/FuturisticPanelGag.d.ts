@@ -15,28 +15,33 @@ declare function InventoryItemMouthFuturisticPanelGagPublishActionTrigger(C: Cha
  * Helper function for handling automatic gag inflation and deflation.
  * @param {Character} C - The selected character
  * @param {Item} Item - The item in question
+ * @param {ModularItemOption} previousOption
+ * @param {readonly ModularItemOption[]} options
  * @param {boolean} Deflate - Whether this function is triggered by an automatic deflation or not
- * @param {number[]} PreviousModuleValues - The current modules values prior to inflation
- * @return {number[]} - The new module values
+ * @returns {ModularItemOption}
  */
-declare function InventoryItemMouthFuturisticPanelGagTriggerGetOptions(C: Character, Item: Item, Deflate: boolean, PreviousModuleValues: number[]): number[];
+declare function InventoryItemMouthFuturisticPanelGagTriggerGetOptions(C: Character, Item: Item, previousOption: ModularItemOption, options: readonly ModularItemOption[], Deflate: boolean): ModularItemOption;
 /**
  * Helper function for handling automatic gag inflation and deflation.
+ * @param {ModularItemData} data
  * @param {Character} C - The selected character
  * @param {Item} Item - The item in question
  * @param {boolean} Deflate - Whether this function is triggered by an automatic deflation or not
  * @return {void}
  */
-declare function InventoryItemMouthFuturisticPanelGagTrigger(C: Character, Item: Item, Deflate: boolean): void;
+declare function InventoryItemMouthFuturisticPanelGagTrigger(data: ModularItemData, C: Character, Item: Item, Deflate: boolean): void;
 /**
  * @typedef {{ LastMessageLen?: number, UpdateTime?: number, ChangeTime?: number }} FuturisticPanelGagPersistentData
  */
-/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticPanelGagPersistentData>} */
-declare function AssetsItemMouthFuturisticPanelGagScriptUpdatePlayer(data: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
-/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticPanelGagPersistentData>} */
-declare function AssetsItemMouthFuturisticPanelGagScriptDraw(data: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
-/** @type {ExtendedItemCallbacks.BeforeDraw<FuturisticPanelGagPersistentData>} */
-declare function AssetsItemMouthFuturisticPanelGagBeforeDraw(data: DynamicDrawingData<FuturisticPanelGagPersistentData>): DynamicBeforeDrawOverrides;
+/**
+ * @param {ModularItemData} data
+ * @param {DynamicScriptCallbackData<FuturisticPanelGagPersistentData>} drawData
+ */
+declare function AssetsItemMouthFuturisticPanelGagScriptUpdatePlayer(data: ModularItemData, drawData: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
+/** @type {ExtendedItemScriptHookCallbacks.ScriptDraw<ModularItemData, FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticPanelGagScriptDrawHook(data: ModularItemData, originalFunction: (drawData: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>) => void, drawData: DynamicScriptCallbackData<FuturisticPanelGagPersistentData>): void;
+/** @type {ExtendedItemScriptHookCallbacks.BeforeDraw<ModularItemData, FuturisticPanelGagPersistentData>} */
+declare function AssetsItemMouthFuturisticPanelGagBeforeDrawHook(data: ModularItemData, originalFunction: (drawData: DynamicDrawingData<FuturisticPanelGagPersistentData>) => DynamicBeforeDrawOverrides, drawData: DynamicDrawingData<FuturisticPanelGagPersistentData>): DynamicBeforeDrawOverrides;
 type FuturisticPanelGagPersistentData = {
     LastMessageLen?: number;
     UpdateTime?: number;

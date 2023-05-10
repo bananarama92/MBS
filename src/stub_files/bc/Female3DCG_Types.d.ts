@@ -206,6 +206,9 @@ interface AssetDefinition {
 	/** Whether the asset is only available to lovers. */
 	LoverOnly?: boolean;
 
+	/** Whether the asset is only available to the family. */
+	FamilyOnly?: boolean;
+
 	/** A list of facial expression using the asset causes to the character */
 	ExpressionTrigger?: ExpressionTrigger[];
 
@@ -318,15 +321,6 @@ interface AssetDefinition {
 
 	/** A list of prerequisite checks that must pass for the group's expressions to be selectable */
 	ExpressionPrerequisite?: AssetPrerequisite[];
-
-	/** A record with the maximum length for each text-based properties with an input field. */
-	TextMaxLength?: null | Partial<Record<PropertyTextNames, number>>;
-
-	/**
-	 * The font used for dynamically drawing text.
-	 * Requires {@link AssetDefinition.DynamicAfterDraw} to be set.
-	 */
-	TextFont?: null | string;
 }
 
 interface AssetLayerDefinition {
@@ -409,7 +403,7 @@ interface AssetLayerDefinition {
 	ShowForAttribute?: AssetAttribute[];
 }
 
-type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight";
+type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight" | "text";
 
 /**
  * An object containing extended item configurations keyed by group name.
@@ -427,7 +421,7 @@ type ExtendedItemGroupConfig = Record<string, AssetArchetypeConfig>;
 /**
  * Valid extended item configuration types
  */
-type AssetArchetypeConfig = TypedItemAssetConfig | ModularItemAssetConfig | VibratingItemAssetConfig | VariableHeightAssetConfig;
+type AssetArchetypeConfig = TypedItemAssetConfig | ModularItemAssetConfig | VibratingItemAssetConfig | VariableHeightAssetConfig | TextItemAssetConfig;
 
 /**
  * An object containing the extended item definition for an asset.
@@ -464,7 +458,7 @@ interface ExtendedItemConfig<OptionType extends ExtendedItemOption> {
 	 * To-be initialized properties independent of the selected item module(s).
 	 * Relevant if there are properties that are (near) exclusively managed by {@link ExtendedItemConfig.ScriptHooks} functions.
 	 */
-	BaselineProperty?: ItemProperties;
+	BaselineProperty?: ItemPropertiesNoArray;
 	/** A boolean indicating whether or not images should be drawn for the option and/or module selection screen. */
 	DrawImages?: boolean;
 }
@@ -509,12 +503,7 @@ interface ExtendedItemOption {
 	 * If it's not, *e.g.* for a custom script hook button that does not alter the item's state,
 	 * then its value must be set `"ExtendedItemOption"`.
 	 */
-	OptionType: "ExtendedItemOption" | "TypedItemOption" | "VariableHeightOption" | "ModularItemOption" | "VibratingItemOption";
-	/**
-	 * A callback for dynamically assigning item properties.
-	 * Called after assigning all normal non-dynamic properties (_i.e._ {@link Property}) by the likes of {@link ExtendedItemSetOption}.
-	 */
-	DynamicProperty?: DynamicPropertyCallback;
+	OptionType: "ExtendedItemOption" | "TypedItemOption" | "VariableHeightOption" | "ModularItemOption" | "VibratingItemOption" | "TextItemOption";
 }
 
 /** Extended item option subtype for typed items */
@@ -523,16 +512,18 @@ interface TypedItemOptionBase extends Omit<ExtendedItemOption, "OptionType"> {
 	/** A unique (automatically assigned) identifier of the struct type */
 	OptionType?: "TypedItemOption";
 	/** If the option has a subscreen, this can set a particular archetype to use */
-	Archetype?: ExtendedArchetype;
+	Archetype?: "vibrating" | "variableheight" | "text";
 	/** If the option has an archetype, sets the config to use */
-	ArchetypeConfig?: TypedItemConfig | ModularItemConfig | VibratingItemConfig | VariableHeightConfig;
+	ArchetypeConfig?: VibratingItemConfig | VariableHeightConfig | TextItemConfig;
 	/** Whether or not this option can be selected randomly */
 	Random?: boolean;
 }
 
 /** Extended item option subtype for typed items */
-interface TypedItemOption extends TypedItemOptionBase {
+interface TypedItemOption extends Omit<TypedItemOptionBase, "ArchetypeConfig"> {
 	OptionType: "TypedItemOption";
+	/** If the option has an archetype, sets the data to use */
+	ArchetypeData?: VibratingItemData | VariableHeightData | TextItemData;
 }
 
 /** Extended item option subtype for vibrating items */
@@ -549,13 +540,9 @@ interface VibratingItemOption extends ExtendedItemOption {
 /** Extended item option subtype for vibrating items */
 interface VariableHeightOption extends ExtendedItemOption {
 	OptionType: "VariableHeightOption";
+	Property: Pick<Required<ItemProperties>, "OverrideHeight">;
+	Name: "newOption" | "previousOption";
 }
-
-/**
- * An extended item option callback for dynamically assigning item properties.
- * @param property - The properties in question; must be modified inplace
- */
-type DynamicPropertyCallback = (property: ItemProperties) => void;
 
 /**
  * An object containing data about the type change that triggered the chat message
@@ -758,10 +745,14 @@ interface ModularItemOptionBase extends Omit<ExtendedItemOption, "OptionType" | 
 	ModuleName?: string;
 	/** The option's (automatically assigned) index within the parent module */
 	Index?: number;
+	/** If the option has a subscreen, this can set a particular archetype to use */
+	Archetype?: "vibrating" | "variableheight" | "text";
+	/** If the option has an archetype, sets the config to use */
+	ArchetypeConfig?: VibratingItemConfig | VariableHeightConfig | TextItemConfig;
 }
 
 /** An object describing a single option within a module for a modular item. */
-interface ModularItemOption extends ExtendedItemOption, ModularItemOptionBase {
+interface ModularItemOption extends Omit<ModularItemOptionBase, "ArchetypeConfig"> {
 	/** The name of the option; automatically set to {@link ModularItemModule.Key} + the option's index */
 	Name: string;
 	/** A unique (automatically assigned) identifier of the struct type */
@@ -770,6 +761,8 @@ interface ModularItemOption extends ExtendedItemOption, ModularItemOptionBase {
 	ModuleName: string;
 	/** The option's (automatically assigned) index within the parent module */
 	Index: number;
+	/** If the option has an archetype, sets the data to use */
+	ArchetypeData?: VibratingItemData | VariableHeightData | TextItemData;
 }
 
 //#endregion
@@ -793,6 +786,8 @@ interface VibratingItemConfig extends ExtendedItemConfig<VibratingItemOption> {
 	DialogPrefix?: {
 		/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
 		Header?: string;
+		/** The dialogue prefix for the name of each option */
+		Option?: string;
 		/** The dialogue prefix that will be used for each of the item's chatroom messages */
 		Chat?: string | ExtendedItemChatCallback<VibratingItemOption>;
 	};
@@ -822,8 +817,8 @@ interface VariableHeightConfig extends ExtendedItemConfig<VariableHeightOption> 
 		Header?: string;
 		/** The dialogue prefix that will be used for each of the item's chatroom messages */
 		Chat?: string | ExtendedItemChatCallback<VariableHeightOption>;
-		/** The prefix used for dialog keys representing an NPC's reactions to item type changes */
-		Npc?: string | ExtendedItemNPCCallback<VariableHeightOption>;
+		/** The dialogue prefix for the name of each option */
+		Option: string;
 	};
 	/** The function that handles finding the current variable height setting */
 	GetHeightFunction?: (property: ItemProperties) => number | null;
@@ -841,6 +836,45 @@ interface VariableHeightSliderConfig {
 	Top: number;
 	/** The height in pixels of the slider */
 	Height: number;
+}
+
+//#endregion
+
+//#region text items
+
+type TextItemAssetConfig = ExtendedItemAssetConfig<"text", TextItemConfig>;
+
+interface TextItemConfig extends ExtendedItemConfig<TextItemOption> {
+	/** A record with the maximum length for each text-based properties with an input field. */
+	MaxLength: TextItemRecord<number>;
+	/** A record containing various dialog keys used by the extended item screen */
+	DialogPrefix?: {
+		/** The dialogue prefix for the player prompt that is displayed on each module's menu screen */
+		Header?: string;
+		/** The dialogue prefix that will be used for each of the item's chatroom messages */
+		Chat?: string | ExtendedItemChatCallback<TextItemOption>;
+	};
+	DrawImages?: false;
+	ChatSetting?: "default";
+	ScriptHooks?: ExtendedItemCapsScriptHooksStruct<TextItemData, TextItemOption>;
+	EventListeners?: TextItemRecord<TextItemEventListener>;
+	DrawData?: {
+		ItemsPerPage?: number;
+		Positions?: [X: number, Y: number, W?: number, H?: number][],
+	}
+	PushOnPublish?: boolean;
+	/**
+	 * The font used for dynamically drawing text.
+	 * Requires {@link AssetDefinition.DynamicAfterDraw} to be set.
+	 */
+	Font?: null | string;
+}
+
+/** Extended item option subtype for vibrating items */
+interface TextItemOption extends ExtendedItemOption {
+	OptionType: "TextItemOption";
+	Property: TextItemRecord<string>;
+	Name: "newOption" | "previousOption";
 }
 
 //#endregion

@@ -1,13 +1,11 @@
-/** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryItemPelvisFuturisticTrainingBeltInit(C: Character, Item: Item, Refresh: boolean): boolean;
-/** @type {ExtendedItemCallbacks.Load} */
-declare function InventoryItemPelvisFuturisticTrainingBeltLoad(): void;
-/** @type {ExtendedItemCallbacks.Draw} */
-declare function InventoryItemPelvisFuturisticTrainingBeltDraw(): void;
-/** @type {ExtendedItemCallbacks.Click} */
-declare function InventoryItemPelvisFuturisticTrainingBeltClick(): void;
-/** @type {ExtendedItemCallbacks.Exit} */
-declare function InventoryItemPelvisFuturisticTrainingBeltExit(): void;
+/** @type {ExtendedItemScriptHookCallbacks.Load<VibratingItemData>} */
+declare function InventoryItemPelvisFuturisticTrainingBeltLoadHook(data: VibratingItemData, originalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Draw<VibratingItemData>} */
+declare function InventoryItemPelvisFuturisticTrainingBeltDrawHook(data: VibratingItemData, originalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Click<VibratingItemData>} */
+declare function InventoryItemPelvisFuturisticTrainingBeltClickHook(data: VibratingItemData, originalFunction: () => void): void;
+/** @type {ExtendedItemScriptHookCallbacks.Exit<VibratingItemData>} */
+declare function InventoryItemPelvisFuturisticTrainingBeltExitHook(data: VibratingItemData, originalFunction: () => void): void;
 /** @type {ExtendedItemCallbacks.PublishAction<ExtendedItemOption>} */
 declare function InventoryItemPelvisFuturisticTrainingBeltPublishAction(C: Character, item: Item, newOption: ExtendedItemOption): void;
 /**
@@ -24,13 +22,6 @@ declare function InventoryItemPelvisFuturisticTrainingBeltPublishMode(C: Charact
  */
 declare function InventoryItemPelvisFuturisticTrainingBeltPublishGeneric(C: Character, msg: string): void;
 /**
- *
- * @param {Character} C
- * @param {Item} Item
- * @returns
- */
-declare function InventoryItemPelvisFuturisticTrainingBeltValidate(C: Character, Item: Item): string;
-/**
  * Get a vibe mode given a belt state
  * @param {Character} C
  * @param {string} State
@@ -40,15 +31,13 @@ declare function InventoryItemPelvisFuturisticTrainingBeltValidate(C: Character,
 declare function InventoryItemPelvisFuturisticTrainingBeltGetVibeMode(C: Character, State: string, First: boolean): VibratorMode;
 /**
  * This function sets the vibration mode, similar to the extended vibrators
- *
+ * @param {VibratingItemData} data
  * @param {Character} C
  * @param {FuturisticTrainingBeltPersistentData} PersistentData
  * @param {Item} Item
  * @param {boolean} [Force]
  */
-declare function InventoryItemPelvisFuturisticTrainingBeltUpdateVibeMode(C: Character, PersistentData: FuturisticTrainingBeltPersistentData, Item: Item, Force?: boolean): void;
-/** @type {ExtendedItemCallbacks.Validate<VibratingItemOption>} */
-declare function InventoryItemFuturisticTrainingBeltValidate(C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption): string;
+declare function InventoryItemPelvisFuturisticTrainingBeltUpdateVibeMode(data: VibratingItemData, C: Character, PersistentData: FuturisticTrainingBeltPersistentData, Item: Item, Force?: boolean): void;
 /**
  * Performs punishment checks on the chat log for the given item and
  * returns an appropriate punishment, if applicable.
@@ -62,22 +51,23 @@ declare function InventoryFuturisticTrainingBeltCheckPunishSpeech(Item: Item, La
     word?: string;
 };
 /**
- *
- * @param {DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>} data
+ * @param {VibratingItemData} data
+ * @param {DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>} drawData
  * @param {number} LastTime
  */
-declare function AssetsItemPelvisFuturisticTrainingBeltScriptUpdatePlayer(data: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>, LastTime: number): void;
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptUpdatePlayer(data: VibratingItemData, drawData: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>, LastTime: number): void;
 /**
  * Handles the vibrator state machine for the belt
- * @param {DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>} data
+ * @param {VibratingItemData} data
+ * @param {DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>} drawData
  * @returns
  */
-declare function AssetsItemPelvisFuturisticTrainingBeltScriptStateMachine(data: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>): void;
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptStateMachine(data: VibratingItemData, drawData: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>): void;
 /**
  * @typedef {{ UpdateTime?: number, LastMessageLen?: number, CheckTime?: number, DeviceState?: number, DeviceStateTimer?: number, DeviceVibeMode?: VibratorMode }} FuturisticTrainingBeltPersistentData
  */
-/** @type {ExtendedItemCallbacks.ScriptDraw<FuturisticTrainingBeltPersistentData>} */
-declare function AssetsItemPelvisFuturisticTrainingBeltScriptDraw(data: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>): void;
+/** @type {ExtendedItemScriptHookCallbacks.ScriptDraw<VibratingItemData, FuturisticTrainingBeltPersistentData>} */
+declare function AssetsItemPelvisFuturisticTrainingBeltScriptDraw(data: VibratingItemData, originalFunction: (drawData: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>) => void, drawData: DynamicScriptCallbackData<FuturisticTrainingBeltPersistentData>): void;
 declare var FuturisticTrainingBeltPermissions: string[];
 declare var FuturisticTrainingBeltSpeechPunishments: string[];
 declare var FuturisticTrainingBeltModes: string[];

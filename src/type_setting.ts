@@ -51,7 +51,11 @@ type setTypeCallback = (C: Character, item: Item, type: string) => void;
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
 let ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>>;
 waitFor(settingsMBSLoaded).then(() => {
-    if (typeof InventoryWearCraftTyped === "function") { // R91
+    if (
+        typeof InventoryWearCraftTyped === "function"
+        && typeof InventoryWearCraftVibrating === "function"
+        && typeof InventoryWearCraftModular === "function"
+    ) { // R91
         ITEM_SET_TYPE_DICT = Object.freeze({
             typed: (C, item, type) => InventoryWearCraftTyped(item, C, type),
             vibrating: (C, item, type) => InventoryWearCraftVibrating(item, C, type),
@@ -72,7 +76,7 @@ waitFor(settingsMBSLoaded).then(() => {
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
 function setTypeNoArch(item: Item, character: Character, type: string): void {
-    if (item.Asset.Name === "FuturisticVibrator") {
+    if (typeof TypedItemSetOption === "function" && item.Asset.Name === "FuturisticVibrator") {
         const options = VibratorModeGetOptions();
         const option = options.find(o => o.Name === type) || VibratorModeOff;
         TypedItemSetOption(character, item, options, option);

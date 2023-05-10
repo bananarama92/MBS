@@ -1,19 +1,11 @@
 /** @type {ExtendedItemCallbacks.Load} */
-declare function InventoryItemPelvisObedienceBeltEngraving0Load(): void;
+declare function InventoryItemPelvisObedienceBelts1Load(): void;
 /** @type {ExtendedItemCallbacks.Draw} */
-declare function InventoryItemPelvisObedienceBeltEngraving0Draw(): void;
+declare function InventoryItemPelvisObedienceBelts1Draw(): void;
 /** @type {ExtendedItemCallbacks.Click} */
-declare function InventoryItemPelvisObedienceBeltEngraving0Click(): void;
+declare function InventoryItemPelvisObedienceBelts1Click(): void;
 /** @type {ExtendedItemCallbacks.Exit} */
-declare function InventoryItemPelvisObedienceBeltEngraving0Exit(): void;
-/** @type {ExtendedItemCallbacks.Load} */
-declare function InventoryItemPelvisObedienceBeltShockModule1Load(): void;
-/** @type {ExtendedItemCallbacks.Draw} */
-declare function InventoryItemPelvisObedienceBeltShockModule1Draw(): void;
-/** @type {ExtendedItemCallbacks.Click} */
-declare function InventoryItemPelvisObedienceBeltShockModule1Click(): void;
-/** @type {ExtendedItemCallbacks.Exit} */
-declare function InventoryItemPelvisObedienceBeltShockModule1Exit(): void;
+declare function InventoryItemPelvisObedienceBelts1Exit(): void;
 /**
  * @param {Item} Item
  */
@@ -28,8 +20,8 @@ declare function AssetsItemPelvisObedienceBeltUpdate(data: DynamicScriptCallback
  */
 /** @type {ExtendedItemCallbacks.ScriptDraw<ObedienceBeltPersistentData>} */
 declare function AssetsItemPelvisObedienceBeltScriptDraw(data: DynamicScriptCallbackData<ObedienceBeltPersistentData>): void;
-/** @type {ExtendedItemCallbacks.AfterDraw<ObedienceBeltPersistentData>} */
-declare function AssetsItemPelvisObedienceBeltAfterDraw({ C, A, X, Y, Property, drawCanvas, drawCanvasBlink, AlphaMasks, L, Color }: DynamicDrawingData<ObedienceBeltPersistentData>): void;
+/** @type {ExtendedItemScriptHookCallbacks.AfterDraw<TextItemData, ObedienceBeltPersistentData>} */
+declare function AssetsItemPelvisObedienceBeltAfterDrawHook(data: TextItemData, originalFunction: (drawData: DynamicDrawingData<ObedienceBeltPersistentData>) => void, { C, A, CA, X, Y, drawCanvas, drawCanvasBlink, AlphaMasks, L, Color }: DynamicDrawingData<ObedienceBeltPersistentData>): void;
 type ObedienceBeltPersistentData = {
     UpdateTime?: number;
     LastMessageLen?: number;

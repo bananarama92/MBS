@@ -19,19 +19,19 @@ declare const BackgroundsTagAsylum: "Asylum";
  * @constant
  * @type {BackgroundTag[]}
  */
-declare var BackgroundsTagList: BackgroundTag[];
+declare const BackgroundsTagList: BackgroundTag[];
 /**
  * List of all tags to setup your main hall or private room
  * @constant
  * @type {BackgroundTag[]}
  */
-declare var BackgroundsPrivateRoomTagList: BackgroundTag[];
+declare const BackgroundsPrivateRoomTagList: BackgroundTag[];
 /**
  * List of all the common backgrounds.
  * @constant
  * @type {{ Name: string; Tag: BackgroundTag[]; }[]}
  */
-declare var BackgroundsList: {
+declare const BackgroundsList: {
     Name: string;
     Tag: BackgroundTag[];
 }[];
