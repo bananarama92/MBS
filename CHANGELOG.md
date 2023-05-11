@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v0.5.14
+* Backport two BC R92Beta2 bug fixes to R92Beta1
+    - [BondageProjects/Bondage-College#4202](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4202): Fix the high-sec and intricate locks not being unlockable
+    - [BondageProjects/Bondage-College#4203](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4203): Make the two chastity shields block clit activities
+
 ## v0.5.13
 * Full R92Beta1 support
 * Various misc Github Actions related updates
