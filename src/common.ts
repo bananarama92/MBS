@@ -392,7 +392,7 @@ export function isArray(arg: unknown): arg is readonly unknown[] {
 }
 
 /** A version of {@link Object.keys} more aimed at records with literal string keys. */
-export function keys<KT extends string>(arg: Record<KT, unknown>): KT[] {
+export function keys<KT extends string>(arg: Partial<Record<KT, unknown>>): KT[] {
     return <KT[]>Object.keys(arg);
 }
 
