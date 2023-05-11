@@ -33,11 +33,21 @@ interface FWCommandOption extends FWObjectOption {
     readonly Parent: import("common_bc").FWCommand,
 }
 
-/**
- * A list of with the various {@link FWItemSetOption} flavors that should be generated
- * for a single {@link FWItemSetOption}.
- */
-type FortuneWheelFlags = "5 Minutes" | "15 Minutes" | "1 Hour" | "4 Hours" | "Exclusive" | "High Security";
+interface FWFlagBase<Type extends AssetLockType> {
+    /** The lock type associated with the flag */
+    readonly type: Type,
+    /** Whether the user has enabled the flag or not */
+    enabled: boolean,
+}
+
+type FWFlagExclusivePadlock = FWFlagBase<"ExclusivePadlock">;
+type FWFlagHighSecurityPadlock = FWFlagBase<"HighSecurityPadlock">;
+interface FWFlagTimerPasswordPadlock extends FWFlagBase<"TimerPasswordPadlock"> {
+    /** The lock duration in seconds; value must fall in the `[60, 240 * 60]` interval */
+    time: number,
+}
+
+type FWFlag = FWFlagExclusivePadlock | FWFlagTimerPasswordPadlock | FWFlagHighSecurityPadlock;
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
@@ -149,7 +159,7 @@ interface FWSimpleItemSet {
     itemList: readonly FWItem[],
     stripLevel: StripLevel,
     equipLevel: StripLevel,
-    flags: readonly FortuneWheelFlags[],
+    flags: readonly Readonly<FWFlag>[],
     custom: boolean,
     hidden: boolean,
     preRunCallback: FortuneWheelPreRunCallback | null,

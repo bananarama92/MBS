@@ -7,13 +7,15 @@ import {
     FORTUNE_WHEEL_COLORS,
     canChangeCosplay,
     sanitizeWheelFortuneIDs,
+    settingsLoaded,
+    settingsMBSLoaded,
+} from "../common_bc";
+
+import {
     equipTimerLock,
     equipHighSecLock,
     equipLock,
-    settingsLoaded,
-    settingsMBSLoaded,
-    FORTUNE_WHEEL_FLAGS,
-} from "../common_bc";
+} from "../lock_flags";
 
 import {
     RAISES,
@@ -116,7 +118,7 @@ export function test_equipTimerLock(): void {
         assertRaises(
             `${name}:${RAISES}:0`,
             () => equipTimerLock(item, <any>undefined, character),
-            "Invalid \"minutes\" type: undefined",
+            "Invalid \"seconds\" type: undefined",
         );
 
         assertPasses(`${name}:${PASSES}:0`, () => equipTimerLock(item, 33, character));
@@ -223,10 +225,4 @@ export function test_settingsLoaded(): void {
     const name = "test_settingsLoaded";
     const output = assertPasses(`${name}:${PASSES}:0`, settingsLoaded);
     assertEqual(`${name}:${PASSES}:0`, output, true);
-}
-
-export function test_FORTUNE_WHEEL_FLAGS(): void {
-    const name = "test_FORTUNE_WHEEL_FLAGS";
-    const ref = ["Exclusive", "5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "High Security"];
-    assertEqual(`${name}:${PASSES}:0`, FORTUNE_WHEEL_FLAGS, ref);
 }

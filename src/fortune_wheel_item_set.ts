@@ -2,12 +2,13 @@
 
 "use strict";
 
+import { clamp } from "lodash-es";
+
 import { toItemBundles } from "item_bundle";
 import {
     getTextInputElement,
     FWSelectedItemSet,
     FWItemSet,
-    FORTUNE_WHEEL_FLAGS,
 } from "common_bc";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
 import { MBSScreen, FWObjectScreen, ExitAction } from "screen_abc";
@@ -20,6 +21,79 @@ const STRIP_MAPPING = Object.freeze({
     [StripLevel.COSPLAY]: "Clothes, underwear and cosplay items",
     [StripLevel.ALL]: "Clothes, underwear, cosplay items and body",
 });
+
+const TIME_PATTERN = new RegExp(
+    "(([0-9]?[0-9])d)?"
+    + "(([0-9]?[0-9])h)?"
+    + "(([0-9]?[0-9])m)?"
+    + "(([0-9]?[0-9])s)?",
+);
+
+/**
+ * Convert number-based time into a string compatible with the {@link createTimerElement} input element
+ * @param time The time in seconds
+ * @returns The stringified time
+ */
+function toInputTime(time: number): string {
+    time = clamp(time, 60, 60 * 240);
+    const unitsTime = { d: 0, h: 0, m: 0, s: 0 };
+
+    unitsTime.d = Math.min(7, Math.floor(time / (24 * 60 * 60)));
+    time -= unitsTime.d * (24 * 60 * 60);
+
+    unitsTime.h = Math.floor(time / (60 * 60));
+    time -= unitsTime.h * (60 * 60);
+
+    unitsTime.m = Math.floor(time / 60);
+    time -= unitsTime.m * 60;
+
+    unitsTime.s = time;
+    let time_str = unitsTime.d ? `${unitsTime.d}d` : "";
+    time_str += `${unitsTime.h.toString().padStart(2, "0")}h${unitsTime.m.toString().padStart(2, "0")}m${unitsTime.s.toString().padStart(2, "0")}s`;
+    return time_str;
+}
+
+/**
+ * Convert a time string produced by the {@link createTimerElement} input element into a number in units of seconds
+ * @param time The stringified time
+ * @returns The time in seconds
+ */
+function fromInputTime(time: string): number | null {
+    const match = time.match(TIME_PATTERN);
+    if (match === null) {
+        return null;
+    }
+
+    const [d, h, m, s] = [match[2], match[4], match[6], match[8]];
+    let seconds = 0;
+    seconds += d === undefined ? 0 : Number.parseInt(d) * (24 * 60 * 60);
+    seconds += h === undefined ? 0 : Number.parseInt(h) * (60 * 60);
+    seconds += m === undefined ? 0 : Number.parseInt(m) * 60;
+    seconds += s === undefined ? 0 : Number.parseInt(s);
+    return seconds;
+}
+
+/**
+ * Construct the timer input field for the timer-lock based flags
+ * @param flag The timer lock flag
+ * @param index The index of the flag within the flag list
+ */
+function createTimerElement(flag: FWFlagTimerPasswordPadlock, index: number, readonly: boolean): void {
+    const element = ElementCreateInput(`MBSFlag${index}`, "text", toInputTime(flag.time), 11);
+    if (element != null) {
+        element.pattern = TIME_PATTERN.source;
+        if (readonly) {
+            element.setAttribute("disabled", true);
+        }
+        element.onchange = function onchange() {
+            const { value } = <HTMLInputElement>this;
+            const seconds = fromInputTime(value);
+            if (seconds !== null) {
+                flag.time = clamp(seconds ?? 60, 60, 60 * 240);
+            }
+        };
+    }
+}
 
 export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
     static readonly screen = "MBS_FWItemSetScreen";
@@ -99,14 +173,13 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
                 },
                 requiresPlayer: true,
             },
-            ...FORTUNE_WHEEL_FLAGS.map((flag, i): ClickAction => {
+            ...this.settings.flags.map((flag, i): ClickAction => {
                 const y = 550 + (i % 3) * 100;
-                const x = (i < 3) ? 1200 : 1500;
+                const x = (i < 3) ? 1200 : 1550;
                 return {
                     coords: [x, y, 64, 64],
                     next: () => {
-                        const flags = this.settings.flags;
-                        flags.has(flag) ? flags.delete(flag) : flags.add(flag);
+                        flag.enabled = !flag.enabled;
                     },
                     requiresPlayer: true,
                 };
@@ -117,11 +190,12 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
     /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
     load(): void {
         super.load();
+        const readonly = !this.character.IsPlayer();
 
         // Unhide all input elements
         const nameElement = getTextInputElement("name", this.settings, "Name", [1100, 300, 700, 64], "", 70);
         const outfitElement = getTextInputElement("outfitCache", this.settings, "Outfit code", [1150, 450, 700, 64]);
-        if (!this.character.IsPlayer()) {
+        if (readonly) {
             nameElement.setAttribute("disabled", true);
             outfitElement.setAttribute("disabled", true);
         }
@@ -136,6 +210,15 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
             );
         } else {
             this.settings.reset();
+        }
+
+        for (const [i, flag] of this.settings.flags.entries()) {
+            switch (flag.type) {
+                case "TimerPasswordPadlock": {
+                    createTimerElement(flag, i, readonly);
+                    break;
+                }
+            }
         }
 
         // Load and dress the preview character
@@ -222,17 +305,34 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
         DrawText("Supported lock types:", 1200, 500 + 16, "Black");
         DrawText("Clothing strip level:", 750, 500 + 16, "Black");
         DrawText("Clothing equip level:", 750, 650 + 16, "Black");
-        FORTUNE_WHEEL_FLAGS.forEach((flag, i) => {
+        for (const [i, flag] of this.settings.flags.entries()) {
             const y = 550 + (i % 3) * 100;
-            const x = (i < 3) ? 1200 : 1500;
-            DrawText(flag, x + 75, y + 32, "Black");
-            DrawCheckbox(x, y, 64, 64, "", this.settings.flags.has(flag), !isPlayer);
-        });
+            const x = (i < 3) ? 1200 : 1550;
+            switch (flag.type) {
+                case "ExclusivePadlock":
+                    DrawText("Exclusive", x + 75, y + 32, "Black");
+                    break;
+                case "HighSecurityPadlock":
+                    DrawText("High Security", x + 75, y + 32, "Black");
+                    break;
+                case "TimerPasswordPadlock":
+                    ElementPosition(`MBSFlag${i}`, x + 200, y + 29, 250, 60);
+                    break;
+            }
+            DrawCheckbox(x, y, 64, 64, "", flag.enabled, !isPlayer);
+        }
         MainCanvas.textAlign = "center";
     }
 
     unload(): void {
         ElementRemove("MBSname");
         ElementRemove("MBSoutfitCache");
+        for (const [i, flag] of this.settings.flags.entries()) {
+            switch (flag.type) {
+                case "TimerPasswordPadlock":
+                    ElementRemove(`MBSFlag${i}`);
+                    break;
+            }
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { clone } from "lodash-es";
+
 import {
     MBS_MOD_API,
     randomElement,
@@ -18,6 +20,10 @@ import {
     canChangeCosplay,
     FORTUNE_WHEEL_MAX_SETS,
 } from "common_bc";
+import {
+    DEFAULT_FLAGS,
+    enableFlags,
+} from "lock_flags";
 import { validateBuiltinWheelIDs } from "sanity_checks";
 import { pushMBSSettings, parseFWObjects } from "settings";
 import { itemSetType } from "type_setting";
@@ -802,7 +808,7 @@ waitFor(settingsMBSLoaded).then(() => {
             Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
-            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive", "High Security"],
+            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
             false,
             false,
         ),
@@ -812,7 +818,7 @@ waitFor(settingsMBSLoaded).then(() => {
             Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.CLOTHES,
             StripLevel.UNDERWEAR,
-            ["Exclusive"],
+            enableFlags(DEFAULT_FLAGS.map(clone), [3]),
             false,
             false,
         ),
@@ -822,7 +828,7 @@ waitFor(settingsMBSLoaded).then(() => {
             Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
-            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
+            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
             false,
             false,
         ),
@@ -832,7 +838,7 @@ waitFor(settingsMBSLoaded).then(() => {
             Player.MBSSettings.FortuneWheelItemSets,
             StripLevel.UNDERWEAR,
             StripLevel.UNDERWEAR,
-            ["5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "Exclusive"],
+            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
             false,
             false,
             statueCopyColors,

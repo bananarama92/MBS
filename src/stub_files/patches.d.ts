@@ -27,7 +27,7 @@ interface WheelFortuneOptionType {
     /** The parent item set */
     readonly Parent?: import("common_bc").FWObject<WheelFortuneOptionType>,
     /** The type of lock flavor */
-    readonly Flag?: FortuneWheelFlags,
+    readonly Flag?: FWFlag,
 }
 
 // R91 compatbility

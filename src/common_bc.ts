@@ -2,19 +2,16 @@
 
 "use strict";
 
-import { sortBy } from "lodash-es";
-
 import {
     toStringTemplate,
-    getRandomPassword,
     LoopIterator,
-    isIterable,
     generateIDs,
     randomElement,
     BCX_MOD_API,
-    validateInt,
     includes,
+    isArray,
 } from "common";
+import { DEFAULT_FLAGS, parseLegacyFlags, applyFlag } from "lock_flags";
 import { pushMBSSettings } from "settings";
 import { fromItemBundles } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
@@ -94,69 +91,6 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/**
- * Attach and set a timer lock to the passed item for the specified duration.
- * @param item The item in question
- * @param minutes The duration of the timer lock; its value must fall in the [0, 240] interval
- */
-export function equipTimerLock(item: Item, minutes: number, character: Character): void {
-    validateInt(minutes, "minutes", 0, 240);
-
-    // Equip the timer lock if desired and possible
-    if (!equipLock(item, "TimerPasswordPadlock", character)) {
-        return;
-    }
-
-    if (item.Property == null) item.Property = {};
-    item.Property.RemoveTimer = CurrentTime + minutes * 60000;
-    item.Property.RemoveItem = true;
-    item.Property.LockSet = true;
-    item.Property.Password = getRandomPassword(8);
-}
-
-/**
- * Attach a high security padlock to the passed item.
- * @param item The item in question
- */
-export function equipHighSecLock(item: Item, character: Character): void {
-    // Equip the timer lock if desired and possible
-    equipLock(item, "HighSecurityPadlock", character);
-    if (item.Property == null) item.Property = {};
-    item.Property.MemberNumberListKeys = "";
-}
-
-/**
- * Attach a the specified padlock to the passed item.
- * Note that no lock-specific {@link Item.Property} values are set on the item.
- * @param item The item in question
- * @param lockName The to-be attached lock
- * @returns whether the lock was equipped or not
- */
-export function equipLock(item: Item, lockName: AssetLockType, character: Character): boolean {
-    if (item === null || typeof item !== "object") {
-        throw new TypeError(`Invalid "item" type: ${typeof item}`);
-    } else if (typeof lockName !== "string") {
-        throw new TypeError(`Invalid "lockName" type: ${typeof lockName}`);
-    }
-    validateCharacter(character);
-
-    const lock = AssetGet(character.AssetFamily, "ItemMisc", lockName);
-    if (lock == null) {
-        throw new Error(`Invalid "lockName" value: ${lockName}`);
-    }
-
-    // Equip the lock if possible
-    if (
-        InventoryGetLock(item) != null
-        || !InventoryDoesItemAllowLock(item)
-        || InventoryBlockedOrLimited(character, { Asset: lock })
-    ) {
-        return false;
-    }
-    InventoryLock(character, item, { Asset: lock }, null, false);
-    return true;
-}
-
 /** Return whether all vanilla BC online settings are loaded. */
 export function settingsLoaded(): boolean {
     return (
@@ -170,33 +104,6 @@ export function settingsLoaded(): boolean {
 export function settingsMBSLoaded(): boolean {
     return settingsLoaded() && Player.MBSSettings !== undefined;
 }
-
-/**
- * A list ordered of with the various {@link FWItemSetOption} flavors that should be generated
- * for a single {@link FWItemSetOption}.
- *
- * Used by {@link FWItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
- * * The order of list elements is *never* changed; new entries can be appended though
- * * The list consists of <= 16 elements
- */
-export const FORTUNE_WHEEL_FLAGS: readonly FortuneWheelFlags[] = Object.freeze([
-    "Exclusive", "5 Minutes", "15 Minutes", "1 Hour", "4 Hours", "High Security",
-]);
-
-/** A record mapping {@link FORTUNE_WHEEL_FLAGS} values to {@link fortuneWheelEquip} global callbacks. */
-const FLAGS_CALLBACKS: Record<FortuneWheelFlags, FortuneWheelCallback> = {
-    "5 Minutes": (item: Item, character: Character) => equipTimerLock(item, 5, character),
-    "15 Minutes": (item: Item, character: Character) => equipTimerLock(item, 15, character),
-    "1 Hour": (item: Item, character: Character) => equipTimerLock(item, 60, character),
-    "4 Hours": (item: Item, character: Character) => equipTimerLock(item, 240, character),
-    "Exclusive": (item: Item, character: Character) => equipLock(item, "ExclusivePadlock", character),
-    "High Security": (item: Item, character: Character) => {
-        if (InventoryDoesItemAllowLock(item) && item.Craft) {
-            item.Craft.Property = "Puzzling";
-        }
-        equipHighSecLock(item, character);
-    },
-};
 
 /** Indices of the default MBS wheel of fortune item sets */
 const DEFAULT_ITEM_SET_INDEX: Record<string, number> = Object.freeze({
@@ -260,7 +167,7 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
     /** The to-be equipped items */
     itemList: null | readonly FWItem[] = null;
     /** Which flavors of {@link FWItemSetOption} should be created */
-    flags: Set<FortuneWheelFlags> = new Set(["5 Minutes", "15 Minutes", "1 Hour", "Exclusive"]);
+    readonly flags: readonly FWFlag[] = Object.freeze(DEFAULT_FLAGS.map(i => Object.seal({ ...i })));
     /** The cached base64 outfit code */
     outfitCache: null | string = null;
 
@@ -293,9 +200,9 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
         this.name = null;
         this.itemList = null;
         this.outfitCache = null;
-        this.flags = new Set(["5 Minutes", "15 Minutes", "1 Hour", "Exclusive"]);
         this.stripLevel = StripLevel.UNDERWEAR;
         this.equipLevel = StripLevel.UNDERWEAR;
+        DEFAULT_FLAGS.forEach((flag, i) => Object.assign(this.flags[i], flag));
     }
 
     /**
@@ -310,13 +217,13 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
         this.itemList = itemSet.itemList;
         this.stripLevel = itemSet.stripLevel;
         this.equipLevel = itemSet.equipLevel;
-        this.flags = new Set(itemSet.flags);
         this.outfitCache = null;
+        itemSet.flags.forEach((flag, i) => Object.assign(this.flags[i], flag));
     }
 
     /**
      * Update this instance with settings from the provided item set.
-     * @param preRunCallback /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
+     * @param preRunCallback An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
      */
     writeSettings(
         hidden: boolean = false,
@@ -556,7 +463,7 @@ type FWItemSetArgTypes = [
     wheelList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
-    flags?: Iterable<FortuneWheelFlags>,
+    flags?: readonly Readonly<FWFlag>[],
     custom?: boolean,
     hidden?: boolean,
     preRunCallback?: null | FortuneWheelPreRunCallback,
@@ -569,14 +476,34 @@ type FWItemSetKwargTypes = {
     wheelList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
-    flags?: Iterable<FortuneWheelFlags>,
+    flags?: readonly Readonly<FWFlag>[],
     custom?: boolean,
     hidden?: boolean,
     preRunCallback?: null | FortuneWheelPreRunCallback,
 };
 
-/** {@link FWItemSet} parsed constructor argument types in object form */
-type WheelFortuneItemSetKwargTypesParsed = Required<FWItemSetKwargTypes> & { flags: Readonly<Set<FortuneWheelFlags>> };
+function validateFlags(flags: readonly Readonly<FWFlag>[]): FWFlag[] {
+    return DEFAULT_FLAGS.map((ref_flag, i) => {
+        const flag = flags[i];
+        if (flag === null || typeof flag !== "object" || flag.type !== ref_flag.type) {
+            return { ...ref_flag };
+        }
+
+        const enabled = typeof flag.enabled === "boolean" ? flag.enabled : ref_flag.enabled;
+        switch (flag.type) {
+            case "TimerPasswordPadlock":
+                if (!(Number.isInteger(flag.time) && flag.time >= 1 && flag.time <= (24 * 60 * 60))) {
+                    return { ...ref_flag };
+                }
+                return { type: flag.type, time: flag.time, enabled };
+            case "ExclusivePadlock":
+            case "HighSecurityPadlock":
+                return { type: flag.type, enabled };
+            default:
+                return { ...ref_flag };
+        }
+    });
+}
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
 export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpleItemSet, "flags"> {
@@ -587,7 +514,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     /** Which from the to-be equipped outfit should be actually equipped */
     readonly equipLevel: StripLevel;
     /** Which flavors of {@link FWItemSetOption} should be created */
-    readonly flags: Readonly<Set<FortuneWheelFlags>>;
+    readonly flags: readonly Readonly<FWFlag>[];
     /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
     // @ts-ignore: false positive; narrowing of superclass attribute type
@@ -600,7 +527,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         wheelList: readonly (null | FWItemSet)[],
         stripLevel?: StripLevel,
         equipLevel?: StripLevel,
-        flags?: Iterable<FortuneWheelFlags>,
+        flags?: readonly Readonly<FWFlag>[],
         custom?: boolean,
         hidden?: boolean,
         preRunCallback?: null | FortuneWheelPreRunCallback,
@@ -625,7 +552,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     }
 
     /** Validation function for the classes' constructor */
-    static validate(kwargs: FWItemSetKwargTypes): WheelFortuneItemSetKwargTypesParsed {
+    static validate(kwargs: FWItemSetKwargTypes): Required<FWItemSetKwargTypes> {
         if (typeof kwargs.name !== "string") {
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
@@ -648,16 +575,15 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.stripLevel = StripLevel.UNDERWEAR;
         }
 
-        if (isIterable(kwargs.flags)) {
-            const flags: Set<FortuneWheelFlags> = new Set();
-            for (const flag of kwargs.flags) {
-                if (FORTUNE_WHEEL_FLAGS.includes(flag)) {
-                    flags.add(flag);
-                }
+        if (isArray(kwargs.flags)) {
+            if (kwargs.flags.every(i => typeof i === "string")) {
+                const flags = <readonly unknown[]>kwargs.flags;
+                kwargs.flags = parseLegacyFlags(<readonly string[]>flags);
+            } else {
+                kwargs.flags = Object.freeze(validateFlags(kwargs.flags).map(i => Object.freeze(i)));
             }
-            kwargs.flags = Object.freeze(flags);
         } else {
-            kwargs.flags = Object.freeze(new Set(<FortuneWheelFlags[]>["5 Minutes", "15 Minutes", "1 Hour", "Exclusive"]));
+            kwargs.flags = DEFAULT_FLAGS;
         }
 
         if (typeof kwargs.custom !== "boolean") {
@@ -671,7 +597,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         if (kwargs.preRunCallback !== null && typeof kwargs.preRunCallback !== "function") {
             kwargs.preRunCallback = null;
         }
-        return <WheelFortuneItemSetKwargTypesParsed>kwargs;
+        return <Required<FWItemSetKwargTypes>>kwargs;
     }
 
     /**
@@ -728,11 +654,13 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
      * @returns A list of wheel of fortune options
      */
     toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
-        const flags = sortBy(
-            Array.from(this.flags),
-            (flag) => FORTUNE_WHEEL_FLAGS.indexOf(flag),
-        );
-        const flagsNumeric = flags.map(i => FORTUNE_WHEEL_FLAGS.indexOf(i));
+        const flags = this.flags.filter(flag => flag.enabled);
+        const flagsNumeric = [];
+        for (const [i, flag] of this.flags.entries()) {
+            if (flag.enabled) {
+                flagsNumeric.push(i);
+            }
+        }
 
         /**
          * * Reserve the `[0, 2**8)` range (extened ASCII) for BC's default
@@ -754,12 +682,24 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
         const IDs = generateIDs(start, flagsNumeric);
         return flags.map((flag, i) => {
+            let Description = this.name;
+            let Default = true;
+            switch (flag.type) {
+                case "HighSecurityPadlock":
+                    Description += ": High Security";
+                    Default = false;
+                    break;
+                case "TimerPasswordPadlock":
+                    Description += `: ${Math.floor(flag.time / 60)} minutes`;
+                    Default = i !== 4;
+                    break;
+            }
             return {
                 ID: IDs[i],
                 Color: randomElement(colors),
-                Script: this.scriptFactory(FLAGS_CALLBACKS[flag]),
-                Description: this.name + (flag === "Exclusive" ? "" : `: ${flag}`),
-                Default: !["4 Hours", "High Security"].includes(flag),
+                Script: this.scriptFactory((...args) => applyFlag(flag, ...args)),
+                Description,
+                Default,
                 Custom: this.custom,
                 Parent: this,
                 Flag: flag,
@@ -774,7 +714,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             itemList: this.itemList,
             stripLevel: this.stripLevel,
             equipLevel: this.equipLevel,
-            flags: Array.from(this.flags),
+            flags: this.flags,
             custom: this.custom,
             hidden: this.hidden,
             preRunCallback: this.preRunCallback,

@@ -59,7 +59,7 @@ export function test_builtinMBSWheel(): void {
                     Equip: undefined,
                     Craft: (
                         wheelItemRef.Craft !== undefined
-                        && option.Flag === "High Security"
+                        && option.Flag.type === "HighSecurityPadlock"
                         && InventoryDoesItemAllowLock(item)
                     ) ? { ...wheelItemRef.Craft, Property: "Puzzling" } : wheelItemRef.Craft,
                 };
