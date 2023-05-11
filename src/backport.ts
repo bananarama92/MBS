@@ -132,9 +132,100 @@ function activityCheckPrerequisite(
     return true;
 }
 
+/**
+ * Gets the coordinates of the current event on the canvas
+ * @param {MouseEvent|TouchEvent} Event - The touch/mouse event
+ * @returns {{X: number, Y: number}} - Coordinates of the click/touch event on the canvas
+ */
+function colorPickerGetCoordinates(Event: MouseEvent | TouchEvent): {X: number, Y: number} {
+    if (isTouchEvent(Event)) {
+        if (Event.changedTouches) {
+            // Mobile
+            TouchMove(Event);
+        }
+    } else {
+        // PC
+        MouseMove(Event);
+    }
+    return { X: MouseX, Y: MouseY };
+}
+
+/**
+ * Sets an extended item's type and properties to the option provided.
+ * @template {ModularItemOption | TypedItemOption | VibratingItemOption} OptionType
+ * @param {ModularItemData | TypedItemData | VibratingItemData} data - The extended item data
+ * @param {Character} C - The character on whom the item is equipped
+ * @param {Item} item - The item whose type to set
+ * @param {OptionType} newOption - The to-be applied extended item option
+ * @param {OptionType} previousOption - The previously applied extended item option
+ * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
+ * player) - defaults to false.
+ * @returns {string|undefined} - undefined or an empty string if the option was set correctly. Otherwise, returns a string
+ * informing the player of the requirements that are not met.
+ */
+function extendedItemSetOption<OptionType extends ModularItemOption | TypedItemOption | VibratingItemOption>(
+    data: ModularItemData | TypedItemData | VibratingItemData,
+    C: Character,
+    item: Item,
+    newOption: OptionType,
+    previousOption: OptionType,
+    push: boolean = false,
+): string | undefined {
+    // TODO: decouple `...Validate` from `...SetOption`
+    if (newOption.Name === previousOption.Name && !newOption.HasSubscreen) {
+        return DialogFindPlayer("AlreadySet");
+    }
+
+    const requirementMessage = ExtendedItemRequirementCheckMessage(item, C, newOption, previousOption);
+    if (requirementMessage) {
+        return requirementMessage;
+    }
+
+    let previousOptionProperty: ItemProperties;
+    let newProperty: ItemProperties;
+    switch (newOption.OptionType) {
+        case "ModularItemOption": {
+            const moduleData = <ModularItemData>data;
+            const previousModuleValues = ModularItemParseCurrent(moduleData, item.Property?.Type);
+            const moduleIndex = moduleData.modules.findIndex(m => m.Name === newOption.ModuleName);
+            const newModuleValues = [...previousModuleValues];
+            newModuleValues[moduleIndex] = newOption.Index;
+
+            newProperty = ModularItemMergeModuleValues(moduleData, newModuleValues);
+            previousOptionProperty = ModularItemMergeModuleValues(moduleData, previousModuleValues);
+            break;
+        }
+        case "VibratingItemOption":
+        case "TypedItemOption":
+            newProperty = JSON.parse(JSON.stringify(newOption.Property));
+            previousOptionProperty = { ...previousOption.Property };
+            break;
+        default:
+            console.error(`Unsupported archetype: ${data.asset.Archetype}`);
+            return undefined;
+    }
+
+    if (newOption.HasSubscreen) {
+        const args: Parameters<ExtendedItemCallbacks.Init> = [C, item, false];
+        CommonCallFunctionByNameWarn(`${data.functionPrefix}${newOption.Name}Init`, ...args);
+    }
+
+    const previousProperty = PropertyUnion(
+        previousOptionProperty,
+        ExtendedItemGatherSubscreenProperty(item, previousOption),
+    );
+    CommonKeys(data.baselineProperty || {}).forEach(i => delete previousProperty[i]);
+    ExtendedItemSetProperty(C, item, previousProperty, newProperty, push);
+
+    if (newOption.Expression) {
+        InventoryExpressionTriggerApply(C, newOption.Expression);
+    }
+    return undefined;
+}
+
 waitFor(settingsMBSLoaded).then(() => {
     /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4202} */
-    if (GameVersion === "R92Beta1" && MBS_MOD_API.getOriginalHash("DialogHasKey") === "0ED0B69F") {
+    if (GameVersion === "R92Beta1") {
         backportIDs.add(4202);
         MBS_MOD_API.hookFunction("DialogHasKey", 11, (args) => {
             return dialogHasKey(...<Parameters<typeof DialogHasKey>>args);
@@ -142,21 +233,34 @@ waitFor(settingsMBSLoaded).then(() => {
     }
 
     /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4203} */
-    const chastityClitShield = AssetGet("Female3DCG", "ItemVulva", "ChastityClitShield");
-    const highSecurityVulvaShield = AssetGet("Female3DCG", "ItemVulva", "ChastityClitShield");
+    const chastityClitShield = AssetGet("Female3DCG", "ItemVulvaPiercings", "ChastityClitShield");
+    const highSecurityVulvaShield = AssetGet("Female3DCG", "ItemVulvaPiercings", "HighSecurityVulvaShield");
     if (
         GameVersion === "R92Beta1"
         && chastityClitShield?.Block
         && highSecurityVulvaShield?.Block
-        && chastityClitShield.Block.includes("ItemVulvaPiercings")
-        && highSecurityVulvaShield.Block.includes("ItemVulvaPiercings")
-        && MBS_MOD_API.getOriginalHash("ActivityCheckPrerequisite") === "D2DE6250"
     ) {
         backportIDs.add(4203);
         chastityClitShield.Block = chastityClitShield.Block.filter(i => i !== "ItemVulvaPiercings");
         highSecurityVulvaShield.Block = highSecurityVulvaShield.Block.filter(i => i !== "ItemVulvaPiercings");
         MBS_MOD_API.hookFunction("ActivityCheckPrerequisite", 11, (args) => {
             return activityCheckPrerequisite(...<Parameters<typeof ActivityCheckPrerequisite>>args);
+        });
+    }
+
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4204} */
+    if (GameVersion === "R92Beta1") {
+        backportIDs.add(4204);
+        MBS_MOD_API.hookFunction("ColorPickerGetCoordinates", 11, (args) => {
+            return colorPickerGetCoordinates(...<Parameters<typeof ColorPickerGetCoordinates>>args);
+        });
+    }
+
+    /** Backport of {@link https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4207} */
+    if (GameVersion === "R92Beta1") {
+        backportIDs.add(4207);
+        MBS_MOD_API.hookFunction("ExtendedItemSetOption", 11, (args) => {
+            return extendedItemSetOption(...<Parameters<typeof ExtendedItemSetOption>>args);
         });
     }
 
