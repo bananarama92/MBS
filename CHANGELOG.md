@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.6.0
+* Allow the specification of custom timer lock durations for the wheel of fortune
+* Reduced the number of exposed functions
+* Backport two more BC R92Beta2 bug fixes to R92Beta1
+    - [BondageProjects/Bondage-College#4204](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4204): Fix a crash with the color picker when on mobile
+    - [BondageProjects/Bondage-College#4207](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4207): Fix subscreens not opening when the respective super-screen option was previously already selected
+
 ## v0.5.14
 * Backport two BC R92Beta2 bug fixes to R92Beta1
     - [BondageProjects/Bondage-College#4202](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4202): Fix the high-sec and intricate locks not being unlockable

@@ -1,8 +1,8 @@
 {
     "name": "maids-bondage-scripts",
-    "version": "0.5.14",
+    "version": "0.6.0",
     "repository": "git@github.com:bananarama92/MBS.git",
-    "author": "bananarama92 <105885570+bananarama92@users.noreply.github.com>",
+    "author": "bananarama92 <bananarama921@outlook.com>",
     "license": "GPL-3.0",
     "private": true,
     "description": "Various additions and utility scripts for BC",
