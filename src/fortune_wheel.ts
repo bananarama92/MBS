@@ -15,7 +15,6 @@ import {
 } from "common";
 import {
     FWItemSet,
-    FWCommand,
     settingsMBSLoaded,
     canChangeCosplay,
     MBS_MAX_SETS,
@@ -25,10 +24,10 @@ import {
     enableFlags,
 } from "lock_flags";
 import { validateBuiltinWheelIDs } from "sanity_checks";
-import { pushMBSSettings, parseFWObjects } from "settings";
+import { pushMBSSettings } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
-import { FWSelectScreen } from "fortune_wheel_select";
+import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
 import { ScreenProxy } from "screen_abc";
 
 /**
@@ -719,37 +718,6 @@ export let FORTUNE_WHEEL_OPTIONS_BASE: readonly FWObjectOption[];
 
 /** A string with all player-independent {@link WheelFortuneDefault} values. */
 export let FORTUNE_WHEEL_DEFAULT_BASE: string;
-
-/**
- * A {@link loadFortuneWheel} helper function for loading item- or command sets.
- * @param fieldName The name of the sets-field
- * @param name The name of the sets
- */
-function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "FortuneWheelCommands">(
-    character: Character,
-    fieldName: T,
-    name: string,
-): MBSSettings[T] {
-    const mbs = character.OnlineSharedSettings?.MBS;
-    let protoWheelList = (mbs === undefined) ? undefined : mbs[fieldName];
-    if (!Array.isArray(protoWheelList)) {
-        if (protoWheelList !== undefined) {
-            console.warn(`MBS: Failed to load "${character.AccountName}" wheel of fortune ${name}`);
-        }
-        protoWheelList = Array(MBS_MAX_SETS).fill(null);
-    }
-
-    let wheelList: MBSSettings[T];
-    if (character.IsPlayer()) {
-        wheelList = Player.MBSSettings[fieldName];
-    } else {
-        const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
-        // @ts-ignore
-        wheelList = parseFWObjects(constructor, protoWheelList);
-    }
-    wheelList.forEach(i => {if (!i?.hidden) { i?.register(false); }});
-    return wheelList;
-}
 
 class FWScreenProxy extends ScreenProxy {
     static readonly screen = "WheelFortune";

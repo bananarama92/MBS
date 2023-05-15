@@ -18,3 +18,4 @@ import "fortune_wheel";
 import "crafting";
 import "window_register";
 import "backport";
+import "settings_screen";

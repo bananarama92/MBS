@@ -4,6 +4,7 @@
 
 import { LoopIterator } from "common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
+import { parseFWObjects } from "settings";
 import { FWCommandScreen } from "fortune_wheel_command";
 import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { MBSScreen } from "screen_abc";
@@ -15,9 +16,40 @@ type PageStruct = {
     readonly field: "FortuneWheelItemSets" | "FortuneWheelCommands",
 }
 
-interface WheelStruct {
+export interface WheelStruct {
     readonly FortuneWheelItemSets: (null | FWItemSet)[],
     readonly FortuneWheelCommands: (null | FWCommand)[],
+}
+
+/**
+ * A {@link loadFortuneWheel} helper function for loading item- or command sets.
+ * @param fieldName The name of the sets-field
+ * @param name The name of the sets
+ */
+export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "FortuneWheelCommands">(
+    character: Character,
+    fieldName: T,
+    name: string,
+): MBSSettings[T] {
+    const mbs = character.OnlineSharedSettings?.MBS;
+    let protoWheelList = (mbs === undefined) ? undefined : mbs[fieldName];
+    if (!Array.isArray(protoWheelList)) {
+        if (protoWheelList !== undefined) {
+            console.warn(`MBS: Failed to load "${character.AccountName}" wheel of fortune ${name}`);
+        }
+        protoWheelList = Array(MBS_MAX_SETS).fill(null);
+    }
+
+    let wheelList: MBSSettings[T];
+    if (character.IsPlayer()) {
+        wheelList = Player.MBSSettings[fieldName];
+    } else {
+        const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
+        // @ts-ignore
+        wheelList = parseFWObjects(constructor, protoWheelList);
+    }
+    wheelList.forEach(i => {if (!i?.hidden) { i?.register(false); }});
+    return wheelList;
 }
 
 export class FWSelectScreen extends MBSScreen {
