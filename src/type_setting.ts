@@ -2,8 +2,7 @@
 
 "use strict";
 
-import { waitFor } from "common";
-import { validateCharacter, settingsMBSLoaded } from "common_bc";
+import { validateCharacter } from "common_bc";
 
 /**
  * Load and assign the type to the passed item without refreshing.
@@ -49,38 +48,15 @@ export function getBaselineProperty(asset: Asset, character: Character, type: nu
 type setTypeCallback = (C: Character, item: Item, type: string) => void;
 
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
-let ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>>;
-waitFor(settingsMBSLoaded).then(() => {
-    if (
-        typeof InventoryWearCraftTyped === "function"
-        && typeof InventoryWearCraftVibrating === "function"
-        && typeof InventoryWearCraftModular === "function"
-    ) { // R91
-        ITEM_SET_TYPE_DICT = Object.freeze({
-            typed: (C, item, type) => InventoryWearCraftTyped(item, C, type),
-            vibrating: (C, item, type) => InventoryWearCraftVibrating(item, C, type),
-            modular: (C, item, type) => InventoryWearCraftModular(item, C, type),
-            variableheight: () => { return; },
-            text: () => { return; },
-        });
-    } else {
-        ITEM_SET_TYPE_DICT = Object.freeze({ // R92
-            typed: (...args) => TypedItemSetOptionByName(...args),
-            vibrating: (...args) => VibratorModeSetOptionByName(...args),
-            modular: (...args) => ModularItemSetOptionByName(...args),
-            variableheight: () => { return; },
-            text: () => { return; },
-        });
-    }
+const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({ // R92
+    typed: (...args) => TypedItemSetOptionByName(...args),
+    vibrating: (...args) => VibratorModeSetOptionByName(...args),
+    modular: (...args) => ModularItemSetOptionByName(...args),
+    variableheight: () => { return; },
+    text: () => { return; },
 });
 
 /** Set the {@link ItemProperties.Type} of a non-archetypical item. */
-function setTypeNoArch(item: Item, character: Character, type: string): void {
-    if (typeof TypedItemSetOption === "function" && item.Asset.Name === "FuturisticVibrator") {
-        const options = VibratorModeGetOptions();
-        const option = options.find(o => o.Name === type) || VibratorModeOff;
-        TypedItemSetOption(character, item, options, option);
-    } else {
-        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
-    }
+function setTypeNoArch(item: Item, _character: Character, _type: string): void {
+    console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
 }

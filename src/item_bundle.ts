@@ -44,18 +44,12 @@ function validateText(field: TextItemNames, property: unknown, asset: Asset): pr
         return false;
     }
 
-    if (asset.TextMaxLength) { // R91
-        return property.length <= (asset.TextMaxLength[field] ?? -1);
-    } else if (typeof TextItemDataLookup === "object") { // R92
-        const key = `${asset.Group.Name}${asset.Name}`;
-        const [_, data] = entries(TextItemDataLookup).find(([k]) => k.includes(key)) ?? ["", null];
-        return (
-            data !== null
-            && property.length <= (data.maxLength[field] ?? -1)
-        );
-    } else {
-        return false;
-    }
+    const key = `${asset.Group.Name}${asset.Name}`;
+    const [_, data] = entries(TextItemDataLookup).find(([k]) => k.includes(key)) ?? ["", null];
+    return (
+        data !== null
+        && property.length <= (data.maxLength[field] ?? -1)
+    );
 }
 
 /**

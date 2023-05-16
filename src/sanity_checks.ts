@@ -24,7 +24,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-const BC_MIN_VERSION = Version.fromBCVersion("R91");
+const BC_MIN_VERSION = Version.fromBCVersion("R92");
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
