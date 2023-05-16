@@ -44,9 +44,10 @@ declare function InventoryItemFuturisticExitAccessDenied(): void;
  * Validates, if the chosen option is possible. Sets the global variable 'DialogExtendedMessage' to the appropriate error message, if not.
  * @param {Character} C - The character to validate the option
  * @param {Item} Item - The equipped item
+ * @param {boolean} changeWhenLocked - See {@link ExtendedItemOption.ChangeWhenLocked}
  * @returns {string} - Returns false and sets DialogExtendedMessage, if the chosen option is not possible.
  */
-declare function InventoryItemFuturisticValidate(C: Character, Item?: Item): string;
+declare function InventoryItemFuturisticValidate(C: Character, Item?: Item, changeWhenLocked?: boolean): string;
 /**
  * Publish a chat message for denied access.
  *

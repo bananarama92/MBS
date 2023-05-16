@@ -2934,13 +2934,13 @@ type TextItemRecord<T> = Partial<Record<TextItemNames, T>>;
 /**
  * A callback signature for handling (throttled) text changes.
  * @param C - The character being modified
- * @param textRecord
+ * @param item - The item being modified
  * @param name - The property wherein the updated text should be stored
  * @param text - The new text to be assigned to the item
  */
 type TextItemEventListener = (
 	C: Character,
-	textRecord: TextItemRecord<string>,
+	item: Item,
 	name: TextItemNames,
 	text: string,
 ) => void;
