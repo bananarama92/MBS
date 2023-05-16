@@ -108,7 +108,7 @@ function initMBSSettings(): void {
     const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS ?? "");
     let settings: null | MBSProtoSettings = (data == null) ? null : JSON.parse(data);
     settings = (settings !== null && typeof settings === "object") ? settings : {};
-    if (detectUpgrade(settings.Version)) {
+    if (settings.Version !== undefined && detectUpgrade(settings.Version)) {
         showChangelog();
     }
 
