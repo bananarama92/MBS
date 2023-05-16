@@ -3,7 +3,7 @@
 import { range } from "lodash-es";
 
 import {
-    FORTUNE_WHEEL_MAX_SETS,
+    MBS_MAX_SETS,
     FORTUNE_WHEEL_COLORS,
     canChangeCosplay,
     sanitizeWheelFortuneIDs,
@@ -37,9 +37,9 @@ export function test_FORTUNE_WHEEL_COLORS(): void {
 
 export function test_FORTUNE_WHEEL_MAX_SETS(): void {
     const name = "test_FORTUNE_WHEEL_MAX_SETS";
-    assertTypeof(`${name}:${PASSES}:0`, FORTUNE_WHEEL_MAX_SETS, "number");
-    assert(`${name}:${PASSES}:0`, Number.isInteger(FORTUNE_WHEEL_MAX_SETS));
-    assert(`${name}:${PASSES}:0`, FORTUNE_WHEEL_MAX_SETS >= 0);
+    assertTypeof(`${name}:${PASSES}:0`, MBS_MAX_SETS, "number");
+    assert(`${name}:${PASSES}:0`, Number.isInteger(MBS_MAX_SETS));
+    assert(`${name}:${PASSES}:0`, MBS_MAX_SETS >= 0);
 }
 
 export function test_canChangeCosplay(): void {

@@ -73,20 +73,18 @@ export abstract class MBSScreen {
      * otherwise, just load the parnt if it exists
      */
     protected exitScreens(fullExit: boolean): void {
-        const parents: MBSScreen[] = [];
-        let parent = this.parent;
-        while (parent !== null && !(parent instanceof ScreenProxy)) {
-            parents.push(parent);
-            parent = parent.parent;
-        }
-
-        if (fullExit) {
-            // Exit all parents
-            parents.forEach(p => p.exit());
-        } else {
+        if (!fullExit) {
             // Switch back to the parent
             this.parent?.load();
+            return;
         }
+
+        let parent = this.parent;
+        while (parent !== null && !(parent instanceof ScreenProxy)) {
+            parent.exit();
+            parent = parent.parent;
+        }
+        parent?.load();
     }
 
     /** Get an object with all {@link ScreenFunctions} and the screen background */
@@ -131,7 +129,7 @@ export class ScreenProxy extends MBSScreen {
 
 export type ExitAction = 0 | 1 | 2;
 
-/** Various exit-related actions for {@link FWObjectScreen.exit}. */
+/** Various exit-related actions for {@link MBSObjectScreen.exit}. */
 export const ExitAction = Object.freeze({
     /** Exit without any special actions. */
     NONE: 0,
@@ -141,33 +139,33 @@ export const ExitAction = Object.freeze({
     DELETE: 2,
 });
 
-export abstract class FWObjectScreen<
-    T extends import("common_bc").FWObject<FWObjectOption>,
+export abstract class MBSObjectScreen<
+    T extends import("common_bc").MBSObject<FWObjectOption>,
 > extends MBSScreen {
-    /** The selected settings for the screen's {@link FWObjectScreen.wheelList} */
-    abstract readonly settings: import("common_bc").FWSelectedObject<T>;
+    /** The selected settings for the screen's {@link MBSObjectScreen.mbsList} */
+    abstract readonly settings: import("common_bc").MBSSelectedObject<T>;
     /** The selected character */
     readonly character: Character;
     /** The screen's (fixed-size) list of fortune wheel objects */
-    readonly wheelList: (null | T)[];
+    readonly mbsList: (null | T)[];
     /** A list with interfaces for representing clickable buttons */
     abstract readonly clickList: readonly ClickAction[];
-    /** The current index within {@link FWObjectScreen.wheelList} */
+    /** The current index within {@link MBSObjectScreen.mbsList} */
     #index: number = 0;
 
-    /** Get or set the current index within {@link FWObjectScreen.wheelList} */
+    /** Get or set the current index within {@link MBSObjectScreen.mbsList} */
     get index(): number { return this.#index; }
     set index(value: number) {
-        validateInt(value, "index", 0, this.wheelList.length - 1);
+        validateInt(value, "index", 0, this.mbsList.length - 1);
         this.#index = value;
     }
-    /** Get current wheel object within {@link FWObjectScreen.wheelList} */
-    get wheelObject() { return this.wheelList[this.#index]; }
+    /** Get current wheel object within {@link MBSObjectScreen.mbsList} */
+    get mbsObject() { return this.mbsList[this.#index]; }
 
     constructor(parent: null | MBSScreen, wheelList: (null | T)[], index: number, character: Character) {
         super(parent);
         this.character = character;
-        this.wheelList = wheelList;
+        this.mbsList = wheelList;
         this.index = index;
     }
 
@@ -200,16 +198,16 @@ export abstract class FWObjectScreen<
                 break;
             case ExitAction.SAVE: {
                 if (this.settings.isValid(this.index)) {
-                    const hidden = this.wheelList[this.index]?.hidden ?? false;
-                    this.wheelList[this.index] = this.settings.writeSettings(hidden);
-                    this.wheelList[this.index]?.registerOptions();
+                    const hidden = this.mbsList[this.index]?.hidden ?? false;
+                    this.mbsList[this.index] = this.settings.writeSettings(hidden);
+                    this.mbsList[this.index]?.register();
                 }
                 break;
             }
             case ExitAction.DELETE: {
-                const option = this.wheelList[this.index];
-                this.wheelList[this.index] = null;
-                option?.unregisterOptions();
+                const option = this.mbsList[this.index];
+                this.mbsList[this.index] = null;
+                option?.unregister();
                 break;
             }
             default:

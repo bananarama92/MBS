@@ -270,7 +270,7 @@ export function generateIDs(
 }
 
 /** Check whether the passed object as an iterable. */
-export function isIterable(obj: unknown): obj is Iterable<any> {
+export function isIterable(obj: unknown): obj is Iterable<unknown> {
     return (Symbol.iterator in Object(obj));
 }
 

@@ -11,7 +11,7 @@ import {
     FWItemSet,
 } from "common_bc";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
-import { MBSScreen, FWObjectScreen, ExitAction } from "screen_abc";
+import { MBSScreen, MBSObjectScreen, ExitAction } from "screen_abc";
 
 /** A mapping that maps {@link StripLevel} values to a description. */
 const STRIP_MAPPING = Object.freeze({
@@ -95,7 +95,7 @@ function createTimerElement(flag: FWFlagTimerPasswordPadlock, index: number, rea
     }
 }
 
-export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
+export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     static readonly screen = "MBS_FWItemSetScreen";
     readonly screen = FWItemSetScreen.screen;
     static readonly background = "Sheet";
@@ -201,7 +201,7 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
         }
 
         // Load the settings
-        const itemSet = this.wheelObject;
+        const itemSet = this.mbsObject;
         if (itemSet !== null) {
             nameElement.value = itemSet.name;
             this.settings.readSettings(itemSet);

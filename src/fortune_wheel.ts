@@ -18,7 +18,7 @@ import {
     FWCommand,
     settingsMBSLoaded,
     canChangeCosplay,
-    FORTUNE_WHEEL_MAX_SETS,
+    MBS_MAX_SETS,
 } from "common_bc";
 import {
     DEFAULT_FLAGS,
@@ -736,7 +736,7 @@ function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "FortuneWhee
         if (protoWheelList !== undefined) {
             console.warn(`MBS: Failed to load "${character.AccountName}" wheel of fortune ${name}`);
         }
-        protoWheelList = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+        protoWheelList = Array(MBS_MAX_SETS).fill(null);
     }
 
     let wheelList: MBSSettings[T];
@@ -747,7 +747,7 @@ function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "FortuneWhee
         // @ts-ignore
         wheelList = parseFWObjects(constructor, protoWheelList);
     }
-    wheelList.forEach(i => {if (!i?.hidden) { i?.registerOptions(false); }});
+    wheelList.forEach(i => {if (!i?.hidden) { i?.register(false); }});
     return wheelList;
 }
 
@@ -767,15 +767,18 @@ class FWScreenProxy extends ScreenProxy {
                 Run: WheelFortuneRun,
                 Click: WheelFortuneClick,
                 Exit: WheelFortuneExit,
-                Load: WheelFortuneLoad,
+                Load: () => {
+                    CommonSetScreen("MiniGame", "WheelFortune");
+                    WheelFortuneLoad();
+                },
                 Unload: CommonNoop,
                 Resize: CommonNoop,
                 KeyDown: CommonNoop,
             },
         );
         this.character = Player;
-        this.FortuneWheelItemSets = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
-        this.FortuneWheelCommands = Array(FORTUNE_WHEEL_MAX_SETS).fill(null);
+        this.FortuneWheelItemSets = Array(MBS_MAX_SETS).fill(null);
+        this.FortuneWheelCommands = Array(MBS_MAX_SETS).fill(null);
     }
 
     initialize() {
@@ -844,7 +847,7 @@ waitFor(settingsMBSLoaded).then(() => {
             statueCopyColors,
         ),
     ]);
-    FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.registerOptions(false));
+    FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
     FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
     pushMBSSettings();

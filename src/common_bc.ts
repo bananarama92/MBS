@@ -23,7 +23,7 @@ const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
 const ITEM_SET_ID_RANGE = 16; // 2**4
 
 /** The maximum number of custom user-specified wheel of fortune item sets. */
-export const FORTUNE_WHEEL_MAX_SETS = ITEM_SET_ID_RANGE;
+export const MBS_MAX_SETS = ITEM_SET_ID_RANGE;
 
 /** A list of all valid wheel of fortune colors. */
 export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([
@@ -113,14 +113,14 @@ const DEFAULT_ITEM_SET_INDEX: Record<string, number> = Object.freeze({
     "Petrification": 3,
 });
 
-export abstract class FWSelectedObject<T extends FWObject<WheelFortuneOptionType>> {
+export abstract class MBSSelectedObject<T extends { name?: string }> {
     /** The name of custom option */
     name: null | string = null;
     /** A read-only view of the underlying list of wheel objects */
-    readonly wheelList: readonly (null | T)[];
+    readonly mbsList: readonly (null | T)[];
 
-    constructor(wheelList: readonly (null | T)[]) {
-        this.wheelList = wheelList;
+    constructor(mbsList: readonly (null | T)[]) {
+        this.mbsList = mbsList;
     }
 
     /** Reset all currently select options to their default. */
@@ -136,7 +136,7 @@ export abstract class FWSelectedObject<T extends FWObject<WheelFortuneOptionType
         if (this.name === null) {
             return false;
         }
-        return this.wheelList.every((value, i) => {
+        return this.mbsList.every((value, i) => {
             if (i === selectedIndex) {
                 return true;
             } else {
@@ -163,7 +163,7 @@ export abstract class FWSelectedObject<T extends FWObject<WheelFortuneOptionType
     abstract valueOf(): object;
 }
 
-export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
+export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
     /** The to-be equipped items */
     itemList: null | readonly FWItem[] = null;
     /** Which flavors of {@link FWItemSetOption} should be created */
@@ -235,7 +235,7 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
         return new FWItemSet(
             this.name,
             this.itemList,
-            this.wheelList,
+            this.mbsList,
             this.stripLevel,
             this.equipLevel,
             this.flags,
@@ -296,7 +296,7 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
     }
 }
 
-export class FWSelectedCommand extends FWSelectedObject<FWCommand> {
+export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
     /** Reset all currently select options to their default. */
     reset(): void {
         this.name = null;
@@ -318,7 +318,7 @@ export class FWSelectedCommand extends FWSelectedObject<FWCommand> {
         if (this.name === null) {
             throw new Error("Cannot create a Command while \"name\" is null");
         }
-        return new FWCommand(this.name, this.wheelList, hidden);
+        return new FWCommand(this.name, this.mbsList, hidden);
     }
 
     /** Return an object representation of this instance. */
@@ -329,8 +329,8 @@ export class FWSelectedCommand extends FWSelectedObject<FWCommand> {
     }
 }
 
-/** A base class for fortune wheel sets. */
-export abstract class FWObject<OptionType extends FWObjectOption> {
+/** A base class for MBS-related objects. */
+export abstract class MBSObject<OptionType extends Record<string, any>> {
     /** The name of custom option */
     readonly name: string;
     /** Whether this concerns a custom user-created item set */
@@ -340,18 +340,18 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
     /** Whether the item set is meant to be hidden */
     #hidden: boolean = true;
     /** A readonly view of the character's list of wheel objects */
-    readonly wheelList: readonly (null | FWObject<OptionType>)[];
+    readonly mbsList: readonly (null | MBSObject<OptionType>)[];
 
     /** Get the registered options corresponding to this item set (if any) */
     get children(): null | readonly OptionType[] { return this.#children; }
 
     /** Get or set whether the item set is meant to be hidden */
-    get hidden(): boolean {  return this.#hidden; }
+    get hidden(): boolean { return this.#hidden; }
     set hidden(value: boolean) {
         if (value === true) {
-            this.unregisterOptions();
+            this.unregister();
         } else if (value === false) {
-            this.registerOptions();
+            this.register();
         } else {
             throw new TypeError(`Invalid "${this.name}.hidden" type: ${typeof value}`);
         }
@@ -359,13 +359,13 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
 
     /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
     get index(): number {
-        return this.wheelList.findIndex(i => i === this);
+        return this.mbsList.findIndex(i => i === this);
     }
 
-    constructor(name: string, custom: boolean, wheelList: readonly (null | FWObject<OptionType>)[], hidden: boolean) {
+    constructor(name: string, custom: boolean, wheelList: readonly (null | MBSObject<OptionType>)[], hidden: boolean) {
         this.name = name;
         this.custom = custom;
-        this.wheelList = wheelList;
+        this.mbsList = wheelList;
         this.#hidden = hidden;
     }
 
@@ -392,12 +392,47 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
      */
     abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
 
+    /**
+     * Convert this instance into a list of {@link FWItemSetOption} and
+     * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
+     */
+    register(): void {
+        this.#hidden = false;
+        this.#children = this.toOptions();
+    }
+
+    /**
+     * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
+     */
+    unregister(): void {
+        this.#hidden = true;
+        this.#children = null;
+    }
+
+    /** Return a string representation of this instance. */
+    toString(): string {
+        return toStringTemplate(typeof this, this.valueOf());
+    }
+
+    /** Return a (JSON safe-ish) object representation of this instance. */
+    abstract valueOf(): object;
+}
+
+/** A base class for fortune wheel sets. */
+export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObject<OptionType> {
+    /**
+     * Convert this instance into a list of {@link FWItemSetOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
+     * @returns A list of wheel of fortune options
+     */
+    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+
     /** Find the insertion position within `WheelFortuneOption`. */
     #registerFindStart(): number {
-        if (!this.#children?.length) {
+        if (!this.children?.length) {
             return WheelFortuneOption.length;
         } else {
-            const initialID = this.#children[0].ID;
+            const initialID = this.children[0].ID;
             const start = WheelFortuneOption.findIndex(i => i.ID >= initialID);
             return start === -1 ? WheelFortuneOption.length : start;
         }
@@ -408,11 +443,10 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
      * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
      * @param push Wether the new MBS settings should be pushed to the server
      */
-    registerOptions(push: boolean = true): void {
-        this.#hidden = false;
-        this.#children = this.toOptions();
+    register(push: boolean = true): void {
+        super.register();
         let start = this.#registerFindStart();
-        for (const o of this.#children) {
+        for (const o of <readonly OptionType[]>this.children) {
             // Check whether the option is already registered
             const i = WheelFortuneOption.findIndex(prevOption => prevOption.ID === o.ID);
 
@@ -439,10 +473,9 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
      * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
      * @param push Wether the new MBS settings should be pushed to the server
      */
-    unregisterOptions(push: boolean = true): void {
-        this.#hidden = true;
+    unregister(push: boolean = true): void {
         const IDs = this.children?.map(c => c.ID) ?? [];
-        this.#children = null;
+        super.unregister();
         WheelFortuneOption = WheelFortuneOption.filter(i => !IDs.includes(i.ID));
         WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.includes(i)).join("");
 
@@ -450,21 +483,13 @@ export abstract class FWObject<OptionType extends FWObjectOption> {
             pushMBSSettings();
         }
     }
-
-    /** Return a string representation of this instance. */
-    toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
-    }
-
-    /** Return a (JSON safe-ish) object representation of this instance. */
-    abstract valueOf(): object;
 }
 
 /** {@link FWItemSet} constructor argument types in tuple form */
 type FWItemSetArgTypes = [
     name: string,
     itemList: readonly FWItem[],
-    wheelList: readonly (null | FWItemSet)[],
+    mbsList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
     flags?: readonly Readonly<FWFlag>[],
@@ -477,7 +502,7 @@ type FWItemSetArgTypes = [
 type FWItemSetKwargTypes = {
     name: string,
     itemList: readonly FWItem[],
-    wheelList: readonly (null | FWItemSet)[],
+    mbsList: readonly (null | FWItemSet)[],
     stripLevel?: StripLevel,
     equipLevel?: StripLevel,
     flags?: readonly Readonly<FWFlag>[],
@@ -522,13 +547,13 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
     readonly preRunCallback: null | FortuneWheelPreRunCallback;
     // @ts-ignore: false positive; narrowing of superclass attribute type
-    readonly wheelList: readonly (null | FWItemSet)[];
+    readonly mbsList: readonly (null | FWItemSet)[];
 
     /** Initialize the instance */
     constructor(
         name: string,
         itemList: readonly FWItem[],
-        wheelList: readonly (null | FWItemSet)[],
+        mbsList: readonly (null | FWItemSet)[],
         stripLevel?: StripLevel,
         equipLevel?: StripLevel,
         flags?: readonly Readonly<FWFlag>[],
@@ -537,17 +562,17 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         preRunCallback?: null | FortuneWheelPreRunCallback,
     ) {
         const kwargs = FWItemSet.validate({
-            name: name,
-            itemList: itemList,
-            wheelList: wheelList,
-            stripLevel: stripLevel,
-            equipLevel: equipLevel,
-            flags: flags,
-            custom: custom,
-            hidden: hidden,
-            preRunCallback: preRunCallback,
+            name,
+            itemList,
+            mbsList,
+            stripLevel,
+            equipLevel,
+            flags,
+            custom,
+            hidden,
+            preRunCallback,
         });
-        super(kwargs.name, kwargs.custom, kwargs.wheelList, kwargs.hidden);
+        super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.hidden);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
@@ -567,8 +592,8 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             throw new TypeError(`Invalid "itemList" type: ${typeof kwargs.itemList}`);
         }
 
-        if (!Array.isArray(kwargs.wheelList)) {
-            throw new TypeError(`Invalid "wheelList" type: ${typeof kwargs.wheelList}`);
+        if (!Array.isArray(kwargs.mbsList)) {
+            throw new TypeError(`Invalid "mbsList" type: ${typeof kwargs.mbsList}`);
         }
 
         if (!(includes(Object.values(StripLevel), kwargs.stripLevel))) {
@@ -613,11 +638,11 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
      * Construct a new {@link FWItemSet} instance from the passed object
      * @param kwargs The to-be parsed object
      */
-    static fromObject(wheelList: readonly (null | FWItemSet)[], kwargs: FWSimplePartialItemSet): FWItemSet {
+    static fromObject(mbsList: readonly (null | FWItemSet)[], kwargs: FWSimplePartialItemSet): FWItemSet {
         const args: FWItemSetArgTypes = [
             kwargs.name,
             kwargs.itemList,
-            wheelList,
+            mbsList,
             kwargs.stripLevel,
             kwargs.equipLevel,
             kwargs.flags,
@@ -734,14 +759,14 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 /** {@link FWCommand} constructor argument types in tuple form */
 type FWCommandArgTypes = [
     name: string,
-    wheelList: readonly (null | FWCommand)[],
+    mbsList: readonly (null | FWCommand)[],
     hidden?: boolean,
 ];
 
 /** {@link FWCommand} constructor argument types in tuple form */
 type FWCommandKwargTypes = {
     name: string,
-    wheelList: readonly (null | FWCommand)[],
+    mbsList: readonly (null | FWCommand)[],
     hidden?: boolean,
 };
 
@@ -750,12 +775,12 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     // @ts-ignore: false positive; narrowing of superclass attribute type
     readonly custom: true;
     // @ts-ignore: false positive; narrowing of superclass attribute type
-    readonly wheelList: readonly (null | FWCommand)[];
+    readonly mbsList: readonly (null | FWCommand)[];
 
     /** Initialize the instance */
-    constructor(name: string, wheelList: readonly (null | FWCommand)[], hidden?: boolean) {
-        const kwargs = FWCommand.validate({ name: name, wheelList: wheelList, hidden: hidden });
-        super(kwargs.name, true, kwargs.wheelList, kwargs.hidden);
+    constructor(name: string, mbsList: readonly (null | FWCommand)[], hidden?: boolean) {
+        const kwargs = FWCommand.validate({ name, mbsList, hidden });
+        super(kwargs.name, true, kwargs.mbsList, kwargs.hidden);
     }
 
     /** Validation function for the classes' constructor */
@@ -764,8 +789,8 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
 
-        if (!Array.isArray(kwargs.wheelList)) {
-            throw new TypeError(`Invalid "wheelList" type: ${typeof kwargs.wheelList}`);
+        if (!Array.isArray(kwargs.mbsList)) {
+            throw new TypeError(`Invalid "mbsList" type: ${typeof kwargs.mbsList}`);
         }
 
         if (typeof kwargs.hidden !== "boolean") {
@@ -778,10 +803,10 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
      * Construct a new {@link FWItemSet} instance from the passed object
      * @param kwargs The to-be parsed object
      */
-    static fromObject(wheelList: readonly (null | FWCommand)[], kwargs: FWSimplePartialCommand): FWCommand {
+    static fromObject(mbsList: readonly (null | FWCommand)[], kwargs: FWSimplePartialCommand): FWCommand {
         const args: FWCommandArgTypes = [
             kwargs.name,
-            wheelList,
+            mbsList,
             kwargs.hidden,
         ];
         return new FWCommand(...args);

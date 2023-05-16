@@ -3,7 +3,7 @@
 "use strict";
 
 import { LoopIterator } from "common";
-import { FORTUNE_WHEEL_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
+import { MBS_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
 import { FWCommandScreen } from "fortune_wheel_command";
 import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { MBSScreen } from "screen_abc";
@@ -69,7 +69,7 @@ export class FWSelectScreen extends MBSScreen {
         DrawButton(1720, 60, 90, 90, "", "White", "Icons/Next.png", this.pageSelector.next(false).name);
         DrawButton(1610, 60, 90, 90, "", "White", "Icons/Prev.png", this.pageSelector.previous(false).name);
 
-        const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
+        const i_per_row = MBS_MAX_SETS / 2;
         for (const [i, wheelSet] of this.wheelList.entries()) {
             const y = this.start.Y + (i % i_per_row) * this.spacing.Y;
             const dx = (i_per_row > i) ? 0 : this.spacing.X;
@@ -100,7 +100,7 @@ export class FWSelectScreen extends MBSScreen {
         }
 
         const isPlayer = this.character.IsPlayer();
-        const i_per_row = FORTUNE_WHEEL_MAX_SETS / 2;
+        const i_per_row = MBS_MAX_SETS / 2;
         for (const [i, wheelSet] of this.wheelList.entries()) {
             const y = this.start.Y + (i % i_per_row) * this.spacing.Y;
             const dx = (i_per_row > i) ? 0 : this.spacing.X;
@@ -119,7 +119,6 @@ export class FWSelectScreen extends MBSScreen {
     }
 
     exit(): void {
-        this.exitScreens(true);
-        CommonSetScreen("MiniGame", "WheelFortune");
+        this.exitScreens(false);
     }
 }

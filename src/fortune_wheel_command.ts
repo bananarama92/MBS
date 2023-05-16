@@ -9,11 +9,11 @@ import {
 } from "common_bc";
 import {
     MBSScreen,
-    FWObjectScreen,
+    MBSObjectScreen,
     ExitAction,
 } from "screen_abc";
 
-export class FWCommandScreen extends FWObjectScreen<FWCommand> {
+export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     static readonly screen = "MBS_FWCommandScreen";
     readonly screen = FWCommandScreen.screen;
     static readonly background = "Sheet";
@@ -60,9 +60,9 @@ export class FWCommandScreen extends FWObjectScreen<FWCommand> {
         }
 
         // Load the settings
-        if (this.wheelObject !== null) {
-            this.settings.readSettings(this.wheelObject);
-            nameElement.value = this.wheelObject.name;
+        if (this.mbsObject !== null) {
+            this.settings.readSettings(this.mbsObject);
+            nameElement.value = this.mbsObject.name;
         } else {
             this.settings.reset();
         }

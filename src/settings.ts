@@ -13,7 +13,7 @@ import {
     FWCommand,
     settingsLoaded,
     sanitizeWheelFortuneIDs,
-    FORTUNE_WHEEL_MAX_SETS,
+    MBS_MAX_SETS,
     FWObject,
 } from "common_bc";
 
@@ -78,18 +78,18 @@ export function parseFWObjects<
     // Pad/trim the item sets if necessary
     if (!Array.isArray(protoWheelList)) {
         protoWheelList = [];
-    } else if (protoWheelList.length > FORTUNE_WHEEL_MAX_SETS) {
-        trimArray(protoWheelList, FORTUNE_WHEEL_MAX_SETS);
+    } else if (protoWheelList.length > MBS_MAX_SETS) {
+        trimArray(protoWheelList, MBS_MAX_SETS);
     }
 
-    const wheelList: (null | RT)[] = Object.seal(Array(FORTUNE_WHEEL_MAX_SETS).fill(null));
+    const wheelList: (null | RT)[] = Object.seal(Array(MBS_MAX_SETS).fill(null));
     protoWheelList.forEach((simpleObject, i) => {
         if (simpleObject === null) {
             return;
         }
         try {
             const wheelObject = wheelList[i] = constructor(wheelList, simpleObject);
-            wheelObject.registerOptions(false);
+            wheelObject.register(false);
         } catch (ex) {
             console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
         }
