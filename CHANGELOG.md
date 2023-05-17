@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.6.1
+* Drop support for BC R91
+* Do not send a version-update beep when installing MBS for the first time
+* Overhauled the build artifact storage system
+* Demand that at least one wheel of fortune lock flag is enabled
+* Add support for saving futuristic training belt properties
+
 ## v0.6.0
 * Allow the specification of custom timer lock durations for the wheel of fortune
 * Reduced the number of exposed functions
