@@ -38,7 +38,7 @@ jobs:
       - run: npm run lint
       - run: |
           mkdir ./dist/"${{ matrix.branch }}"
-          mv ./package-lock.json ./src/loader.user.js ./src/dev_loader.user.js ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
+          mv ./package-lock.json ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
       - uses: actions/upload-artifact@v3
         with:
           name: artifact
@@ -55,22 +55,49 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v3
+        name: Download previous release artifacts
+        with:
+          repository: bananarama92/MBS-Artifacts
+          path: MBS-Artifacts
       - uses: actions/download-artifact@v3
         with:
           name: artifact
-          path: dist
+          path: MBS-Artifacts/artifacts
+      - name: Push new release artifacts to the MBS release archive
+        if: github.event_name == 'release'
+        run: |
+          MBS_HASH=$(git rev-parse HEAD)
+
+          cd MBS-Artifacts
+          git mkdir artifacts/${{ github.ref_name }}
+          cp main/package-lock.json main/mbs.js main/mbs.js.map artifacts/${{ github.ref_name }}/
+
+          git add artifacts/${{ github.ref_name }}/*
+          git config --local user.name "GitHub Action [bot]"
+          git config --local user.email "action@github.com"
+          git commit git -m "CI: Add MBS ${{ github.ref_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          git push
+      - name: Define the latest MBS release
+        run: |
+          TAG=$(git describe --abbrev=0 --tags)
+          rm -rf MBS-Artifacts/artifacts/main
+          cp -r MBS-Artifacts/artifacts/"$TAG" MBS-Artifacts/artifacts/main
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: './dist'
+          path: './MBS-Artifacts/artifacts'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
-      - name: Attach wheels to GitHub release
+      - name: Attach release artifacts to GitHub release
         if: github.event_name == 'release'
         uses: AButler/upload-release-assets@v2.0.2
         with:
-          files: 'dist/main/package-lock.json;dist/main/mbs.js;dist/main/mbs.js.map'
+          files: 'MBS-Artifacts/artifacts/${{ github.ref_name }}/*'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
