@@ -278,7 +278,13 @@ export class FWItemSetScreen extends FWObjectScreen<FWItemSet> {
         } else if (!this.settings.isValid(this.index)) {
             acceptDisabled = true;
             acceptColor = "Gray";
-            acceptDescription += (this.settings.name === null) ? ": Missing name" : ": Duplicate name";
+            if (this.settings.name === null) {
+                acceptDescription += ": Missing name";
+            } else if (this.settings.flags.every(i => !i.enabled)) {
+                acceptDescription += ": Must enable at least one lock flag";
+            } else {
+                acceptDescription += ": Duplicate name";
+            }
         }
         DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
         DrawCharacter(this.preview, 300, 175, 0.78, false);

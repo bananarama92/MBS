@@ -276,7 +276,11 @@ export class FWSelectedItemSet extends FWSelectedObject<FWItemSet> {
      * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
      */
     isValid(selectedIndex: null | number = null): this is ThisType<this> & { name: string, itemList: readonly FWItem[] } {
-        return super.isValid(selectedIndex) && this.itemList !== null;
+        return (
+            super.isValid(selectedIndex)
+            && this.itemList !== null
+            && this.flags.some(i => i.enabled)
+        );
     }
 
     /** Return an object representation of this instance. */
@@ -576,12 +580,17 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         }
 
         if (isArray(kwargs.flags)) {
+            let flags: FWFlag[];
             if (kwargs.flags.every(i => typeof i === "string")) {
-                const flags = <readonly unknown[]>kwargs.flags;
-                kwargs.flags = parseLegacyFlags(<readonly string[]>flags);
+                const flagsUnknown = <readonly unknown[]>kwargs.flags;
+                flags = parseLegacyFlags(<readonly string[]>flagsUnknown);
             } else {
-                kwargs.flags = Object.freeze(validateFlags(kwargs.flags).map(i => Object.freeze(i)));
+                flags = validateFlags(kwargs.flags);
             }
+            if (flags.every(i => !i.enabled)) {
+                flags[0].enabled = true;
+            }
+            kwargs.flags = Object.freeze(flags.map(i => Object.freeze(i)));
         } else {
             kwargs.flags = DEFAULT_FLAGS;
         }
