@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.2
+* Misc CI fixes
+
 ## v0.6.1
 * Drop support for BC R91
 * Do not send a version-update beep when installing MBS for the first time
