@@ -78,6 +78,15 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     },
     TargetAngle: (p, _) => typeof p === "number",
     OverrideHeight: validateOverrideHeight,
+    PunishStruggle: (p, _) => typeof p === "boolean",
+    PunishStruggleOther: (p, _) => typeof p === "boolean",
+    PunishRequiredSpeechWord: (p, _) => typeof p === "string" && p.length <= 70,
+    PunishProhibitedSpeechWords: (p, _) => typeof p === "string" && p.length <= 70,
+    PunishSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PunishRequiredSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PunishProhibitedSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PublicModeCurrent: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltModes.length,
+    PublicModePermission: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltPermissions.length,
 });
 
 /**
