@@ -121,7 +121,7 @@ export function test_equipTimerLock(): void {
             "Invalid \"seconds\" type: undefined",
         );
 
-        assertPasses(`${name}:${PASSES}:0`, () => equipTimerLock(item, 33, character));
+        assertPasses(`${name}:${PASSES}:0`, () => equipTimerLock(item, 99, character));
         assert(`${name}:${PASSES}:0`, (item.Property?.RemoveTimer ?? Infinity) <= CurrentTime + 33 * 60000);
         assertEqual(`${name}:${PASSES}:0`, item.Property?.RemoveItem, true);
         assertEqual(`${name}:${PASSES}:0`, item.Property?.LockSet, true);
