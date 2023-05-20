@@ -73,7 +73,7 @@ jobs:
           MBS_HASH=$(git rev-parse HEAD)
 
           cd MBS-Artifacts
-          git mkdir artifacts/${{ github.ref_name }}
+          mkdir artifacts/${{ github.ref_name }}
           cp main/package-lock.json main/mbs.js main/mbs.js.map artifacts/${{ github.ref_name }}/
 
           git add artifacts/${{ github.ref_name }}/*
