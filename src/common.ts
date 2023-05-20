@@ -410,3 +410,8 @@ export function fromEntries<KT extends string, VT>(arg: Iterable<readonly [KT, V
 export function includes<T>(arg: readonly T[], value: unknown): value is T {
     return arg.includes(<T>value);
 }
+
+/** A version of {@link Number.isInteger} that serves as a type guard. */
+export function isInteger(arg: unknown): arg is number {
+    return Number.isInteger(arg);
+}

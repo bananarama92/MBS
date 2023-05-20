@@ -4,7 +4,7 @@
 
 import { cloneDeep, clone } from "lodash-es";
 
-import { isArray, entries } from "common";
+import { isArray, entries, isInteger } from "common";
 import { getBaselineProperty } from "type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
@@ -57,7 +57,7 @@ function validateText(field: TextItemNames, property: unknown, asset: Asset): pr
  * Properties are limited to a subset that are not managed by the extended item type-setting machinery.
  */
 const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
-    OverridePriority: (p, _) => Number.isInteger(p),
+    OverridePriority: (p, _) => isInteger(p),
     Opacity: (p, a) => typeof p === "number" && p <= a.MaxOpacity && p >= a.MinOpacity,
     Text: (p, a) => validateText("Text", p, a),
     Text2: (p, a) => validateText("Text2", p, a),
