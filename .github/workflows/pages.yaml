@@ -74,7 +74,7 @@ jobs:
 
           cd MBS-Artifacts
           mkdir artifacts/${{ github.ref_name }}
-          cp main/package-lock.json main/mbs.js main/mbs.js.map artifacts/${{ github.ref_name }}/
+          cp artifacts/main/package-lock.json artifacts/main/mbs.js artifacts/main/mbs.js.map artifacts/${{ github.ref_name }}/
 
           git add artifacts/${{ github.ref_name }}/*
           git config --local user.name "GitHub Action [bot]"
