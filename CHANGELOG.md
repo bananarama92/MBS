@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.3
+* Add support for storing record-based `Item.OverridePriority` values
+* Fix the bookmark loader URL
+
 ## v0.6.2
 * Misc CI fixes
 
