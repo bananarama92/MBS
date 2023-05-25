@@ -79,7 +79,7 @@ jobs:
           git add artifacts/${{ github.ref_name }}/*
           git config --local user.name "GitHub Action [bot]"
           git config --local user.email "action@github.com"
-          git commit git -m "CI: Add MBS ${{ github.ref_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          git commit -m "CI: Add MBS ${{ github.ref_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           git push
       - name: Define the latest MBS release
         run: |
