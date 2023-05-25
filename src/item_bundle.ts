@@ -57,7 +57,16 @@ function validateText(field: TextItemNames, property: unknown, asset: Asset): pr
  * Properties are limited to a subset that are not managed by the extended item type-setting machinery.
  */
 const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
-    OverridePriority: (p, _) => isInteger(p),
+    OverridePriority: (p, a) => {
+        if (isInteger(p)) {
+            return true;
+        } else if (CommonIsObject(p)) {
+            const layers = a.Layer.map(l => l.Name);
+            return entries(p).every(([k, v]) => layers.includes(k) && isInteger(v));
+        } else {
+            return false;
+        }
+    },
     Opacity: (p, a) => typeof p === "number" && p <= a.MaxOpacity && p >= a.MinOpacity,
     Text: (p, a) => validateText("Text", p, a),
     Text2: (p, a) => validateText("Text2", p, a),
