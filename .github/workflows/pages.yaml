@@ -77,8 +77,8 @@ jobs:
           cp artifacts/main/package-lock.json artifacts/main/mbs.js artifacts/main/mbs.js.map artifacts/${{ github.ref_name }}/
 
           git add artifacts/${{ github.ref_name }}/*
-          git config --local user.name "GitHub Action [bot]"
-          git config --local user.email "action@github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "CI: Add MBS ${{ github.ref_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           git push
       - name: Define the latest MBS release
