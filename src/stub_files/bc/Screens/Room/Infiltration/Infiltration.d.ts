@@ -35,13 +35,19 @@ declare function InfiltrationCatBurglarHasMoney(): boolean;
 declare function InfiltrationReverseMaidCanComplete(): boolean;
 /**
  * Returns TRUE if the player hasat least 1 NPC from Pandora in their private room and has reached 5 infiltration
- * @returns (boolean) - TRUE if successful
+ * @returns {boolean} - TRUE if successful
  */
 declare function InfiltrationPandoraPrisonerPresent(): boolean;
 /**
- * Returns TRUE if the player brought back a Mistress from Pandora's Box
+ * Returns TRUE if the player brought back a Mistress from Pandoras Box
+ * @returns {boolean} - TRUE if successful
  */
 declare function InfiltrationPartyPrisonerIsMistress(): boolean;
+/**
+ * Returns TRUE if there is still free space in private room.
+ * @returns {boolean} - TRUE if successful
+ */
+declare function InfiltrationCanJoinPrivateRoom(): boolean;
 /**
  * Loads the infiltration screen by generating the supervisor.
  * @returns {void} - Nothing

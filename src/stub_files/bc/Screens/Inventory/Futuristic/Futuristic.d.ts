@@ -39,7 +39,6 @@ declare function FuturisticAccessValidate(Data: ExtendedItemData<any>, OriginalF
 declare function InventoryItemFuturisticLoadAccessDenied(): void;
 declare function InventoryItemFuturisticDrawAccessDenied(): void;
 declare function InventoryItemFuturisticClickAccessDenied(): void;
-declare function InventoryItemFuturisticExitAccessDenied(): void;
 /**
  * Validates, if the chosen option is possible. Sets the global variable 'DialogExtendedMessage' to the appropriate error message, if not.
  * @param {Character} C - The character to validate the option

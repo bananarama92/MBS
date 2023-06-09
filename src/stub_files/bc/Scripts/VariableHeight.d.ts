@@ -7,22 +7,28 @@
  */
 declare function VariableHeightRegister(asset: Asset, config: VariableHeightConfig, parentOption?: null | ExtendedItemOption): VariableHeightData;
 /**
+ * Parse the passed variable height draw data as passed via the extended item config
+ * @param {VariableHeightConfigDrawData} drawData - The to-be parsed draw data
+ * @return {ExtendedItemDrawData<ElementMetaData.VariableHeight>} - The parsed draw data
+ */
+declare function VariableHeightGetDrawData(drawData: VariableHeightConfigDrawData): ExtendedItemDrawData<ElementMetaData.VariableHeight>;
+/**
  * Generates an asset's variable height data
  * @param {Asset} asset - The asset to generate modular item data for
  * @param {VariableHeightConfig} config - The variable height configuration
  * @param {null | ExtendedItemOption} parentOption
  * @returns {VariableHeightData} - The generated variable height data for the asset
  */
-declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, Slider, DialogPrefix, ChatTags, Dictionary, GetHeightFunction, SetHeightFunction, ScriptHooks, BaselineProperty }: VariableHeightConfig, parentOption?: null | ExtendedItemOption): VariableHeightData;
+declare function VariableHeightCreateData(asset: Asset, { MaxHeight, MinHeight, DialogPrefix, ChatTags, Dictionary, GetHeightFunction, SetHeightFunction, ScriptHooks, BaselineProperty, DrawData, }: VariableHeightConfig, parentOption?: null | ExtendedItemOption): VariableHeightData;
 /**
  * @param {VariableHeightData} data - The variable height data for the asset
  */
-declare function VariableHeightLoad({ maxHeight, minHeight, slider, getHeight, setHeight, dialogPrefix }: VariableHeightData): void;
+declare function VariableHeightLoad(data: VariableHeightData): void;
 /**
  * @param {VariableHeightData} data - The variable height data for the asset
  * @returns {void} - Nothing
  */
-declare function VariableHeightDraw({ slider, drawImages, dialogPrefix }: VariableHeightData): void;
+declare function VariableHeightDraw({ dialogPrefix, drawData }: VariableHeightData): void;
 /**
  * @param {VariableHeightData} data - The variable height data for the asset
  * @returns {void} - Nothing
@@ -97,4 +103,5 @@ declare const VariableHeightNumerId: "VariableHeightNumber";
  * @type {Record<string, VariableHeightData>}
  */
 declare const VariableHeightDataLookup: Record<string, VariableHeightData>;
-declare function VariableHeightChange(height: any, maxHeight: any, minHeight: any, setHeight: any, fromElementId: any): void;
+/** @type {(height: number, maxHeight: number, minHeight: number, setHeight: VariableHeightSetHeightCallback, fromElementId: string) => void} */
+declare function VariableHeightChange(height: number, maxHeight: number, minHeight: number, setHeight: VariableHeightSetHeightCallback, fromElementId: string): void;

@@ -7,9 +7,9 @@ declare function InventoryItemMiscPasswordPadlockDraw(): void;
 declare function InventoryItemMiscPasswordPadlockDrawControls(): void;
 /** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryItemMiscPasswordPadlockClick(): void;
-declare function InventoryItemMiscPasswordPadlockControlsClick(ExitCallback: any): void;
-declare function InventoryItemMiscPasswordPadlockHandleOpenClick(ExitCallback: any): void;
-declare function InventoryItemMiscPasswordPadlockHandleFirstSet(ExitCallback: any): void;
+declare function InventoryItemMiscPasswordPadlockControlsClick(): void;
+declare function InventoryItemMiscPasswordPadlockHandleOpenClick(): void;
+declare function InventoryItemMiscPasswordPadlockHandleFirstSet(): void;
 /** @type {ExtendedItemCallbacks.Exit} */
 declare function InventoryItemMiscPasswordPadlockExit(): void;
 declare function InventoryItemMiscPasswordPadlockIsSet(): boolean;

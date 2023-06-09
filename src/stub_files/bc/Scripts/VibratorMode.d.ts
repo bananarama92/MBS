@@ -15,17 +15,25 @@ declare function VibratorModeRegister(asset: Asset, config: VibratingItemConfig,
  * @param {VibratingItemOption} previousOption - The previously applied extended item option
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
- * @returns {string|undefined} - undefined or an empty string if the option was set correctly. Otherwise, returns a string
- * informing the player of the requirements that are not met.
  */
-declare function VibratorModeSetOption(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption, push?: boolean): string | undefined;
+declare function VibratorModeSetOption(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption, push?: boolean): void;
+/**
+ * Parse the passed typed item draw data as passed via the extended item config
+ * @param {readonly VibratorModeSet[]} modeSet - The vibrator mode sets for the item
+ * @param {ExtendedItemConfigDrawData<{ drawImage?: false }> | undefined} drawData - The to-be parsed draw data
+ * @param {number} y - The y-coordinate at which to start drawing the controls
+ * @return {ExtendedItemDrawData<ElementMetaData.Vibrating>} - The parsed draw data
+ */
+declare function VibratorModeGetDrawData(modeSet: readonly VibratorModeSet[], drawData: ExtendedItemConfigDrawData<{
+    drawImage?: false;
+}> | undefined, y?: number): ExtendedItemDrawData<ElementMetaData.Vibrating>;
 /**
  * Generates an asset's vibrating item data
  * @param {Asset} asset - The asset to generate vibrating item data for
  * @param {VibratingItemConfig} config - The item's extended item configuration
  * @returns {VibratingItemData} - The generated vibrating item data for the asset
  */
-declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix }: VibratingItemConfig, parentOption?: any): VibratingItemData;
+declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix, DrawData }: VibratingItemConfig, parentOption?: any): VibratingItemData;
 /**
  * Gather all extended item options for a given list of modes.
  * @param {readonly VibratorModeSet[]} modeSet
@@ -37,8 +45,16 @@ declare function VibratorModeGetOptions(modeSet?: readonly VibratorModeSet[]): V
  * @param {VibratingItemData} data
  */
 declare function VibratorModeLoad({ dialogPrefix: { header } }: VibratingItemData): void;
-/** @type {ExtendedItemCallbacks.Validate<ExtendedItemOption>} */
-declare function VibratorModeValidate(C: Character, item: Item, option: ExtendedItemOption, currentOption: ExtendedItemOption): string;
+/**
+ * @param {VibratingItemData} data
+ * @param {Character} C - The character on whom the item is equipped
+ * @param {Item} item - The item whose options are being validated
+ * @param {VibratingItemOption} newOption - The new option
+ * @param {VibratingItemOption} previousOption - The previously applied option
+ * @returns {string|undefined} - undefined or an empty string if the validation passes. Otherwise, returns a string
+ * message informing the player of the requirements that are not met.
+ */
+declare function VibratorModeValidate(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption): string | undefined;
 /**
  * Publish a vibrator action and exit the dialog of applicable
  * @param {VibratingItemData} data
@@ -66,27 +82,6 @@ declare function VibratorModeSetAllowEffect({ asset, modeSet }: VibratingItemDat
  * @returns {void} - Nothing
  */
 declare function VibratorModeSetEffect({ asset }: VibratingItemData): void;
-/**
- * Generate coordinates for vibrator buttons
- * @param {readonly VibratorModeSet[]} modeSet - The vibrator mode sets for the item
- * @param {number} Y - The y-coordinate at which to start drawing the controls
- * @returns {[X: number, Y: number][]} - The button coordinates
- */
-declare function VibratorModeGenerateCoords(modeSet: readonly VibratorModeSet[], Y?: number): [X: number, Y: number][];
-/**
- * Common draw function for vibrators
- * @param {VibratingItemData} data
- * @param {number} [Y] - The y-coordinate at which to start drawing the controls
- * @returns {void} - Nothing
- */
-declare function VibratorModeDraw(data: VibratingItemData, Y?: number): void;
-/**
- * Common click function for vibrators
- * @param {VibratingItemData} data
- * @param {number} [Y] - The y-coordinate at which the extended item controls were drawn
- * @returns {void} - Nothing
- */
-declare function VibratorModeClick(data: VibratingItemData, Y?: number): void;
 /**
  * Gets a vibrator mode from VibratorModeOptions
  * @param {VibratorMode} ModeName - The name of the mode from VibratorMode, e.g. VibratorMode.OFF
@@ -217,7 +212,7 @@ declare function VibratorModeInit(data: VibratingItemData, C: Character, Item: I
  * An alias for {@link TypedItemSetOptionByName}.
  * @type {typeof TypedItemSetOptionByName}
  */
-declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean): string;
+declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean, C_Source?: Character): string;
 /**
  * An enum for the possible vibrator modes
  * @readonly

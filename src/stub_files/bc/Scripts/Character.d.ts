@@ -312,6 +312,13 @@ declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGro
  */
 declare function CharacterResetFacialExpression(C: Character): void;
 /**
+ * Checks if a given expression is allowed on a character
+ * @param {Character} C
+ * @param {Item} Item
+ * @param {ExpressionName} Expression
+ */
+declare function CharacterIsExpressionAllowed(C: Character, Item: Item, Expression: ExpressionName): boolean;
+/**
  * Gets the currently selected character
  * @returns {Character|null} - Currently selected character
  */

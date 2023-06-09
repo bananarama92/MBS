@@ -8,6 +8,6 @@ declare function InventoryItemDevicesWoodenBoxExitHook(): void;
 declare function InventoryItemDevicesWoodenBoxPublishActionHook(data: TypedItemData, originalFunction: (C: Character, item: Item, newOption: any, previousOption: any) => void, C: Character, item: Item, newOption: any, previousOption: any): void;
 /**
  * Dynamic AfterDraw function. Draws text onto the box.
- * @type {ExtendedItemCallbacks.AfterDraw}
+ * @type {ExtendedItemScriptHookCallbacks.AfterDraw<TypedItemData>}
  */
-declare function AssetsItemDevicesWoodenBoxAfterDraw({ C, A, CA, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color, Opacity }: DynamicDrawingData<Record<string, unknown>>): void;
+declare function AssetsItemDevicesWoodenBoxAfterDrawHook(_: TypedItemData, originalFunction: (drawData: DynamicDrawingData<Record<string, unknown>>) => void, { C, A, CA, X, Y, L, Property, drawCanvas, drawCanvasBlink, AlphaMasks, Color, Opacity }: DynamicDrawingData<Record<string, unknown>>): void;

@@ -5,7 +5,6 @@ declare function InventoryItemMiscCombinationPadlockLoad(): void;
 declare function InventoryItemMiscCombinationPadlockModifyInput(e: any): void;
 /** @type {ExtendedItemCallbacks.Draw} */
 declare function InventoryItemMiscCombinationPadlockDraw(): void;
-declare function InventoryItemMiscCombinationPadlockUnlock(C: any, Item: any): void;
 /** @type {ExtendedItemCallbacks.Click} */
 declare function InventoryItemMiscCombinationPadlockClick(): void;
 /** @type {ExtendedItemCallbacks.Exit} */

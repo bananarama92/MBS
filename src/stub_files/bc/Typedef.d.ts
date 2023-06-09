@@ -61,14 +61,53 @@ interface RGBAColor extends RGBColor {
 	a: number;
 }
 
-type RectTuple = [number, number, number, number];
+/** A 4-tuple with X & Y coordinates, width and height */
+type RectTuple = [X: number, Y: number, W: number, H: number];
+
+/** A 4-tuple with X & Y coordinates and, optionally, width and height */
+type PartialRectTuple = [X: number, Y: number, W?: number, H?: number];
 
 type CommonSubstituteReplacer = (match: string, offset: number, replacement: string, string: string) => string;
 type CommonSubtituteSubstitution = [tag: string, substitution: string, replacer?: CommonSubstituteReplacer];
 
+interface CommonGenerateGridParameters {
+	/** Starting X coordinate of the grid */
+	x: number,
+	/** Starting Y coordinate of the grid */
+	y: number,
+	/** Maximum width of the grid */
+	width: number,
+	/** Maximum height of the grid */
+	height: number,
+	/** Width of one grid item */
+	itemWidth: number,
+	/** Height of one grid item */
+	itemHeight: number,
+}
+
+type CommonGenerateGridCallback<T> = (item: T, x: number, y: number, width: number, height: number) => boolean;
+
 //#endregion
 
 //#region Enums
+
+type DialogMenuMode = "dialog" | "items" | "colorDefault" | "colorExpression" | "colorItem" | "permissions" | "activities" | "locking" | "locked" | "extended" | "tighten" | "crafted" | "struggle";
+
+type DialogMenuButton = "Activity" |
+	"ColorCancel" | "ColorChange" | "ColorChangeMulti" | "ColorDefault" | "ColorPickDisabled" | "ColorSelect" |
+	"Crafting" |
+	"DialogNormalMode" | "DialogPermissionMode" |
+	"Dismount" | "Escape" | "Remove" |
+	"Exit" |
+	"GGTSControl" |
+	"InspectLock" | "InspectLockDisabled" |
+	"Lock" | "LockDisabled" | "LockMenu" |
+	"Next" | "Prev" | "PickLock" | "PickLockDisabled" |
+	"Remote" | "RemoteDisabled" | `RemoteDisabledFor${VibratorRemoteAvailability}` |
+	"Unlock" | "Use" | "UseDisabled" | "Struggle" | "TightenLoosen" |
+	// Wardrobe buttons
+	"Wardrobe" | "WardrobeDisabled" | "Reset" | "WearRandom" | "Random" | "Naked" | "Accept" | "Cancel" | "Character"
+	;
 
 type DialogSortOrder = | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
@@ -112,6 +151,9 @@ type ItemVulvaFuturisticVibratorAccessMode = "" | "ProhibitSelf" | "LockMember";
  * @property Slow - Indicates the character is slowed. Used when exiting chatrooms.
  * @property FillVulva - Marks the item as filling the character's vulva.
  *   Used when checking activities' prerequisites and the auto-stimulation events.
+ * @property ShaftVulva - Marks the item as being some sort of shaft extending out of the vulva.
+ *   Used to block things like chastity from closing.
+ * @property IsPlugged - Marks the item as filling the character's butt.
  * @property IsPlugged - Marks the item as filling the character's butt.
  *   Used when checking activities' prerequisites and the auto-stimulation events.
  *
@@ -176,7 +218,7 @@ type EffectName =
 
 	"Shackled" | "Tethered" | "Enclose" | "OneWayEnclose" | "OnBed" | "Lifted" | "Suspended" |
 
-	"Slow" | "FillVulva" | "IsPlugged" |
+	"Slow" | "FillVulva" | "VulvaShaft" | "IsPlugged" |
 
 	"Egged" | "Vibrating" |
 
@@ -229,26 +271,26 @@ type EffectName =
 	;
 
 interface ExpressionNameMap {
-	Eyebrows: "Raised" | "Lowered" | "OneRaised" | "Harsh" | "Angry" | "Soft",
+	Eyebrows: null | "Raised" | "Lowered" | "OneRaised" | "Harsh" | "Angry" | "Soft",
 	Eyes: (
-		"Closed" | "Dazed" | "Shy" | "Sad" | "Horny" | "Lewd" | "VeryLewd" |
+		null | "Closed" | "Dazed" | "Shy" | "Sad" | "Horny" | "Lewd" | "VeryLewd" |
 		"Heart" | "HeartPink" | "LewdHeart" | "LewdHeartPink" | "Dizzy" | "Daydream" |
 		"ShylyHappy" | "Angry" | "Surprised" | "Scared"
 	),
 	Eyes2: ExpressionNameMap["Eyes"],
 	Mouth: (
-		"Frown" | "Sad" | "Pained" | "Angry" | "HalfOpen" | "Open" | "Ahegao" | "Moan" |
+		null | "Frown" | "Sad" | "Pained" | "Angry" | "HalfOpen" | "Open" | "Ahegao" | "Moan" |
 		"TonguePinch" | "LipBite" | "Happy" | "Devious" | "Laughing" | "Grin" | "Smirk" | "Pout"
 	),
-	Pussy: "Hard",
-	Blush: "Low" | "Medium" | "High" | "VeryHigh" | "Extreme" | "ShortBreath",
+	Pussy: null | "Hard",
+	Blush: null | "Low" | "Medium" | "High" | "VeryHigh" | "Extreme" | "ShortBreath",
 	Fluids: (
-		"DroolLow" | "DroolMedium" | "DroolHigh" | "DroolSides" | "DroolMessy" | "DroolTearsLow" |
+		null | "DroolLow" | "DroolMedium" | "DroolHigh" | "DroolSides" | "DroolMessy" | "DroolTearsLow" |
 		"DroolTearsMedium" | "DroolTearsHigh" | "DroolTearsMessy" | "DroolTearsSides" |
 		"TearsHigh" | "TearsMedium" | "TearsLow"
 	),
 	Emoticon: (
-		"Afk" | "Whisper" | "Sleep" | "Hearts" | "Tear" | "Hearing" | "Confusion" | "Exclamation" |
+		null | "Afk" | "Whisper" | "Sleep" | "Hearts" | "Tear" | "Hearing" | "Confusion" | "Exclamation" |
 		"Annoyed" | "Read" | "RaisedHand" | "Spectator" | "ThumbsDown" | "ThumbsUp" | "LoveRope" |
 		"LoveGag" | "LoveLock" | "Wardrobe" | "Gaming" | "Coffee"
 	),
@@ -299,7 +341,7 @@ type AssetLockType =
 	"IntricatePadlock" | "LoversPadlock" | "LoversTimerPadlock" | "FamilyPadlock" |
 	"MetalPadlock" | "MistressPadlock" | "MistressTimerPadlock" |
 	"OwnerPadlock" | "OwnerTimerPadlock" | "PandoraPadlock" |
-	"PasswordPadlock" | "SafewordPadlock" | "TimerPadlock" |
+	"PasswordPadlock" | "PortalLinkPadlock" | "SafewordPadlock" | "TimerPadlock" |
 	"TimerPasswordPadlock"
 	;
 
@@ -311,21 +353,23 @@ type CraftingPropertyType =
 
 type AssetAttribute =
 	"Skirt" |
-	"ShortHair" | "SmallEars" | "NoEars" | "NoseRing" | "HoodieFix" |
+	"ShortHair" | "SmallEars" | "NoEars" | "AltEars" | "NoseRing" | "HoodieFix" |
 	"CanAttachMittens" |
-	"PenisLayer" | "PussyLayer" | "GenitaliaCover" |
-	"CagePlastic2" | "CageTechno" | "CageFlat"
+	"PenisLayer" | "PussyLayer" | "GenitaliaCover" | "PussyLight1" | "PussyLight2" | "PussyLight3" | "PussyDark1" | "PussyDark2" | "PussyDark3" |
+	"CagePlastic2" | "CageTechno" | "CageFlat" |
+	"FuturisticRecolor" | "FuturisticRecolorDisplay" |
+	"PortalLinkLockable" | `PortalLinkChastity${string}` | `PortalLinkActivity${ActivityName}` | `PortalLinkTarget${AssetGroupItemName}`
 	;
 
 type AssetPrerequisite =
-	"AccessBreast" | "AccessBreastSuitZip" | "AccessButt" | "AccessFullPenis" | "AccessMouth" | "AccessTorso" | "AccessVulva" |
-	"AllFours" | "BlockedMouth" | "ButtEmpty" | "CanBeCeilingTethered" | "CanCloseLegs" | "CanKneel" | "CannotBeSuited" | "CannotHaveWand" |
+	"AccessBreast" | "AccessBreastSuitZip" | "AccessButt" | "AccessFullPenis" | "AccessMouth" | "AccessTorso" | "AccessVulva" | "AccessCrotch" |
+	"AllFours" | "BlockedMouth" | "ButtEmpty" | "CanBeCeilingTethered" | "CanCloseLegs" | "CanCoverVulva" | "CanHaveErection" | "CanKneel" | "CannotBeSuited" | "CannotHaveWand" |
 	"ClitEmpty" | "Collared" | "CuffedArms" | "CuffedArmsOrEmpty" | "CuffedFeet" | "CuffedFeetOrEmpty" | "CuffedLegs" | "CuffedLegsOrEmpty" |
 	"DisplayFrame" | "EyesEmpty" | "GagCorset" | "GagFlat" | "GagUnique" | "GasMask" | "HasBreasts" | "HasFlatChest" | "HasPenis" | "HasVagina" |
 	"HoodEmpty" | "LegsOpen" | "NakedFeet" | "NakedHands" | "NeedsHarness" | "NeedsNippleRings" | "NoChastityCage" | "NoClothLower" | "NoFeetSpreader" | "NoItemArms" |
 	"NoItemFeet" | "NoItemHands" | "NoItemLegs" | "NoMaidTray" | "NoOuterClothes" | "NotChained" | "NotChaste" | "NotHogtied" | "NotHorse" | "NotKneeling" |
 	"NotKneelingSpread" | "NotLifted" | "NotMasked" | "NotMounted" | "NotProtrudingFromMouth" | "NotShackled" | "NotSuspended" | "NotYoked" | "OnBed" |
-	"RemotesAllowed" | "VulvaEmpty" | "VulvaNotBlockedByBelt"
+	"RemotesAllowed" | "VulvaEmpty"
 ;
 
 type CraftingStatusType = 0 | 1 | 2;
@@ -391,6 +435,9 @@ type MagicSchoolHouse = "Maiestas" | "Vincula" | "Amplector" | "Corporis";
 type ModuleType = "Character" | "Cutscene" | "MiniGame" | "Online" | "Room";
 
 type AssetCategory = "Medical" | "Extreme" | "Pony" | "SciFi" | "ABDL" | "Fantasy";
+
+type PortalLinkStatus = "PortalLinkInvalidCode" | "PortalLinkClipboardError" | "PortalLinkValidCode" | `PortalLinkSearching${number}` | "PortalLinkDuplicateCode" | "PortalLinkTargetNotFound" | "PortalLinkEstablished";
+type PortalLinkFunction = "PortalLinkFunctionLock" | "PortalLinkFunctionUnlock" | "PortalLinkFunctionCycleChastity" | `PortalLinkFunctionActivity${ActivityName}`;
 
 //#endregion
 
@@ -1200,8 +1247,6 @@ interface Asset {
 	CraftGroup: string;
 	ColorSuffix: Record<string, string>;
 	ExpressionPrerequisite?: readonly AssetPrerequisite[];
-	FuturisticRecolor?: boolean;
-	FuturisticRecolorDisplay?: boolean;
 }
 
 //#endregion
@@ -1295,7 +1340,7 @@ interface Item {
 
 type FavoriteIcon = "Favorite" | "FavoriteBoth" | "FavoritePlayer";
 type ItemEffectIcon = "BlindLight" | "BlindNormal" | "BlindHeavy" | "DeafLight" | "DeafNormal" | "DeafHeavy" | "GagLight" | "GagNormal" | "GagHeavy" | "GagTotal";
-type InventoryIcon = FavoriteIcon | ItemEffectIcon | "AllowedLimited" | "Handheld" | "Locked" | "LoverOnly" | "FamilyOnly" | "OwnerOnly" | "Unlocked";
+type InventoryIcon = FavoriteIcon | ItemEffectIcon | "AllowedLimited" | "Handheld" | "Locked" | "LoverOnly" | "FamilyOnly" | "OwnerOnly" | "Unlocked" | AssetLockType;
 
 interface InventoryItem {
 	Group: AssetGroupName;
@@ -1550,6 +1595,7 @@ interface Character {
 		MagicBattle?: GameMagicBattleParameters,
 		GGTS?: GameGGTSParameters,
 		Poker?: GamePokerParameters,
+		ClubCard?: GameClubCardParameters,
 	};
 	BlackList: number[];
 	RunScripts?: boolean;
@@ -1900,6 +1946,71 @@ interface NPCTrait {
 
 //#region Extended items
 
+/**
+ * An interface with all available element metadata fields.
+ * Note that only a subset of fields are generally used by a given archetype.
+ * @see {@link ElementData}
+ * @see {@link ExtendedItemDrawData}
+ */
+interface ElementMetaData {
+	/** Whether to draw an element-accompanying image or not */
+	drawImage?: boolean,
+	/** The name of a supported thumbnail image in \CSS\Styles.css that will show the current position on the slider */
+	icon?: string,
+	/** Whether an options shows up in the UI. Useful for options that are managed programmatically. */
+	hidden?: boolean,
+}
+
+declare namespace ElementMetaData {
+	interface Typed { drawImage: boolean, hidden: boolean }
+	interface Modular { drawImage: boolean, hidden: boolean }
+	interface Vibrating  { drawImage: false, hidden: false }
+	interface Text {}
+	interface VariableHeight { icon: string }
+}
+
+/** @see {@link ElementData} */
+type ElementConfigData<MetaData extends ElementMetaData> = {
+	/** A 4-tuple with X & Y coordinates, width and height. */
+	position?: PartialRectTuple,
+} & MetaData;
+
+/**
+ * An interface with element coordinates and additional (archetype-specific metadata).
+ * @template MetaData A record with (archetype-specific) additional element metadata
+ * @see {@link ExtendedItemDrawData}
+ */
+type ElementData<MetaData extends ElementMetaData> = {
+	/** A 4-tuple with X & Y coordinates, width and height. */
+	position: RectTuple,
+} & MetaData;
+
+/** @see {@link ExtendedItemDrawData} */
+interface ExtendedItemConfigDrawData<MetaData extends ElementMetaData> {
+	/** An array with two-tuples of X and Y coordinates for the buttons and, optionally, the buttons width and height */
+	elementData?: ElementConfigData<MetaData>[],
+	/** The number of buttons to be drawn per page */
+	itemsPerPage?: number,
+}
+
+/** @see {@link ExtendedItemDrawData} */
+interface VariableHeightConfigDrawData extends ExtendedItemConfigDrawData<{}> {
+	elementData: { position: RectTuple, icon: string }[],
+}
+
+/**
+ * An interface with element-specific drawing data for a given screen.
+ * @template MetaData A record with (archetype-specific) additional element metadata
+ */
+interface ExtendedItemDrawData<MetaData extends ElementMetaData> extends Required<ExtendedItemConfigDrawData<MetaData>> {
+	/** A list of {@link ElementData} interfaces, one for each to-be drawn element (_e.g._ buttons) */
+	elementData: ElementData<MetaData>[],
+	/** The number of pages */
+	pageCount: number,
+	/** Whether pagination is required; i.e. if the number of buttons is larger than {@link ExtendedItemDrawData.itemsPerPage} */
+	paginate: boolean,
+}
+
 /** A record containing various dialog keys used by the extended item screen */
 interface ExtendedItemDialog<
 	OptionType extends ExtendedItemOption
@@ -2062,7 +2173,7 @@ declare namespace ExtendedItemCallbacks {
 	 */
 	type SetOption<
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean], string>;
+	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean]>;
 	/**
 	 * Callback for extended item `AfterDraw` functions.
 	 * Relevant for assets that define {@link Asset.DynamicAfterDraw}.
@@ -2187,7 +2298,7 @@ declare namespace ExtendedItemScriptHookCallbacks {
 	type SetOption<
 		DataType extends ExtendedItemData<any>,
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean], string>;
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean]>;
 	/**
 	 * Callback for extended item `AfterDraw` functions.
 	 * Relevant for assets that define {@link Asset.DynamicAfterDraw}.
@@ -2224,18 +2335,22 @@ declare namespace ExtendedItemScriptHookCallbacks {
 	> = ExtendedItemScriptHookCallback<DataType, [drawData: DynamicScriptCallbackData<PersistentData>]>;
 }
 
+/** Union of all (archetype-specific) {@link ExtendedItemData.chatSetting} allowed values. */
+type ExtendedItemChatSetting = "default" | TypedItemChatSetting | ModularItemChatSetting;
+
 /**
  * Abstract extended item data interface that all archetypical item data interfaces must implement.
- * Archetypes are free to demand any appropriate subtype for a given property,
- * _e.g._ `drawImages: false` if an archetype does have any images in its UI.
+ * Archetypes are free to demand any appropriate subtype for a given property.
  */
 interface ExtendedItemData<OptionType extends ExtendedItemOption> {
+	/** The archetype of the extended item data */
+	archetype: ExtendedArchetype;
 	/**
 	 * The chat message setting for the item. This can be provided to allow
 	 * finer-grained chatroom message keys for the item.
-	 * If an archetype does not support multiple chat messages settings it should use the `"default"` literal string.
+	 * Archetypes must use the `"default"` literal string as default value.
 	 */
-	chatSetting: string;
+	chatSetting: ExtendedItemChatSetting;
 	/** A record containing various dialog keys used by the extended item screen */
 	dialogPrefix: ExtendedItemDialog<OptionType>;
 	/**
@@ -2256,8 +2371,6 @@ interface ExtendedItemData<OptionType extends ExtendedItemOption> {
 	chatTags: CommonChatTags[];
 	/** Contains custom dictionary entries in the event that the base ones do not suffice. */
 	dictionary: ExtendedItemDictionaryCallback<OptionType>[];
-	/** A boolean indicating whether or not images should be drawn in this item's extended item menu. */
-	drawImages: boolean;
 	/**
 	 * To-be initialized properties independent of the selected item module(s).
 	 * Relevant if there are properties that are (near) exclusively managed by {@link ExtendedItemData.scriptHooks} functions.
@@ -2265,6 +2378,8 @@ interface ExtendedItemData<OptionType extends ExtendedItemOption> {
 	baselineProperty: ItemPropertiesNoArray | null;
 	/** The extended item option of the super screen that this archetype was initialized from (if any) */
 	parentOption: null | ExtendedItemOption;
+	/** An interface with element-specific drawing data for a given screen. */
+	drawData: ExtendedItemDrawData<{}>;
 }
 
 /** A struct-type that maps archetypes to their respective extended item data.  */
@@ -2624,6 +2739,8 @@ interface ItemPropertiesCustom {
 	/** Lucky Wheel: the angle the wheel should spin to */
 	TargetAngle?: number;
 
+	/** PortalLink: Used to link a remote to its target asset. */
+	PortalLinkCode?: string;
 }
 
 interface ItemProperties extends ItemPropertiesBase, AssetDefinitionProperties, ItemPropertiesCustom { }
@@ -2633,24 +2750,11 @@ type ItemPropertiesNoArray = { [k in keyof ItemProperties]: ItemProperties[k] ex
 
 //#endregion
 
-/** A struct with drawing data for a given module. */
-interface ModularItemDrawData {
-	/** The number of pages */
-	pageCount: number,
-	/** Whether pagination is required; i.e. if the number of buttons is larger than {@link ModularItemDrawData.itemsPerPage} */
-	paginate: boolean,
-	/** An array with two-tuples of X and Y coordinates for the buttons */
-	positions: [X: number, Y: number][],
-	/** Whether each button should be accompanied by a preview image */
-	drawImages: boolean,
-	/** The number of buttons to be drawn per page */
-	itemsPerPage: number
-}
-
 /** An object containing modular item configuration for an asset. Contains all of the necessary information for the
  * item's load, draw & click handlers.
  */
 interface ModularItemData extends ExtendedItemData<ModularItemOption> {
+	archetype: "modular";
 	/**
 	 * The item's chatroom message setting. Determines the level of
 	 * granularity for chatroom messages when the item's module values change.
@@ -2676,7 +2780,7 @@ interface ModularItemData extends ExtendedItemData<ModularItemOption> {
 	/** A lookup for the current page in the extended item menu for each of the item's modules */
 	pages: Record<string, number>;
 	/** A lookup for the draw data for each of the item's modules */
-	drawData: Record<string, ModularItemDrawData>;
+	drawData: ExtendedItemDrawData<ElementMetaData.Modular>;
 	/** A lookup for the draw functions for each of the item's modules */
 	drawFunctions: Record<string, () => void>;
 	/** A lookup for the click functions for each of the item's modules */
@@ -2720,6 +2824,8 @@ type TypedItemSetTypeCallback = (NewType: string) => void;
  * load, draw & click handlers.
  */
 interface TypedItemData extends ExtendedItemData<TypedItemOption> {
+	archetype: "typed";
+	drawData: ExtendedItemDrawData<ElementMetaData.Typed>;
 	/** The list of extended item options available for the item */
 	options: TypedItemOption[];
 	/** A record containing various dialog keys used by the extended item screen */
@@ -2821,6 +2927,8 @@ interface AppearanceValidationWrapper {
 //#region Vibrating items
 
 interface VibratingItemData extends ExtendedItemData<VibratingItemOption> {
+	archetype: "vibrating";
+	drawData: ExtendedItemDrawData<ElementMetaData.Vibrating>;
 	/** The list of extended item options available for the item */
 	options: VibratingItemOption[];
 	/** The list with all groups of extended item options available for the item */
@@ -2841,7 +2949,6 @@ interface VibratingItemData extends ExtendedItemData<VibratingItemOption> {
 	 */
 	scriptHooks: ExtendedItemScriptHookStruct<VibratingItemData, VibratingItemOption>;
 	chatSetting: "default";
-	drawImages: false;
 }
 
 /**
@@ -2858,17 +2965,29 @@ interface StateAndIntensity {
 
 //#region Variable Height items
 
+/** The function that handles applying the height setting to the character */
+type VariableHeightGetHeightCallback = (
+	property: ItemProperties,
+) => number | null;
+
+/** The function that handles finding the current variable height setting */
+type VariableHeightSetHeightCallback = (
+	property: ItemProperties,
+	height: number,
+	maxHeight: number,
+	minHeight: number,
+) => void;
+
 /**
  * An object containing typed item configuration for an asset. Contains all of the necessary information for the item's
  * load, draw & click handlers.
  */
 interface VariableHeightData extends ExtendedItemData<VariableHeightOption> {
+	archetype: "variableheight";
 	/** The highest Y co-ordinate that can be set  */
 	maxHeight: number;
 	/** The lowest Y co-ordinate that can be set  */
 	minHeight: number;
-	/** Settings for the range input element the user can use to change the height */
-	slider: VariableHeightSliderConfig;
 	/** A record containing various dialog keys used by the extended item screen */
 	dialogPrefix: {
 		/** The dialog key for the item's load text (usually a prompt to select the type) */
@@ -2880,25 +2999,19 @@ interface VariableHeightData extends ExtendedItemData<VariableHeightOption> {
 	};
 	scriptHooks: ExtendedItemScriptHookStruct<VariableHeightData, VariableHeightOption>;
 	/** The function that handles finding the current variable height setting */
-	getHeight: (property: ItemProperties) => number | null;
+	getHeight: VariableHeightGetHeightCallback;
 	/** The function that handles applying the height setting to the character */
-	setHeight: (property: ItemProperties, height: number, maxHeight: number, minHeight: number) => void;
-	drawImages: false;
+	setHeight: VariableHeightSetHeightCallback;
 	chatSetting: "default";
+	drawData: ExtendedItemDrawData<ElementMetaData.VariableHeight>;
 }
 
 //#endregion
 
 // #region TextItem
 
-/** A struct with drawing data for a given module. */
-interface TextItemDrawData extends Omit<ModularItemDrawData, "positions"> {
-	/** An array with tuples of X and Y coordinates for the buttons and, optionally, the buttons width and height */
-	positions: [X: number, Y: number, W?: number, H?: number][],
-	drawImages: false,
-}
-
 interface TextItemData extends ExtendedItemData<TextItemOption> {
+	archetype: "text";
 	/** A record with the maximum length for each text-based properties with an input field. */
 	maxLength: TextItemRecord<number>;
 	/** A record containing various dialog keys used by the extended item screen */
@@ -2909,11 +3022,10 @@ interface TextItemData extends ExtendedItemData<TextItemOption> {
 		chat: string | ExtendedItemChatCallback<TextItemOption>;
 	};
 	scriptHooks: ExtendedItemScriptHookStruct<TextItemData, TextItemOption>;
-	drawImages: false;
 	chatSetting: "default";
 	baselineProperty: ItemPropertiesNoArray;
 	eventListeners: TextItemRecord<TextItemEventListener>;
-	drawData: TextItemDrawData;
+	drawData: ExtendedItemDrawData<ElementMetaData.Text>;
 	pushOnPublish: boolean;
 	textNames: TextItemNames[];
 	/**
@@ -3026,6 +3138,10 @@ interface PokerPlayer {
 
 interface GamePokerParameters {
 	Challenge?: string;
+}
+
+interface GameClubCardParameters {
+	Deck: string[];
 }
 
 //#endregion
@@ -3537,7 +3653,6 @@ interface DialogInventoryItem extends Item {
 	Worn: boolean;
 	Icons: InventoryIcon[];
 	SortOrder: string;
-	Hidden: boolean;
 	Vibrating: boolean;
 }
 
@@ -3644,6 +3759,43 @@ interface WheelFortuneOptionType {
 
 // #end region
 
+interface ClubCard {
+	ID: number;
+	Name: string;
+	Type?: string;
+	Title?: string;
+	Text?: string;
+	Unique?: boolean;
+	MoneyPerTurn?: number;
+	FamePerTurn?: number;
+	RequiredLevel?: number;
+	ExtraTime?: number;
+	ExtraDraw?: number;
+	ExtraPlay?: number;
+	Group?: any[];
+	Location?: string;
+	GlowTimer?: number;
+	GlowColor?: string;
+	OnPlay?: (C: ClubCardPlayer) => void;
+	OnTurnEnd?: (C: ClubCardPlayer) => void;
+}
+
+interface ClubCardPlayer {
+	Character: Character;
+	Control: string;
+	Index: number;
+	Sleeve: string;
+	Deck: ClubCard[];
+	FullDeck: ClubCard[];
+	Hand: ClubCard[];
+	Board: ClubCard[];
+	Level: number;
+	Money: number;
+	Fame: number;
+	LastFamePerTurn?: number;
+	LastMoneyPerTurn?: number;
+}
+
 // #region drawing
 
 /** Drawing options for an item's preview box */
@@ -3670,6 +3822,10 @@ interface PreviewDrawOptions {
 	Icons?: readonly InventoryIcon[];
 	/** The crafted properties of the item */
 	Craft?: CraftingItem;
+	/** The width of the preview rectangle */
+	Width?: number;
+	/** The height of the preview rectangle */
+	Height?: number;
 }
 
 // #end region
