@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.6.4
+* Update type annotations for BC R93Beta1
+* Misc GitHub Actions workflow maintenance
+* Backport two BC R93Beta2 bug fixes to R93Beta1
+    - [BondageProjects/Bondage-College#4289](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4289): Remove the `TapedHands` entry from the `HideForPose` array of handheld items
+    - [BondageProjects/Bondage-College#4290](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4290): Fix a hard-coded `IsOwnedByPlayer` check
+
 ## v0.6.3
 * Add support for storing record-based `Item.OverridePriority` values
 * Fix the bookmark loader URL
