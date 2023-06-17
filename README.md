@@ -1,7 +1,7 @@
 # Maid's Bondage Scripts
 A repo with a number of Bondage Club-related additions, including:
 * More crafting slots
-* Additional bondage-heavy outfits for the wheel of fortune (requires BC R88Beta1 or later), including the likes of:
+* Additional bondage-heavy outfits for the wheel of fortune, including the likes of:
   * PSO (Permanently Sealed Object) uniforms
   * Bondage maids
   * Wrapped up mummies
