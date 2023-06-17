@@ -64,9 +64,10 @@ declare function PortalLinkGetFunctions(item: Item): PortalLinkFunction[];
 declare function PortalLinkPublishMessage(target: Character, item: Item, func: PortalLinkFunction): void;
 /**
  *
+ * @param {Character} sender
  * @param {Item} item
  */
-declare function PortalLinkCycleChastityModule(item: Item): void;
+declare function PortalLinkCycleChastityModule(sender: Character, item: Item): void;
 /**
  * The handler for processing the hidden PortalLink messages
  * @param {Character} sender

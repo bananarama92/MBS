@@ -335,6 +335,10 @@ declare function DialogMenuBack(): void;
  */
 declare function DialogModeShowsInventory(): boolean;
 /**
+ * Helper used to check whether the player is in the Appearance screen
+ */
+declare function DialogIsInWardrobe(): boolean;
+/**
  * Leaves the item menu for both characters.
  *
  * This exits the item-selecting UI and switches back to the current character's dialog options.
@@ -441,14 +445,32 @@ declare function DialogInventorySort(): void;
  */
 declare function DialogCanUseCraftedItem(C: Character, Craft: CraftingItem): boolean;
 /**
+ * Returns TRUE if the player can use owner locks on the target character
+ * @param {Character} target - The target to (potentially) lock
+ * @returns {Boolean} - TRUE if the player can use owner locks on the target, FALSE otherwise
+ */
+declare function DialogCanUseOwnerLockOn(target: Character): boolean;
+/**
+ * Returns TRUE if the player can use lover locks on the target character
+ * @param {Character} target - The target to (potentially) lock
+ * @returns {Boolean} - TRUE if the player can use lover locks on the target, FALSE otherwise
+ */
+declare function DialogCanUseLoverLockOn(target: Character): boolean;
+/**
+ * Returns TRUE if the player can use family locks on the target character
+ * @param {Character} target - The target to (potentially) lock
+ * @returns {Boolean} - TRUE if the player can use family locks on the target, FALSE otherwise
+ */
+declare function DialogCanUseFamilyLockOn(target: Character): boolean;
+/**
  * Build the inventory listing for the dialog which is what's equipped,
  * the player's inventory and the character's inventory for that group
  * @param {Character} C - The character whose inventory must be built
- * @param {number} [Offset] - The offset to be at, if specified.
+ * @param {boolean} [resetOffset=false] - The offset to be at, if specified.
  * @param {boolean} [locks=false] - If TRUE we build a list of locks instead.
  * @returns {void} - Nothing
  */
-declare function DialogInventoryBuild(C: Character, Offset?: number, locks?: boolean): void;
+declare function DialogInventoryBuild(C: Character, resetOffset?: boolean, locks?: boolean): void;
 /**
  * Create a stringified list of the group and the assets currently in the dialog inventory
  * @param {Character} C - The character the dialog inventory has been built for
@@ -525,8 +547,9 @@ declare function DialogInventoryTogglePermission(item: DialogInventoryItem, worn
  * Changes the dialog mode and perform the initial setup.
  *
  * @param {DialogMenuMode} mode The new mode for the dialog.
+ * @param {boolean} reset Whether to reset the mode back to its defaults
  */
-declare function DialogChangeMode(mode: DialogMenuMode): void;
+declare function DialogChangeMode(mode: DialogMenuMode, reset?: boolean): void;
 /**
  * Change the given character's focused group.
  * @param {Character} C - The character to change the focus of.
@@ -888,9 +911,12 @@ declare var DialogAllowEyebrows: boolean;
 declare var DialogAllowFluids: boolean;
 /**
  * The group that was selected before we entered the expression coloring screen
- * @type {AssetItemGroup}
+ * @type {{mode: DialogMenuMode, group: AssetItemGroup}}
  */
-declare var DialogExpressionGroup: AssetItemGroup;
+declare var DialogExpressionPreviousMode: {
+    mode: DialogMenuMode;
+    group: AssetItemGroup;
+};
 /** @type {ExpressionItem[]} */
 declare var DialogFacialExpressions: ExpressionItem[];
 /** The maximum number of expressions per page for a given asset group. */

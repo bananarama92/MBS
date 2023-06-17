@@ -78,13 +78,6 @@ declare function CharacterDelete(NPCType: string): void;
  */
 declare function CharacterDeleteAllOnline(): void;
 /**
- * Adds a pose to a character's pose list, does not add it if it's already there
- * @param {Character} C - Character for which to add a pose to its list
- * @param {readonly AssetPoseName[]} NewPose - The name of the pose to add
- * @returns {void} - Nothing
- */
-declare function CharacterAddPose(C: Character, NewPose: readonly AssetPoseName[]): void;
-/**
  * Checks whether the given character can change to the named pose unaided
  * @param {Character} C - The character to check
  * @param {AssetPoseName} poseName - The name of the pose to check for

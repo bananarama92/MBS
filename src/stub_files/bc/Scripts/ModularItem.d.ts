@@ -103,9 +103,10 @@ declare function ModularItemClickCommon({ paginate, elementData }: ExtendedItemD
  * @param {string} moduleName - The name of the module whose page should be modified
  * @param {number} delta - The page delta to apply to the module's current page
  * @param {ModularItemData} data - The modular item's data
+ * @param {ExtendedItemDrawData<ElementMetaData.Modular>} drawData
  * @returns {void} - Nothing
  */
-declare function ModularItemChangePage(moduleName: string, delta: number, data: ModularItemData): void;
+declare function ModularItemChangePage(moduleName: string, delta: number, data: ModularItemData, { pageCount }: ExtendedItemDrawData<ElementMetaData.Modular>): void;
 /**
  * Transitions between pages within a modular item's extended item menu
  * @param {string} newModule - The name of the new module to transition to

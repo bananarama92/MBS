@@ -265,6 +265,15 @@ declare function DialogCanCallMaidsPunishmentOff(): boolean;
  * @returns {void} - Nothing.
  */
 declare function ChatRoomCreateElement(): void;
+/** Hide the UI elements of the chatroom screen */
+declare function ChatRoomShowElements(): void;
+/** Show the UI elements of the chatroom screen */
+declare function ChatRoomHideElements(): void;
+/**
+ * Append an element to the chatroom's chat log, scroll it down and restore focus
+ * @param {HTMLElement} div
+ */
+declare function ChatRoomAppendChat(div: HTMLElement): void;
 /**
  * Loads the chat room screen by displaying the proper inputs.
  * @returns {void} - Nothing.
@@ -1158,6 +1167,16 @@ declare var ChatRoomSlowtimer: number;
  * @type {boolean}
  */
 declare var ChatRoomSlowStop: boolean;
+/**
+ * Default position of the chat log field
+ * @type {RectTuple}
+ */
+declare var ChatRoomChatLogRect: RectTuple;
+/**
+ * Default position of the chat input field
+ * @type {RectTuple}
+ */
+declare var ChatRoomChatInputRect: RectTuple;
 declare var ChatRoomChatHidden: boolean;
 declare var ChatRoomCharacterCount: number;
 /** @type {Character[]} */

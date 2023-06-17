@@ -5,12 +5,13 @@
  */
 declare function ClubCardLogAdd(LogEntry: string): void;
 /**
- * Adds money to the club card player stats
- * @param {Object} CCPlayer - The club card player
- * @param {Number} Amount - The amount to add
+ * Publishes an action to the log and replaces all the tags
+ * @param {string} Text - The text to fetch
+ * @param {ClubCardPlayer|null} CCPlayer - The source player
+ * @param {number|null} Amount - The amount linked to the action
  * @returns {void} - Nothing
  */
-declare function ClubCardPlayerAddMoney(CCPlayer: any, Amount: number): void;
+declare function ClubCardLogPublish(Text: string, CCPlayer?: ClubCardPlayer | null, Amount?: number | null): void;
 /**
  * Creates a popop in the middle of the board that pauses the game
  * @param {string} Mode - The popup mode "DECK", "TEXT" or "YESNO"
@@ -34,12 +35,25 @@ declare function ClubCardDestroyPopup(): void;
  */
 declare function ClubCardIsLiability(Card: ClubCard): boolean;
 /**
- * Adds fame to the club card player stats, can trigger a victory
- * @param {Object} CCPlayer - The club card player
+ * Gets the opponent of the parameter player or the player that's not on it's turn if null
+ * @param {ClubCardPlayer|null} CCPlayer - The club card player or null
+ * @returns {ClubCardPlayer} - The opponent
+ */
+declare function ClubCardGetOpponent(CCPlayer?: ClubCardPlayer | null): ClubCardPlayer;
+/**
+ * Adds money to the club card player stats
+ * @param {ClubCardPlayer} CCPlayer - The club card player
  * @param {Number} Amount - The amount to add
  * @returns {void} - Nothing
  */
-declare function ClubCardPlayerAddFame(CCPlayer: any, Amount: number): void;
+declare function ClubCardPlayerAddMoney(CCPlayer: ClubCardPlayer, Amount: number): void;
+/**
+ * Adds fame to the club card player stats, can trigger a victory
+ * @param {ClubCardPlayer} CCPlayer - The club card player
+ * @param {Number} Amount - The amount to add
+ * @returns {void} - Nothing
+ */
+declare function ClubCardPlayerAddFame(CCPlayer: ClubCardPlayer, Amount: number): void;
 /**
  * Raises the level of player
  * @param {Object} CCPlayer - The club card player
@@ -185,7 +199,7 @@ declare function ClubCardBankrupt(): void;
  * @returns {void} - Nothing
  */
 declare function ClubCardEndGame(Victory: boolean): void;
-declare function ClubCardTextGet(Text: any): string;
+declare function ClubCardTextGet(Text: any): any;
 /**
  * Prepares the card titles, texts and initialize the log if needed
  * @returns {void} - Nothing
@@ -283,6 +297,7 @@ declare var ClubCardColor: string[];
 declare var ClubCardOpponent: any;
 declare var ClubCardHover: any;
 declare var ClubCardFocus: any;
+declare var ClubCardTextCache: any;
 declare var ClubCardTurnIndex: number;
 declare var ClubCardTurnCardPlayed: number;
 declare var ClubCardTurnEndDraw: boolean;

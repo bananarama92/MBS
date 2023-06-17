@@ -352,8 +352,8 @@ type CraftingPropertyType =
 	;
 
 type AssetAttribute =
-	"Skirt" |
-	"ShortHair" | "SmallEars" | "NoEars" | "AltEars" | "NoseRing" | "HoodieFix" |
+	"Skirt" | "SuitLower" | "UpperLarge" |
+	"ShortHair" | "SmallEars" | "NoEars" | "NoseRing" | "HoodieFix" |
 	"CanAttachMittens" |
 	"PenisLayer" | "PussyLayer" | "GenitaliaCover" | "PussyLight1" | "PussyLight2" | "PussyLight3" | "PussyDark1" | "PussyDark2" | "PussyDark3" |
 	"CagePlastic2" | "CageTechno" | "CageFlat" |
@@ -3778,6 +3778,7 @@ interface ClubCard {
 	GlowColor?: string;
 	OnPlay?: (C: ClubCardPlayer) => void;
 	OnTurnEnd?: (C: ClubCardPlayer) => void;
+	CanPlay?: (C: ClubCardPlayer) => boolean;
 }
 
 interface ClubCardPlayer {

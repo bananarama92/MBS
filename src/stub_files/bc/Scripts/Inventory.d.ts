@@ -58,7 +58,7 @@ declare function InventoryAvailable(C: Character, InventoryName: string | '*', I
 * Returns an error message if a prerequisite clashes with the character's items and clothes
 * @param {Character} C - The character on which we check for prerequisites
 * @param {AssetPrerequisite} Prerequisite - The name of the prerequisite
-* @returns {String} - The error tag, can be converted to an error message
+* @returns {string} - The error tag, can be converted to an error message
 */
 declare function InventoryPrerequisiteMessage(C: Character, Prerequisite: AssetPrerequisite): string;
 /**
