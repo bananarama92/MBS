@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v0.6.5
+* Update type annotations for BC R93
+* Drop support for BC R92
+* Added a basic MBS settings menu to the BC preferences
+* Increase the maximum description length of crafted items from 100 to 200
+
 ## v0.6.4
 * Update type annotations for BC R93Beta1
 * Misc GitHub Actions workflow maintenance
