@@ -105,7 +105,9 @@ MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
     DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
 });
 
-MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
+// TODO: Lower the priority again once BCTweaks has removed its `PreferenceClick` hook
+// XREF agicitag/BCTweaks#52
+MBS_MOD_API.hookFunction("PreferenceClick", 3, (args, next) => {
     const previousScreen = PreferenceSubscreen;
     next(args);
     if (!previousScreen && <string>PreferenceSubscreen === MBSPreferenceScreen.screen) {
