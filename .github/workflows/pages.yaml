@@ -84,6 +84,7 @@ jobs:
       - name: Define the latest MBS release
         run: |
           TAG=$(git describe --abbrev=0 --tags)
+          echo $TAG
           rm -rf MBS-Artifacts/artifacts/main
           cp -r MBS-Artifacts/artifacts/"$TAG" MBS-Artifacts/artifacts/main
       - name: Setup Pages
