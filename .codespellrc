@@ -1,0 +1,2 @@
+[codespell]
+skip = ./src/stub_files/bc,./node_modules,./dist

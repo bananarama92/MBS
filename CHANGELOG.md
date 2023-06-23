@@ -103,7 +103,7 @@
 * Fix the `padArray` and `trimArray` logic; make them more lenient
 
 ## v0.4.4
-* Properly respect items with the `Enclose` effect such as the futuristic crate
+* Properly respect items with the `Enclose` effect such as the futuristic create
 * Do not attempt to wear clothes if one is wearing a clubsslave collar
 * Allow `FortuneWheelOption.Script` to be used on arbitrary player- and simple characters
 
@@ -154,7 +154,7 @@
 * Expand the list of padlocks that MBS can (potentially) remove, including support for BCX's `block_keyuse_self` rule
 * Switch from LGPL3 to GPL3
 * Up the priority of the `WheelFortuneLoad` and `WheelFortuneExit` hooks
-* Try to unequip blocking restraints, even if their group does not intersect with the to-be equiped item set
+* Try to unequip blocking restraints, even if their group does not intersect with the to-be equipped item set
 * Fix the wheel of fortune item set preview using the incorrect item set list when viewing other players
 * Fix the petrifcation wheel of fortune option occasionally failing to properly color the skin
 

@@ -111,7 +111,7 @@ export function getRandomPassword(n: number): string {
 /**
  * Wait for the passed predicate to evaluate to `true`.
  * @param predicate A predicate
- * @param timeout The timeout in miliseconds for when the predicate fails
+ * @param timeout The timeout in milliseconds for when the predicate fails
  */
 export async function waitFor(predicate: () => boolean, timeout: number = 10): Promise<boolean> {
     while (!predicate()) {

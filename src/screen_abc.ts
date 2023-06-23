@@ -9,7 +9,7 @@ export abstract class MBSScreen {
     static readonly screen: string = "";
     /** The name of the screen. */
     readonly screen: string = "";
-    /** The parent screen if any. Only relevant when multiple screens are opened in succesion. */
+    /** The parent screen if any. Only relevant when multiple screens are opened in succession. */
     readonly parent: null | MBSScreen;
     /** A map of all child screens */
     readonly children: Map<string, MBSScreen>;

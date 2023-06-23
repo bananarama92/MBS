@@ -441,7 +441,7 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
     /**
      * Convert this instance into a list of {@link FWItemSetOption} and
      * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
-     * @param push Wether the new MBS settings should be pushed to the server
+     * @param push Whether the new MBS settings should be pushed to the server
      */
     register(push: boolean = true): void {
         super.register();
@@ -471,7 +471,7 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
 
     /**
      * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
-     * @param push Wether the new MBS settings should be pushed to the server
+     * @param push Whether the new MBS settings should be pushed to the server
      */
     unregister(push: boolean = true): void {
         const IDs = this.children?.map(c => c.ID) ?? [];
@@ -697,7 +697,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         }
 
         /**
-         * * Reserve the `[0, 2**8)` range (extened ASCII) for BC's default
+         * * Reserve the `[0, 2**8)` range (extended ASCII) for BC's default
          * * Reserve the `[2**8, 2**9)` range for MBS's builtin options
          * * "Reserve" the `[2**9, 2**16)` range for MBS's custom options
          */

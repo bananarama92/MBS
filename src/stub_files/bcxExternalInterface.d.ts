@@ -23,7 +23,7 @@ interface BCX_RuleStateAPI_Generic {
 	/** If the rule is logged (inEffect and logging enabled) */
 	readonly isLogged: boolean;
 
-	/** Rule setttings */
+	/** Rule settings */
 	readonly customData: any;
 	/** Rule internal data */
 	readonly internalData: any;
