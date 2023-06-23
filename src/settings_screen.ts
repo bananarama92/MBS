@@ -36,38 +36,54 @@ export class MBSPreferenceScreen extends MBSScreen {
     static readonly screen = "MBSPreferenceScreen";
     readonly screen = MBSPreferenceScreen.screen;
     readonly character: Character;
+    readonly clickList: readonly ClickAction[];
 
     constructor(parent: null | MBSScreen, character: Character) {
         super(parent);
         this.character = character;
+        this.clickList = [
+            {
+                coords: [1815, 75, 90, 90],
+                requiresPlayer: false,
+                next: () => this.exit(),
+            },
+            {
+                coords: [500, 172, 90, 90],
+                requiresPlayer: false,
+                next: () => {
+                    const wheelStruct = {
+                        FortuneWheelItemSets: loadFortuneWheelObjects(this.character, "FortuneWheelItemSets", "item sets"),
+                        FortuneWheelCommands: loadFortuneWheelObjects(this.character, "FortuneWheelCommands", "commands"),
+                    };
+                    const subScreen = new FWSelectScreen(this, wheelStruct, this.character);
+                    this.children.set(subScreen.screen, subScreen);
+                    subScreen.load();
+                },
+            },
+        ];
     }
 
     click() {
-        if (MouseIn(1815, 75, 90, 90)) {
-            this.exit();
-        } else if (MouseIn(500, 320, 90, 90)) {
-            const wheelStruct = {
-                FortuneWheelItemSets: loadFortuneWheelObjects(this.character, "FortuneWheelItemSets", "item sets"),
-                FortuneWheelCommands: loadFortuneWheelObjects(this.character, "FortuneWheelCommands", "commands"),
-            };
-            const subScreen = new FWSelectScreen(this, wheelStruct, this.character);
-            this.children.set(subScreen.screen, subScreen);
-            subScreen.load();
+        const isPlayer = this.character.IsPlayer();
+        for (const { coords, requiresPlayer, next } of this.clickList) {
+            const canClick = isPlayer ? true : !requiresPlayer;
+            if (MouseIn(...coords) && canClick) {
+                next();
+                return;
+            }
         }
     }
 
     run() {
         MainCanvas.textAlign = "left";
-        DrawText("- MBS preferences -", 500, 125, "Black");
-        DrawText(`MBS Version: ${MBS_VERSION}`, 500, 225, "Black");
+        DrawText(`- Maid's Bondage Scripts ${MBS_VERSION} -`, 500, 125, "Black");
         DrawCharacter(Player, 50, 50, 0.9);
-        MainCanvas.textAlign = "center";
-
-        DrawButton(
-            500, 320, 90, 90, "", "White", "Icons/Crafting.png",
-            "Configure Wheel of Fortune",
-        );
         DrawButton(1815, 75, 90, 90, "", "White", "Icons/Exit.png", "Exit");
+
+        DrawButton(500, 172, 90, 90, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
+        DrawText("Configure the Wheel of Fortune", 625, 172 + 35, "Black");
+
+        MainCanvas.textAlign = "center";
     }
 
     exit() {
