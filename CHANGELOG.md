@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.6
+* Fix an incompatibility between MBS settings screen and BCTweaks
+
 ## v0.6.5
 * Update type annotations for BC R93
 * Drop support for BC R92
