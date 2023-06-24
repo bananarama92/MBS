@@ -57,6 +57,8 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
         ["CraftingSaveServer", ["823BB54B"]],
+        ["DialogDrawCrafting", ["????????"]],
+        ["CraftingModeSet", ["????????"]],
     ];
     return Object.freeze(new Map(hashes.map(item => {
         const [key, value] = item;

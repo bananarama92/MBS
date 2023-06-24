@@ -860,10 +860,9 @@ waitFor(settingsMBSLoaded).then(() => {
             };
             const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
             fortuneWheelState.children.set(subScreen.screen, subScreen);
-            return subScreen.load();
-        } else {
-            return next(args);
+            subScreen.load();
         }
+        return next(args);
     });
 
     fortuneWheelState = new FWScreenProxy();

@@ -30,36 +30,6 @@ function craftingSerialize(items?: null | readonly (null | CraftingItem)[]): str
     }).join("§");
 }
 
-/** A {@link DialogDrawCrafting} variant with altered line spacing and `MaxLine` values. */
-function dialogDrawCrafting(C: Character, Item: Item): void {
-    if ((C == null) || (Item == null) || (Item.Craft == null)) return;
-    DrawTextWrap(DialogFind(Player, "CraftedItemProperties"), 1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", undefined, 2);
-    if (Item.Craft.Name != null) {
-        DrawTextWrap(
-            DialogFind(Player, "CraftingName").replace("CraftName", Item.Craft.Name),
-            1050, 150, 900, 125, "White", undefined, 2,
-        );
-    }
-    if ((Item.Craft.MemberName != null) && (Item.Craft.MemberNumber != null)) {
-        DrawTextWrap(
-            DialogFind(Player, "CraftingMember").replace("MemberName", Item.Craft.MemberName).replace("MemberNumber", Item.Craft.MemberNumber.toString()),
-            1050, 300, 900, 125, "White", undefined, 2,
-        );
-    }
-    if (Item.Craft.Property != null) {
-        DrawTextWrap(
-            DialogFind(Player, "CraftingProperty").replace("CraftProperty", Item.Craft.Property),
-            1050, 450, 900, 125, "White", undefined, 2,
-        );
-    }
-    if (Item.Craft.Description != null) {
-        DrawTextWrap(
-            DialogFind(Player, "CraftingDescription").replace("CraftDescription", Item.Craft.Description),
-            1050, 600, 900, 215, "White", undefined, 5,
-        );
-    }
-}
-
 waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
     CraftingSlotMax = 100;
     console.log("MBS: Initializing crafting module");
@@ -75,8 +45,21 @@ waitFor(settingsMBSLoaded).then(() => {
         pushMBSSettings();
     });
 
-    MBS_MOD_API.hookFunction("DialogDrawCrafting", 11, (args, _next) => {
-        dialogDrawCrafting(...<Parameters<typeof DialogDrawCrafting>>args);
+    MBS_MOD_API.patchFunction("DialogDrawCrafting", {
+        '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 3':
+            '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 2',
+
+        '1050, 200, 900, 125, "White", null, 3':
+            '1050, 150, 900, 125, "White", null, 2',
+
+        '1050, 400, 900, 125, "White", null, 3':
+            '1050, 300, 900, 125, "White", null, 2',
+
+        '1050, 600, 900, 125, "White", null, 3':
+            '1050, 450, 900, 125, "White", null, 2',
+
+        '1050, 800, 900, 125, "White", null, 3':
+            '1050, 600, 900, 215, "White", null, 5',
     });
 
     MBS_MOD_API.patchFunction("CraftingModeSet", {
