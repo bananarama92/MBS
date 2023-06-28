@@ -69,11 +69,12 @@ waitFor(settingsMBSLoaded).then(() => {
             '1050, 450, 900, 125, "White", null, 2',
 
         '1050, 800, 900, 125, "White", null, 3':
-            '1050, 600, 900, 215, "White", null, 5',
+            '1050, 600, 900, 215, "White", null, 7',
     });
 
     MBS_MOD_API.patchFunction("CraftingModeSet", {
-        'ElementCreateInput("InputDescription", "text", "", "100");': 'ElementCreateInput("InputDescription", "text", "", "200");',
+        'ElementCreateInput("InputDescription", "text", "", "100");':
+            'ElementCreateInput("InputDescription", "text", "", "200");',
     });
 
     if (Player.Crafting == null) {
