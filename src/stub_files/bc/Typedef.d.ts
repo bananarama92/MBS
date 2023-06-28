@@ -3452,6 +3452,14 @@ interface CraftingItem {
 	Type: string | null;
 	/** An integer representing the item layering priority; see {@link ItemProperties.OverridePriority} */
 	OverridePriority: number | null;
+	/**
+	 * A record with a select few (optional) extra item properties:
+	 * * {@link ItemProperties.OverridePriority} in either its record or number form.
+	 * * Properties as specified in {@link ExtendedItemData.baselineProperty}
+	 *
+	 * Requires BC R94Beta1 or later.
+	 */
+	ItemProperty?: ItemProperties | null;
 }
 
 /**
