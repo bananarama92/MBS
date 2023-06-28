@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v0.6.7
+*  Ensure that ModSDK hooks always call `next()`
+* Add basic support for BC R94Beta1
+* Increase the max number of lines for crafted item descriptions to 7
+
 ## v0.6.6
 * Fix an incompatibility between MBS settings screen and BCTweaks
 
