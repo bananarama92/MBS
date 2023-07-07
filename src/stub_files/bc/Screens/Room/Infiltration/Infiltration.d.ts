@@ -187,6 +187,16 @@ declare function InfiltrationPandoraPrisonerBrainwash(): void;
  * @returns {void} - Nothing
  */
 declare function InfiltrationSetPandoraPrisoner(): void;
+/**
+ * When the player starts a club card game against the supervisor
+ * @returns {void} - Nothing
+ */
+declare function InfiltrationClubCardStart(): void;
+/**
+ * When the player ends a club card game against the supervisor
+ * @returns {void} - Nothing
+ */
+declare function InfiltrationClubCardEnd(): void;
 declare var InfiltrationBackground: string;
 /** @type {NPCCharacter} */
 declare var InfiltrationSupervisor: NPCCharacter;

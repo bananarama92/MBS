@@ -322,7 +322,7 @@ declare function DialogRemove(): void;
  */
 declare function DialogRemoveGroup(GroupName: string): void;
 /**
- * Generic function that sets timers for expression changes, if the player'S expressions have been altered by the dialog
+ * Clears the timers used for expression changes caused by struggling
  * @returns {void} - Nothing
  */
 declare function DialogEndExpression(): void;

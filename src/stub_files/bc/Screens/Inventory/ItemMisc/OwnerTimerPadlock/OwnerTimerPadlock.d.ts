@@ -1,5 +1,5 @@
 /** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryItemMiscOwnerTimerPadlockInit(C: Character, Item: Item): boolean;
+declare function InventoryItemMiscOwnerTimerPadlockInit(C: Character, Item: Item, refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemMiscOwnerTimerPadlockLoad(): void;
 /**

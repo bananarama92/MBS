@@ -37,9 +37,9 @@ declare function AssetBuildConfig(A: Asset, config: AssetArchetypeConfig, extend
  * @param {ExtendedItemMainConfig} extendedConfig - The extended item configuration object for the asset's family
  * @param {null | ExtendedItemOption} parentOption
  * @param {boolean} createCallbacks
- * @returns {null | ExtendedItemData<any>} - The extended itemdata or `null` if an error was encoutered
+ * @returns {null | AssetArchetypeData} - The extended itemdata or `null` if an error was encoutered
  */
-declare function AssetBuildExtended(A: Asset, baseConfig: AssetArchetypeConfig, extendedConfig: ExtendedItemMainConfig, parentOption?: null | ExtendedItemOption, createCallbacks?: boolean): null | ExtendedItemData<any>;
+declare function AssetBuildExtended(A: Asset, baseConfig: AssetArchetypeConfig, extendedConfig: ExtendedItemMainConfig, parentOption?: null | ExtendedItemOption, createCallbacks?: boolean): null | AssetArchetypeData;
 /**
  * Finds the extended item configuration for the provided group and asset name, if any exists
  * @param {ExtendedItemMainConfig} ExtendedConfig - The full extended item configuration object

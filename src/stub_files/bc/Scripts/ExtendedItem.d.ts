@@ -50,17 +50,14 @@ declare function ExtendedItemLoad({ functionPrefix, dialogPrefix, parentOption }
  * Draw a single button in the extended item type selection screen.
  * @param {ExtendedItemOption | ModularItemModule} Option - The new extended item option
  * @param {ExtendedItemOption} CurrentOption - The current extended item option
- * @param {ElementData<{ drawImage?: boolean, hidden?: boolean }>} buttonData - The X coordinate of the button
+ * @param {ElementData<ElementMetaData>} buttonData - The X coordinate of the button
  * @param {string} DialogPrefix - The prefix to the dialog keys for the display strings describing each extended type.
  *     The full dialog key will be <Prefix><Option.Name>
  * @param {Item} Item - The item in question; defaults to {@link DialogFocusItem}
  * @param {boolean | null} IsSelected - Whether the button is already selected or not. If `null` compute this value by checking if the item's current type matches `Option`.
  * @see {@link TypedItemDraw}
  */
-declare function ExtendedItemDrawButton(Option: ExtendedItemOption | ModularItemModule, CurrentOption: ExtendedItemOption, DialogPrefix: string, buttonData: ElementData<{
-    drawImage?: boolean;
-    hidden?: boolean;
-}>, Item?: Item, IsSelected?: boolean | null): void;
+declare function ExtendedItemDrawButton(Option: ExtendedItemOption | ModularItemModule, CurrentOption: ExtendedItemOption, DialogPrefix: string, buttonData: ElementData<ElementMetaData>, Item?: Item, IsSelected?: boolean | null): void;
 /**
  * Determine the background color for the item option's button
  * @param {Character} C - The character wearing the item
@@ -173,11 +170,11 @@ declare function ExtendedItemSetOffset(Offset: number): void;
  * Maps a chat tag to a dictionary entry for use in item chatroom messages.
  * @param {DictionaryBuilder} dictionary - The to-be updated dictionary builder
  * @param {Character} C - The target character
- * @param {Asset} asset - The asset for the typed item
+ * @param {Item} item - The typed item
  * @param {CommonChatTags} tag - The tag to map to a dictionary entry
  * @returns {DictionaryBuilder} - The originally passed dictionary builder, modified inplace
  */
-declare function ExtendedItemMapChatTagToDictionaryEntry(dictionary: DictionaryBuilder, C: Character, asset: Asset, tag: CommonChatTags): DictionaryBuilder;
+declare function ExtendedItemMapChatTagToDictionaryEntry(dictionary: DictionaryBuilder, C: Character, { Asset, Craft }: Item, tag: CommonChatTags): DictionaryBuilder;
 /**
  * Construct an array of inventory icons for a given asset and type
  * @param {Character} C - The target character
@@ -238,20 +235,21 @@ declare function ExtendedItemDrawHeader(X?: number, Y?: number, Item?: Item): vo
 /**
  * Extract the passed item's data from one of the extended item lookup tables
  * @template {ExtendedArchetype} Archetype
- * @param {Item} Item - The item whose data should be extracted
+ * @param {Asset} asset - The item whose data should be extracted
  * @param {Archetype} Archetype - The archetype corresponding to the lookup table
  * @param {string} Type - The item's type. Only relevant in the case of {@link VariableHeightData}
  * @returns {null | ExtendedDataLookupStruct[Archetype]} The item's data or `null` if the lookup failed
  */
-declare function ExtendedItemGetData<Archetype extends ExtendedArchetype>(Item: Item, Archetype: Archetype, Type?: string): ExtendedDataLookupStruct[Archetype];
+declare function ExtendedItemGetData<Archetype extends ExtendedArchetype>(asset: Asset, Archetype: Archetype, Type?: string): ExtendedDataLookupStruct[Archetype];
 /**
  * Constructs the chat message dictionary for the extended item based on the items configuration data.
  * @template {ExtendedItemOption} OptionType
  * @param {ExtendedItemChatData<OptionType>} chatData - The chat data that triggered the message.
  * @param {ExtendedItemData<OptionType>} data - The extended item data for the asset
+ * @param {Item} item
  * @returns {DictionaryBuilder} - The dictionary for the item based on its required chat tags
  */
-declare function ExtendedItemBuildChatMessageDictionary<OptionType extends ExtendedItemOption>(chatData: ExtendedItemChatData<OptionType>, { asset, chatTags, dictionary }: ExtendedItemData<OptionType>): DictionaryBuilder;
+declare function ExtendedItemBuildChatMessageDictionary<OptionType extends ExtendedItemOption>(chatData: ExtendedItemChatData<OptionType>, { chatTags, dictionary }: ExtendedItemData<OptionType>, item: Item): DictionaryBuilder;
 /**
  * Return {@link ExtendedItemDialog.chat} if it's a string or call it using chat data based on a fictional extended item option.
  * Generally used for getting a chat prefix for extended item buttons with custom functionality.
@@ -263,12 +261,10 @@ declare function ExtendedItemCustomChatPrefix(Name: string, Data: ExtendedItemDa
 /**
  * Gather and return all subscreen properties of the passed option.
  * @param {Item} item - The item in question
- * @param {ExtendedItemOption & { ArchetypeData?: VibratingItemData | VariableHeightData | TextItemData }} option - The extended item option
+ * @param {ExtendedItemOption} option - The extended item option
  * @returns {ItemProperties} - The item properties of the option's subscreen (if any)
  */
-declare function ExtendedItemGatherSubscreenProperty(item: Item, option: ExtendedItemOption & {
-    ArchetypeData?: VibratingItemData | VariableHeightData | TextItemData;
-}): ItemProperties;
+declare function ExtendedItemGatherSubscreenProperty(item: Item, option: ExtendedItemOption): ItemProperties;
 /**
  * Sets an extended item's type and properties to the option provided.
  * @template {ModularItemOption | TypedItemOption | VibratingItemOption} OptionType
@@ -335,3 +331,5 @@ declare var ExtendedItemPermissionMode: boolean;
  * @type {string|null}
  */
 declare var ExtendedItemSubscreen: string | null;
+/** @type {(item: Item) => ExtendedItemOption[]} */
+declare function ExtendedItemGatherOptions(item: Item): ExtendedItemOption[];

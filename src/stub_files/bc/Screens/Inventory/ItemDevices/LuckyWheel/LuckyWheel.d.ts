@@ -11,13 +11,13 @@ declare function InventoryItemDevicesLuckyWheelClickHook(data: ModularItemData, 
 /** @type {ExtendedItemScriptHookCallbacks.Init<ModularItemData>} */
 declare function InventoryItemDevicesLuckyWheelInitHook(data: ModularItemData, originalFunction: (C: Character, item: Item, refresh: boolean) => boolean, character: Character, item: Item, refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
-declare function InventoryItemDevicesLuckyWheelGame0Load(): void;
+declare function InventoryItemDevicesLuckyWheelg0Load(): void;
 /** @type {ExtendedItemCallbacks.Draw} */
-declare function InventoryItemDevicesLuckyWheelGame0Draw(): void;
+declare function InventoryItemDevicesLuckyWheelg0Draw(): void;
 /** @type {ExtendedItemCallbacks.Click} */
-declare function InventoryItemDevicesLuckyWheelGame0Click(): void;
+declare function InventoryItemDevicesLuckyWheelg0Click(): void;
 /** @type {ExtendedItemCallbacks.Exit} */
-declare function InventoryItemDevicesLuckyWheelGame0Exit(): void;
+declare function InventoryItemDevicesLuckyWheelg0Exit(): void;
 declare function InventoryItemDevicesLuckyWheelUpdate(): void;
 declare function InventoryItemDevicesLuckyWheelTrigger(): void;
 declare function InventoryItemDevicesLuckyWheelStoppedTurning(C: any, Item: any, Angle: any): void;

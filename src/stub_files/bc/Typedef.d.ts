@@ -315,7 +315,7 @@ type AssetGroupScriptName = 'ItemScript';
 
 type AssetGroupBodyName =
 	ExpressionGroupName | 'BodyLower' | 'BodyUpper' | 'Bra' | 'Bracelet' | 'Cloth' |
-	'ClothAccessory' | 'ClothLower' | 'Corset' | 'FacialHair' | 'Garters' | 'Glasses' | 'Gloves' |
+	'ClothAccessory' | 'ClothLower' | 'Corset' | 'EyeShadow' | 'FacialHair' | 'Garters' | 'Glasses' | 'Gloves' |
 	'HairAccessory1' | 'HairAccessory2' | 'HairAccessory3' | 'HairBack' |
 	'HairFront' | 'FacialHair' | 'Hands' | 'Hat' | 'Head' | 'Height' | 'Jewelry' | 'LeftAnklet' | 'LeftHand' | 'Mask' |
 	'Necklace' | 'Nipples' | 'Panties' | 'Pronouns' | 'RightAnklet' | 'RightHand' |
@@ -701,6 +701,8 @@ interface GroupReferenceDictionaryEntry extends TaggedDictionaryEntry {
 interface AssetReferenceDictionaryEntry extends GroupReferenceDictionaryEntry {
 	/** The name of the asset being referenced */
 	AssetName: string;
+	/** The (optional) {@link CraftingItem.Name} in case the asset was referenced via a crafted item */
+	CraftName?: string;
 }
 
 /**
@@ -813,6 +815,8 @@ interface IChatRoomMessageMetadata {
 	GroupName?: AssetGroupName;
 	/** The assets referenced in the message */
 	Assets?: Record<string, Asset>;
+	/** The {@link CraftingItem.Name} of the assets referenced in the message (if applicable) */
+	CraftingNames?: Record<string, string>;
 	/** The groups referenced in the message */
 	Groups?: Partial<Record<AssetGroupName, AssetGroup>>;
 	/** How intense the shock should be */
@@ -964,7 +968,9 @@ interface AssetGroup {
 	FreezeActivePose: readonly AssetPoseCategory[];
 	PreviewZone?: RectTuple;
 	DynamicGroupName: AssetGroupName;
+
 	MirrorActivitiesFrom?: AssetGroupItemName;
+	ArousalZone?: AssetGroupItemName;
 
 	/** A dict mapping colors to custom filename suffices.
 	The "HEX_COLOR" key is special-cased to apply to all color hex codes. */
@@ -1955,6 +1961,12 @@ interface NPCTrait {
 interface ElementMetaData {
 	/** Whether to draw an element-accompanying image or not */
 	drawImage?: boolean,
+	/**
+	 * The static image path of the to-be drawn image.
+	 * A value of `null` either implies that it should not be drawn (per {@link ElementMetaData.drawImage})
+	 * or that it's a dynamic image path (_e.g._ modular item modules).
+	 */
+	imagePath?: null | string,
 	/** The name of a supported thumbnail image in \CSS\Styles.css that will show the current position on the slider */
 	icon?: string,
 	/** Whether an options shows up in the UI. Useful for options that are managed programmatically. */
@@ -1962,9 +1974,9 @@ interface ElementMetaData {
 }
 
 declare namespace ElementMetaData {
-	interface Typed { drawImage: boolean, hidden: boolean }
-	interface Modular { drawImage: boolean, hidden: boolean }
-	interface Vibrating  { drawImage: false, hidden: false }
+	interface Typed { drawImage: boolean, hidden: boolean, imagePath: null | string }
+	interface Modular { drawImage: boolean, hidden: boolean, imagePath: null | string }
+	interface Vibrating  { drawImage: false, hidden: false, imagePath: null }
 	interface Text {}
 	interface VariableHeight { icon: string }
 }
@@ -3142,6 +3154,7 @@ interface GamePokerParameters {
 
 interface GameClubCardParameters {
 	Deck: string[];
+	Reward?: string;
 }
 
 //#endregion
@@ -3420,7 +3433,10 @@ interface PandoraBaseRoom {
 
 //#region Crafting items
 
-type CraftingMode = "Slot" | "Item" | "Property" | "Lock" | "Name" | "Color";
+type CraftingMode = (
+	"Slot" | "Item" | "Property" | "Lock" | "Name" | "Color" | "Extended"
+	| "OverridePriority"
+);
 
 /**
  * A struct with an items crafting-related information.
@@ -3450,16 +3466,17 @@ interface CraftingItem {
 	 * @see {@link ItemProperties.Type}
 	 */
 	Type: string | null;
-	/** An integer representing the item layering priority; see {@link ItemProperties.OverridePriority} */
-	OverridePriority: number | null;
+	/**
+	 * An integer (or `null`) representing the item layering priority; see {@link ItemProperties.OverridePriority}.
+	 * @deprecated - superseded by {@link CraftingItem.ItemProperty}
+	 */
+	OverridePriority?: null | number;
 	/**
 	 * A record with a select few (optional) extra item properties:
 	 * * {@link ItemProperties.OverridePriority} in either its record or number form.
 	 * * Properties as specified in {@link ExtendedItemData.baselineProperty}
-	 *
-	 * Requires BC R94Beta1 or later.
 	 */
-	ItemProperty?: ItemProperties | null;
+	ItemProperty: ItemProperties | null;
 }
 
 /**
@@ -3487,8 +3504,15 @@ interface CraftingItemSelected {
 	 * @see {@link ItemProperties.Type}
 	 */
 	Type: string;
-	/** An integer representing the item layering priority; see {@link ItemProperties.OverridePriority} */
-	OverridePriority: number | null;
+	/**
+	 * A record with a select few (optional) extra item properties:
+	 * * {@link ItemProperties.OverridePriority} in either its record or number form.
+	 * * Properties as specified in {@link ExtendedItemData.baselineProperty}
+	 */
+	ItemProperty: ItemProperties;
+	/** Get or set the `OverridePriority` property of {@link CraftingItemSelected.ItemProperty} */
+	get OverridePriority(): null | AssetLayerOverridePriority;
+	set OverridePriority(value: null | AssetLayerOverridePriority);
  }
 
 /**
@@ -3773,10 +3797,12 @@ interface ClubCard {
 	Type?: string;
 	Title?: string;
 	Text?: string;
-	Unique?: boolean;
+	Prerequisite?: string;
+	Reward?: string;
 	MoneyPerTurn?: number;
 	FamePerTurn?: number;
 	RequiredLevel?: number;
+	Time?: number;
 	ExtraTime?: number;
 	ExtraDraw?: number;
 	ExtraPlay?: number;
@@ -3786,6 +3812,7 @@ interface ClubCard {
 	GlowColor?: string;
 	OnPlay?: (C: ClubCardPlayer) => void;
 	OnTurnEnd?: (C: ClubCardPlayer) => void;
+	OnOpponentTurnEnd?: (C: ClubCardPlayer) => void;
 	CanPlay?: (C: ClubCardPlayer) => boolean;
 }
 
@@ -3798,6 +3825,7 @@ interface ClubCardPlayer {
 	FullDeck: ClubCard[];
 	Hand: ClubCard[];
 	Board: ClubCard[];
+	Event: ClubCard[];
 	Level: number;
 	Money: number;
 	Fame: number;

@@ -28,7 +28,7 @@ declare function TextItemCreateTextItemData(asset: Asset, { MaxLength, Font, Dia
  * @param {Item} item - The item in question
  * @returns {{ newOption: TextItemOption, previousOption: TextItemOption }}
  */
-declare function TextItemConstructOptions({ textNames }: TextItemData, item: Item): {
+declare function TextItemConstructOptions(data: TextItemData, item: Item): {
     newOption: TextItemOption;
     previousOption: TextItemOption;
 };

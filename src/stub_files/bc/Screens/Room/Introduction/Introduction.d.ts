@@ -40,6 +40,11 @@ declare function IntroductionCannotTakeJobDone(): boolean;
  */
 declare function IntroductionCannotTakeJobRestrained(): boolean;
 /**
+ * Returns TRUE if the player and the current character can play Club Card
+ * @returns {boolean} - Returns TRUE if both aren't restrained
+ */
+declare function IntroductionCanPlayClubCard(): boolean;
+/**
  * Loads the introduction room and its 2 NPCS
  * @returns {void} - Nothing
  */
@@ -152,6 +157,16 @@ declare function IntroductionJobPuppyStart(): void;
  * @returns {void} - Nothing
  */
 declare function IntroductionJobDojoStart(): void;
+/**
+ * When the player starts a club card game
+ * @returns {void} - Nothing
+ */
+declare function IntroductionClubCardStart(): void;
+/**
+ * When the player ends a club card game
+ * @returns {void} - Nothing
+ */
+declare function IntroductionClubCardEnd(): void;
 declare var IntroductionBackground: string;
 /** @type {null | NPCCharacter} */
 declare var IntroductionMaid: null | NPCCharacter;

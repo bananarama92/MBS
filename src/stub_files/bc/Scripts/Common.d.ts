@@ -402,6 +402,24 @@ declare function CommonIncludes<T>(array: readonly T[], searchElement: unknown, 
  * @returns {number}
  */
 declare function CommonGenerateGrid<T>(items: T[], offset: number, grid: CommonGenerateGridParameters, callback: CommonGenerateGridCallback<T>): number;
+/**
+ * Create a copy of the passed record with all specified keys removed
+ * @template {keyof RecordType} KeyType
+ * @template {{}} RecordType
+ * @param {RecordType} object - The to-be copied record
+ * @param {KeyType[]} keys - The to-be removed keys from the record
+ * @returns {Omit<RecordType, KeyType>}
+ */
+declare function CommonOmit<KeyType_1 extends keyof RecordType, RecordType extends {}>(object: RecordType, keys: KeyType_1[]): Omit<RecordType, KeyType_1>;
+/**
+ * Iterate through the passed iterable and yield index/value pairs.
+ * @template T
+ * @param {Iterable<T>} iterable - The to-be iterated iterable
+ * @param {number} start - The starting index
+ * @param {number} step - The step size in which the index is incremented
+ * @returns {Generator<[index: number, value: T], void>}
+ */
+declare function CommonEnumerate<T>(iterable: Iterable<T>, start?: number, step?: number): Generator<[index: number, value: T], void, any>;
 /** @type {PlayerCharacter} */
 declare var Player: PlayerCharacter;
 /** @type {number|string} */

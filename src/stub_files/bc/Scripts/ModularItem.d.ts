@@ -32,11 +32,11 @@ declare function ModularItemDraw(data: ModularItemData): void;
 /**
  * Parse the and pre-process the passed modules (and their options)
  * @param {Asset} asset - The asset in question
- * @param {readonly ModularItemModuleBase[]} modules - An object describing a single module for a modular item.
+ * @param {readonly ModularItemModuleConfig[]} modules - An object describing a single module for a modular item.
  * @param {boolean | undefined} [changeWhenLocked] - See {@link ModularItemConfig.ChangeWhenLocked}
  * @returns {ModularItemModule[]} - The updated modules and options
  */
-declare function ModularItemBuildModules(asset: Asset, modules: readonly ModularItemModuleBase[], changeWhenLocked?: boolean | undefined): ModularItemModule[];
+declare function ModularItemBuildModules(asset: Asset, modules: readonly ModularItemModuleConfig[], changeWhenLocked?: boolean | undefined): ModularItemModule[];
 /**
  * Generates an asset's modular item data
  * @param {Asset} asset - The asset to generate modular item data for
