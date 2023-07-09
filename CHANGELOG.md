@@ -1,7 +1,11 @@
 # MBS Changelog
 
+## v0.6.8
+* Add full support for BC R94Beta1
+* Increase the number of crafting slots from 100 to 160
+
 ## v0.6.7
-*  Ensure that ModSDK hooks always call `next()`
+* Ensure that ModSDK hooks always call `next()`
 * Add basic support for BC R94Beta1
 * Increase the max number of lines for crafted item descriptions to 7
 
