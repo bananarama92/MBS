@@ -2,12 +2,11 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, padArray, getFunctionHash } from "common";
+import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
-const CRAFTING_SLOT_MAX_ORIGINAL = 40;
-let CRAFTING_SAVE_SERVER_HASH = "";
+let CRAFTING_SLOT_MAX_ORIGINAL: number;
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -16,22 +15,21 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
     }
     return items.map(C => {
         let P = "";
-        if ((C != null) && (C.Item != null) && (C.Item != "")) {
-            P = P + C.Item + "¶";
-            P = P + ((C.Property == null) ? "" : C.Property) + "¶";
-            P = P + ((C.Lock == null) ? "" : C.Lock) + "¶";
-            P = P + ((C.Name == null) ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
-            P = P + ((C.Description == null) ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
-            P = P + ((C.Color == null) ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
-            P = P + (((C.Private != null) && C.Private) ? "T" : "") + "¶";
-            P = P + ((C.Type == null) ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
+        if (C?.Item) {
+            P += C.Item + "¶";
+            P += (C.Property == null ? "" : C.Property) + "¶";
+            P += (C.Lock == null ? "" : C.Lock) + "¶";
+            P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
+            P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
+            P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
+            P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
+            P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
 
-            // TODO: Replace with a `GameVersion` check on the beta officially hits
-            if (CRAFTING_SAVE_SERVER_HASH === "823BB54B") { // R93
-                P = P + ((C.OverridePriority == null) ? "" : C.OverridePriority.toString());
-            } else if (CRAFTING_SAVE_SERVER_HASH === "B5299AB2") { // R94Beta1
-                P = P + "¶";
-                P = P + (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty)) + "§";
+            if (GameVersion === "R93") {
+                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString()) + "§";
+            } else {
+                P += "¶";
+                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty)) + "§";
             }
         }
         return P;
@@ -46,7 +44,7 @@ waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing crafting hooks");
 
-    CRAFTING_SAVE_SERVER_HASH = getFunctionHash(CraftingSaveServer);
+    CRAFTING_SLOT_MAX_ORIGINAL = GameVersion === "R93" ? 40 : 80;
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
