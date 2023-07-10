@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.9
+* Adapt to BC R94Beta1 failing to actually increment its version
+
 ## v0.6.8
 * Add full support for BC R94Beta1
 * Increase the number of crafting slots from 100 to 160
