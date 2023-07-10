@@ -421,7 +421,7 @@ export function isInteger(arg: unknown): arg is number {
  * @param func - The function in question
  * @returns The computed hash
  */
-export function getFunctionHash(func: (...args: unknown[]) => unknown): string {
+export function getFunctionHash(func: (...args: never[]) => unknown): string {
     if (typeof func !== "function") {
         throw new TypeError(`"func" expected a function; observed type: ${typeof func}`);
     }
