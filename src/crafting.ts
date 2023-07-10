@@ -2,11 +2,12 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, padArray } from "common";
+import { MBS_MOD_API, waitFor, padArray, getFunctionHash, Version } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
 let CRAFTING_SLOT_MAX_ORIGINAL: number;
+let R94BETA1_OR_LATER: boolean;
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -25,11 +26,11 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
             P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
             P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
 
-            if (GameVersion === "R93") {
-                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString()) + "§";
-            } else {
+            if (R94BETA1_OR_LATER) {
                 P += "¶";
                 P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty)) + "§";
+            } else {
+                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString()) + "§";
             }
         }
         return P;
@@ -44,7 +45,11 @@ waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing crafting hooks");
 
-    CRAFTING_SLOT_MAX_ORIGINAL = GameVersion === "R93" ? 40 : 80;
+    R94BETA1_OR_LATER = (Version.fromBCVersion(GameVersion) > Version.fromBCVersion("R93")) || (
+        getFunctionHash(CraftingModeSet) === "0EF1B752"
+        && getFunctionHash(CraftingSaveServer) === "B5299AB2"
+    );
+    CRAFTING_SLOT_MAX_ORIGINAL = R94BETA1_OR_LATER ? 80 : 40;
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
