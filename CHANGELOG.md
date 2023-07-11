@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.10
+* Fix a bug that would cause crafting item duplication when upgrading from BC R93 to R94
+
 ## v0.6.9
 * Adapt to BC R94Beta1 failing to actually increment its version
 
