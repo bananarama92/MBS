@@ -8,6 +8,8 @@ import { pushMBSSettings } from "settings";
 
 let CRAFTING_SLOT_MAX_ORIGINAL: number;
 let R94BETA1_OR_LATER: boolean;
+const MBS_CRAFTING_SLOT_MAX_PRE_068 = 100;
+const MBS_CRAFTING_SLOT_MAX = 160;
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -28,17 +30,84 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
 
             if (R94BETA1_OR_LATER) {
                 P += "¶";
-                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty)) + "§";
+                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
             } else {
-                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString()) + "§";
+                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString());
             }
         }
         return P;
     }).join("§");
 }
 
+/**
+ * Load crafting items from the MBS cache.
+ * @param character The characer in question
+ * @param craftingCache The crafting cache
+ */
+function loadCraftingCache(character: Character, craftingCache: string = ""): void {
+    character.Crafting ??= [];
+    if (!craftingCache) {
+        padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+        return;
+    }
+
+    let refresh = false;
+    const packet = LZString.compressToUTF16(craftingCache);
+    const data = CraftingDecompressServerData(packet);
+    for (const item of data) {
+        // Make sure that the item is a valid craft
+        switch (CraftingValidate(item)) {
+            case CraftingStatusType.OK:
+                character.Crafting.push(item);
+                break;
+            case CraftingStatusType.ERROR:
+                character.Crafting.push(item);
+                refresh = true;
+                break;
+            case CraftingStatusType.CRITICAL_ERROR:
+                character.Crafting.push(null);
+                refresh = true;
+                break;
+        }
+
+        // Too many items, skip the rest
+        if (character.Crafting.length >= MBS_CRAFTING_SLOT_MAX) {
+            break;
+        }
+    }
+    padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+
+    /**
+     * One or more validation errors were encountered that were successfully resolved;
+     * push the fixed items back to the server
+     */
+    if (refresh && character.IsPlayer()) {
+        CraftingSaveServer();
+    }
+}
+
+/**
+ * Ensure that {@link Character.Crafting} is adequately populated.
+ * @param character The characer in question
+ * @param craftingCache The crafting cache
+ * @returns A status code proportional to the previous crafting array length
+ */
+function validateCraftingArray(character: Character, craftingCache: string = ""): 0 | 1 | 2 {
+    character.Crafting ??= [];
+    switch (character.Crafting.length) {
+        case MBS_CRAFTING_SLOT_MAX:
+            return 0;
+        case MBS_CRAFTING_SLOT_MAX_PRE_068:
+            padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+            return 1;
+        default:
+            loadCraftingCache(character, craftingCache);
+            return 2;
+    }
+}
+
 waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
-    CraftingSlotMax = 160;
+    CraftingSlotMax = MBS_CRAFTING_SLOT_MAX;
     console.log("MBS: Initializing crafting module");
 });
 
@@ -80,44 +149,5 @@ waitFor(settingsMBSLoaded).then(() => {
             'ElementCreateInput("InputDescription", "text", "", "200");',
     });
 
-    if (Player.Crafting == null) {
-        Player.Crafting = [];
-    }
-    if (
-        Player.Crafting.length <= CRAFTING_SLOT_MAX_ORIGINAL
-        && Player.MBSSettings.CraftingCache.length !== 0
-    ) {
-        padArray(Player.Crafting, CRAFTING_SLOT_MAX_ORIGINAL, null);
-
-        let refresh = false;
-        const packet = LZString.compressToUTF16(Player.MBSSettings.CraftingCache);
-        const data = CraftingDecompressServerData(packet);
-        for (const item of data) {
-            // Make sure that the item is a valid craft
-            switch (CraftingValidate(item)) {
-                case CraftingStatusType.OK:
-                    Player.Crafting.push(item);
-                    break;
-                case CraftingStatusType.ERROR:
-                    Player.Crafting.push(item);
-                    refresh = true;
-                    break;
-                case CraftingStatusType.CRITICAL_ERROR:
-                    Player.Crafting.push(null);
-                    refresh = true;
-                    break;
-            }
-
-            // Too many items, skip the rest
-            if (Player.Crafting.length >= CraftingSlotMax) {
-                break;
-            }
-        }
-        /**
-         * One or more validation errors were encountered that were successfully resolved;
-         * push the fixed items back to the server */
-        if (refresh) {
-            CraftingSaveServer();
-        }
-    }
+    validateCraftingArray(Player, Player.MBSSettings.CraftingCache);
 });
