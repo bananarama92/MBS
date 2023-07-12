@@ -8,8 +8,16 @@ import { pushMBSSettings } from "settings";
 
 let CRAFTING_SLOT_MAX_ORIGINAL: number;
 let R94BETA1_OR_LATER: boolean;
-const MBS_CRAFTING_SLOT_MAX_PRE_068 = 100;
-const MBS_CRAFTING_SLOT_MAX = 160;
+let R94_OR_LATER: boolean;
+
+const MBS_CRAFTING_MAX = Object.freeze({
+    "default": 160,
+    "pre_v0_6_8": 100,
+});
+const BC_CRAFTING_MAX = Object.freeze({
+    "default": 80,
+    "pre_R94": 40,
+});
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -47,13 +55,33 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
 function loadCraftingCache(character: Character, craftingCache: string = ""): void {
     character.Crafting ??= [];
     if (!craftingCache) {
-        padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+        padArray(character.Crafting, MBS_CRAFTING_MAX.default, null);
         return;
     }
 
-    let refresh = false;
     const packet = LZString.compressToUTF16(craftingCache);
-    const data = CraftingDecompressServerData(packet);
+    const fullData = CraftingDecompressServerData(packet);
+    let data: typeof fullData;
+    switch (fullData.length) {
+        case MBS_CRAFTING_MAX.pre_v0_6_8 - BC_CRAFTING_MAX.default:
+        case MBS_CRAFTING_MAX.default - BC_CRAFTING_MAX.default:
+            data = fullData;
+            break;
+        case MBS_CRAFTING_MAX.pre_v0_6_8 - BC_CRAFTING_MAX.pre_R94:
+        case MBS_CRAFTING_MAX.default - BC_CRAFTING_MAX.pre_R94:
+            if (R94BETA1_OR_LATER && character.Crafting.length === BC_CRAFTING_MAX.default) {
+                data = fullData.slice(BC_CRAFTING_MAX.default - BC_CRAFTING_MAX.pre_R94);
+            } else {
+                data = fullData;
+            }
+            break;
+        default:
+            // No clue when this data was created; just grab all non-null entries
+            data = fullData.filter(i => i != null);
+            break;
+    }
+
+    let refresh = false;
     for (const item of data) {
         // Make sure that the item is a valid craft
         switch (CraftingValidate(item)) {
@@ -71,11 +99,11 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
         }
 
         // Too many items, skip the rest
-        if (character.Crafting.length >= MBS_CRAFTING_SLOT_MAX) {
+        if (character.Crafting.length >= MBS_CRAFTING_MAX.default) {
             break;
         }
     }
-    padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+    padArray(character.Crafting, MBS_CRAFTING_MAX.default, null);
 
     /**
      * One or more validation errors were encountered that were successfully resolved;
@@ -95,10 +123,10 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
 function validateCraftingArray(character: Character, craftingCache: string = ""): 0 | 1 | 2 {
     character.Crafting ??= [];
     switch (character.Crafting.length) {
-        case MBS_CRAFTING_SLOT_MAX:
+        case MBS_CRAFTING_MAX.default:
             return 0;
-        case MBS_CRAFTING_SLOT_MAX_PRE_068:
-            padArray(character.Crafting, MBS_CRAFTING_SLOT_MAX, null);
+        case MBS_CRAFTING_MAX.pre_v0_6_8:
+            padArray(character.Crafting, MBS_CRAFTING_MAX.default, null);
             return 1;
         default:
             loadCraftingCache(character, craftingCache);
@@ -107,18 +135,22 @@ function validateCraftingArray(character: Character, craftingCache: string = "")
 }
 
 waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
-    CraftingSlotMax = MBS_CRAFTING_SLOT_MAX;
+    CraftingSlotMax = MBS_CRAFTING_MAX.default;
     console.log("MBS: Initializing crafting module");
 });
 
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing crafting hooks");
 
-    R94BETA1_OR_LATER = (Version.fromBCVersion(GameVersion) > Version.fromBCVersion("R93")) || (
+    const versionCurrent = Version.fromBCVersion(GameVersion);
+    const versionR94 = Version.fromBCVersion("R94");
+    const versionR94Beta1 = Version.fromBCVersion("R94Beta1");
+    R94_OR_LATER = versionCurrent.greaterOrEqual(versionR94);
+    R94BETA1_OR_LATER = versionCurrent.greaterOrEqual(versionR94Beta1) || (
         getFunctionHash(CraftingModeSet) === "0EF1B752"
         && getFunctionHash(CraftingSaveServer) === "B5299AB2"
     );
-    CRAFTING_SLOT_MAX_ORIGINAL = R94BETA1_OR_LATER ? 80 : 40;
+    CRAFTING_SLOT_MAX_ORIGINAL = R94_OR_LATER ? BC_CRAFTING_MAX.default : BC_CRAFTING_MAX.pre_R94;
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
