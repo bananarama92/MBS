@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { range, zip, isEqual, random } from "lodash-es";
+import { range, isEqual, random } from "lodash-es";
 
 import bcModSdk from "bondage-club-mod-sdk";
 
@@ -318,15 +318,20 @@ export class Version {
         if (!(other instanceof Version)) {
             return false;
         }
-        const attrList = <[number | boolean, number | boolean][]>zip(this.values(), other.values());
-        for (const [thisAttr, otherAttr] of attrList) {
-            if (thisAttr > otherAttr) {
+
+        for (const attr of ["major", "minor", "micro"] as const) {
+            if (this[attr] > other[attr]) {
                 return true;
-            } else if (thisAttr < otherAttr) {
+            } else if (this[attr] < other[attr]) {
                 return false;
             }
         }
-        return false;
+
+        if (!this.beta && other.beta) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /** Check whether this version is lesser than the other */
