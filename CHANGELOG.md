@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.13
+* More crafting duplication fixes
+
 ## v0.6.12
 * Add even more safeguards against crafting duplication
 
