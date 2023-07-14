@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.14
+* Update for R94Beta3
+
 ## v0.6.13
 * More crafting duplication fixes
 
