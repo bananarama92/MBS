@@ -2,11 +2,11 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, getFunctionHash, Version } from "common";
+import { MBS_MOD_API, waitFor, getFunctionHash, Version, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
-let CRAFTING_SLOT_MAX_ORIGINAL: number;
+let CRAFTING_SLOT_MAX_ORIGINAL: typeof BC_CRAFTING_MAX[keyof typeof BC_CRAFTING_MAX];
 let R94BETA1_OR_LATER: boolean;
 let R94_OR_LATER: boolean;
 
@@ -54,14 +54,50 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
  */
 function loadCraftingCache(character: Character, craftingCache: string = ""): void {
     character.Crafting ??= [];
+    padArray(
+        character.Crafting,
+        R94BETA1_OR_LATER ? BC_CRAFTING_MAX.default : BC_CRAFTING_MAX.pre_R94,
+        null,
+    );
     if (!craftingCache) {
         return;
     }
 
     const packet = LZString.compressToUTF16(craftingCache);
-    const data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
+    let data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
     const oldCrafts = new Set(character.Crafting.map(i => JSON.stringify(i)));
     let refresh = false;
+    let i = -1;
+    for (const item of data) {
+        i += 1;
+
+        // Make sure that the item is a valid craft
+        switch (CraftingValidate(<CraftingItem>item)) {
+            case CraftingStatusType.OK: {
+                const key = JSON.stringify(item);
+                if (oldCrafts.has(key)) {
+                    data[i] = null;
+                }
+                break;
+            }
+            case CraftingStatusType.ERROR: {
+                const key = JSON.stringify(item);
+                if (oldCrafts.has(key)) {
+                    data[i] = null;
+                } else {
+                    refresh = true;
+                }
+                break;
+            }
+            case CraftingStatusType.CRITICAL_ERROR:
+                data[i] = null;
+                break;
+        }
+    }
+
+    if (R94BETA1_OR_LATER && !R94_OR_LATER && data.slice(0, 40).every(i => i == null)) {
+        data = data.slice(40);
+    }
     for (const item of data) {
         // Too many items, try to remove `null` entries or skip the rest if not possible
         if (character.Crafting.length >= MBS_CRAFTING_MAX.default) {
@@ -74,29 +110,8 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
             } else {
                 break;
             }
-        }
-
-        // Make sure that the item is a valid craft
-        switch (CraftingValidate(<CraftingItem>item)) {
-            case CraftingStatusType.OK: {
-                const key = JSON.stringify(item);
-                if (!oldCrafts.has(key)) {
-                    character.Crafting.push(item);
-                }
-                break;
-            }
-            case CraftingStatusType.ERROR: {
-                const key = JSON.stringify(item);
-                if (!oldCrafts.has(key)) {
-                    character.Crafting.push(item);
-                }
-                refresh = true;
-                break;
-            }
-            case CraftingStatusType.CRITICAL_ERROR:
-                character.Crafting.push(null);
-                refresh = true;
-                break;
+        } else {
+            character.Crafting.push(item);
         }
     }
 
@@ -109,9 +124,16 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
     }
 }
 
-waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
-    CraftingSlotMax = MBS_CRAFTING_MAX.default;
-    console.log("MBS: Initializing crafting module");
+waitFor(() => typeof GameVersion !== "undefined").then(() => {
+    const versionCurrent = Version.fromBCVersion(GameVersion);
+    const versionR94 = Version.fromBCVersion("R94");
+    if (versionCurrent.greaterOrEqual(versionR94) || GameVersion === "R94Beta3" || GameVersion === "R94Beta4") {
+        return;
+    }
+
+    waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
+        CraftingSlotMax = MBS_CRAFTING_MAX.default;
+    });
 });
 
 waitFor(settingsMBSLoaded).then(() => {
@@ -157,6 +179,20 @@ waitFor(settingsMBSLoaded).then(() => {
         'ElementCreateInput("InputDescription", "text", "", "100");':
             'ElementCreateInput("InputDescription", "text", "", "200");',
     });
+
+    if (versionCurrent.greaterOrEqual(versionR94) || GameVersion === "R94Beta3" || GameVersion === "R94Beta4") {
+        MBS_MOD_API.patchFunction("CraftingClick", {
+            "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
+                `if (CraftingOffset < 0) CraftingOffset = ${MBS_CRAFTING_MAX.default} - 20;`,
+            "if (CraftingOffset >= 80) CraftingOffset = 0;":
+                `if (CraftingOffset >= ${MBS_CRAFTING_MAX.default}) CraftingOffset = 0;`,
+        });
+
+        MBS_MOD_API.patchFunction("CraftingRun", {
+            "/ ${80 / 20}.":
+                `/ ${MBS_CRAFTING_MAX.default / 20}.`,
+        });
+    }
 
     loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
 });
