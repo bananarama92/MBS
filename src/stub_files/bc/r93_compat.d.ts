@@ -1,4 +1,0 @@
-declare const InventoryItemDevicesLuckyWheelGame0Load: undefined | typeof InventoryItemDevicesLuckyWheelg0Load;
-declare const InventoryItemDevicesLuckyWheelGame0Draw: undefined | typeof InventoryItemDevicesLuckyWheelg0Draw;
-declare const InventoryItemDevicesLuckyWheelGame0Click: undefined | typeof InventoryItemDevicesLuckyWheelg0Click;
-declare const InventoryItemDevicesLuckyWheelGame0Exit: undefined | typeof InventoryItemDevicesLuckyWheelg0Exit;

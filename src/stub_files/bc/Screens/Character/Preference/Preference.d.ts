@@ -218,6 +218,7 @@ declare function PreferenceSubscreenChatRun(): void;
  * @returns {void} - Nothing
  */
 declare function PreferenceSubscreenOnlineRun(): void;
+declare function PreferenceSubscreenArousalLoad(): void;
 /**
  * Sets the arousal preferences for a player. Redirected to from the main Run function if the player is in the arousal
  * settings subscreen

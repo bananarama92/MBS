@@ -150,8 +150,6 @@ declare let CraftingOffset: number;
  * @type {Asset[]}
  */
 declare let CraftingItemList: Asset[];
-/** The maximum number of crafting slots. */
-declare let CraftingSlotMax: number;
 /**
  * The character used for the crafting preview.
  * @type {Character | null}
