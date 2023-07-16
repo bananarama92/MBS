@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.15
+* Drop support for BC R95
+* Fix a double call to `PreferenceLoad` when exiting the MBS settings screen
+
 ## v0.6.14
 * Update for R94Beta3
 
