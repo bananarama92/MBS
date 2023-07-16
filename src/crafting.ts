@@ -2,22 +2,12 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, getFunctionHash, Version, padArray } from "common";
+import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
-let CRAFTING_SLOT_MAX_ORIGINAL: typeof BC_CRAFTING_MAX[keyof typeof BC_CRAFTING_MAX];
-let R94BETA1_OR_LATER: boolean;
-let R94_OR_LATER: boolean;
-
-const MBS_CRAFTING_MAX = Object.freeze({
-    "default": 160,
-    "pre_v0_6_8": 100,
-});
-const BC_CRAFTING_MAX = Object.freeze({
-    "default": 80,
-    "pre_R94": 40,
-});
+const BC_SLOT_MAX_ORIGINAL = 80;
+const MBS_SLOT_MAX_ORIGINAL = 160;
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -35,13 +25,8 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
             P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
             P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
             P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
-
-            if (R94BETA1_OR_LATER) {
-                P += "¶";
-                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
-            } else {
-                P += ((C.OverridePriority == null) ? "" : C.OverridePriority.toString());
-            }
+            P += "¶";
+            P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
         }
         return P;
     }).join("§");
@@ -54,17 +39,13 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
  */
 function loadCraftingCache(character: Character, craftingCache: string = ""): void {
     character.Crafting ??= [];
-    padArray(
-        character.Crafting,
-        R94BETA1_OR_LATER ? BC_CRAFTING_MAX.default : BC_CRAFTING_MAX.pre_R94,
-        null,
-    );
+    padArray(character.Crafting, BC_SLOT_MAX_ORIGINAL, null);
     if (!craftingCache) {
         return;
     }
 
     const packet = LZString.compressToUTF16(craftingCache);
-    let data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
+    const data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
     const oldCrafts = new Set(character.Crafting.map(i => JSON.stringify(i)));
     let refresh = false;
     let i = -1;
@@ -94,17 +75,13 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
                 break;
         }
     }
-
-    if (R94BETA1_OR_LATER && !R94_OR_LATER && data.slice(0, 40).every(i => i == null)) {
-        data = data.slice(40);
-    }
     for (const item of data) {
         // Too many items, try to remove `null` entries or skip the rest if not possible
-        if (character.Crafting.length >= MBS_CRAFTING_MAX.default) {
+        if (character.Crafting.length >= MBS_SLOT_MAX_ORIGINAL) {
             if (item == null) {
                 continue;
-            } else if (character.Crafting.includes(null, CRAFTING_SLOT_MAX_ORIGINAL)) {
-                character.Crafting = character.Crafting.filter((item, i) => i < CRAFTING_SLOT_MAX_ORIGINAL || item != null);
+            } else if (character.Crafting.includes(null, BC_SLOT_MAX_ORIGINAL)) {
+                character.Crafting = character.Crafting.filter((item, i) => i < BC_SLOT_MAX_ORIGINAL || item != null);
             } else if (character.Crafting.includes(null)) {
                 character.Crafting = character.Crafting.filter(item => item != null);
             } else {
@@ -124,36 +101,14 @@ function loadCraftingCache(character: Character, craftingCache: string = ""): vo
     }
 }
 
-waitFor(() => typeof GameVersion !== "undefined").then(() => {
-    const versionCurrent = Version.fromBCVersion(GameVersion);
-    const versionR94 = Version.fromBCVersion("R94");
-    if (versionCurrent.greaterOrEqual(versionR94) || GameVersion === "R94Beta3" || GameVersion === "R94Beta4") {
-        return;
-    }
-
-    waitFor(() => typeof CraftingSlotMax !== "undefined").then(() => {
-        CraftingSlotMax = MBS_CRAFTING_MAX.default;
-    });
-});
-
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing crafting hooks");
-
-    const versionCurrent = Version.fromBCVersion(GameVersion);
-    const versionR94 = Version.fromBCVersion("R94");
-    const versionR94Beta1 = Version.fromBCVersion("R94Beta1");
-    R94_OR_LATER = versionCurrent.greaterOrEqual(versionR94);
-    R94BETA1_OR_LATER = versionCurrent.greaterOrEqual(versionR94Beta1) || (
-        getFunctionHash(CraftingModeSet) === "0EF1B752"
-        && getFunctionHash(CraftingSaveServer) === "B5299AB2"
-    );
-    CRAFTING_SLOT_MAX_ORIGINAL = R94_OR_LATER ? BC_CRAFTING_MAX.default : BC_CRAFTING_MAX.pre_R94;
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
         next(args);
         Player.MBSSettings.CraftingCache = craftingSerialize(
-            Player.Crafting ? Player.Crafting.slice(CRAFTING_SLOT_MAX_ORIGINAL) : null,
+            Player.Crafting ? Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL) : null,
         );
         pushMBSSettings();
     });
@@ -180,19 +135,17 @@ waitFor(settingsMBSLoaded).then(() => {
             'ElementCreateInput("InputDescription", "text", "", "200");',
     });
 
-    if (versionCurrent.greaterOrEqual(versionR94) || GameVersion === "R94Beta3" || GameVersion === "R94Beta4") {
-        MBS_MOD_API.patchFunction("CraftingClick", {
-            "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
-                `if (CraftingOffset < 0) CraftingOffset = ${MBS_CRAFTING_MAX.default} - 20;`,
-            "if (CraftingOffset >= 80) CraftingOffset = 0;":
-                `if (CraftingOffset >= ${MBS_CRAFTING_MAX.default}) CraftingOffset = 0;`,
-        });
+    MBS_MOD_API.patchFunction("CraftingClick", {
+        "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
+            `if (CraftingOffset < 0) CraftingOffset = ${MBS_SLOT_MAX_ORIGINAL} - 20;`,
+        "if (CraftingOffset >= 80) CraftingOffset = 0;":
+            `if (CraftingOffset >= ${MBS_SLOT_MAX_ORIGINAL}) CraftingOffset = 0;`,
+    });
 
-        MBS_MOD_API.patchFunction("CraftingRun", {
-            "/ ${80 / 20}.":
-                `/ ${MBS_CRAFTING_MAX.default / 20}.`,
-        });
-    }
+    MBS_MOD_API.patchFunction("CraftingRun", {
+        "/ ${80 / 20}.":
+            `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
+    });
 
     loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
 });

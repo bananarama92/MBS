@@ -24,7 +24,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-const BC_MIN_VERSION = Version.fromBCVersion("R93");
+const BC_MIN_VERSION = Version.fromBCVersion("R94");
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
@@ -33,7 +33,7 @@ const BC_MIN_VERSION = Version.fromBCVersion("R93");
 export function validateBCVersion(version: string): void {
     const BC_VERSION = Version.fromBCVersion(version);
     if (BC_VERSION.lesser(BC_MIN_VERSION)) {
-        throw new Error(`BC ${GameVersion} detected; MBS requires version R93 or later`);
+        throw new Error(`BC ${GameVersion} detected; MBS requires version R94 or later`);
     } else {
         console.log(`MBS: Detected BC ${GameVersion}`);
     }
@@ -56,11 +56,11 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
-        ["CraftingSaveServer", ["823BB54B", "B5299AB2"]],
+        ["CraftingSaveServer", ["B5299AB2"]],
         ["DialogDrawCrafting", ["871E7AF7"]],
-        ["CraftingModeSet", ["D0B92F02", "0EF1B752"]],
-        ["CraftingClick", ["9CB5E895", "482C6768", null, "FCAFCC5D"]],
-        ["CraftingRun", ["55F21AB3", "02D8661B", "2791D7AD", "E6488E16"]],
+        ["CraftingModeSet", ["0EF1B752"]],
+        ["CraftingClick", ["FCAFCC5D"]],
+        ["CraftingRun", ["E6488E16"]],
     ];
     return Object.freeze(new Map(hashes.map(item => {
         const [key, value] = item;
