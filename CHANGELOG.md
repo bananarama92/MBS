@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.16
+* Fix `PreferenceExit` not being called when opening the MBS preference screen
+
 ## v0.6.15
 * Drop support for BC R95
 * Fix a double call to `PreferenceLoad` when exiting the MBS settings screen
