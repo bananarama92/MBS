@@ -19,10 +19,7 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Run: PreferenceRun,
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
-                Load: () => {
-                    CommonSetScreen("Character", "Preference");
-                    PreferenceLoad();
-                },
+                Load: () => CommonSetScreen("Character", "Preference"),
                 Unload: CommonNoop,
                 Resize: CommonNoop,
                 KeyDown: CommonNoop,
