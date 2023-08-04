@@ -58,7 +58,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneRun", ["E9E5F3D6"]],
         ["CraftingSaveServer", ["B5299AB2"]],
         ["DialogDrawCrafting", ["871E7AF7"]],
-        ["CraftingModeSet", ["0EF1B752"]],
+        ["CraftingModeSet", ["0EF1B752", "022C2474"]],
         ["CraftingClick", ["FCAFCC5D"]],
         ["CraftingRun", ["E6488E16"]],
     ];
