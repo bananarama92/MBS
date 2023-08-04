@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.17
+* Perform stricter validation of wheel of fortune embedded items
+* Fix the wheel of fortune preview character failing to equip items if the player is enclosed
+
 ## v0.6.16
 * Fix `PreferenceExit` not being called when opening the MBS preference screen
 
