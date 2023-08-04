@@ -314,7 +314,7 @@ export function fortuneWheelEquip(
     keyCache.clear();
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
-    const isClubSlave = LogQuery("ClubSlave", "Management");
+    const isClubSlave = character.IsPlayer() && LogQuery("ClubSlave", "Management");
     for (const {Name, Group, Equip, NoEquip} of <(FWItem & { NoEquip?: boolean })[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
