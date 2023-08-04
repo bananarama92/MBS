@@ -586,13 +586,26 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             throw new TypeError(`Invalid "name" type: ${typeof kwargs.name}`);
         }
 
-        if (Array.isArray(kwargs.itemList)) {
-            kwargs.itemList = Object.freeze([...kwargs.itemList]);
+        if (isArray(kwargs.itemList)) {
+            const itemList: FWItem[] = [];
+            const invalid: string[] = [];
+            for (const item of kwargs.itemList) {
+                const asset = AssetGet("Female3DCG", item.Group, item.Name);
+                if (asset == null) {
+                    invalid.push(`${item.Group}:${item.Name}`);
+                } else {
+                    itemList.push(item);
+                }
+            }
+            kwargs.itemList = Object.freeze(itemList);
+            if (invalid.length !== 0) {
+                console.warn(`MBS: Found ${invalid.length} items in wheel of fortune item set "${this.name}": ${invalid}`);
+            }
         } else {
             throw new TypeError(`Invalid "itemList" type: ${typeof kwargs.itemList}`);
         }
 
-        if (!Array.isArray(kwargs.mbsList)) {
+        if (!isArray(kwargs.mbsList)) {
             throw new TypeError(`Invalid "mbsList" type: ${typeof kwargs.mbsList}`);
         }
 
