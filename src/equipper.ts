@@ -329,7 +329,8 @@ export function fortuneWheelEquip(
             continue;
         } else {
             const equipChecks: Record<string, boolean> = {
-                "InventoryGroupIsBlocked": InventoryGroupIsBlocked(character, <AssetGroupItemName>Group, false),
+                "InventoryGroupIsBlockedForCharacter": InventoryGroupIsBlockedForCharacter(character, <AssetGroupItemName>Group, false),
+                "InventoryGroupIsBlockedByOwnerRule": InventoryGroupIsBlockedByOwnerRule(character, Group),
                 "Locked item equipped": oldItem == null ? false : !canUnlock(oldItem, character),
             };
             if (!NoEquip) {
