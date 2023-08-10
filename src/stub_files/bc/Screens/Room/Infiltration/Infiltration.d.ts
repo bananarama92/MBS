@@ -49,6 +49,11 @@ declare function InfiltrationPartyPrisonerIsMistress(): boolean;
  */
 declare function InfiltrationCanJoinPrivateRoom(): boolean;
 /**
+ * Returns TRUE if the player and the current character can play Club Card
+ * @returns {boolean} - Returns TRUE if both aren't restrained and gagged
+ */
+declare function InfiltrationCanPlayClubCard(): boolean;
+/**
  * Loads the infiltration screen by generating the supervisor.
  * @returns {void} - Nothing
  */

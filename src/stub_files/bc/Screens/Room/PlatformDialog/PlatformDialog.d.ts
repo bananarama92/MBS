@@ -1,4 +1,10 @@
 /**
+ * Players the audio track for the dialog
+ * @param {string} Source - The source file to use
+ * @returns {void} - Nothing
+ */
+declare function PlatformDialogVoice(Source: string): void;
+/**
  * Loads the dialog at a specific position
  * @param {Number} Position - The position # to load
  * @returns {void} - Nothing
@@ -115,6 +121,7 @@ declare var PlatformDialogGoto: any;
 declare var PlatformDialogCharacterDisplay: any;
 declare var PlatformDialogPosition: number;
 declare var PlatformDialogCharacter: any;
+declare var PlatformDialogAudio: any;
 declare var PlatformDialogCharacterTemplate: ({
     Name: string;
     Color: string;
@@ -146,6 +153,7 @@ declare var PlatformDialogCharacterTemplate: ({
 })[];
 declare var PlatformDialogData: ({
     Name: string;
+    Music: string;
     Dialog: ({
         Text: string;
         Background: string;
@@ -156,10 +164,12 @@ declare var PlatformDialogData: ({
             X: number;
             Y: number;
         }[];
+        Audio?: undefined;
     } | {
         Text: string;
         Background?: undefined;
         Character?: undefined;
+        Audio?: undefined;
     } | {
         Character: {
             Name: string;
@@ -170,9 +180,16 @@ declare var PlatformDialogData: ({
         }[];
         Text?: undefined;
         Background?: undefined;
+        Audio?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
     } | {
         Background: string;
         Text: string;
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
@@ -180,6 +197,7 @@ declare var PlatformDialogData: ({
         }[];
     } | {
         Text: string;
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
@@ -190,6 +208,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -199,12 +218,14 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
         ID?: undefined;
     } | {
         Text: string;
         Background?: undefined;
         Character?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
         ID?: undefined;
     } | {
@@ -214,22 +235,34 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Goto?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Goto: string;
         })[];
         Background?: undefined;
         ID?: undefined;
     } | {
         Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        Answer?: undefined;
+        ID?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
         Answer: {
             Text: string;
             Reply: string;
+            Audio: string;
         }[];
         Background?: undefined;
         Character?: undefined;
@@ -239,10 +272,43 @@ declare var PlatformDialogData: ({
         Text: string;
         Background?: undefined;
         Character?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
+    Dialog: ({
+        Background: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Animation: string;
+        }[];
+        Text?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: {
+            Text: string;
+            Reply: string;
+            Audio: string;
+        }[];
+        Background?: undefined;
+        Character?: undefined;
+    })[];
+    Exit?: undefined;
+} | {
+    Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -252,14 +318,17 @@ declare var PlatformDialogData: ({
             Animation: string;
         }[];
         Text?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
@@ -269,6 +338,7 @@ declare var PlatformDialogData: ({
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
@@ -281,28 +351,35 @@ declare var PlatformDialogData: ({
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Domination?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
         })[];
         Background?: undefined;
         Character?: undefined;
+        Audio?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
         })[];
         Background?: undefined;
         Character?: undefined;
     } | {
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
@@ -313,22 +390,36 @@ declare var PlatformDialogData: ({
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
             Love?: undefined;
         })[];
         Background?: undefined;
         Character?: undefined;
+    } | {
+        Text: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Pose: string;
+        }[];
+        Background?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -338,18 +429,44 @@ declare var PlatformDialogData: ({
             Animation: string;
         }[];
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        Answer?: undefined;
+        ID?: undefined;
+        Entry?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Domination: number;
+            Love: number;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio?: undefined;
+            Domination?: undefined;
+            Love?: undefined;
+        })[];
         Background?: undefined;
         Character?: undefined;
         ID?: undefined;
-        Answer?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Background: string;
         Character: {
@@ -359,26 +476,52 @@ declare var PlatformDialogData: ({
             X: number;
         }[];
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Goto?: undefined;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Goto: string;
+        })[];
+        Background?: undefined;
+        Character?: undefined;
+        ID?: undefined;
+        Entry?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         ID: string;
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination?: undefined;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination?: undefined;
         })[];
@@ -386,21 +529,26 @@ declare var PlatformDialogData: ({
         Character?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination?: undefined;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination: number;
         })[];
@@ -409,21 +557,26 @@ declare var PlatformDialogData: ({
         ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Love?: undefined;
             Domination?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination: number;
         })[];
@@ -432,42 +585,72 @@ declare var PlatformDialogData: ({
         ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Entry: () => void;
         Background?: undefined;
         Character?: undefined;
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         ID: string;
         Text: string;
+        Audio: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Love: number;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio?: undefined;
+            Love?: undefined;
+        })[];
+        Background?: undefined;
+        Character?: undefined;
+        ID?: undefined;
+        Entry?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
             Domination: number;
+            Audio?: undefined;
             Goto?: undefined;
         } | {
             Text: string;
             Reply: string;
             Domination?: undefined;
+            Audio?: undefined;
             Goto?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Goto: string;
             Domination: number;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Goto: string;
             Domination?: undefined;
         })[];
@@ -476,6 +659,7 @@ declare var PlatformDialogData: ({
         ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
         Character: {
@@ -484,20 +668,35 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Background?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
-        TextScript: () => "Can I have my orgasm Lady Olivia?" | "It's time for the climax";
+        Text: string;
+        Background?: undefined;
+        Character?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+        ID?: undefined;
+        Entry?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        TextScript: () => "Can I have my orgasm Lady Olivia?" | "It's time for the climax.";
+        AudioScript: () => "O221" | "O222";
         Background?: undefined;
         Character?: undefined;
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
     } | {
         TextScript: () => "Yes, you can have your orgasm my maid." | "(She smiles and watches you carefully.)";
+        AudioScript: () => string;
         Character: {
             Name: string;
             Status: string;
@@ -506,21 +705,24 @@ declare var PlatformDialogData: ({
         }[];
         Background?: undefined;
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
     } | {
         Entry: () => void;
         Text: string;
+        Audio: string;
         Character: {
             Name: string;
             Status: string;
             Pose: string;
         }[];
         Background?: undefined;
-        ID?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Text: string;
         Character: {
@@ -530,10 +732,12 @@ declare var PlatformDialogData: ({
             X: number;
         }[];
         Background?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
     } | {
         Background: string;
         Character: {
@@ -542,13 +746,30 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text?: undefined;
-        ID?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
+        ID?: undefined;
         Entry?: undefined;
         TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Pose: string;
+        }[];
+        Background?: undefined;
+        Answer?: undefined;
+        ID?: undefined;
+        Entry?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -558,10 +779,19 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
         ID?: undefined;
     } | {
         Text: string;
+        Background?: undefined;
+        Character?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+        ID?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
@@ -573,13 +803,16 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Goto?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Goto: string;
         })[];
         Background?: undefined;
@@ -591,6 +824,7 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text: string;
+        Audio: string;
         Background?: undefined;
         Answer?: undefined;
         ID?: undefined;
@@ -602,11 +836,13 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text: string;
+        Audio: string;
         Background?: undefined;
         Answer?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -616,88 +852,54 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Answer: ({
             Text: string;
             Reply: string;
+            Audio: string;
             Domination?: undefined;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
             Love?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Love: number;
             Domination?: undefined;
         } | {
             Text: string;
             Reply: string;
+            Audio: string;
             Domination: number;
             Love: number;
         })[];
         Background?: undefined;
         Character?: undefined;
-    })[];
-} | {
-    Name: string;
-    Exit: () => void;
-    Dialog: ({
-        Background: string;
-        Character: {
-            Name: string;
-            Status: string;
-            Pose: string;
-        }[];
-        TextScript?: undefined;
-        Text?: undefined;
-        Answer?: undefined;
-    } | {
-        TextScript: () => "Is it you Melody?  Are you a zombie?" | "Hey!  I'm Edlaran, a wood elf, are you a zombie?";
-        Background?: undefined;
-        Character?: undefined;
-        Text?: undefined;
-        Answer?: undefined;
-    } | {
-        Text: string;
-        Answer: ({
-            Text: string;
-            Reply: string;
-            Domination: number;
-            Love?: undefined;
-        } | {
-            Text: string;
-            Reply: string;
-            Domination?: undefined;
-            Love?: undefined;
-        } | {
-            Text: string;
-            Reply: string;
-            Love: number;
-            Domination?: undefined;
-        })[];
-        Background?: undefined;
-        Character?: undefined;
-        TextScript?: undefined;
     } | {
         Text: string;
         Background?: undefined;
         Character?: undefined;
-        TextScript?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
     })[];
 } | {
     Name: string;
-    Exit: () => void;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -706,53 +908,171 @@ declare var PlatformDialogData: ({
             Pose: string;
         }[];
         Text?: undefined;
+        Audio?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
+        Audio: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
     } | {
         Text: string;
-        Answer: ({
-            Text: string;
-            Reply: string;
-            Domination?: undefined;
-            Script?: undefined;
-        } | {
-            Text: string;
-            Reply: string;
-            Domination: number;
-            Script?: undefined;
-        } | {
-            Text: string;
-            Script: () => void;
-            Reply?: undefined;
-            Domination?: undefined;
-        })[];
-        Background?: undefined;
-        Character?: undefined;
-    } | {
-        Text: string;
-        Character: {
-            Name: string;
-            Status: string;
-            Pose: string;
-        }[];
-        Background?: undefined;
-        Answer?: undefined;
-    } | {
-        Text: string;
+        Audio: string;
         Answer: {
             Text: string;
             Reply: string;
-            Love: number;
+            Audio: string;
         }[];
         Background?: undefined;
         Character?: undefined;
+    } | {
+        Text: string;
+        Background?: undefined;
+        Character?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    })[];
+    Exit?: undefined;
+} | {
+    Name: string;
+    Music: string;
+    Exit: () => void;
+    Dialog: ({
+        Background: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Pose: string;
+        }[];
+        TextScript?: undefined;
+        AudioScript?: undefined;
+        Text?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    } | {
+        TextScript: () => "Is it you Melody?  Are you a zombie?" | "Hey!  I'm Edlaran, a wood elf, are you a zombie?";
+        AudioScript: () => "12" | "11";
+        Background?: undefined;
+        Character?: undefined;
+        Text?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Domination: number;
+            Love?: undefined;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Domination?: undefined;
+            Love?: undefined;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Love: number;
+            Domination?: undefined;
+        })[];
+        Background?: undefined;
+        Character?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        TextScript?: undefined;
+        AudioScript?: undefined;
+        Answer?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
+    Exit: () => void;
+    Dialog: ({
+        Background: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Pose: string;
+        }[];
+        Text?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Domination?: undefined;
+            Script?: undefined;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Domination: number;
+            Script?: undefined;
+        } | {
+            Text: string;
+            Script: () => void;
+            Reply?: undefined;
+            Audio?: undefined;
+            Domination?: undefined;
+        })[];
+        Background?: undefined;
+        Character?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Character: {
+            Name: string;
+            Status: string;
+            Pose: string;
+        }[];
+        Background?: undefined;
+        Answer?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Answer: ({
+            Text: string;
+            Reply: string;
+            Love: number;
+            Audio?: undefined;
+        } | {
+            Text: string;
+            Reply: string;
+            Audio: string;
+            Love: number;
+        })[];
+        Background?: undefined;
+        Character?: undefined;
+    } | {
+        Text: string;
+        Background?: undefined;
+        Character?: undefined;
+        Audio?: undefined;
+        Answer?: undefined;
+    })[];
+} | {
+    Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -965,6 +1285,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Text: string;
@@ -976,6 +1297,7 @@ declare var PlatformDialogData: ({
             X: number;
         }[];
         Answer?: undefined;
+        Audio?: undefined;
     } | {
         Text: string;
         Answer: ({
@@ -989,6 +1311,7 @@ declare var PlatformDialogData: ({
         })[];
         Background?: undefined;
         Character?: undefined;
+        Audio?: undefined;
     } | {
         Text: string;
         Character: {
@@ -998,11 +1321,13 @@ declare var PlatformDialogData: ({
         }[];
         Background?: undefined;
         Answer?: undefined;
+        Audio?: undefined;
     } | {
         Text: string;
         Background?: undefined;
         Character?: undefined;
         Answer?: undefined;
+        Audio?: undefined;
     } | {
         Background: string;
         Character: {
@@ -1012,9 +1337,17 @@ declare var PlatformDialogData: ({
         }[];
         Text: string;
         Answer?: undefined;
+        Audio?: undefined;
+    } | {
+        Text: string;
+        Audio: string;
+        Background?: undefined;
+        Character?: undefined;
+        Answer?: undefined;
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Text: string;
@@ -1103,6 +1436,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Text: string;
@@ -1185,6 +1519,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -1287,6 +1622,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -1343,6 +1679,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Text: string;
         Background: string;
@@ -1428,6 +1765,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -1475,6 +1813,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -1595,6 +1934,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -1694,6 +2034,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -1792,6 +2133,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -1867,6 +2209,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -1927,6 +2270,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -2014,6 +2358,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -2064,6 +2409,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Text: string;
@@ -2144,6 +2490,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -2162,6 +2509,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Background: string;
         Character: {
@@ -2347,6 +2695,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Text: string;
@@ -2583,6 +2932,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Exit: () => void;
     Dialog: ({
         Background: string;
@@ -2623,6 +2973,7 @@ declare var PlatformDialogData: ({
     })[];
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Entry: () => void;
         Character: {
@@ -2765,6 +3116,7 @@ declare var PlatformDialogData: ({
     Exit?: undefined;
 } | {
     Name: string;
+    Music: string;
     Dialog: ({
         Entry: () => void;
         Character: {

@@ -322,6 +322,8 @@ interface AssetDefinition {
 
 	/** A list of prerequisite checks that must pass for the group's expressions to be selectable */
 	ExpressionPrerequisite?: AssetPrerequisite[];
+
+	ColorSuffix?: Record<string, string>;
 }
 
 interface AssetLayerDefinition {
@@ -402,6 +404,7 @@ interface AssetLayerDefinition {
 	HideForAttribute?: AssetAttribute[];
 	/* Specifies that this layer should not be drawn unless the character is wearing an item with one of the given attributes */
 	ShowForAttribute?: AssetAttribute[];
+	ColorSuffix?: Record<string, string>;
 }
 
 type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight" | "text";

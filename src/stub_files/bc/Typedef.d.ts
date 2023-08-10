@@ -125,6 +125,32 @@ type VibratorRemoteAvailability = "Available" | "NoRemote" | "NoRemoteOwnerRuleA
 
 type ItemVulvaFuturisticVibratorAccessMode = "" | "ProhibitSelf" | "LockMember";
 
+/** The {@link EffectName} values for all gag-related effects. */
+type GagEffectName = (
+	"GagVeryLight"
+	| "GagEasy"
+	| "GagLight"
+	| "GagNormal"
+	| "GagMedium"
+	| "GagHeavy"
+	| "GagVeryHeavy"
+	| "GagTotal"
+
+	// Those are only supposed to be "transient", as in, they appear because of stacked gags
+	| "GagTotal2"
+	| "GagTotal3"
+	| "GagTotal4"
+);
+
+/** The {@link EffectName} values for all blindness-related effects. */
+type BlindEffectName = "BlindLight" | "BlindNormal" | "BlindHeavy" | "BlindTotal";
+
+/** The {@link EffectName} values for all blurring-related effects. */
+type BlurEffectName = "BlurLight" | "BlurNormal" | "BlurHeavy" | "BlurTotal";
+
+/** The {@link EffectName} values for all deafness-related effects. */
+type DeafEffectName = "DeafLight" | "DeafNormal" | "DeafHeavy" | "DeafTotal";
+
 /**
  * @property Freeze - Prevents walking and kneeling unaided. There's a few caveats with the kneeling part.
  * @property Prone - Indicates the character is prone. Looks non-functional.
@@ -212,6 +238,8 @@ type ItemVulvaFuturisticVibratorAccessMode = "" | "ProhibitSelf" | "LockMember";
  *   triggering arousal. Used as part of the stimulation event system.
  */
 type EffectName =
+	GagEffectName | BlindEffectName | BlurEffectName | DeafEffectName |
+
 	"Freeze" | "Prone" | "Block" | "Mounted" | "KneelFreeze" | "ForceKneel" | "BlockKneel" |
 
 	"CuffedFeet" | "CuffedLegs" | "CuffedArms" | "IsChained" | "FixedHead" | "MergedFingers" |
@@ -237,15 +265,6 @@ type EffectName =
 	"OpenPermission" | "OpenPermissionArm" | "OpenPermissionLeg" | "OpenPermissionChastity" |
 
 	"BlockMouth" | "OpenMouth" |
-
-	"GagVeryLight" | "GagEasy" | "GagLight" | "GagNormal" | "GagMedium" | "GagHeavy" | "GagVeryHeavy" | "GagTotal" |
-
-	// Those are only supposed to be "transient", as in, they appear because of stacked gags
-	"GagTotal2" | "GagTotal3" | "GagTotal4" |
-
-	"BlindLight" | "BlindNormal" | "BlindHeavy" | "BlindTotal" |
-	"BlurLight" | "BlurNormal" | "BlurHeavy" | "BlurTotal" |
-	"DeafLight" | "DeafNormal" | "DeafHeavy" | "DeafTotal" |
 
 	"VR" | "VRAvatars" | "KinkyDungeonParty" |
 
@@ -355,7 +374,7 @@ type AssetAttribute =
 	"Skirt" | "SuitLower" | "UpperLarge" |
 	"ShortHair" | "SmallEars" | "NoEars" | "NoseRing" | "HoodieFix" |
 	"CanAttachMittens" |
-	"PenisLayer" | "PussyLayer" | "GenitaliaCover" | "PussyLight1" | "PussyLight2" | "PussyLight3" | "PussyDark1" | "PussyDark2" | "PussyDark3" |
+	"PenisLayer" | "PussyLayer" | "GenitaliaCover" | "Pussy1" | "Pussy2" | "Pussy3" |
 	"CagePlastic2" | "CageTechno" | "CageFlat" |
 	"FuturisticRecolor" | "FuturisticRecolorDisplay" |
 	"PortalLinkLockable" | `PortalLinkChastity${string}` | `PortalLinkActivity${ActivityName}` | `PortalLinkTarget${AssetGroupItemName}`
@@ -439,6 +458,9 @@ type AssetCategory = "Medical" | "Extreme" | "Pony" | "SciFi" | "ABDL" | "Fantas
 type PortalLinkStatus = "PortalLinkInvalidCode" | "PortalLinkClipboardError" | "PortalLinkValidCode" | `PortalLinkSearching${number}` | "PortalLinkDuplicateCode" | "PortalLinkTargetNotFound" | "PortalLinkEstablished";
 type PortalLinkFunction = "PortalLinkFunctionLock" | "PortalLinkFunctionUnlock" | "PortalLinkFunctionCycleChastity" | `PortalLinkFunctionActivity${ActivityName}`;
 
+/** Valid thumb icons for range slider elements */
+type ThumbIcon = "lock" | "blindfold" | "lightbulb" | "player" | "rope";
+
 //#endregion
 
 //#region Server Messages
@@ -451,7 +473,7 @@ interface IChatRoomGameResponse {
 			target: number,
 		};
 		/* LARP */
-		GameProgress?: "Start" | "Stop" | "Next" | "Skip" | "Action";
+		GameProgress?: "Start" | "Stop" | "Next" | "Skip" | "Action" | "Query";
 		Action?: undefined;
 		Target?: number;
 		Item?: string;
@@ -459,6 +481,12 @@ interface IChatRoomGameResponse {
 		/* MagicBattle */
 		Spell?: number;
 		Time?: number; /* ms */
+
+		/* Club Card */
+		Player1?: number;
+		Player2?: number;
+		CCData: [any];
+		CCLog: string;
 	}
 	Sender: number;
 	RNG: number
@@ -495,7 +523,7 @@ interface IChatRoomSyncArousalMessage {
 type ChatRoomLovershipOption = "" | "CanOfferBeginWedding" | "CanBeginWedding";
 type ChatRoomOwnershipOption = "" | "CanOfferEndTrial" | "CanOfferTrial" | "CanEndTrial";
 type ChatRoomSpaceType = "X" | "" | "M" | "Asylum";
-type ChatRoomGame = "" | "LARP" | "MagicBattle" | "GGTS";
+type ChatRoomGame = "" | "ClubCard" | "LARP" | "MagicBattle" | "GGTS";
 type ChatRoomBlockCategory = AssetCategory | "Leashing" | "Photos" | "Arousal";
 type ChatRoomLanguage = "EN" | "DE" | "FR" | "ES" | "CN" | "RU";
 
@@ -956,7 +984,7 @@ interface AssetGroup {
 	SetPose?: readonly AssetPoseName[];
 	AllowPose: readonly AssetPoseName[];
 	AllowExpression?: readonly ExpressionName[];
-	Effect?: readonly EffectName[];
+	Effect: readonly EffectName[];
 	MirrorGroup: AssetGroupName | "";
 	RemoveItemOnRemove: readonly { Group: AssetGroupItemName; Name: string; Type?: string }[];
 	DrawingPriority: number;
@@ -1085,6 +1113,7 @@ interface AssetLayer {
 	ShowForAttribute: readonly AssetAttribute[] | null;
 	/** Used along with a hook to make layers of an asset disappear in some cases. */
 	Visibility: "Player" | "AllExceptPlayerDialog" | "Others" | "OthersExceptDialog" | "Owner" | "Lovers" | "Mistresses" | null;
+	ColorSuffix: Record<string, string> | null;
 }
 
 /** An object defining a group of alpha masks to be applied when drawing an asset layer */
@@ -1150,7 +1179,7 @@ interface Asset {
 	AllowActivityOn?: readonly AssetGroupItemName[];
 	BuyGroup?: string;
 	PrerequisiteBuyGroups?: readonly string[];
-	Effect?: readonly EffectName[];
+	Effect: readonly EffectName[];
 	Bonus?: AssetBonusName;
 	Block?: readonly AssetGroupItemName[];
 	Expose: readonly AssetGroupItemName[];
@@ -1968,7 +1997,7 @@ interface ElementMetaData {
 	 */
 	imagePath?: null | string,
 	/** The name of a supported thumbnail image in \CSS\Styles.css that will show the current position on the slider */
-	icon?: string,
+	icon?: ThumbIcon,
 	/** Whether an options shows up in the UI. Useful for options that are managed programmatically. */
 	hidden?: boolean,
 }
@@ -1978,7 +2007,7 @@ declare namespace ElementMetaData {
 	interface Modular { drawImage: boolean, hidden: boolean, imagePath: null | string }
 	interface Vibrating  { drawImage: false, hidden: false, imagePath: null }
 	interface Text {}
-	interface VariableHeight { icon: string }
+	interface VariableHeight { icon: ThumbIcon }
 }
 
 /** @see {@link ElementData} */
@@ -2007,7 +2036,7 @@ interface ExtendedItemConfigDrawData<MetaData extends ElementMetaData> {
 
 /** @see {@link ExtendedItemDrawData} */
 interface VariableHeightConfigDrawData extends ExtendedItemConfigDrawData<{}> {
-	elementData: { position: RectTuple, icon: string }[],
+	elementData: { position: RectTuple, icon: ThumbIcon }[],
 }
 
 /**
@@ -2150,11 +2179,13 @@ declare namespace ExtendedItemCallbacks {
 	 * @param item The item in question
 	 * @param newOption The newly selected extended item option
 	 * @param previousOption The previusly selected extended item option
+	 * @param permitExisting - Determines whether the validation should allow the new option and previous option
+	 * to be identical. Defaults to false.
 	 * @returns A non-empty message string if the item failed validation, or an empty string otherwise
 	 */
 	type Validate<
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType], string>;
+	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType, permitExisting?: boolean], string>;
 	/**
 	 * Callback for extended item `PublishAction` functions.
 	 * `PublishAction` functions are responsible for reporting any changes to an item's properties via a chat message.
@@ -2263,12 +2294,14 @@ declare namespace ExtendedItemScriptHookCallbacks {
 	 * @param item The item in question
 	 * @param newOption The newly selected extended item option
 	 * @param previousOption The previusly selected extended item option
+	 * @param permitExisting - Determines whether the validation should allow the new option and previous option
+	 * to be identical. Defaults to false.
 	 * @returns A non-empty message string if the item failed validation, or an empty string otherwise
 	 */
 	type Validate<
 		DataType extends ExtendedItemData<any>,
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType], string>;
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType, permitExisting?: boolean], string>;
 	/**
 	 * Callback for extended item `PublishAction` script hooks.
 	 * `PublishAction` functions are responsible for reporting any changes to an item's properties via a chat message.
@@ -2536,10 +2569,14 @@ interface AssetDefinitionProperties {
 
 	/**
 	 * The timer for after how long until a lock should be removed.
-	 * Also used for timed emoticons.
 	 * @see {@link Asset.RemoveTimer}
 	 */
 	RemoveTimer?: number;
+
+	/**
+	 * The timer for an expression change.
+	 */
+	ExpressionTimer?: number;
 
 	/**
 	 * The asset's draw opacity
@@ -2571,9 +2608,6 @@ interface ItemPropertiesBase {
 
 	/** A facial expression */
 	Expression?: ExpressionName;
-
-	/** Whether the asset affects should be overriden rather than extended */
-	OverrideAssetEffect?: boolean;
 
 	// Vibratory-related properties
 
@@ -3154,7 +3188,10 @@ interface GamePokerParameters {
 
 interface GameClubCardParameters {
 	Deck: string[];
+	DeckName?: string[];
 	Reward?: string;
+	Status?: OnlineGameStatus;
+	PlayerSlot?: number;
 }
 
 //#endregion
@@ -3623,6 +3660,9 @@ interface LogNameType {
 	"NPC-Sarah": "SarahLover" | "SarahCollared" | "SarahCollaredWithCurfew",
 	"NPC-SarahIntro": "SarahWillBePunished" | "SarahCameWithPlayer",
 	"NPC-Sidney": "SidneyLover" | "SidneyMistress" | "SidneyCollared" | "SidneyCollaredWithCurfew",
+	"NPC-Julia": "Dominant" | "Submissive",
+	"NPC-Yuki": "Dominant" | "Submissive",
+	"NPC-Mildred": "Dominant" | "Submissive",
 	// NOTE: A number of owner rules can have arbitrary suffices, and can thus not be expressed as string literals
 	OwnerRule: (
 		"BlockChange"

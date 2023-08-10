@@ -119,10 +119,12 @@ declare function TypedItemGetOption(groupName: AssetGroupName, assetName: string
  * @param {Item} item - The item whose options are being validated
  * @param {T} option - The new option
  * @param {T} previousOption - The previously applied option
+ * @param {boolean} [permitExisting] - Determines whether the validation should allow the new option and previous option
+ * to be identical. Defaults to false.
  * @returns {string|undefined} - undefined or an empty string if the validation passes. Otherwise, returns a string
  * message informing the player of the requirements that are not met.
  */
-declare function TypedItemValidateOption<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, item: Item, option: T, previousOption: T): string | undefined;
+declare function TypedItemValidateOption<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, item: Item, option: T, previousOption: T, permitExisting?: boolean): string | undefined;
 /**
  * Sets a typed item's type and properties to the option whose name matches the provided option name parameter.
  * @param {Character} C - The character on whom the item is equipped

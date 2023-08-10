@@ -1,9 +1,20 @@
 /**
+ * Returns TRUE if the current game is online
+ * @returns {boolean} - Nothing
+ */
+declare function ClubCardIsOnline(): boolean;
+/**
+ * Returns TRUE if the BC Player is a player in the current Club Card game
+ * @returns {boolean} - Nothing
+ */
+declare function ClubCardIsPlaying(): boolean;
+/**
  * Adds a text entry to the game log
  * @param {string} LogEntry - The club card player
+ * @param {boolean} Push - The club card player
  * @returns {void} - Nothing
  */
-declare function ClubCardLogAdd(LogEntry: string): void;
+declare function ClubCardLogAdd(LogEntry: string, Push?: boolean): void;
 /**
  * Publishes an action to the log and replaces all the tags
  * @param {string} Text - The text to fetch
@@ -136,6 +147,11 @@ declare function ClubCardPlayerDiscardCard(CCPlayer: ClubCardPlayer, Amount: num
  * @returns {Array} - The resulting deck
  */
 declare function ClubCardLoadDeck(InDeck: any[]): any[];
+/**
+ * Returns the index of the player in the ClubCardPlayer array
+ * @returns {number} - The array index position
+ */
+declare function ClubCardGetPlayerIndex(): number;
 /**
  * Builds a deck array of object from a deck array of numbers
  * @param {number} DeckNum - The array of number deck
@@ -328,6 +344,7 @@ declare function ClubCardRun(): void;
  * @returns {void} - Nothing
  */
 declare function ClubCardClick(): void;
+declare function ClubCardKeyDown(event: any): void;
 declare var ClubCardBackground: string;
 declare var ClubCardLog: any[];
 declare var ClubCardLogText: string;
@@ -350,5 +367,7 @@ declare var ClubCardLevelLimit: number[];
 declare var ClubCardLevelCost: number[];
 /** @type {ClubCardPlayer[]} */
 declare var ClubCardPlayer: ClubCardPlayer[];
+declare var ClubCardOnlinePlayerMemberNumber1: number;
+declare var ClubCardOnlinePlayerMemberNumber2: number;
 /** @type {ClubCard[]} */
 declare var ClubCardList: ClubCard[];

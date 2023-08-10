@@ -78,12 +78,6 @@ declare function VibratorModeSetAssetProperties(data: VibratingItemData): void;
  */
 declare function VibratorModeSetAllowEffect({ asset, modeSet }: VibratingItemData): void;
 /**
- * Sets the Effect property for a vibrating item
- * @param {VibratingItemData} data - The vibrating item data for the asset
- * @returns {void} - Nothing
- */
-declare function VibratorModeSetEffect({ asset }: VibratingItemData): void;
-/**
  * @typedef {{ Mode?: VibratorMode, ChangeTime?: number, LastChange?: number }} VibratorModePersistentData
  */
 /**
@@ -130,6 +124,13 @@ declare function VibratorModeInit(data: VibratingItemData, C: Character, Item: I
  * @type {typeof TypedItemSetOptionByName}
  */
 declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean, C_Source?: Character, subscreen?: [archetype: "typed" | "vibrating", screen: string]): string;
+/**
+ * Return the (standard) vibrator mode one would get by incrementing/decrementing the passed mode.
+ * @param {VibratorMode} mode - The current vibrator mode
+ * @param {boolean} decrement - Whether the mode should be decremented rather than incremented
+ * @returns {VibratorMode} The new vibrator mode
+ */
+declare function VibratorModeIntensityIncrement(mode: VibratorMode, decrement?: boolean): VibratorMode;
 /**
  * An enum for the possible vibrator modes
  * @readonly

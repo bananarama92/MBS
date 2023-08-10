@@ -300,6 +300,16 @@ declare function PandoraChestLoot(): void;
  * @returns {void} - Nothing
  */
 declare function PandoraGetPaint(): void;
+/**
+ * When the player starts a club card game
+ * @returns {void} - Nothing
+ */
+declare function PandoraClubCardStart(): void;
+/**
+ * When the player ends a club card game
+ * @returns {void} - Nothing
+ */
+declare function PandoraClubCardEnd(): void;
 declare var PandoraBackground: string;
 /** @type {PandoraBaseRoom} */
 declare var PandoraCurrentRoom: PandoraBaseRoom;

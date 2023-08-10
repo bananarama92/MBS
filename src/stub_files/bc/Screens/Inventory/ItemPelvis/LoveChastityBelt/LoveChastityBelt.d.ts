@@ -3,6 +3,6 @@ declare function InventoryItemPelvisLoveChastityBeltDraw(Data: ModularItemData, 
 /** @type {ExtendedItemScriptHookCallbacks.SetOption<ModularItemData, ModularItemOption>} */
 declare function InventoryItemPelvisLoveChastityBeltSetOptionHook(data: ModularItemData, originalFunction: (C: Character, item: Item, newOption: ModularItemOption, previousOption: ModularItemOption, push: boolean) => void, C: Character, item: Item, newOption: ModularItemOption, previousOption: ModularItemOption, push: boolean): void;
 /** @type {ExtendedItemScriptHookCallbacks.Validate<ModularItemData, ModularItemOption>} */
-declare function InventoryItemPelvisLoveChastityBeltValidate(Data: ModularItemData, OriginalFunction: (C: Character, item: Item, newOption: ModularItemOption, previousOption: ModularItemOption) => string, C: Character, Item: Item, Option: ModularItemOption, CurrentOption: ModularItemOption): string;
+declare function InventoryItemPelvisLoveChastityBeltValidate(Data: ModularItemData, OriginalFunction: (C: Character, item: Item, newOption: ModularItemOption, previousOption: ModularItemOption, permitExisting?: boolean) => string, C: Character, Item: Item, Option: ModularItemOption, CurrentOption: ModularItemOption): string;
 /** Map the names of the love chastity belt front + black shield options to its scifi pleasure panties equivalent. */
 declare const InventoryItemPelvisLoveChastityBeltCrotchShield: Map<string, string>;

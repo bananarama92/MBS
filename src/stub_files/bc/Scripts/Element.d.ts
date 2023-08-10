@@ -35,12 +35,12 @@ declare function ElementCreateInput(ID: string, Type: string, Value: string, Max
  * @param {number} min - The minimum value of the input
  * @param {number} max - The maximum value of the input
  * @param {number} step - The increment size of the input
- * @param {string} [thumbIcon] - The icon to use for the range input's "thumb" (handle). Can currently be set to "lock"
- * or "blindfold". If not set, the slider will have a default appearance with no custom thumb.
+ * @param {ThumbIcon} [thumbIcon] - The icon to use for the range input's "thumb" (handle). If not set, the slider will
+ * have a default appearance with no custom thumb.
  * @param {boolean} [vertical] - Whether this range input is a vertical slider (defaults to false)
  * @returns {HTMLInputElement} - The created HTML input element
  */
-declare function ElementCreateRangeInput(id: string, value: number, min: number, max: number, step: number, thumbIcon?: string, vertical?: boolean): HTMLInputElement;
+declare function ElementCreateRangeInput(id: string, value: number, min: number, max: number, step: number, thumbIcon?: ThumbIcon, vertical?: boolean): HTMLInputElement;
 /**
  * Creates a dropdown element and adjusts it to the BC look and feel. In the HTML Code this will look like this:
  * <div> -- enclosing div used for css and postioning

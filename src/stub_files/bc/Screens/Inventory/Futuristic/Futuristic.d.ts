@@ -35,7 +35,7 @@ declare function FuturisticAccessExit(): void;
  * Hook script for injecting futuristic features into a typed or modular item
  * @type {ExtendedItemScriptHookCallbacks.Validate<ExtendedItemData<any>, any>}
  */
-declare function FuturisticAccessValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any) => string, C: Character, Item: Item, Option: any, CurrentOption: any): string;
+declare function FuturisticAccessValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any, permitExisting?: boolean) => string, C: Character, Item: Item, Option: any, CurrentOption: any, permitExisting: boolean): string;
 declare function InventoryItemFuturisticLoadAccessDenied(): void;
 declare function InventoryItemFuturisticDrawAccessDenied(): void;
 declare function InventoryItemFuturisticClickAccessDenied(): void;

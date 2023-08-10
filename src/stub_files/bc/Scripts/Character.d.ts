@@ -478,12 +478,12 @@ declare function CharacterScriptRemove(C: Character): void;
 /** @type Character[] */
 declare var Character: Character[];
 declare var CharacterNextId: number;
-/** @type Map<EffectName, number> */
-declare const CharacterBlindLevels: Map<EffectName, number>;
-/** @type Map<EffectName, number> */
-declare const CharacterDeafLevels: Map<EffectName, number>;
-/** @type Map<EffectName, number> */
-declare const CharacterBlurLevels: Map<EffectName, number>;
+/** @type {Map<BlindEffectName, number>} */
+declare const CharacterBlindLevels: Map<BlindEffectName, number>;
+/** @type {Map<DeafEffectName, number>} */
+declare const CharacterDeafLevels: Map<DeafEffectName, number>;
+/** @type {Map<BlurEffectName, number>} */
+declare const CharacterBlurLevels: Map<BlurEffectName, number>;
 /**
  * An enum representing the various character archetypes
  * ONLINE: The player, or a character representing another online player

@@ -9,10 +9,10 @@ declare function PropertyGetID(Name: string, Item?: Item): string;
  * Load function for items with opacity sliders. Constructs the opacity slider.
  * @param {null | ExtendedItemData<any>} Data - The items extended item data
  * @param {null | (() => void)} OriginalFunction - The function that is normally called when an archetypical item reaches this point (if any).
- * @param {string} thumbIcon The icon to use for the range input's "thumb" (handle).
+ * @param {ThumbIcon} thumbIcon The icon to use for the range input's "thumb" (handle).
  * @returns {HTMLInputElement} - The new or pre-existing range input element of the opacity slider
  */
-declare function PropertyOpacityLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), thumbIcon?: string): HTMLInputElement;
+declare function PropertyOpacityLoad(Data?: null | ExtendedItemData<any>, OriginalFunction?: null | (() => void), thumbIcon?: ThumbIcon): HTMLInputElement;
 /**
  * Draw function for items with opacity sliders. Draws the opacity slider and further opacity-related information.
  * @param {null | ExtendedItemData<any>} Data - The items extended item data
@@ -35,7 +35,7 @@ declare function PropertyOpacityExit(Data?: null | ExtendedItemData<any>, Origin
  * Validation function for items with opacity sliders.
  * @type {ExtendedItemScriptHookCallbacks.Validate<ExtendedItemData<any>, any>}
  */
-declare function PropertyOpacityValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any) => string, C: Character, Item: Item, Option: any, CurrentOption: any): string;
+declare function PropertyOpacityValidate(Data: ExtendedItemData<any>, OriginalFunction: (C: Character, item: Item, newOption: any, previousOption: any, permitExisting?: boolean) => string, C: Character, Item: Item, Option: any, CurrentOption: any): string;
 /**
  * Helper fuction for publishing shock-related actions.
  * @param {Character} C - The shocked character; defaults to the {@link CharacterGetCurrent} output

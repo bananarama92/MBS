@@ -104,10 +104,12 @@ declare function ExtendedItemSetProperty(C: Character, item: Item, previousPrope
  * @param {Item} item - The item in question
  * @param {T} Option - The selected type definition
  * @param {T} CurrentOption - The current type definition
+ * @param {boolean} permitExisting - Determines whether the validation should allow the new option and previous option
+ * to be identical. Defaults to false.
  * @returns {string|null} null if the player meets the option requirements. Otherwise a string message informing them
  * of the requirements they do not meet
  */
-declare function ExtendedItemRequirementCheckMessage<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, item: Item, Option: T, CurrentOption: T): string | null;
+declare function ExtendedItemRequirementCheckMessage<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, item: Item, Option: T, CurrentOption: T, permitExisting?: boolean): string | null;
 /**
  * Checks whether the player is able to select an option based on it's self-selection criteria (whether or not the
  * wearer may select the option)
@@ -139,9 +141,11 @@ declare function ExtendedItemCheckBuyGroups(Option: ExtendedItemOption): string 
  * @param {Item} Item - The extended item to validate
  * @param {T} newOption - The selected option
  * @param {T} previousOption - The currently applied option on the item
+ * @param {boolean} [permitExisting] - Determines whether the validation should allow the new option and previous option
+ * to be identical. Defaults to false.
  * @returns {string} - Returns a non-empty message string if the item failed validation, or an empty string otherwise
  */
-declare function ExtendedItemValidate<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, Item: Item, newOption: T, previousOption: T): string;
+declare function ExtendedItemValidate<T extends ExtendedItemOption>(data: ExtendedItemData<T>, C: Character, Item: Item, newOption: T, previousOption: T, permitExisting?: boolean): string;
 /**
  * Simple getter for the function prefix used for the passed extended item - used for calling standard
  * extended item functions (e.g. if the currently focused it is the hemp rope arm restraint, this will return
@@ -197,11 +201,11 @@ declare function ExtendedItemCreateNpcDialogFunction(Asset: Asset, FunctionPrefi
  * @param {string} Name - The name of the button and its pseudo-type
  * @param {number} X - The X coordinate of the button
  * @param {number} Y - The Y coordinate of the button
- * @param {boolean} drawImage — Denotes whether images should be shown for the specific item
+ * @param {string | null} imagePath — The pa
  * @param {boolean} IsSelected - Whether the button is selected or not
  * @returns {void} Nothing
  */
-declare function ExtendedItemCustomDraw(Name: string, X: number, Y: number, drawImage?: boolean, IsSelected?: boolean): void;
+declare function ExtendedItemCustomDraw(Name: string, X: number, Y: number, imagePath?: string | null, IsSelected?: boolean): void;
 /**
  * Helper click function for creating custom buttons, including extended item permission support.
  * @param {string} Name - The name of the button and its pseudo-type
