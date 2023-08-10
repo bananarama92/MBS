@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.18
+* Update type annotations for BC R95Beta1
+* Increase the maximum number of wheel of fortune item sets and commands to 32
+
 ## v0.6.17
 * Perform stricter validation of wheel of fortune embedded items
 * Fix the wheel of fortune preview character failing to equip items if the player is enclosed
