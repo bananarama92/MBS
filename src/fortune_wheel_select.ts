@@ -10,10 +10,11 @@ import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { MBSScreen } from "screen_abc";
 
 type PageStruct = {
-    readonly index: 0 | 1,
+    readonly index: 0 | 1 | 2 | 3,
     readonly screenType: typeof FWItemSetScreen | typeof FWCommandScreen,
     readonly name: string,
     readonly field: "FortuneWheelItemSets" | "FortuneWheelCommands",
+    readonly slice: readonly [start: number, stop: number],
 }
 
 export interface WheelStruct {
@@ -67,7 +68,9 @@ export class FWSelectScreen extends MBSScreen {
         X: 800,
         Y: 90,
     });
-    get wheelList() { return this.wheelStruct[this.pageSelector.value.field]; }
+    get wheelList() {
+        return this.wheelStruct[this.pageSelector.value.field].slice(...this.pageSelector.value.slice);
+    }
 
     constructor(parent: MBSScreen | null, wheelStruct: WheelStruct, character: Character) {
         super(parent);
@@ -77,12 +80,28 @@ export class FWSelectScreen extends MBSScreen {
                 screenType: FWItemSetScreen,
                 name: "item sets: page 0",
                 field: "FortuneWheelItemSets",
+                slice: [0, 16] as const,
             }),
             Object.freeze({
                 index: 1,
+                screenType: FWItemSetScreen,
+                name: "item sets: page 1",
+                field: "FortuneWheelItemSets",
+                slice: [16, 32] as const,
+            }),
+            Object.freeze({
+                index: 2,
                 screenType: FWCommandScreen,
                 name: "commands: page 0",
                 field: "FortuneWheelCommands",
+                slice: [0, 16] as const,
+            }),
+            Object.freeze({
+                index: 3,
+                screenType: FWCommandScreen,
+                name: "commands: page 1",
+                field: "FortuneWheelCommands",
+                slice: [16, 32] as const,
             }),
         ]);
         this.wheelStruct = wheelStruct;
@@ -101,7 +120,7 @@ export class FWSelectScreen extends MBSScreen {
         DrawButton(1720, 60, 90, 90, "", "White", "Icons/Next.png", this.pageSelector.next(false).name);
         DrawButton(1610, 60, 90, 90, "", "White", "Icons/Prev.png", this.pageSelector.previous(false).name);
 
-        const i_per_row = MBS_MAX_SETS / 2;
+        const i_per_row = 8;
         for (const [i, wheelSet] of this.wheelList.entries()) {
             const y = this.start.Y + (i % i_per_row) * this.spacing.Y;
             const dx = (i_per_row > i) ? 0 : this.spacing.X;
@@ -113,7 +132,7 @@ export class FWSelectScreen extends MBSScreen {
             }
             DrawCheckbox(this.start.X + dx, y, 64, 64, "", !(wheelSet?.hidden ?? true), checkboxDisabled);
             DrawButton(
-                this.start.X + 100 + dx, y, 600, 64, `${i}: ${name}`,
+                this.start.X + 100 + dx, y, 600, 64, `${i + this.pageSelector.value.slice[0]}: ${name}`,
                 buttonDisabled ? "Gray" : "White", "", "", buttonDisabled,
             );
         }
@@ -132,7 +151,7 @@ export class FWSelectScreen extends MBSScreen {
         }
 
         const isPlayer = this.character.IsPlayer();
-        const i_per_row = MBS_MAX_SETS / 2;
+        const i_per_row = 8;
         for (const [i, wheelSet] of this.wheelList.entries()) {
             const y = this.start.Y + (i % i_per_row) * this.spacing.Y;
             const dx = (i_per_row > i) ? 0 : this.spacing.X;
@@ -141,7 +160,9 @@ export class FWSelectScreen extends MBSScreen {
                 wheelSet.hidden = !wheelSet.hidden;
                 return null;
             } else if (MouseIn(this.start.X + 100 + dx, y, 600, 64) && !buttonDisabled) {
-                const subScreen = new this.pageSelector.value.screenType(this, <any>this.wheelList, i, this.character);
+                const subScreen: FWItemSetScreen | FWCommandScreen = new this.pageSelector.value.screenType(
+                    this, <any>this.wheelStruct[this.pageSelector.value.field], i + this.pageSelector.value.slice[0], this.character,
+                );
                 this.children.set(subScreen.screen, subScreen);
                 subScreen.load();
                 return subScreen;
