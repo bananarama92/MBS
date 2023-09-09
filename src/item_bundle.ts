@@ -112,6 +112,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
     for (const [name, validate] of entries(propMapping)) {
         const value: any = properties[name];
         if (value != null && validate(value, asset)) {
+            // @ts-ignore
             ret[name] = value;
         }
     }
