@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.19
+* Add support for BC R96Beta1
+
 ## v0.6.18
 * Update type annotations for BC R95Beta1
 * Increase the maximum number of wheel of fortune item sets and commands to 32
