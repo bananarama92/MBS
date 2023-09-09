@@ -76,15 +76,18 @@ declare function GameClubCardLoadStatus(): void;
 /**
  * Creates a bundle of cards in a string to push to the server.
  * @param {ClubCard[]} Cards - An array of c
+ * @param {boolean} IncludeTime - If we must include the time property
  * @returns {string} - A string with all the cards
  */
-declare function GameClubCardDoBundle(Cards: ClubCard[]): string;
+declare function GameClubCardDoBundle(Cards: ClubCard[], IncludeTime?: boolean): string;
 /**
  * Processes the club card game data received from the server
  * @param {string} Bundle - An array of c
+ * @param {boolean} IncludeTime - If we must include the time property
+ * @param {string} Location - The location of the card
  * @returns {ClubCard[]} - A string with all the cards
  */
-declare function GameClubCardUndoBundle(Bundle: string): ClubCard[];
+declare function GameClubCardUndoBundle(Bundle: string, IncludeTime?: boolean, Location?: string): ClubCard[];
 /**
  * Loads the full server bundle for a player
  * @param {ClubCardPlayer} CCPlayer - The club card player

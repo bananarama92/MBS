@@ -54,6 +54,11 @@ declare function LoginValidCollar(): void;
  */
 declare function LoginMistressItems(): void;
 /**
+ * Give the matching RewardMemberNumber Club Card to the player
+ * @returns {void} Nothing
+ */
+declare function LoginClubCard(): void;
+/**
  * Adds or confiscates pony equipment from the player. Only players that are ponies or trainers can have the pony
  * equipment.
  * @returns {void} Nothing

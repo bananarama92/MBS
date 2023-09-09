@@ -22,16 +22,17 @@ declare function CharacterDialogSubstitution(C: Character): void;
  * Builds the dialog objects from the character CSV file
  * @param {Character} C - Character for which to build the dialog
  * @param {readonly string[][]} CSV - Content of the CSV file
+ * @param {string} functionPrefix - A prefix that will be added to functions that aren't part of the Dialog or ChatRoom "namespace"
  * @returns {void} - Nothing
  */
-declare function CharacterBuildDialog(C: Character, CSV: readonly string[][]): void;
+declare function CharacterBuildDialog(C: Character, CSV: readonly string[][], functionPrefix: string): void;
 /**
  * Loads the content of a CSV file to build the character dialog. Can override the current screen.
  * @param {Character} C - Character for which to build the dialog objects
- * @param {string} [Override] - Optional: Path to the specific CSV to build the character dialog with
+ * @param {DialogInfo} [info]
  * @returns {void} - Nothing
  */
-declare function CharacterLoadCSVDialog(C: Character, Override?: string): void;
+declare function CharacterLoadCSVDialog(C: Character, info?: DialogInfo): void;
 /**
  * Sets the clothes based on a character archetype
  * @param {Character} C - Character to set the clothes for

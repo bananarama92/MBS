@@ -318,6 +318,14 @@ declare function CommonGetServer(): string;
  */
 declare function CommonStringSubstitute(msg: string, substitutions: CommonSubtituteSubstitution[]): string;
 /**
+ * Returns a nice version of the passed strings
+ *
+ * This turns ["this", "this", "that"] into "this, this, and that" using appropriate localization
+ *
+ * @param {string[]} strings The strings to join
+ */
+declare function CommonArrayJoinPretty(strings: string[]): string;
+/**
  * Returns a titlecased version of the given string.
  * @param {string} str
  * @returns {string}
@@ -420,6 +428,13 @@ declare function CommonOmit<KeyType_1 extends keyof RecordType, RecordType exten
  * @returns {Generator<[index: number, value: T], void>}
  */
 declare function CommonEnumerate<T>(iterable: Iterable<T>, start?: number, step?: number): Generator<[index: number, value: T], void, any>;
+/**
+ * Return a value clamped to a minimum and maximum
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ */
+declare function CommonClamp(value: number, min: number, max: number): number;
 /** @type {PlayerCharacter} */
 declare var Player: PlayerCharacter;
 /** @type {number|string} */

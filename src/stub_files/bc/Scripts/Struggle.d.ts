@@ -299,6 +299,7 @@ declare var StruggleProgressChallenge: number;
 declare var StruggleLoosenSpeed: number;
 declare var StruggleLoosenAngle: number;
 declare var StruggleLoosenHoleAngle: number;
+declare var StruggleExpressionStore: any;
 /**
  * The struggle minigame progress
  *

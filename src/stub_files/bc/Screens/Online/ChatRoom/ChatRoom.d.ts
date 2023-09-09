@@ -894,6 +894,11 @@ declare function ChatRoomListUpdate(list: number[], adding: boolean, memberNumbe
  */
 declare function ChatRoomAllowItem(data: object): void;
 /**
+ * Opens the appearance editor for the given character
+ * @param {Character} C
+ */
+declare function ChatRoomAppearanceLoadCharacter(C: Character): void;
+/**
  * Triggered when the player wants to change another player's outfit.
  * @returns {void} - Nothing
  */

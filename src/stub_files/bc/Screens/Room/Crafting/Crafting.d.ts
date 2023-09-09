@@ -76,6 +76,11 @@ declare function CraftingDecompressServerData(Data: string | any[]): CraftingIte
  */
 declare function CraftingLoadServer(Packet: string): void;
 /**
+ * Advance to the next crafting reordering mode, or set the mode to the specified value.
+ * @param {CraftingReorderType} newmode - The mode to set.  If null, advance to next mode.
+ */
+declare function CraftingReorderModeSet(newmode?: CraftingReorderType): void;
+/**
  * Handles clicks in the crafting room.
  * @returns {void} - Nothing
  */
@@ -161,6 +166,12 @@ declare let CraftingNakedPreview: boolean;
 declare let CraftingReturnToChatroom: boolean;
 /** Pagination offset used for the `Priority` {@link CraftingMode}. */
 declare let CraftingOverridePriorityOffset: number;
+/** List of item indices collected for swapping.
+ * @type {number[]}
+ */
+declare let CraftingReorderList: number[];
+/** @type {CraftingReorderType} */
+declare let CraftingReorderMode: CraftingReorderType;
 /**
  * @type {null | TextCache}
  */

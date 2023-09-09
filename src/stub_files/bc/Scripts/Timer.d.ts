@@ -29,6 +29,15 @@ declare function TimerInventoryRemove(): void;
  */
 declare function TimerInventoryRemoveSet(C: Character, AssetGroup: AssetGroupName, Timer: number): void;
 /**
+ * Sets a remove timer in seconds for expressions, adds to Expression Queue.
+ * @param {Character} C - Character for which we are removing an item
+ * @param {ExpressionGroupName} ExpressionGroup - Group targeted by the removal
+ * @param {number} Timer - Seconds it takes to remove the item
+ * @param {ExpressionName} Expression - Expression to queue. Defaults to null if not specified.
+ * @returns {void} - Nothing
+ */
+declare function TimerExpressionSet(C: Character, ExpressionGroup: ExpressionGroupName, Timer: number, Expression?: ExpressionName): void;
+/**
  * Random trigger for the NPC owner in a private room. If possible, when triggered it will beep the player anywhere in the club, the player has 2 minutes to get back to her
  * @returns {void} - Nothing
  */

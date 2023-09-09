@@ -115,6 +115,8 @@ type DialogStruggleActionType = "ActionUse" | "ActionSwap" | "ActionRemove" | "A
 
 type CharacterType = "online" | "npc" | "simple";
 
+type CharacterPronouns = "SheHer" | "HeHim";
+
 type VibratorIntensity = -1 | 0 | 1 | 2 | 3;
 
 type VibratorModeState = "Default" | "Deny" | "Orgasm" | "Rest";
@@ -846,7 +848,7 @@ interface IChatRoomMessageMetadata {
 	/** The {@link CraftingItem.Name} of the assets referenced in the message (if applicable) */
 	CraftingNames?: Record<string, string>;
 	/** The groups referenced in the message */
-	Groups?: Partial<Record<AssetGroupName, AssetGroup>>;
+	Groups?: Partial<Record<AssetGroupName, AssetGroup[]>>;
 	/** How intense the shock should be */
 	ShockIntensity?: number;
 	ActivityCounter?: number;
@@ -1390,6 +1392,8 @@ interface Skill {
 	Level: number;
 	Progress: number;
 	Ratio?: number;
+	ModifierLevel?: number;
+	ModifierTimeout?: number;
 }
 
 type ReputationType =
@@ -1487,11 +1491,21 @@ interface DialogLine {
 	Trait: string;
 }
 
+interface DialogInfo {
+	module: ModuleType;
+	screen: string;
+	name: string;
+}
+
 interface Character {
 	ID: number;
 	/** Only on `Player` */
 	OnlineID?: string;
 	Type: CharacterType;
+	/**
+	 * The character's loaded dialog info
+	 */
+	DialogInfo?: DialogInfo;
 	Name: string;
 	Nickname?: string;
 	AssetFamily: IAssetFamily;
@@ -1612,7 +1626,8 @@ interface Character {
 	UnregisterHook: (hookName: CharacterHook, hookInstance: string) => boolean;
 	RunHooks: (hookName: CharacterHook) => void;
 	HeightRatioProportion?: number;
-	GetGenders: () => ("M" | "F")[];
+	GetGenders: () => ("F" | "M")[];
+	GetPronouns: () => CharacterPronouns;
 	HasPenis: () => boolean;
 	HasVagina: () => boolean;
 	IsFlatChested: () => boolean;
@@ -1635,7 +1650,7 @@ interface Character {
 	BlackList: number[];
 	RunScripts?: boolean;
 	HasScriptedAssets?: boolean;
-	Cage?: true | null;
+	Cage?: boolean;
 	Difficulty?: {
 		Level: number;
 		LastChange?: number;
@@ -2579,6 +2594,22 @@ interface AssetDefinitionProperties {
 	ExpressionTimer?: number;
 
 	/**
+	 * The expression to change to after timer expires.
+	 */
+	NextExpression?: ExpressionName;
+	
+	/**
+	 * Storage for expression reversion.
+	 */
+	StoredExpression?: ExpressionName;
+
+	/** 
+	 * Expression queue array
+	 */
+
+	ExpressionQueue?: ExpressionQueueItem[]
+
+	/**
 	 * The asset's draw opacity
 	 * @see {@link Asset.Opacity}
 	 */
@@ -2595,6 +2626,16 @@ interface AssetDefinitionProperties {
 	 * @see {@link Asset.Fetish}
 	 */
 	Fetish?: FetishName[];
+}
+
+/**
+ * Properties for Expression Queue item
+ */
+
+interface ExpressionQueueItem {
+	Time?: number;
+
+	Expression?: ExpressionName;
 }
 
 /**
@@ -3475,6 +3516,9 @@ type CraftingMode = (
 	| "OverridePriority"
 );
 
+type CraftingReorderType = "None" | "Select" | "Place";
+
+
 /**
  * A struct with an items crafting-related information.
  * @see {@link Item.Craft}
@@ -3839,6 +3883,7 @@ interface ClubCard {
 	Text?: string;
 	Prerequisite?: string;
 	Reward?: string;
+	RewardMemberNumber?: number;
 	MoneyPerTurn?: number;
 	FamePerTurn?: number;
 	RequiredLevel?: number;

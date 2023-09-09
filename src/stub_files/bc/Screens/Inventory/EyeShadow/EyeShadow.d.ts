@@ -9,6 +9,7 @@ declare var InventoryEyeShadowSuperstarSolidInit: typeof InventoryClothFrilledSh
 declare var InventoryEyeShadowTanukiInit: typeof InventoryClothFrilledShirtInit;
 declare var InventoryEyeShadowUndershadowedBlurredInit: typeof InventoryClothFrilledShirtInit;
 declare var InventoryEyeShadowUndershadowedSolidInit: typeof InventoryClothFrilledShirtInit;
+declare var InventoryEyeShadowWingsInit: typeof InventoryClothFrilledShirtInit;
 declare var InventoryEyeShadowCatEyeLoad: typeof InventoryClothFrilledShirtLoad;
 declare var InventoryEyeShadowCatEye2Load: typeof InventoryClothFrilledShirtLoad;
 declare var InventoryEyeShadowLargeBlurredLoad: typeof InventoryClothFrilledShirtLoad;
@@ -20,6 +21,7 @@ declare var InventoryEyeShadowSuperstarSolidLoad: typeof InventoryClothFrilledSh
 declare var InventoryEyeShadowTanukiLoad: typeof InventoryClothFrilledShirtLoad;
 declare var InventoryEyeShadowUndershadowedBlurredLoad: typeof InventoryClothFrilledShirtLoad;
 declare var InventoryEyeShadowUndershadowedSolidLoad: typeof InventoryClothFrilledShirtLoad;
+declare var InventoryEyeShadowWingsLoad: typeof InventoryClothFrilledShirtLoad;
 declare var InventoryEyeShadowCatEyeDraw: typeof InventoryClothFrilledShirtDraw;
 declare var InventoryEyeShadowCatEye2Draw: typeof InventoryClothFrilledShirtDraw;
 declare var InventoryEyeShadowLargeBlurredDraw: typeof InventoryClothFrilledShirtDraw;
@@ -31,6 +33,7 @@ declare var InventoryEyeShadowSuperstarSolidDraw: typeof InventoryClothFrilledSh
 declare var InventoryEyeShadowTanukiDraw: typeof InventoryClothFrilledShirtDraw;
 declare var InventoryEyeShadowUndershadowedBlurredDraw: typeof InventoryClothFrilledShirtDraw;
 declare var InventoryEyeShadowUndershadowedSolidDraw: typeof InventoryClothFrilledShirtDraw;
+declare var InventoryEyeShadowWingsDraw: typeof InventoryClothFrilledShirtDraw;
 declare var InventoryEyeShadowCatEyeClick: typeof InventoryClothFrilledShirtClick;
 declare var InventoryEyeShadowCatEye2Click: typeof InventoryClothFrilledShirtClick;
 declare var InventoryEyeShadowLargeBlurredClick: typeof InventoryClothFrilledShirtClick;
@@ -42,6 +45,7 @@ declare var InventoryEyeShadowSuperstarSolidClick: typeof InventoryClothFrilledS
 declare var InventoryEyeShadowTanukiClick: typeof InventoryClothFrilledShirtClick;
 declare var InventoryEyeShadowUndershadowedBlurredClick: typeof InventoryClothFrilledShirtClick;
 declare var InventoryEyeShadowUndershadowedSolidClick: typeof InventoryClothFrilledShirtClick;
+declare var InventoryEyeShadowWingsClick: typeof InventoryClothFrilledShirtClick;
 declare var InventoryEyeShadowCatEyeExit: typeof InventoryClothFrilledShirtExit;
 declare var InventoryEyeShadowCatEye2Exit: typeof InventoryClothFrilledShirtExit;
 declare var InventoryEyeShadowLargeBlurredExit: typeof InventoryClothFrilledShirtExit;
@@ -53,3 +57,4 @@ declare var InventoryEyeShadowSuperstarSolidExit: typeof InventoryClothFrilledSh
 declare var InventoryEyeShadowTanukiExit: typeof InventoryClothFrilledShirtExit;
 declare var InventoryEyeShadowUndershadowedBlurredExit: typeof InventoryClothFrilledShirtExit;
 declare var InventoryEyeShadowUndershadowedSolidExit: typeof InventoryClothFrilledShirtExit;
+declare var InventoryEyeShadowWingsExit: typeof InventoryClothFrilledShirtExit;

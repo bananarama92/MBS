@@ -233,6 +233,10 @@ declare function AppearanceMenuClick(C: Character): void;
  */
 declare function AppearanceExit(): void;
 /**
+ * Common cleanup that must happen when the appearance editor closes
+ */
+declare function CharacterAppearanceClose(): void;
+/**
  * Restore the characters appearance backup, if the exit button is clicked
  * @param {Character} C - The character, whose appearance backup should be used
  * @returns {void} - Nothing
@@ -253,9 +257,12 @@ declare function CharacterAppearanceCopy(FromC: Character, ToC: Character): void
 /**
  * Loads the appearance editing screen for a character
  * @param {Character} C - The character for whom the appearance screen should be loaded
+ * @param {(result: boolean) => void} [resultCallback] - A callback executed when the appearance editor closes.
+ *  If not specified, it will change back to the previous screen automatically, otherwise the caller is
+ *  reponsible for screen changes, and `result` will be true if the appearance change was made, false otherwise.
  * @returns {void} - nothing
  */
-declare function CharacterAppearanceLoadCharacter(C: Character): void;
+declare function CharacterAppearanceLoadCharacter(C: Character, resultCallback?: (result: boolean) => void): void;
 /**
  * Load wardrobe menu in appearance selection screen
  * @param {Character} C - The character whose wardrobe should be loaded
@@ -352,6 +359,8 @@ declare var CharacterAppearanceColorPickerBackup: string;
 declare var CharacterAppearanceColorPickerRefreshTimer: any;
 /** @type {Character | null} */
 declare var CharacterAppearanceSelection: Character | null;
+/** @type {(accept: boolean) => void} */
+declare var CharacterAppearanceResultCallback: (accept: boolean) => void;
 declare var CharacterAppearanceReturnRoom: string;
 /** @type {ModuleType} */
 declare var CharacterAppearanceReturnModule: ModuleType;

@@ -13,19 +13,19 @@ declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: Exte
 declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
 declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
 declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
 /**
  * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
  */
 /** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
 declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
 declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
+/**
+ * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ */
+/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
 /** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
 declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
 declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
-type ShockUnitPersistentData = {
-    ChangeTime?: number;
-    DisplayCount?: number;
-    LastTriggerCount?: number;
-};
+/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
