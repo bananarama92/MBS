@@ -14,5 +14,5 @@ A repo with a number of Bondage Club-related additions, including:
 This addon can either be installed using Tampermonkey by clicking on the [src/loader.user.js](https://github.com/bananarama92/MBS/raw/main/src/loader.user.js) link or, alternatively, by passing assigning (and activating) the following link to a bookmark or directly using it in the address bar:
 
 ```js
-javascript:(()=>{fetch('https://bananarama92.github.io/MBS/main/mbs.js').then(r=>r.text()).then(r=>eval(r));})();
+javascript:(()=>{fetch(`https://bananarama92.github.io/MBS/main/mbs.js?_=${Date.now()}`).then(r=>r.text()).then(r=>eval(r));})();
 ```
