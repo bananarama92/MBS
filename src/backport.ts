@@ -8,8 +8,8 @@ export const backportIDs: Set<number> = new Set();
 
 waitFor(settingsMBSLoaded).then(() => {
     if (backportIDs.size) {
-        console.log("MBS: Initializing R95 bug fix backports", backportIDs);
+        console.log("MBS: Initializing R97 bug fix backports", backportIDs);
     } else {
-        console.log("MBS: No R95 bug fix backports");
+        console.log("MBS: No R97 bug fix backports");
     }
 });

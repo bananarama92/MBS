@@ -270,15 +270,6 @@ function blockedByEnclose(character: Character): boolean {
     return (item == null) ? false : !canUnlock(item, character);
 }
 
-function skillGetWithRatio(character: Character, skillType: SkillType): number {
-    if (GameVersion === "R95") {
-        // @ts-expect-error
-        return SkillGetWithRatio(skillType);
-    } else {
-        return SkillGetWithRatio(character, skillType);
-    }
-}
-
 /**
  * Equip the character with all items from the passed fortune wheel item list.
  * @param name The name of the wheel of fortune item list
@@ -372,7 +363,7 @@ export function fortuneWheelEquip(
         const color = Color ?? asset.DefaultColor;
         const colorCopy = isArray(color) ? [...color] : color;
         CharacterAppearanceSetItem(
-            character, Group, asset, colorCopy, skillGetWithRatio(character, "Bondage"),
+            character, Group, asset, colorCopy, SkillGetWithRatio(character, "Bondage"),
             character.MemberNumber, false,
         );
         const newItem = InventoryGet(character, Group);
