@@ -1,31 +1,32 @@
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
+/** @type {ExtendedItemCallbacks.Load} */
+declare function InventoryItemPelvisForbiddenChastityBelts1Load(): void;
+/** @type {ExtendedItemCallbacks.Draw} */
+declare function InventoryItemPelvisForbiddenChastityBelts1Draw(): void;
+/** @type {ExtendedItemCallbacks.Click} */
+declare function InventoryItemPelvisForbiddenChastityBelts1Click(): void;
+/** @type {ExtendedItemCallbacks.Exit} */
+declare function InventoryItemPelvisForbiddenChastityBelts1Exit(): void;
+declare function InventoryItemPelvisForbiddenChastityBeltResetCount(): void;
 /**
- * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ * @typedef {{ UpdateTime?: number, CheckTime?: number, LastMessageLen?: number, LastTriggerCount?: number, DisplayCount?: number }} ForbiddenChastityBeltPersistentData
  */
-/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw<ForbiddenChastityBeltPersistentData>} */
+declare function AssetsItemPelvisForbiddenChastityBeltBeforeDraw(data: DynamicDrawingData<ForbiddenChastityBeltPersistentData>): DynamicBeforeDrawOverrides;
 /**
- * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ * @param {Item} Item
  */
-/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
-/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
+declare function InventoryForbiddenChastityBeltCheckPunish(Item: Item): "" | "Struggle" | "Orgasm" | "StandUp";
+/**
+ * @param {DynamicScriptCallbackData<FuturisticChastityBeltPersistentData>} data
+ * @param {number} LastTime
+ */
+declare function AssetsItemPelvisForbiddenChastityBeltUpdate(data: DynamicScriptCallbackData<FuturisticChastityBeltPersistentData>, LastTime: number): void;
+/** @type {ExtendedItemCallbacks.ScriptDraw<ForbiddenChastityBeltPersistentData>} */
+declare function AssetsItemPelvisForbiddenChastityBeltScriptDraw(data: DynamicScriptCallbackData<ForbiddenChastityBeltPersistentData>): void;
+type ForbiddenChastityBeltPersistentData = {
+    UpdateTime?: number;
+    CheckTime?: number;
+    LastMessageLen?: number;
+    LastTriggerCount?: number;
+    DisplayCount?: number;
+};

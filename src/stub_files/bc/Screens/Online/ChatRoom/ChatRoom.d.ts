@@ -1329,6 +1329,10 @@ declare namespace ChatRoomResizeManager {
     function ChatRoomResizeEventsEnd(): void;
 }
 declare let ChatRoomStatusDeadKeys: string[];
+/**
+ * Regex used to split out a string at word boundaries, handling chinese characters properly.
+ */
+declare const mentionNameSplitter: RegExp;
 /** @type {ChatRoomMessageExtractor[]} */
 declare var ChatRoomMessageExtractors: ChatRoomMessageExtractor[];
 /**

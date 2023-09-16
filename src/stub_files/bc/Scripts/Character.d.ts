@@ -298,7 +298,7 @@ declare function CharacterSetActivePose(C: Character, NewPose: null | AssetPoseN
  * @param {string|string[]} [Color] - Optional: color of the expression to set
  * @returns {void} - Nothing
  */
-declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[]): void;
+declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[], fromQueue?: boolean): void;
 /**
  * Resets the character's facial expression to the default
  * @param {Character} C - Character for which to reset the expression of

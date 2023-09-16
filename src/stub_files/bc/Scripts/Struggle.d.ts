@@ -86,13 +86,13 @@ declare function StruggleMinigameIsRunning(): boolean;
  * This function initializes the common state and calls the requested minigame
  * setup function.
  *
- * @param {Character} C
- * @param {StruggleKnownMinigames} MiniGame
- * @param {Item} PrevItem
- * @param {Item} NextItem
- * @param {StruggleCompletionCallback} Completion
+ * @param {Character} C - The character currently doing the struggling, either on itself (ie. as Player), or on someone else.
+ * @param {StruggleKnownMinigames} MiniGame - The minigame to start
+ * @param {Item | null} PrevItem - The item currently being present on the character, or null if none
+ * @param {Item} NextItem - The item currently being added on the character, or null if it's a removal
+ * @param {StruggleCompletionCallback} Completion - A callback that will be called when the minigame ends
  */
-declare function StruggleMinigameStart(C: Character, MiniGame: StruggleKnownMinigames, PrevItem: Item, NextItem: Item, Completion: StruggleCompletionCallback): void;
+declare function StruggleMinigameStart(C: Character, MiniGame: StruggleKnownMinigames, PrevItem: Item | null, NextItem: Item, Completion: StruggleCompletionCallback): void;
 /**
  * Stop the struggle minigame and reset it so it can be reentered.
  *
@@ -299,7 +299,11 @@ declare var StruggleProgressChallenge: number;
 declare var StruggleLoosenSpeed: number;
 declare var StruggleLoosenAngle: number;
 declare var StruggleLoosenHoleAngle: number;
-declare var StruggleExpressionStore: any;
+/**
+ * Character expression at the beginning of the minigame; player-only
+ * @type {Partial<Record<ExpressionGroupName, ExpressionName>> | undefined}
+ */
+declare var StruggleExpressionStore: Partial<Record<ExpressionGroupName, ExpressionName>> | undefined;
 /**
  * The struggle minigame progress
  *
@@ -346,3 +350,8 @@ declare var StruggleProgressDexMax: number;
 declare var StruggleProgressDexDirectionRight: boolean;
 /** @type {Record<string, StruggleMinigame>} */
 declare const StruggleMinigames: Record<string, StruggleMinigame>;
+/**
+ * List of expressions to go through while struggling, keyed by duration
+ * @type {Record<number, Partial<Record<ExpressionGroupName, ExpressionName>>>}
+ */
+declare const StruggleFacesList: Record<number, Partial<Record<ExpressionGroupName, ExpressionName>>>;

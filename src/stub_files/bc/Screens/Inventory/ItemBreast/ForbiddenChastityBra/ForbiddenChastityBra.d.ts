@@ -1,31 +1,32 @@
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Draw<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitDrawHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-/** @type {ExtendedItemScriptHookCallbacks.Click<ExtendedItemData>} */
-declare function InventoryItemNeckAccessoriesCollarShockUnitClickHook(Data: ExtendedItemData<any>, OriginalFunction: () => void): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
-declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
+/** @type {ExtendedItemCallbacks.Load} */
+declare function InventoryItemBreastForbiddenChastityBras1Load(): void;
+/** @type {ExtendedItemCallbacks.Draw} */
+declare function InventoryItemBreastForbiddenChastityBras1Draw(): void;
+/** @type {ExtendedItemCallbacks.Click} */
+declare function InventoryItemBreastForbiddenChastityBras1Click(): void;
+/** @type {ExtendedItemCallbacks.Exit} */
+declare function InventoryItemBreastForbiddenChastityBras1Exit(): void;
+declare function InventoryItemBreastForbiddenChastityBraResetCount(): void;
 /**
- * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ * @typedef {{ UpdateTime?: number, CheckTime?: number, LastMessageLen?: number, LastTriggerCount?: number, DisplayCount?: number }} ForbiddenChastityBraPersistentData
  */
-/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemCallbacks.BeforeDraw<ForbiddenChastityBraPersistentData>} */
+declare function AssetsItemBreastForbiddenChastityBraBeforeDraw(data: DynamicDrawingData<ForbiddenChastityBraPersistentData>): DynamicBeforeDrawOverrides;
 /**
- * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
+ * @param {Item} Item
  */
-/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
-/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
+declare function InventoryForbiddenChastityBraCheckPunish(Item: Item): "" | "Struggle" | "Orgasm" | "StandUp";
+/**
+ * @param {DynamicScriptCallbackData<ForbiddenChastityBraPersistentData>} data
+ * @param {number} LastTime
+ */
+declare function AssetsItemBreastForbiddenChastityBraUpdate(data: DynamicScriptCallbackData<ForbiddenChastityBraPersistentData>, LastTime: number): void;
+/** @type {ExtendedItemCallbacks.ScriptDraw<ForbiddenChastityBraPersistentData>} */
+declare function AssetsItemBreastForbiddenChastityBraScriptDraw(data: DynamicScriptCallbackData<ForbiddenChastityBraPersistentData>): void;
+type ForbiddenChastityBraPersistentData = {
+    UpdateTime?: number;
+    CheckTime?: number;
+    LastMessageLen?: number;
+    LastTriggerCount?: number;
+    DisplayCount?: number;
+};
