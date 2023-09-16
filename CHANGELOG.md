@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.6.20
+* Drop support for BC R95
+* Update the MBS URL's in the bookmark & *.user.js files with a cache bust.
+* Backport two R97 bug fixes:
+    - [BondageProjects/Bondage-College#4478](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4478): Fix a bunch issues related to the forbidden chastity belt and bra
+    - [BondageProjects/Bondage-College#4475](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4475): Fix the crafting validation sometimes looking up the wrong asset
+
 ## v0.6.19
 * Add support for BC R96Beta1
 
