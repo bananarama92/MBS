@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.21
+* Add the option to forgo any locks when equipping fortune wheel item sets
+
 ## v0.6.20
 * Drop support for BC R95
 * Update the MBS URL's in the bookmark & *.user.js files with a cache bust.
