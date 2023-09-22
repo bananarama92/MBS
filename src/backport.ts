@@ -13,7 +13,11 @@ function fixAssetData(assetName: string) {
     }
 }
 
-function fixExtendedItemData(data: ModularItemData) {
+function fixExtendedItemData(data: undefined | ModularItemData) {
+    if (data === undefined) {
+        return;
+    }
+
     if (["ForbiddenChastityBra", "ForbiddenChastityBelt"].includes(data.asset.Name)) {
         if (!data.chatTags.includes(CommonChatTags.ASSET_NAME)) {
             data.chatTags.push(CommonChatTags.ASSET_NAME);
@@ -58,22 +62,30 @@ waitFor(settingsMBSLoaded).then(() => {
         Object.values(extendedItemData).forEach(fixExtendedItemData);
 
         // Fix the extended item scripthooks
-        MBS_MOD_API.patchFunction("InventoryItemBreastForbiddenChastityBras1Click", {
-            "const C = CurrentCharacter;":
-                "const C = CharacterGetCurrent();",
-        });
-        MBS_MOD_API.patchFunction("InventoryItemPelvisForbiddenChastityBelts1Click", {
-            "const C = CurrentCharacter;":
-                "const C = CharacterGetCurrent();",
-        });
-        MBS_MOD_API.patchFunction("AssetsItemBreastForbiddenChastityBraScriptDraw", {
-            "AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime);":
-                "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime); }",
-        });
-        MBS_MOD_API.patchFunction("AssetsItemPelvisForbiddenChastityBeltScriptDraw", {
-            "AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime);":
-                "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime); }",
-        });
+        if (typeof InventoryItemBreastForbiddenChastityBras1Click == "function") {
+            MBS_MOD_API.patchFunction("InventoryItemBreastForbiddenChastityBras1Click", {
+                "const C = CurrentCharacter;":
+                    "const C = CharacterGetCurrent();",
+            });
+        }
+        if (typeof InventoryItemPelvisForbiddenChastityBelts1Click == "function") {
+            MBS_MOD_API.patchFunction("InventoryItemPelvisForbiddenChastityBelts1Click", {
+                "const C = CurrentCharacter;":
+                    "const C = CharacterGetCurrent();",
+            });
+        }
+        if (typeof AssetsItemBreastForbiddenChastityBraScriptDraw == "function") {
+            MBS_MOD_API.patchFunction("AssetsItemBreastForbiddenChastityBraScriptDraw", {
+                "AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime);":
+                    "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime); }",
+            });
+        }
+        if (typeof AssetsItemPelvisForbiddenChastityBeltScriptDraw == "function") {
+            MBS_MOD_API.patchFunction("AssetsItemPelvisForbiddenChastityBeltScriptDraw", {
+                "AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime);":
+                    "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime); }",
+            });
+        }
     }
     if (backportIDs.size) {
         console.log("MBS: Initializing R97 bug fix backports", backportIDs);
