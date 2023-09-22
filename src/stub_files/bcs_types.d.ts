@@ -33,7 +33,7 @@ interface FWCommandOption extends FWObjectOption {
     readonly Parent: import("common_bc").FWCommand,
 }
 
-interface FWFlagBase<Type extends AssetLockType> {
+interface FWFlagBase<Type extends null | AssetLockType> {
     /** The lock type associated with the flag */
     readonly type: Type,
     /** Whether the user has enabled the flag or not */
@@ -46,8 +46,14 @@ interface FWFlagTimerPasswordPadlock extends FWFlagBase<"TimerPasswordPadlock"> 
     /** The lock duration in seconds; value must fall in the `[60, 240 * 60]` interval */
     time: number,
 }
+type FWFlagNoLock = FWFlagBase<null>;
 
-type FWFlag = FWFlagExclusivePadlock | FWFlagTimerPasswordPadlock | FWFlagHighSecurityPadlock;
+type FWFlag = (
+    FWFlagExclusivePadlock
+    | FWFlagTimerPasswordPadlock
+    | FWFlagHighSecurityPadlock
+    | FWFlagNoLock
+);
 
 /**
  * An enum with various strip levels for {@link characterStrip}.

@@ -28,6 +28,7 @@ export const DEFAULT_FLAGS: readonly Readonly<FWFlag>[] = Object.freeze([
     Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 60, enabled: true }),
     Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 240, enabled: false }),
     Object.freeze({ type: "HighSecurityPadlock", enabled: false }),
+    Object.freeze({ type: null, enabled: false }),
 ]);
 
 /**
@@ -114,6 +115,8 @@ export function applyFlag(flag: FWFlag, item: Item, character: Character): void 
                 item.Craft.Property = "Puzzling";
             }
             equipHighSecLock(item, character);
+            break;
+        case null:
             break;
         default:
             throw new Error(`Unknown flag type: ${flagType}`, flag);

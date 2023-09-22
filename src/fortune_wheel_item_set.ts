@@ -174,8 +174,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 requiresPlayer: true,
             },
             ...this.settings.flags.map((flag, i): ClickAction => {
-                const y = 550 + (i % 3) * 100;
-                const x = (i < 3) ? 1200 : 1550;
+                const y = 550 + (i % 4) * 100;
+                const x = (i < 4) ? 1200 : 1550;
                 return {
                     coords: [x, y, 64, 64],
                     next: () => {
@@ -312,8 +312,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         DrawText("Clothing strip level:", 750, 500 + 16, "Black");
         DrawText("Clothing equip level:", 750, 650 + 16, "Black");
         for (const [i, flag] of this.settings.flags.entries()) {
-            const y = 550 + (i % 3) * 100;
-            const x = (i < 3) ? 1200 : 1550;
+            const y = 550 + (i % 4) * 100;
+            const x = (i < 4) ? 1200 : 1550;
             switch (flag.type) {
                 case "ExclusivePadlock":
                     DrawText("Exclusive", x + 75, y + 32, "Black");
@@ -323,6 +323,9 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     break;
                 case "TimerPasswordPadlock":
                     ElementPosition(`MBSFlag${i}`, x + 200, y + 29, 250, 60);
+                    break;
+                case null:
+                    DrawText("No Lock", x + 75, y + 32, "Black");
                     break;
             }
             DrawCheckbox(x, y, 64, 64, "", flag.enabled, !isPlayer);

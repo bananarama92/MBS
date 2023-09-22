@@ -527,6 +527,7 @@ function validateFlags(flags: readonly Readonly<FWFlag>[]): FWFlag[] {
                 return { type: flag.type, time: flag.time, enabled };
             case "ExclusivePadlock":
             case "HighSecurityPadlock":
+            case null:
                 return { type: flag.type, enabled };
             default:
                 return { ...ref_flag };
@@ -742,6 +743,12 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
                 case "TimerPasswordPadlock":
                     Description += `: ${Math.floor(flag.time / 60)} minutes`;
                     Default = i !== 4;
+                    break;
+                case "ExclusivePadlock":
+                    Description += ": Exclusive";
+                    break;
+                case null:
+                    Default = false;
                     break;
             }
             return {
