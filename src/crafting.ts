@@ -34,7 +34,7 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
 
 /**
  * Load crafting items from the MBS cache.
- * @param character The characer in question
+ * @param character The character in question
  * @param craftingCache The crafting cache
  */
 function loadCraftingCache(character: Character, craftingCache: string = ""): void {
