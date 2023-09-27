@@ -483,6 +483,9 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
             pushMBSSettings([SettingsType.SHARED]);
         }
     }
+
+    /** Return a list of wheel of fortune IDs in the form of length-1 strings */
+    abstract getIDs(): string[];
 }
 
 /** {@link FWItemSet} constructor argument types in tuple form */
@@ -699,13 +702,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         };
     }
 
-    /**
-     * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
-     * @returns A list of wheel of fortune options
-     */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
-        const flags = this.flags.filter(flag => flag.enabled);
+    getIDs(): string[] {
         const flagsNumeric = [];
         for (const [i, flag] of this.flags.entries()) {
             if (flag.enabled) {
@@ -734,7 +731,17 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             }
         }
 
-        const IDs = generateIDs(start, flagsNumeric);
+        return generateIDs(start, flagsNumeric);
+    }
+
+    /**
+     * Convert this instance into a list of {@link FWItemSetOption}.
+     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
+     * @returns A list of wheel of fortune options
+     */
+    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
+        const flags = this.flags.filter(flag => flag.enabled);
+        const IDs = this.getIDs();
         return flags.map((flag, i) => {
             let Description = this.name;
             let Default = true;
@@ -844,12 +851,9 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
      * @returns A list of wheel of fortune options
      */
     toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWCommandOption[] {
-        // Stagger the itemset/command IDs:
-        // 16 items sets followed by 16 commands, followed by 16 item sets, etc
-        const offset = 3 + Math.floor(this.index / 16);
-        const ID = offset * ITEM_SET_CATEGORY_ID_RANGE + this.index;
+        const [ID] = this.getIDs();
         return [{
-            ID: String.fromCharCode(ID),
+            ID: ID,
             Color: randomElement(colors),
             Description: this.name,
             Default: true,
@@ -860,10 +864,32 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
         }];
     }
 
+    getIDs(): [string] {
+        // Stagger the itemset/command IDs:
+        // 16 items sets followed by 16 commands, followed by 16 item sets, etc
+        const offset = 3 + Math.floor(this.index / 16);
+        const ID = offset * ITEM_SET_CATEGORY_ID_RANGE + this.index;
+        return [String.fromCharCode(ID)];
+    }
+
     /** Return a (JSON safe-ish) object representation of this instance. */
     valueOf(): FWSimpleCommand {
         return { name: this.name, hidden: this.hidden };
     }
+}
+
+/** Gather and return all valid wheel of fortune IDs from the passed lists */
+export function getFWIDs(...fwObjectLists: (readonly (null | FWObject<any>)[])[]): Set<string> {
+    const idList: string[] = [];
+    for (const fwObjectList of fwObjectLists) {
+        for (const fwObject of fwObjectList) {
+            if (fwObject === null) {
+                continue;
+            }
+            idList.push(...fwObject.getIDs());
+        }
+    }
+    return new Set(idList);
 }
 
 /**
