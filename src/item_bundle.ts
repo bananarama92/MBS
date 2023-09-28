@@ -155,7 +155,7 @@ export function fromItemBundle(
     if (item.Craft !== null && typeof item.Craft === "object") {
         craft = Object.assign(
             cloneDeep(item.Craft),
-            {Type: null, OverridePriority: null, Lock: "" },
+            { Type: null, OverridePriority: null, Lock: "", Description: "" },
         );
         CraftingValidate(craft, asset, false);
     }
