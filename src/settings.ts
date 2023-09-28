@@ -105,8 +105,20 @@ function initMBSSettings(): void {
     }
 
     // Load saved settings and check whether MBS has been upgraded
-    const data = LZString.decompressFromBase64(Player.OnlineSettings.MBS ?? "");
-    let settings: null | MBSProtoSettings = (data == null) ? null : JSON.parse(data);
+    let settings: null | MBSProtoSettings = null;
+    try {
+        if (Player.OnlineSettings.MBS) {
+            let stringData = LZString.decompressFromUTF16(Player.OnlineSettings.MBS);
+            if (!stringData) {
+                // Try again with pre-v0.6.23 compression
+                stringData = LZString.decompressFromBase64(Player.OnlineSettings.MBS);
+            }
+            settings = JSON.parse(stringData || "null");
+        }
+    } catch (error) {
+        console.warn("MBS: failed to load corrupted MBS settings", error);
+    }
+
     settings = (settings !== null && typeof settings === "object") ? settings : {};
     if (settings.Version !== undefined && detectUpgrade(settings.Version)) {
         showChangelog();
@@ -150,7 +162,7 @@ export function pushMBSSettings(push: boolean = true): void {
         FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(i => i?.valueOf() ?? null),
         FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(i => i?.valueOf() ?? null),
     };
-    Player.OnlineSettings.MBS = LZString.compressToBase64(JSON.stringify(settings));
+    Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
     Player.OnlineSharedSettings.MBS = Object.freeze({
         Version: MBS_VERSION,
         FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.hidden === false ? set.valueOf() : null),
