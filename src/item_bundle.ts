@@ -201,7 +201,13 @@ export function fromItemBundles(items: ItemBundle | readonly ItemBundle[]): FWIt
         let asset: null | Asset = null;
         try {
             asset = AssetGet("Female3DCG", item.Group, item.Name);
-            ret.push(fromItemBundle(asset, item));
+            const fwItem = fromItemBundle(asset, item);
+            if (
+                (<Asset>asset).Group.IsItem() ||
+                ((<Asset>asset).Group.IsAppearance() && (<Asset>asset).Group.AllowNone)
+            ) {
+                ret.push(fwItem);
+            }
         } catch (ex) {
             let key = `${asset?.Group?.Name}${asset?.Name}`;
             if (key.includes("undefined")) {

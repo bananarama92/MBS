@@ -594,7 +594,10 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
                 const asset = AssetGet("Female3DCG", item.Group, item.Name);
                 if (asset == null) {
                     invalid.push(`${item.Group}:${item.Name}`);
-                } else {
+                } else if (
+                    asset.Group.IsItem()
+                    || (asset.Group.IsAppearance() && asset.Group.AllowNone)
+                ) {
                     itemList.push(item);
                 }
             }
