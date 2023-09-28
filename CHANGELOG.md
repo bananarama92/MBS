@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.22
+* Optimize the amount of stored server-side data
+* Crafted items applied by the wheel of fortune no longer have a description in order to save on data
+
 ## v0.6.21
 * Add the option to forgo any locks when equipping fortune wheel item sets
 
