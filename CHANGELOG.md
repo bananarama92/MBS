@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v0.6.23
+* Use heavier MBS settings compression
+
 ## v0.6.22
 * Optimize the amount of stored server-side data
 * Crafted items applied by the wheel of fortune no longer have a description in order to save on data
