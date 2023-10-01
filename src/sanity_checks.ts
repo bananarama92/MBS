@@ -56,11 +56,12 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
-        ["CraftingSaveServer", ["B5299AB2"]],
-        ["DialogDrawCrafting", ["871E7AF7"]],
-        ["CraftingModeSet", ["022C2474", "B9806BAE"]],
-        ["CraftingClick", ["FCAFCC5D", "BFE0FC95"]],
-        ["CraftingRun", ["E6488E16", "C5BAEE74"]],
+        ["CraftingSaveServer", ["B5299AB2", "F0C798C7"]],
+        ["DialogDrawCrafting", ["871E7AF7", "B694AB2B"]],
+        ["CraftingModeSet", ["B9806BAE"]],
+        ["CraftingClick", ["BFE0FC95", "5A4845C6"]],
+        ["CraftingRun", ["C5BAEE74"]],
+        ["CraftingConvertSelectedToItem", ["B3F4D559", "E7A4C9DA"]],
     ];
     return Object.freeze(new Map(hashes.map(item => {
         const [key, value] = item;
