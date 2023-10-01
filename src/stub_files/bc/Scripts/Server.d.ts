@@ -38,8 +38,13 @@ declare function ServerDisconnect(data: any, close?: boolean): void;
  * @returns {boolean} - True if in a chatroom
  */
 declare function ServerPlayerIsInChatRoom(): boolean;
-/** Sends a message with the given data to the server via socket.emit */
-declare function ServerSend(Message: any, Data: any): void;
+/**
+ * Sends a message with the given data to the server via socket.emit
+ * @type {<Ev extends import("@socket.io/component-emitter").EventNames<ClientToServerEvents>>(
+ *     ev: Ev, ...args: import("@socket.io/component-emitter").EventParams<ClientToServerEvents, Ev>
+ * ) => void}
+ */
+declare function ServerSend<Ev extends "AccountCreate" | "AccountLogin" | "PasswordReset" | "PasswordResetProcess" | "AccountUpdate" | "AccountUpdateEmail" | "AccountQuery" | "AccountBeep" | "AccountOwnership" | "AccountLovership" | "AccountDifficulty" | "AccountDisconnect" | "ChatRoomSearch" | "ChatRoomCreate" | "ChatRoomJoin" | "ChatRoomLeave" | "ChatRoomChat" | "ChatRoomCharacterUpdate" | "ChatRoomCharacterExpressionUpdate" | "ChatRoomCharacterPoseUpdate" | "ChatRoomCharacterArousalUpdate" | "ChatRoomCharacterItemUpdate" | "ChatRoomAdmin" | "ChatRoomAllowItem" | "ChatRoomGame">(Message: Ev, ...args: Parameters<ClientToServerEvents[Ev]>): void;
 /**
  * Syncs Money, owner name and lover name with the server
  * @returns {void} - Nothing
@@ -136,7 +141,11 @@ declare function ServerAddRequiredAppearance(assetFamily: IAssetFamily, diffMap:
  */
 declare function ServerValidateColorAgainstSchema(Color: string, Schema: readonly string[]): string;
 /**
- * Syncs the player appearance with the server
+ * Syncs the player appearance with the server database.
+ *
+ * Note that this will *not* push appearance changes to the rest of the chatroom,
+ * which requires either {@link ChatRoomCharacterItemUpdate} or {@link ChatRoomCharacterUpdate}.
+ *
  * @returns {void} - Nothing
  */
 declare function ServerPlayerAppearanceSync(): void;
@@ -148,10 +157,10 @@ declare function ServerPrivateCharacterSync(): void;
 /**
  * Callback used to parse received information related to a query made by the player such as viewing their online
  * friends or current email status
- * @param {object} data - Data object containing the query data
+ * @param {ServerAccountQueryResponse} data - Data object containing the query data
  * @returns {void} - Nothing
  */
-declare function ServerAccountQueryResult(data: object): void;
+declare function ServerAccountQueryResult(data: ServerAccountQueryResponse): void;
 /**
  * Callback used to parse received information related to a beep from another account
  * @param {object} data - Data object containing the beep object which contain at the very least a name and a member

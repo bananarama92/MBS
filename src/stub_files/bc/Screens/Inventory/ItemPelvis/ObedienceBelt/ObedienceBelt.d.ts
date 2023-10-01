@@ -8,8 +8,9 @@ declare function InventoryItemPelvisObedienceBelts1Click(): void;
 declare function InventoryItemPelvisObedienceBelts1Exit(): void;
 /**
  * @param {Item} Item
+ * @param {Character} C
  */
-declare function InventoryObedienceBeltCheckPunish(Item: Item): "" | "Orgasm" | "StandUp";
+declare function InventoryObedienceBeltCheckPunish(Item: Item, C: Character): "" | "Struggle" | "Orgasm" | "StandUp";
 /**
  * @param {DynamicScriptCallbackData<ObedienceBeltPersistentData>} data
  * @param {number} LastTime

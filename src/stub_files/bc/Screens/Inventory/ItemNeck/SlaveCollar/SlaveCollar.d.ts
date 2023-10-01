@@ -1,5 +1,5 @@
 /** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryItemNeckSlaveCollarInit(C: Character, Item: Item, Refresh: boolean): boolean;
+declare function InventoryItemNeckSlaveCollarInit(C: Character, Item: Item, Push: boolean, Refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemNeckSlaveCollarLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

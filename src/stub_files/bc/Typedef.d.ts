@@ -1,7 +1,7 @@
 //#region Common
 
 declare namespace SocketIO {
-	type Socket = import("socket.io-client").Socket;
+	type Socket = import("socket.io-client").Socket<ServerToClientEvents, ClientToServerEvents>
 }
 
 declare function io(serv: string): SocketIO.Socket;
@@ -90,6 +90,8 @@ type CommonGenerateGridCallback<T> = (item: T, x: number, y: number, width: numb
 //#endregion
 
 //#region Enums
+
+type ChatRoomSpaceLabel = "MIXED" | "FEMALE_ONLY" | "MALE_ONLY" | "ASYLUM";
 
 type DialogMenuMode = "dialog" | "items" | "colorDefault" | "colorExpression" | "colorItem" | "permissions" | "activities" | "locking" | "locked" | "extended" | "tighten" | "crafted" | "struggle";
 
@@ -465,84 +467,12 @@ type ThumbIcon = "lock" | "blindfold" | "lightbulb" | "player" | "rope";
 
 //#endregion
 
-//#region Server Messages
-
-interface IChatRoomGameResponse {
-	Data: {
-		KinkyDungeon: string;
-		OnlineBounty: {
-			finishTime: number,
-			target: number,
-		};
-		/* LARP */
-		GameProgress?: "Start" | "Stop" | "Next" | "Skip" | "Action" | "Query";
-		Action?: undefined;
-		Target?: number;
-		Item?: string;
-
-		/* MagicBattle */
-		Spell?: number;
-		Time?: number; /* ms */
-
-		/* Club Card */
-		Player1?: number;
-		Player2?: number;
-		CCData: [any];
-		CCLog: string;
-	}
-	Sender: number;
-	RNG: number
-}
-
-//#endregion
-
-//#region Server messages
-
-interface IChatRoomSyncExpressionMessageBase<T extends ExpressionGroupName> {
-	MemberNumber: number;
-	Group: T;
-	Name?: ExpressionNameMap[T];
-}
-type IChatRoomSyncExpressionMessageMap<T> = T extends ExpressionGroupName ? IChatRoomSyncExpressionMessageBase<T> : never;
-type IChatRoomSyncExpressionMessage = IChatRoomSyncExpressionMessageMap<ExpressionGroupName>;
-
-interface IChatRoomSyncPoseMessage {
-	MemberNumber: number;
-	Pose: AssetPoseName[];
-}
-
-interface IChatRoomSyncArousalMessage {
-	MemberNumber: number;
-	OrgasmTimer: number;
-	OrgasmCount: number;
-	Progress: number;
-	ProgressTimer: number;
-}
-//#endregion
-
 //#region Chat
 
 type ChatRoomLovershipOption = "" | "CanOfferBeginWedding" | "CanBeginWedding";
 type ChatRoomOwnershipOption = "" | "CanOfferEndTrial" | "CanOfferTrial" | "CanEndTrial";
-type ChatRoomSpaceType = "X" | "" | "M" | "Asylum";
-type ChatRoomGame = "" | "ClubCard" | "LARP" | "MagicBattle" | "GGTS";
-type ChatRoomBlockCategory = AssetCategory | "Leashing" | "Photos" | "Arousal";
-type ChatRoomLanguage = "EN" | "DE" | "FR" | "ES" | "CN" | "RU";
 
-interface ChatRoom {
-	Name: string;
-	Description: string;
-	Admin: number[];
-	Ban: number[];
-	Limit: number;
-	Game: ChatRoomGame;
-	Background: string;
-	Private: boolean;
-	Locked: boolean;
-	BlockCategory: ChatRoomBlockCategory[];
-	Language: ChatRoomLanguage;
-	Character?: any[]; /* From server, not really a Character object */
-}
+interface ChatRoom extends ServerChatRoomData {}
 
 type StimulationAction = "Kneel" | "Walk" | "Struggle" | "StruggleFail" | "Talk";
 
@@ -567,265 +497,6 @@ interface ChatRoomChatLogEntry {
 	SenderMemberNumber: number;
 	Time: number;
 }
-
-type MessageActionType = "Action" | "Chat" | "Whisper" | "Emote" | "Activity" | "Hidden" |
-	"LocalMessage" | "ServerMessage" | "Status";
-
-type MessageContentType = string;
-
-type CharacterReferenceTag =
-	| "SourceCharacter"
-	| "DestinationCharacter"
-	| "DestinationCharacterName"
-	| "TargetCharacter"
-	| "TargetCharacterName"
-
-type CommonChatTags =
-	| CharacterReferenceTag
-	| "AssetName"
-	| "Automatic";
-
-/**
- * A dictionary entry containing a replacement tag to be replaced by some value. The replacement strategy depends on
- * the type of dictionary entry.
- */
-interface TaggedDictionaryEntry {
-	/** The tag that will be replaced in the message */
-	Tag: string;
-}
-
-/**
- * A dictionary entry used to reference a character. The character reference tag will be replaced with the provided
- * character's name or pronoun. The display format will depend on the tag chosen.
- * Example substitutions for each tag (assuming the character name is Ben987):
- * * SourceCharacter: "Ben987"
- * * DestinationCharacter: "Ben987's" (if character is not self), "her"/"him" (if character is self)
- * * DestinationCharacterName: "Ben987's"
- * * TargetCharacter: "Ben987" (if character is not self), "herself"/"himself" (if character is self)
- * * TargetCharacterName: "Ben987"
- * @deprecated Use {@link SourceCharacterDictionaryEntry} and {@link TargetCharacterDictionaryEntry} instead.
- */
-interface CharacterReferenceDictionaryEntry extends TaggedDictionaryEntry {
-	/** The member number of the referenced character */
-	MemberNumber: number;
-	/** The character reference tag, determining how the character's name or pronoun will be interpreted */
-	Tag: CharacterReferenceTag;
-	/**
-	 * The nickname of the referenced character
-	 * @deprecated Redundant information
-	 */
-	Text?: string;
-}
-
-/**
- * A dictionary entry used to indicate the source character of a chat message or action (i.e. the character initiating
- * the message or action).
- */
-interface SourceCharacterDictionaryEntry {
-	SourceCharacter: number;
-}
-
-/**
- * A dictionary entry used to indicate the target character of a chat message or action (i.e. the character that is
- * being acted upon as part of the message or action).
- */
-interface TargetCharacterDictionaryEntry {
-	TargetCharacter: number;
-	Index?: number;
-}
-
-/**
- * A dictionary entry which indicates the focused group. This represents the group that was focused or interacted with
- * when sending a chat message. For example, if the message was caused by performing an activity or modifying an item
- * on the `ItemArms` group, then it would be appropriate to send this dictionary entry with `ItemArms` as the focus
- * group name.
- */
-interface FocusGroupDictionaryEntry {
-	/**
-	 * The tag to be replaced - this is always FocusAssetGroup.
-	 * @deprecated Redundant information.
-	 */
-	Tag?: "FocusAssetGroup";
-	/** The group name representing focused group for the purposes of the sent message */
-	FocusGroupName: AssetGroupItemName;
-}
-
-/**
- * A direct text substitution dictionary entry. Any occurrences of the given {@link Tag} string in the associated
- * message will be directly replaced with the {@link Text} from this dictionary entry (no text lookup will be done).
- * For example, given the message:
- * ```
- * Life is like a box of ConfectionaryName.
- * ```
- * and the {@link TextDictionaryEntry}:
- * ```js
- * {Tag: "ConfectionaryName", Text: "chocolates"}
- * ```
- * The resulting message would be:
- * ```
- * Life is like a box of chocolates.
- * ```
- */
-interface TextDictionaryEntry extends TaggedDictionaryEntry {
-	/** The text that will be substituted for the tag */
-	Text: string;
-}
-
-/**
- * A text substitution dictionary entry with text lookup functionality. Any occurrences of the given {@link Tag} string
- * in the associated message will be replaced with the {@link Text} from the dictionary entry, but only after a text
- * lookup has been done on the {@link Text}, meaning that if the text has localisations, the localised version will be
- * used. The text will be looked up against `Dialog_Player.csv`.
- * For example, given the message:
- * ```
- * Hello, {GreetingObjectName}!
- * ```
- * And the {@link TextLookupDictionaryEntry}:
- * ```js
- * {Tag: "GreetingObjectName", TextToLookup: "WorldObject"}
- * ```
- * And the following in `Dialog_Player.csv`:
- * ```
- * WorldObject,,,World,,
- * ```
- * The text to lookup (`"WorldObject"`) would be looked up against `Dialog_Player.csv`, resolving to `"World"`. This
- * would then be used to replace the tag `"GreetingObjectName"` in the message, resulting in:
- * ```
- * Hello, World!
- * ```
- */
-interface TextLookupDictionaryEntry extends TaggedDictionaryEntry {
-	/** The text whose lookup will be substituted for the tag */
-	TextToLookUp: string;
-}
-
-/**
- * A dictionary entry that references an asset group. Note that this is different from
- * {@link FocusGroupDictionaryEntry}, which denotes the group being acted on. A dictionary should only ever contain
- * one {@link FocusGroupDictionaryEntry}, whereas it may contain many {@link GroupReferenceDictionaryEntry}s. This
- * represents any group that might be referenced in the message, but is not necessarily the focused group.
- * For example, given the message:
- * ```
- * Use your BodyPart!
- * ```
- * And the {@link GroupReferenceDictionaryEntry}:
- * ```
- * {Tag: "BodyPart", GroupName: "ItemHands"}
- * ```
- * The name of the `"ItemHands"` group would be looked up, and this would be used to replace the `"BodyPart"` tag. The
- * resulting message would be:
- * ```
- * Use your Hands!
- * ```
- */
-interface GroupReferenceDictionaryEntry extends TaggedDictionaryEntry {
-	/** The name of the asset group to reference */
-	GroupName: AssetGroupName;
-}
-
-/**
- * A dictionary entry that references an asset. Note that a dictionary may contain multiple of these entries, one for
- * each asset mentioned or referenced in the message. For example, a message when swapping two restraints might contain
- * two of these entries, one for the restraint being removed, and one for the restraint being added.
- */
-interface AssetReferenceDictionaryEntry extends GroupReferenceDictionaryEntry {
-	/** The name of the asset being referenced */
-	AssetName: string;
-	/** The (optional) {@link CraftingItem.Name} in case the asset was referenced via a crafted item */
-	CraftName?: string;
-}
-
-/**
- * A special instance of an {@link AssetReferenceDictionaryEntry} which indicates that this asset was used to carry
- * out an activity.
- */
-interface ActivityAssetReferenceDictionaryEntry extends AssetReferenceDictionaryEntry {
-	Tag: "ActivityAsset";
-}
-
-/**
- * A metadata dictionary entry sent with a shock event message including a shock intensity representing the strength
- * of the shock. This is used to determine the severity of any visual or gameplay effects the shock may have.
- */
-interface ShockEventDictionaryEntry {
-	/** The intensity of the shock - must be a non-negative number */
-	ShockIntensity: number;
-}
-
-/**
- * A metadata dictionary entry indicating that the message has been generated due to an automated event. Can be used
- * to filter out what might otherwise be spammy chat messages (these include things like automatic vibrator intensity
- * changes and events & messages triggered by some futuristic items).
- */
-interface AutomaticEventDictionaryEntry {
-	/** Indicates that this message was triggered by an automatic event */
-	Automatic: true;
-}
-
-/**
- * A metadata dictionary entry carrying a numeric counter for an associated event or activity. Currently only used by
- * the Anal Beads XL to indicate how many beads were inserted.
- */
-interface ActivityCounterDictionaryEntry {
-	/** Counter metadata to be sent with a message */
-	ActivityCounter: number;
-}
-
-/**
- * A dictionary entry for group lookup & replacement. Used ambiguously for both {@link FocusGroupDictionaryEntry} and
- * {@link GroupReferenceDictionaryEntry}. This dictionary entry type is deprecated, and one of the aforementioned entry
- * types should be used instead.
- * @deprecated Use {@link FocusGroupDictionaryEntry}/{@link GroupReferenceDictionaryEntry}
- */
-interface AssetGroupNameDictionaryEntry {
-	Tag?: "FocusAssetGroup";
-	AssetGroupName: AssetGroupItemName;
-}
-
-/**
- * A dictionary entry indicating the name of an activity. Sent with chat messages to indicate that an activity was
- * carried out as part of the message.
- */
-interface ActivityNameDictionaryEntry {
-	/** The name of the activity carried out */
-	ActivityName: ActivityName;
-}
-
-type ChatMessageDictionaryEntry =
-	| CharacterReferenceDictionaryEntry
-	| SourceCharacterDictionaryEntry
-	| TargetCharacterDictionaryEntry
-	| FocusGroupDictionaryEntry
-	| TextDictionaryEntry
-	| TextLookupDictionaryEntry
-	| GroupReferenceDictionaryEntry
-	| AssetReferenceDictionaryEntry
-	| ActivityAssetReferenceDictionaryEntry
-	| ShockEventDictionaryEntry
-	| AutomaticEventDictionaryEntry
-	| ActivityCounterDictionaryEntry
-	| AssetGroupNameDictionaryEntry
-	| ActivityNameDictionaryEntry;
-
-type ChatMessageDictionary = ChatMessageDictionaryEntry[];
-
-interface IChatRoomMessageBasic {
-	Content: MessageContentType;
-	Sender: number;
-	// SourceMemberNumber: number;
-}
-
-interface IChatRoomMessage extends IChatRoomMessageBasic {
-	Type: MessageActionType;
-	Dictionary?: ChatMessageDictionary;
-	Timeout?: number;
-}
-
-interface IChatRoomSyncBasic {
-	SourceMemberNumber: number
-}
-
-interface IChatRoomSyncMessage extends IChatRoomSyncBasic, ChatRoom { }
 
 interface IChatRoomMessageMetadata {
 	/** The name of the sender character, appropriately garbled if deafened */
@@ -871,7 +542,7 @@ interface IChatRoomMessageMetadata {
  * @return null if the extraction has nothing to report.
  */
 type ChatRoomMessageExtractor =
-	(data: IChatRoomMessage, sender: Character) => { metadata: IChatRoomMessageMetadata, substitutions: CommonSubtituteSubstitution[] } | null;
+	(data: ServerChatRoomMessage, sender: Character) => { metadata: IChatRoomMessageMetadata, substitutions: CommonSubtituteSubstitution[] } | null;
 
 /**
  * A chat message handler.
@@ -937,7 +608,7 @@ interface ChatRoomMessageHandler {
 	 * @param metadata - The collected metadata from the message's dictionary, only available in "post" mode.
 	 * @returns {boolean} true if the message was handled and the processing should stop, false otherwise.
 	 */
-	Callback: (data: IChatRoomMessage, sender: Character, msg: string, metadata?: IChatRoomMessageMetadata) => boolean | { msg?: string; skip?: (handler: ChatRoomMessageHandler) => boolean };
+	Callback: (data: ServerChatRoomMessage, sender: Character, msg: string, metadata?: IChatRoomMessageMetadata) => boolean | { msg?: string; skip?: (handler: ChatRoomMessageHandler) => boolean };
 }
 
 //#endregion
@@ -957,56 +628,64 @@ interface IFriendListBeepLogMessage {
 
 //#endregion
 
+/**
+ * Make all properties in T mutable.
+ * Opposite of {@link Readonly}
+ */
+type Mutable<T> = {
+    -readonly[P in keyof T]: T[P];
+};
+
 //#region Assets
 
 type IAssetFamily = "Female3DCG";
 
 interface AssetGroup {
-	Family: IAssetFamily;
-	Name: AssetGroupName;
-	Description: string;
-	Asset: readonly Asset[];
-	ParentGroupName: AssetGroupName | "";
-	Category: 'Appearance' | 'Item' | 'Script';
-	IsDefault: boolean;
-	IsRestraint: boolean;
-	AllowNone: boolean;
-	AllowColorize: boolean;
-	AllowCustomize: boolean;
-	Random?: boolean;
-	ColorSchema: readonly string[];
-	ParentSize: AssetGroupName | "";
-	ParentColor: AssetGroupName | "";
-	Clothing: boolean;
-	Underwear: boolean;
-	BodyCosplay: boolean;
-	Hide?: readonly AssetGroupName[];
-	Block?: readonly AssetGroupItemName[];
-	Zone?: readonly [number, number, number, number][];
-	SetPose?: readonly AssetPoseName[];
-	AllowPose: readonly AssetPoseName[];
-	AllowExpression?: readonly ExpressionName[];
-	Effect: readonly EffectName[];
-	MirrorGroup: AssetGroupName | "";
-	RemoveItemOnRemove: readonly { Group: AssetGroupItemName; Name: string; Type?: string }[];
-	DrawingPriority: number;
-	DrawingLeft: number;
-	DrawingTop: number;
-	DrawingFullAlpha: boolean;
-	DrawingBlink: boolean;
-	InheritColor: AssetGroupName | null;
-	FreezeActivePose: readonly AssetPoseCategory[];
-	PreviewZone?: RectTuple;
-	DynamicGroupName: AssetGroupName;
+	readonly Family: IAssetFamily;
+	readonly Name: AssetGroupName;
+	readonly Description: string;
+	readonly Asset: readonly Asset[];
+	readonly ParentGroupName: AssetGroupName | "";
+	readonly Category: 'Appearance' | 'Item' | 'Script';
+	readonly IsDefault: boolean;
+	readonly IsRestraint: boolean;
+	readonly AllowNone: boolean;
+	readonly AllowColorize: boolean;
+	readonly AllowCustomize: boolean;
+	readonly Random?: boolean;
+	readonly ColorSchema: readonly string[];
+	readonly ParentSize: AssetGroupName | "";
+	readonly ParentColor: AssetGroupName | "";
+	readonly Clothing: boolean;
+	readonly Underwear: boolean;
+	readonly BodyCosplay: boolean;
+	readonly Hide?: readonly AssetGroupName[];
+	readonly Block?: readonly AssetGroupItemName[];
+	readonly Zone?: readonly [number, number, number, number][];
+	readonly SetPose?: readonly AssetPoseName[];
+	readonly AllowPose: readonly AssetPoseName[];
+	readonly AllowExpression?: readonly ExpressionName[];
+	readonly Effect: readonly EffectName[];
+	readonly MirrorGroup: AssetGroupName | "";
+	readonly RemoveItemOnRemove: readonly Readonly<{ Group: AssetGroupItemName; Name: string; Type?: string }>[];
+	readonly DrawingPriority: number;
+	readonly DrawingLeft: number;
+	readonly DrawingTop: number;
+	readonly DrawingFullAlpha: boolean;
+	readonly DrawingBlink: boolean;
+	readonly InheritColor: AssetGroupName | null;
+	readonly FreezeActivePose: readonly AssetPoseCategory[];
+	readonly PreviewZone?: RectTuple;
+	readonly DynamicGroupName: AssetGroupName;
 
-	MirrorActivitiesFrom?: AssetGroupItemName;
-	ArousalZone?: AssetGroupItemName;
+	readonly MirrorActivitiesFrom?: AssetGroupItemName;
+	readonly ArousalZone?: AssetGroupItemName;
 
 	/** A dict mapping colors to custom filename suffices.
 	The "HEX_COLOR" key is special-cased to apply to all color hex codes. */
-	ColorSuffix?: Record<string, string>;
-	ExpressionPrerequisite?: readonly AssetPrerequisite[];
-	HasPreviewImages: boolean;
+	readonly ColorSuffix?: Readonly<Record<string, string>>;
+	readonly ExpressionPrerequisite?: readonly AssetPrerequisite[];
+	readonly HasPreviewImages: boolean;
 	/** Return whether this group belongs to the `Appearance` {@link AssetGroup.Category} */
 	IsAppearance(): this is AssetAppearanceGroup;
 	/** Return whether this group belongs to the `Item` {@link AssetGroup.Category} */
@@ -1017,34 +696,34 @@ interface AssetGroup {
 
 /** An AssetGroup subtype for the `Appearance` {@link AssetGroup.Category} */
 interface AssetAppearanceGroup extends AssetGroup {
-	Category: "Appearance";
-	Name: AssetGroupBodyName;
-	IsRestraint: false;
-	AllowExpression?: readonly ExpressionName[];
+	readonly Category: "Appearance";
+	readonly Name: AssetGroupBodyName;
+	readonly IsRestraint: false;
+	readonly AllowExpression?: readonly ExpressionName[];
 }
 
 /** An AssetGroup subtype for the `Item` {@link AssetGroup.Category} */
 interface AssetItemGroup extends AssetGroup {
-	Category: "Item";
-	Name: AssetGroupItemName;
-	Underwear: false;
-	BodyCosplay: false;
-	Clothing: false;
-	IsDefault: false;
-	AllowExpression?: undefined;
-	Zone: readonly [number, number, number, number][];
+	readonly Category: "Item";
+	readonly Name: AssetGroupItemName;
+	readonly Underwear: false;
+	readonly BodyCosplay: false;
+	readonly Clothing: false;
+	readonly IsDefault: false;
+	readonly AllowExpression?: undefined;
+	readonly Zone: readonly RectTuple[];
 }
 
 /** An AssetGroup subtype for the `Script` {@link AssetGroup.Category} */
 interface AssetScriptGroup extends AssetGroup {
-	Category: "Script";
-	Name: AssetGroupScriptName;
-	IsRestraint: false;
-	BodyCosplay: false;
-	Underwear: false;
-	Clothing: false;
-	IsDefault: false;
-	AllowExpression?: undefined;
+	readonly Category: "Script";
+	readonly Name: AssetGroupScriptName;
+	readonly IsRestraint: false;
+	readonly BodyCosplay: false;
+	readonly Underwear: false;
+	readonly Clothing: false;
+	readonly IsDefault: false;
+	readonly AllowExpression?: undefined;
 }
 
 /** Mapped type for mapping group names to their respective {@link AssetGroup} subtype */
@@ -1081,7 +760,7 @@ interface AssetLayer {
 	/** An array of poses that this layer should be hidden for. */
 	HideForPose: readonly (AssetPoseName | "")[];
 	/** An array of objects mapping poses to other poses to determine their draw folder */
-	PoseMapping?: AssetPoseMapping;
+	PoseMapping?: Readonly<AssetPoseMapping>;
 	/** The drawing priority of this layer. Inherited from the parent asset/group if not specified in the layer
 	definition. */
 	Priority: number;
@@ -1091,7 +770,7 @@ interface AssetLayer {
 	Asset: Asset;
 	DrawingLeft?: number;
 	DrawingTop?: number;
-	HideAs?: { Group: AssetGroupName; Asset?: string };
+	HideAs?: Readonly<{ Group: AssetGroupName; Asset?: string }>;
 	/** That layer is drawing at a fixed Y position */
 	FixedPosition?: boolean;
 	HasImage: boolean;
@@ -1115,7 +794,7 @@ interface AssetLayer {
 	ShowForAttribute: readonly AssetAttribute[] | null;
 	/** Used along with a hook to make layers of an asset disappear in some cases. */
 	Visibility: "Player" | "AllExceptPlayerDialog" | "Others" | "OthersExceptDialog" | "Owner" | "Lovers" | "Mistresses" | null;
-	ColorSuffix: Record<string, string> | null;
+	ColorSuffix: Readonly<Record<string, string>> | null;
 }
 
 /** An object defining a group of alpha masks to be applied when drawing an asset layer */
@@ -1164,7 +843,7 @@ interface ExpressionItem {
  *
  * See AssetDefinition in Female3DCG.d.ts for documentation.
  */
-interface Asset {
+type Asset = Readonly<{
 	Name: string;
 	Description: string;
 	Group: AssetGroup;
@@ -1230,7 +909,9 @@ interface Asset {
 	AllowBlock?: readonly AssetGroupItemName[];
 	AllowHide?: readonly AssetGroupName[];
 	AllowHideItem?: readonly string[];
+	/** @deprecated */
 	AllowType?: readonly string[];
+	AllowTypes?: readonly string[];
 	AllowTighten?: boolean;
 	/**
 	 * The default color of the item: an array of length {@link Asset.ColorableLayerCount} consisting of `"Default"` and/or valid color hex codes.
@@ -1280,23 +961,15 @@ interface Asset {
 	Tint: readonly TintDefinition[];
 	AllowTint: boolean;
 	DefaultTint?: string;
-	Gender?: 'F' | 'M';
+	Gender?: AssetGender;
 	CraftGroup: string;
 	ColorSuffix: Record<string, string>;
 	ExpressionPrerequisite?: readonly AssetPrerequisite[];
-}
+}>;
 
 //#endregion
 
-/** An ItemBundle is a minified version of the normal Item */
-interface ItemBundle {
-	Group: AssetGroupName;
-	Name: string;
-	Difficulty?: number;
-	Color?: ItemColor;
-	Property?: ItemProperties;
-	Craft?: CraftingItem;
-}
+type ItemBundle = ServerItemBundle;
 
 /** An AppearanceBundle is whole minified appearance of a character */
 type AppearanceBundle = ItemBundle[];
@@ -1627,7 +1300,7 @@ interface Character {
 	UnregisterHook: (hookName: CharacterHook, hookInstance: string) => boolean;
 	RunHooks: (hookName: CharacterHook) => void;
 	HeightRatioProportion?: number;
-	GetGenders: () => ("F" | "M")[];
+	GetGenders: () => AssetGender[];
 	GetPronouns: () => CharacterPronouns;
 	HasPenis: () => boolean;
 	HasVagina: () => boolean;
@@ -1879,18 +1552,19 @@ interface PlayerCharacter extends Character {
 		ChatRoomMuffle: boolean;
 		BlindAdjacent: boolean;
 		AllowTints: boolean;
+		ShowRoomCustomization: number; // 0 - Never, 1 - No by default, 2 - Yes by default, 3 - Always
 	};
 	LastChatRoom?: string;
 	LastChatRoomBG?: string;
 	LastChatRoomPrivate?: boolean;
 	LastChatRoomSize?: number;
-	LastChatRoomLanguage?: ChatRoomLanguage;
+	LastChatRoomLanguage?: ServerChatRoomLanguage;
 	LastChatRoomDesc?: string;
 	LastChatRoomAdmin?: number[];
 	LastChatRoomBan?: number[];
-	LastChatRoomBlockCategory?: ChatRoomBlockCategory[];
+	LastChatRoomBlockCategory?: ServerChatRoomBlockCategory[];
 	LastChatRoomTimer?: any;
-	LastChatRoomSpace?: ChatRoomSpaceType;
+	LastChatRoomSpace?: ServerChatRoomSpace;
 	RestrictionSettings?: {
 		BypassStruggle: boolean;
 		SlowImmunity: boolean;
@@ -2218,10 +1892,11 @@ declare namespace ExtendedItemCallbacks {
 	 * `Init` functions are responsible for setting the initial properties of an extended item.
 	 * @param C The character that has the item equiped
 	 * @param item The item in question
-	 * @param refresh Whether the character and relevant item should be refreshed and pushed to the server
+	 * @param push Whether to push to changes to the server
+	 * @param refresh Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
 	 * @returns Whether the items properties were actually updated or not
 	 */
-	type Init = ExtendedItemCallback<[C: Character, item: Item, refresh: boolean], boolean>;
+	type Init = ExtendedItemCallback<[C: Character, item: Item, push: boolean, refresh: boolean], boolean>;
 	/**
 	 * Callback for extended item `SetOption` functions.
 	 * @param C The character that has the item equiped
@@ -2229,10 +1904,11 @@ declare namespace ExtendedItemCallbacks {
 	 * @param newOption The newly selected extended item option
 	 * @param previousOption The previusly selected extended item option
 	 * @param push Whether to push to changes to the server
+	 * @param refresh Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
 	 */
 	type SetOption<
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean]>;
+	> = ExtendedItemCallback<[C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean, refresh: boolean]>;
 	/**
 	 * Callback for extended item `AfterDraw` functions.
 	 * Relevant for assets that define {@link Asset.DynamicAfterDraw}.
@@ -2339,12 +2015,13 @@ declare namespace ExtendedItemScriptHookCallbacks {
 	 * @param originalFunction The function (if any) that is normally called when an archetypical item reaches this point
 	 * @param C The character that has the item equiped
 	 * @param item The item in question
-	 * @param refresh Whether the character and relevant item should be refreshed and pushed to the server
+	 * @param push Whether to push to changes to the server
+	 * @param refresh Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
 	 * @returns Whether the items properties were actually updated or not
 	 */
 	type Init<
 		DataType extends ExtendedItemData<any>
-	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, refresh: boolean], boolean>;
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, push: boolean, refresh: boolean], boolean>;
 	/**
 	 * Callback for extended item `SetOption` functions.
 	 * @param data The items extended item data
@@ -2354,12 +2031,13 @@ declare namespace ExtendedItemScriptHookCallbacks {
 	 * @param newOption The newly selected extended item option
 	 * @param previousOption The previusly selected extended item option
 	 * @param push Whether to push to changes to the server
+	 * @param refresh Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
 	 * @returns
 	 */
 	type SetOption<
 		DataType extends ExtendedItemData<any>,
 		OptionType extends ExtendedItemOption
-	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean]>;
+	> = ExtendedItemScriptHookCallback<DataType, [C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push: boolean, refresh: boolean]>;
 	/**
 	 * Callback for extended item `AfterDraw` functions.
 	 * Relevant for assets that define {@link Asset.DynamicAfterDraw}.
@@ -2441,6 +2119,11 @@ interface ExtendedItemData<OptionType extends ExtendedItemOption> {
 	parentOption: null | ExtendedItemOption;
 	/** An interface with element-specific drawing data for a given screen. */
 	drawData: ExtendedItemDrawData<{}>;
+	/**
+	 * A list with extra to-be allowed effect names.
+	 * Should only defined when there are effects that are exclusively managed by script hooks and thus cannot be extracted from the normal extended item options.
+	 */
+	allowEffect: readonly EffectName[];
 }
 
 /** A struct-type that maps archetypes to their respective extended item data.  */
@@ -3241,8 +2924,12 @@ interface GameLARPParameters {
 	}[];
 }
 
+type GameLARPOptionName = "Pass" | "Seduce" | "Struggle" | "Hide" | "Cover" |
+	"Strip" | "Tighten" | "RestrainArms" | "RestrainLegs" | "RestrainMouth" |
+	"Silence" | "Immobilize" | "Detain" | "Dress" | "Costume" | "";
+
 interface GameLARPOption {
-	Name: string;
+	Name: GameLARPOptionName;
 	Odds: number;
 }
 
@@ -3278,10 +2965,10 @@ interface AudioEffect {
  */
 interface AudioChatAction {
 	/** Is that action applicable for that chat message? */
-	IsAction: (data: IChatRoomMessage) => boolean;
+	IsAction: (data: ServerChatRoomMessage) => boolean;
 
 	/** Extracts the actual sound effect from the chat message */
-	GetSoundEffect: (data: IChatRoomMessage, metadata: IChatRoomMessageMetadata) => (AudioSoundEffect | string | null);
+	GetSoundEffect: (data: ServerChatRoomMessage, metadata: IChatRoomMessageMetadata) => (AudioSoundEffect | string | null);
 }
 
 // #endregion

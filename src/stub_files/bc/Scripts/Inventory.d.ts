@@ -287,7 +287,127 @@ declare function InventoryItemIsPickable(Item: Item): boolean;
  * @returns {(ItemProperties & Asset & AssetGroup)[Name] | undefined} - The value of the requested property for the given item.
  * Returns either undefined, an empty array or object if the property or the item itself does not exist.
  */
-declare function InventoryGetItemProperty<Name extends "Name" | "Gender" | "BuyGroup" | "ParentItem" | "Enable" | "Visible" | "NotVisibleOnScreen" | "Wear" | "Activity" | "AllowActivity" | "ActivityAudio" | "ActivityExpression" | "AllowActivityOn" | "PrerequisiteBuyGroups" | "Effect" | "Block" | "BlockRemotes" | "OpenPermission" | "OpenPermissionArm" | "OpenPermissionLeg" | "OpenPermissionChastity" | "Bonus" | "Expose" | "Hide" | "HideItem" | "HideItemExclude" | "Require" | "SetPose" | "AllowPose" | "HideForPose" | "PoseMapping" | "AllowActivePose" | "WhitelistActivePose" | "Value" | "Difficulty" | "SelfBondage" | "SelfUnlock" | "ExclusiveUnlock" | "Random" | "RemoveAtLogin" | "LayerVisibility" | "RemoveTime" | "RemoveTimer" | "MaxTimer" | "Alpha" | "Prerequisite" | "Extended" | "AlwaysExtend" | "AlwaysInteract" | "AllowLock" | "IsLock" | "PickDifficulty" | "OwnerOnly" | "LoverOnly" | "FamilyOnly" | "ExpressionTrigger" | "RemoveItemOnRemove" | "AllowEffect" | "AllowBlock" | "AllowHide" | "AllowHideItem" | "AllowType" | "AllowTighten" | "DefaultColor" | "Opacity" | "MinOpacity" | "MaxOpacity" | "Audio" | "Category" | "Fetish" | "ArousalZone" | "IsRestraint" | "BodyCosplay" | "OverrideBlinking" | "DialogSortOverride" | "DynamicDescription" | "DynamicPreviewImage" | "DynamicAllowInventoryAdd" | "DynamicName" | "DynamicGroupName" | "DynamicActivity" | "DynamicAudio" | "CharacterRestricted" | "AllowRemoveExclusive" | "InheritColor" | "DynamicBeforeDraw" | "DynamicAfterDraw" | "DynamicScriptDraw" | "HasType" | "AllowLockType" | "AllowColorize" | "AllowColorizeAll" | "AvailableLocations" | "OverrideHeight" | "FreezeActivePose" | "DrawLocks" | "AllowExpression" | "MirrorExpression" | "FixedPosition" | "CustomBlindBackground" | "Layer" | "Archetype" | "Attribute" | "HideItemAttribute" | "PreviewIcons" | "Tint" | "DefaultTint" | "CraftGroup" | "ExpressionPrerequisite" | "ColorSuffix" | "Text" | "LockPickSeed" | "CombinationNumber" | "Password" | "Hint" | "LockSet" | "Padding" | "Type" | "Door" | "Expression" | "Mode" | "Intensity" | "State" | "HeightModifier" | "OverridePriority" | "ItemMemberNumber" | "LockedBy" | "LockMemberNumber" | "MemberNumberListKeys" | "RemoveItem" | "RemoveOnUnlock" | "ShowTimer" | "EnableRandomInput" | "MemberNumberList" | "InflateLevel" | "SuctionLevel" | "Text2" | "Text3" | "LockButt" | "HeartRate" | "HeartIcon" | "AutoPunish" | "AutoPunishUndoTime" | "AutoPunishUndoTimeSetting" | "OriginalSetting" | "BlinkState" | "Option" | "PunishStruggle" | "PunishStruggleOther" | "PunishOrgasm" | "PunishStandup" | "PunishSpeech" | "PunishRequiredSpeech" | "PunishRequiredSpeechWord" | "PunishProhibitedSpeech" | "PunishProhibitedSpeechWords" | "NextShockTime" | "PublicModeCurrent" | "PublicModePermission" | "TriggerValues" | "AccessMode" | "ShockLevel" | "InsertedBeads" | "ShowText" | "TriggerCount" | "Iterations" | "Revert" | "UnHide" | "Texts" | "TargetAngle" | "PortalLinkCode" | "Underwear" | "Description" | "Group" | "ParentGroupName" | "WearTime" | "DrawingPriority" | "DrawingLeft" | "DrawingTop" | "ZoomModifier" | "ColorableLayerCount" | "AllowTint" | "Family" | "Asset" | "IsDefault" | "AllowNone" | "AllowCustomize" | "ColorSchema" | "ParentSize" | "ParentColor" | "Clothing" | "Zone" | "MirrorGroup" | "DrawingFullAlpha" | "DrawingBlink" | "PreviewZone" | "MirrorActivitiesFrom" | "HasPreviewImages" | "IsAppearance" | "IsItem" | "IsScript">(Item: Item, PropertyName: Name, CheckGroup?: boolean): (ItemProperties & Asset & AssetGroup)[Name];
+declare function InventoryGetItemProperty<Name extends "Name" | "Gender" | "BuyGroup" | "ParentItem" | "Enable" | "Visible" | "NotVisibleOnScreen" | "Wear" | "Activity" | "AllowActivity" | "ActivityAudio" | "ActivityExpression" | "AllowActivityOn" | "PrerequisiteBuyGroups" | "Bonus" | "Expose" | "HideItem" | "HideItemExclude" | "Require" | "PoseMapping" | "AllowActivePose" | "WhitelistActivePose" | "Value" | "Difficulty" | "SelfBondage" | "SelfUnlock" | "ExclusiveUnlock" | "RemoveAtLogin" | "LayerVisibility" | "RemoveTime" | "RemoveTimer" | "MaxTimer" | "Prerequisite" | "Extended" | "AlwaysExtend" | "AlwaysInteract" | "AllowLock" | "IsLock" | "PickDifficulty" | "OwnerOnly" | "LoverOnly" | "FamilyOnly" | "ExpressionTrigger" | "RemoveItemOnRemove" | "AllowEffect" | "Block" | "BlockRemotes" | "OpenPermission" | "OpenPermissionArm" | "OpenPermissionLeg" | "OpenPermissionChastity" | "AllowBlock" | "AllowHide" | "AllowHideItem" | "AllowTighten" | "DefaultColor" | "Audio" | "Category" | "Fetish" | "ArousalZone" | "OverrideBlinking" | "DialogSortOverride" | "DynamicDescription" | "DynamicPreviewImage" | "DynamicAllowInventoryAdd" | "DynamicName" | "DynamicGroupName" | "DynamicActivity" | "DynamicAudio" | "CharacterRestricted" | "AllowRemoveExclusive" | "DynamicBeforeDraw" | "DynamicAfterDraw" | "DynamicScriptDraw" | "AllowLockType" | "AllowColorizeAll" | "AvailableLocations" | "OverrideHeight" | "DrawLocks" | "MirrorExpression" | "CustomBlindBackground" | "Layer" | "Archetype" | "Attribute" | "HideItemAttribute" | "PreviewIcons" | "Tint" | "DefaultTint" | "CraftGroup" | "ExpressionPrerequisite" | "Hide" | "Effect" | "SetPose" | "FreezeActivePose" | "AllowExpression" | "Random" | "IsRestraint" | "BodyCosplay" | "HideForPose" | "Alpha" | "ColorSuffix" | "FixedPosition" | "HasType" | "AllowTypes" | "Opacity" | "MinOpacity" | "MaxOpacity" | "InheritColor" | "AllowPose" | "AllowColorize" | "Text" | "LockPickSeed" | "CombinationNumber" | "Password" | "Hint" | "LockSet" | "Padding" | "Type" | "Door" | "Expression" | "Mode" | "Intensity" | "State" | "HeightModifier" | "OverridePriority" | "ItemMemberNumber" | "LockedBy" | "LockMemberNumber" | "MemberNumberListKeys" | "RemoveItem" | "RemoveOnUnlock" | "ShowTimer" | "EnableRandomInput" | "MemberNumberList" | "InflateLevel" | "SuctionLevel" | "Text2" | "Text3" | "LockButt" | "HeartRate" | "HeartIcon" | "AutoPunish" | "AutoPunishUndoTime" | "AutoPunishUndoTimeSetting" | "OriginalSetting" | "BlinkState" | "Option" | "PunishStruggle" | "PunishStruggleOther" | "PunishOrgasm" | "PunishStandup" | "PunishSpeech" | "PunishRequiredSpeech" | "PunishRequiredSpeechWord" | "PunishProhibitedSpeech" | "PunishProhibitedSpeechWords" | "NextShockTime" | "PublicModeCurrent" | "PublicModePermission" | "TriggerValues" | "AccessMode" | "ShockLevel" | "InsertedBeads" | "ShowText" | "TriggerCount" | "Iterations" | "Revert" | "UnHide" | "Texts" | "TargetAngle" | "PortalLinkCode" | "Underwear" | "Description" | "Group" | "ParentGroupName" | "WearTime" | "DrawingPriority" | "DrawingLeft" | "DrawingTop" | "ZoomModifier" | "ColorableLayerCount" | "AllowTint" | "Asset" | "Clothing" | "AllowNone" | "AllowCustomize" | "ParentSize" | "ParentColor" | "Zone" | "MirrorGroup" | "PreviewZone" | "MirrorActivitiesFrom" | "HasPreviewImages" | "Family" | "IsDefault" | "ColorSchema" | "DrawingFullAlpha" | "DrawingBlink" | "IsAppearance" | "IsItem" | "IsScript">(Item: Item, PropertyName: Name, CheckGroup?: boolean): (ItemProperties & Readonly<{
+    Name: string;
+    Description: string;
+    Group: AssetGroup;
+    ParentItem?: string;
+    ParentGroupName?: AssetGroupName;
+    Enable: boolean;
+    Visible: boolean;
+    NotVisibleOnScreen?: readonly string[];
+    Wear: boolean;
+    Activity: ActivityName;
+    AllowActivity?: readonly ActivityName[];
+    ActivityAudio?: readonly string[];
+    ActivityExpression: Partial<Record<ActivityName, readonly ExpressionTrigger[]>>;
+    AllowActivityOn?: readonly AssetGroupItemName[];
+    BuyGroup?: string;
+    PrerequisiteBuyGroups?: readonly string[];
+    Effect: readonly EffectName[];
+    Bonus?: AssetBonusName;
+    Block?: readonly AssetGroupItemName[];
+    Expose: readonly AssetGroupItemName[];
+    Hide?: readonly AssetGroupName[];
+    HideItem?: readonly string[];
+    HideItemExclude: readonly string[];
+    HideItemAttribute: readonly AssetAttribute[];
+    Require: readonly AssetGroupBodyName[];
+    SetPose?: readonly AssetPoseName[];
+    AllowPose: readonly AssetPoseName[];
+    HideForPose: readonly ("" | AssetPoseName)[];
+    PoseMapping?: Partial<Record<AssetPoseName, "" | AssetPoseName>>;
+    AllowActivePose?: readonly AssetPoseName[];
+    WhitelistActivePose?: readonly AssetPoseName[];
+    Value: number;
+    Difficulty: number;
+    SelfBondage: number;
+    SelfUnlock: boolean;
+    ExclusiveUnlock: boolean;
+    Random: boolean;
+    RemoveAtLogin: boolean;
+    WearTime: number;
+    RemoveTime: number;
+    RemoveTimer: number;
+    MaxTimer: number;
+    DrawingPriority?: number;
+    DrawingLeft?: number;
+    DrawingTop?: number;
+    HeightModifier: number;
+    ZoomModifier: number;
+    Alpha?: readonly AlphaDefinition[];
+    Prerequisite: readonly AssetPrerequisite[];
+    Extended: boolean;
+    AlwaysExtend: boolean;
+    AlwaysInteract: boolean;
+    AllowLock: boolean;
+    LayerVisibility: boolean;
+    IsLock: boolean;
+    PickDifficulty: number;
+    OwnerOnly: boolean;
+    LoverOnly: boolean;
+    FamilyOnly: boolean;
+    ExpressionTrigger?: readonly ExpressionTrigger[];
+    RemoveItemOnRemove: readonly {
+        Name: string;
+        Group: AssetGroupName;
+        Type?: string;
+    }[];
+    AllowEffect?: readonly EffectName[];
+    AllowBlock?: readonly AssetGroupItemName[];
+    AllowHide?: readonly AssetGroupName[];
+    AllowHideItem?: readonly string[];
+    AllowTypes?: readonly string[];
+    AllowTighten?: boolean;
+    DefaultColor: readonly string[];
+    Opacity: number;
+    MinOpacity: number;
+    MaxOpacity: number;
+    Audio?: string;
+    Category?: readonly AssetCategory[];
+    Fetish?: readonly FetishName[];
+    CustomBlindBackground?: string;
+    ArousalZone: AssetGroupItemName;
+    IsRestraint: boolean;
+    BodyCosplay: boolean;
+    OverrideBlinking: boolean;
+    DialogSortOverride?: DialogSortOrder;
+    DynamicDescription: (C: Character) => string;
+    DynamicPreviewImage: (C: Character) => string;
+    DynamicAllowInventoryAdd: (C: Character) => boolean;
+    DynamicName: (C: Character) => string;
+    DynamicGroupName: AssetGroupName;
+    DynamicActivity: (C: Character) => ActivityName;
+    DynamicAudio: (C: Character) => string;
+    CharacterRestricted: boolean;
+    AllowRemoveExclusive: boolean;
+    InheritColor?: AssetGroupName;
+    DynamicBeforeDraw: boolean;
+    DynamicAfterDraw: boolean;
+    DynamicScriptDraw: boolean;
+    HasType: boolean;
+    AllowLockType?: readonly string[];
+    AllowColorizeAll: boolean;
+    AvailableLocations: readonly string[];
+    OverrideHeight?: AssetOverrideHeight;
+    FreezeActivePose: readonly AssetPoseCategory[];
+    DrawLocks: boolean;
+    AllowExpression?: readonly ExpressionName[];
+    MirrorExpression?: AssetGroupBodyName;
+    FixedPosition: boolean;
+    Layer: readonly AssetLayer[];
+    ColorableLayerCount: number;
+    Archetype?: ExtendedArchetype;
+    Attribute: readonly AssetAttribute[];
+    PreviewIcons: readonly InventoryIcon[];
+    Tint: readonly TintDefinition[];
+    AllowTint: boolean;
+    DefaultTint?: string;
+    Gender?: AssetGender;
+    CraftGroup: string;
+    ColorSuffix: Record<string, string>;
+    ExpressionPrerequisite?: readonly AssetPrerequisite[];
+}> & AssetGroup)[Name];
 /**
  * Apply an item's expression trigger to a character if able
  * @param {Character} C - The character to update
@@ -488,10 +608,10 @@ declare function InventoryIsKey(Item: Item): boolean;
 declare function InventoryStringify(C: Character): string;
 /**
  * Returns TRUE if the inventory category is blocked in the current chat room
- * @param {readonly ChatRoomBlockCategory[]} Category - An array of string containing all the categories to validate
+ * @param {readonly ServerChatRoomBlockCategory[]} Category - An array of string containing all the categories to validate
  * @return {boolean} - TRUE if it's blocked
  */
-declare function InventoryChatRoomAllow(Category: readonly ChatRoomBlockCategory[]): boolean;
+declare function InventoryChatRoomAllow(Category: readonly ServerChatRoomBlockCategory[]): boolean;
 /**
  * Applies a preset expression from being shocked to the character if able
  * @param {Character} C - The character to update

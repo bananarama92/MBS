@@ -104,10 +104,10 @@ declare function AssetLayerAlpha(Layer: AssetLayerDefinition, NewAsset: AssetDef
 /**
  * Assigns color indices to the layers of an asset. These determine which colors get applied to the layer. Also adds
  * a count of colorable layers to the asset definition.
- * @param {Asset} A - The built asset
+ * @param {Mutable<Asset>} A - The built asset
  * @returns {void} - Nothing
  */
-declare function AssetAssignColorIndices(A: Asset): void;
+declare function AssetAssignColorIndices(A: Mutable<Asset>): void;
 /**
  * Builds the asset description from the CSV file
  * @param {IAssetFamily} Family

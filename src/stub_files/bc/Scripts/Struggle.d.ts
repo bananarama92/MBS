@@ -98,6 +98,10 @@ declare function StruggleMinigameStart(C: Character, MiniGame: StruggleKnownMini
  *
  * If the game was already played a bit, it will also log the failure in chat.
  *
+ * Do not call this from within minigames, use {@link StruggleMinigameCheckCancel}
+ * and {@link StruggleProgressCheckEnd} instead so whoever started the minigame
+ * knows it has ended and can react accordingly.
+ *
  * @returns {void}
  */
 declare function StruggleMinigameStop(): void;
@@ -319,12 +323,24 @@ declare let StruggleProgress: number;
  */
 declare var StruggleProgressCurrentMinigame: StruggleKnownMinigames | "";
 /**
- * The item worn at the beginning of the minigame
+ * The item worn at the beginning of the minigame.
+ *
+ * This is a (shallow) copy so that changes made outside of the minigame
+ * don't cause crashes if the data gets changed externally —
+ * which can happen if someone else removes the item we're currently
+ * struggling with. Changes made to it might be ignored!
+ *
  * @type {Item | null}
  */
 declare var StruggleProgressPrevItem: Item | null;
 /**
  * The item that should be worn at the end of the minigame
+ *
+ * This is a (shallow) copy so that changes made outside of the minigame
+ * don't cause crashes if the data gets changed externally —
+ * which can happen if someone else removes the item we're currently
+ * struggling with. Changes made to it might be ignored!
+ *
  * @type {Item | null}
  */
 declare var StruggleProgressNextItem: Item | null;

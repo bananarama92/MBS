@@ -25,10 +25,11 @@ declare function ExtendedItemParseScriptHooks<DataType extends ExtendedItemData<
  * Initialize the extended item properties
  * @param {Item} Item - The item in question
  * @param {Character} C - The character that has the item equiped
- * @param {boolean} Refresh - Whether the character and relevant item should be refreshed
+ * @param {boolean} Push - Whether to push to changes to the server
+ * @param {boolean} Refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {boolean} Whether properties were updated or not
  */
-declare function ExtendedItemInit(C: Character, Item: Item, Refresh?: boolean): boolean;
+declare function ExtendedItemInit(C: Character, Item: Item, Push?: boolean, Refresh?: boolean): boolean;
 /**
  * Helper init function for extended items without an archetype.
  * Note that on the long term this function should ideally be removed in favor of adding appropriate archetypes.
@@ -36,10 +37,11 @@ declare function ExtendedItemInit(C: Character, Item: Item, Refresh?: boolean): 
  * @param {Character} C - The character that has the item equiped
  * @param {ItemProperties} Properties - A record that maps property keys to their default value.
  *        The type of each value is used for basic validation.
- * @param {boolean} Refresh - Whether the character and relevant item should be refreshed
+ * @param {boolean} Push - Whether to push to changes to the server
+ * @param {boolean} Refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {boolean} Whether properties were updated or not
  */
-declare function ExtendedItemInitNoArch(C: Character, Item: Item, Properties: ItemProperties, Refresh?: boolean): boolean;
+declare function ExtendedItemInitNoArch(C: Character, Item: Item, Properties: ItemProperties, Push?: boolean, Refresh?: boolean): boolean;
 /**
  * Loads the item's extended item menu
  * @param {ExtendedItemData<any>} data
@@ -90,11 +92,11 @@ declare function ExtendedItemExit(): void;
  * @param {Item} item - The item whose type to set
  * @param {ItemProperties} previousProperty - The typed item options for the item
  * @param {ItemProperties} newProperty - The option to set
- * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
- * player) - defaults to false.
+ * @param {boolean} push - Whether to push to changes to the server
+ * @param {boolean} refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {void} Nothing
  */
-declare function ExtendedItemSetProperty(C: Character, item: Item, previousProperty: ItemProperties, newProperty: ItemProperties, push?: boolean): void;
+declare function ExtendedItemSetProperty(C: Character, item: Item, previousProperty: ItemProperties, newProperty: ItemProperties, push?: boolean, refresh?: boolean): void;
 /**
  * Checks whether the character meets the requirements for an extended type option. This will check against their Bondage
  * skill if applying the item to another character, or their Self Bondage skill if applying the item to themselves.
@@ -277,10 +279,10 @@ declare function ExtendedItemGatherSubscreenProperty(item: Item, option: Extende
  * @param {Item} item - The item whose type to set
  * @param {OptionType} newOption - The to-be applied extended item option
  * @param {OptionType} previousOption - The previously applied extended item option
- * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
- * player) - defaults to false.
+ * @param {boolean} push - Whether to push to changes to the server
+ * @param {boolean} refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  */
-declare function ExtendedItemSetOption<OptionType extends TypedItemOption | ModularItemOption | VibratingItemOption>(data: ModularItemData | TypedItemData | VibratingItemData, C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push?: boolean): void;
+declare function ExtendedItemSetOption<OptionType extends TypedItemOption | ModularItemOption | VibratingItemOption>(data: ModularItemData | TypedItemData | VibratingItemData, C: Character, item: Item, newOption: OptionType, previousOption: OptionType, push?: boolean, refresh?: boolean): void;
 /** A temporary hack for registering extra archetypes for a single screen. */
 declare function ExtendedItemManualRegister(): void;
 /**

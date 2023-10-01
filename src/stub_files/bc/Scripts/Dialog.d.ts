@@ -779,13 +779,6 @@ declare function DialogDrawOwnerRulesMenu(): void;
  */
 declare function DialogSetSkillRatio(SkillType: SkillType, NewRatio: string): void;
 /**
- * Sends an room administrative command to the server for the chat room from the player dialog
- * @param {string} ActionType - The name of the administrative command to use
- * @param {string} Publish - Determines whether the action should be published to the ChatRoom. As this is a string, use "true" to do so
- * @returns {void} - Nothing
- */
-declare function DialogChatRoomAdminAction(ActionType: string, Publish: string): void;
-/**
  * Leave the dialog and revert back to a safe state, when the player uses her safe word
  * @returns {void} - Nothing
  */

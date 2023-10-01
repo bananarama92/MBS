@@ -242,9 +242,10 @@ declare function PlatformDraw(): void;
 declare function PlatformDrawRightButtons(): void;
 /**
  * Plays the dialog ambient music
+ * @param {string} Music - The URL of the music to play
  * @returns {void} - Nothing
  */
-declare function PlatformBackgroundMusic(Music: any): void;
+declare function PlatformBackgroundMusic(Music: string): void;
 /**
  * Draws the possible gifts on the top of the screen, exit gift mode if too far from target
  * @returns {void} - Nothing

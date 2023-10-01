@@ -177,6 +177,7 @@ declare function ClubCardGetReward(): void;
  * @returns {void} - Nothing
  */
 declare function ClubCardEndTurn(Draw?: boolean | null): void;
+declare function ClubCardCheckVictory(CCPlayer: any): boolean;
 /**
  * Returns the number of cards that can be played in one turn by a player
  * @param {ClubCardPlayer} CCPlayer - The club card player

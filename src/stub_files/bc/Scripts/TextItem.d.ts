@@ -22,7 +22,7 @@ declare function TextItemGetDrawData(fieldNames: readonly TextItemNames[], drawD
  * @param {null | ExtendedItemOption} parentOption - The parent extended item option of the super screens (if any)
  * @returns {TextItemData} - The generated typed item data for the asset
  */
-declare function TextItemCreateTextItemData(asset: Asset, { MaxLength, Font, DialogPrefix, ChatTags, Dictionary, ScriptHooks, BaselineProperty, EventListeners, DrawData, PushOnPublish, }: TextItemConfig, parentOption?: null | ExtendedItemOption): TextItemData;
+declare function TextItemCreateTextItemData(asset: Asset, { MaxLength, Font, DialogPrefix, ChatTags, Dictionary, ScriptHooks, BaselineProperty, EventListeners, DrawData, PushOnPublish, AllowEffect, }: TextItemConfig, parentOption?: null | ExtendedItemOption): TextItemData;
 /**
  * @param {TextItemData} data - The extended item data
  * @param {Item} item - The item in question
@@ -46,7 +46,7 @@ declare function TextItemPropertyRevert({ textNames }: TextItemData, item: Item)
  */
 declare const TextItemDataLookup: Record<string, TextItemData>;
 declare namespace TextItem {
-    function Init({ asset, font, baselineProperty, maxLength }: TextItemData, C: Character, item: Item, refresh?: boolean): boolean;
+    function Init({ asset, font, baselineProperty, maxLength }: TextItemData, C: Character, item: Item, push?: boolean, refresh?: boolean): boolean;
     function Load(data: TextItemData): void;
     function Draw({ asset, drawData, textNames }: TextItemData): void;
     function Click({ functionPrefix, drawData }: TextItemData): void;

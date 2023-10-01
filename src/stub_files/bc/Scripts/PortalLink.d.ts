@@ -1,5 +1,5 @@
 /** @type {ExtendedItemCallbacks.Init} */
-declare function PortalLinkRecieverInit(C: Character, Item: Item, Refresh: boolean): boolean;
+declare function PortalLinkRecieverInit(C: Character, Item: Item, Push: boolean, Refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function PortalLinkRecieverLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */
@@ -8,7 +8,7 @@ declare function PortalLinkRecieverDraw(): void;
 declare function PortalLinkRecieverClick(): void;
 declare function PortalLinkRecieverExit(): void;
 /** @type {ExtendedItemCallbacks.Init} */
-declare function PortalLinkTransmitterInit(C: Character, Item: Item, Refresh: boolean): boolean;
+declare function PortalLinkTransmitterInit(C: Character, Item: Item, Push: boolean, Refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function PortalLinkTransmitterLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */
@@ -71,9 +71,9 @@ declare function PortalLinkCycleChastityModule(sender: Character, item: Item): v
 /**
  * The handler for processing the hidden PortalLink messages
  * @param {Character} sender
- * @param {IChatRoomMessage} data
+ * @param {ServerChatRoomMessage} data
  */
-declare function PortalLinkProcessMessage(sender: Character, data: IChatRoomMessage): void;
+declare function PortalLinkProcessMessage(sender: Character, data: ServerChatRoomMessage): void;
 /**
  * This file contains everything needed to add remote-style functions
  * (a.k.a PortalLink compatibility) to an asset, both as a transmitter

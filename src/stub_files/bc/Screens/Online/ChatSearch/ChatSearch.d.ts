@@ -181,15 +181,15 @@ declare function ChatSearchMatchesTerms(Room: {
  */
 declare function ChatSearchCalculateIgnoredRoomsOffset(shownRooms: number): number;
 declare var ChatSearchBackground: string;
-/** @type {{ Name: string, CreatorMemberNumber: number, MemberLimit: number, MemberCount: number, DisplayName: string, BlockCategory: ChatRoomBlockCategory[], Game: ChatRoomGame, Friends: { MemberName: string, MemberNumber: number, Type: string }[], Description: string, Creator: string, Order: number }[]} */
+/** @type {{ Name: string, CreatorMemberNumber: number, MemberLimit: number, MemberCount: number, DisplayName: string, BlockCategory: ServerChatRoomBlockCategory[], Game: ServerChatRoomGame, Friends: { MemberName: string, MemberNumber: number, Type: string }[], Description: string, Creator: string, Order: number }[]} */
 declare var ChatSearchResult: {
     Name: string;
     CreatorMemberNumber: number;
     MemberLimit: number;
     MemberCount: number;
     DisplayName: string;
-    BlockCategory: ChatRoomBlockCategory[];
-    Game: ChatRoomGame;
+    BlockCategory: ServerChatRoomBlockCategory[];
+    Game: ServerChatRoomGame;
     Friends: {
         MemberName: string;
         MemberNumber: number;
@@ -234,8 +234,8 @@ declare var ChatSearchFilterUnhideConfirm: null | {
 declare var ChatSearchRejoinIncrement: number;
 /** @type {null | string} */
 declare var ChatSearchReturnToScreen: null | string;
-/** @type {"" | ChatRoomLanguage} */
-declare var ChatSearchLanguage: "" | ChatRoomLanguage;
-/** @type {"" | ChatRoomLanguage} */
-declare var ChatSearchLanguageTemp: "" | ChatRoomLanguage;
+/** @type {"" | ServerChatRoomLanguage} */
+declare var ChatSearchLanguage: "" | ServerChatRoomLanguage;
+/** @type {"" | ServerChatRoomLanguage} */
+declare var ChatSearchLanguageTemp: "" | ServerChatRoomLanguage;
 declare var ChatSearchFilterTermsTemp: string;

@@ -97,23 +97,23 @@ declare function GameClubCardUndoBundle(Bundle: string, IncludeTime?: boolean, L
 declare function GameClubCardLoadBundle(CCPlayer: ClubCardPlayer, Bundle: any): void;
 /**
  * Assigns both club card players based on the players selection
- * @param {IChatRoomGameResponse} Packet - The data packet to process
+ * @param {ServerChatRoomGameResponse} Packet - The data packet to process
  * @param {Character} Char - The character that's sending the packet
  * @returns {void} - Nothing
  */
-declare function GameClubCardAssignPlayers(Packet: IChatRoomGameResponse, Char: Character): void;
+declare function GameClubCardAssignPlayers(Packet: ServerChatRoomGameResponse, Char: Character): void;
 /**
  * Loads the club card game data
- * @param {IChatRoomGameResponse} Packet - The data packet to process
+ * @param {ServerChatRoomGameResponse} Packet - The data packet to process
  * @returns {void} - Nothing
  */
-declare function GameClubCardLoadData(Packet: IChatRoomGameResponse): void;
+declare function GameClubCardLoadData(Packet: ServerChatRoomGameResponse): void;
 /**
  * Processes the club card game data received from the server
- * @param {IChatRoomGameResponse} Packet - The data packet to process
+ * @param {ServerChatRoomGameResponse} Packet - The data packet to process
  * @returns {void} - Nothing
  */
-declare function GameClubCardProcess(Packet: IChatRoomGameResponse): void;
+declare function GameClubCardProcess(Packet: ServerChatRoomGameResponse): void;
 /**
  * Syncs the online data with all players
  * @param {string} Progress - The progress status to push (default to action)
