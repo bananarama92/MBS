@@ -164,6 +164,7 @@ export function pushMBSSettings(push: boolean = true, sharedSettings: boolean = 
         FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(i => i?.valueOf() ?? null),
     };
     Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
+    Player.OnlineSettings.MBSVersion = MBS_VERSION;
 
     if (sharedSettings) {
         Player.OnlineSharedSettings.MBS = Object.freeze({
