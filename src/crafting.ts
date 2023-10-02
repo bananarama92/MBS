@@ -107,10 +107,14 @@ waitFor(settingsMBSLoaded).then(() => {
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
         next(args);
-        Player.MBSSettings.CraftingCache = craftingSerialize(
+
+        const cache = craftingSerialize(
             Player.Crafting ? Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL) : null,
         );
-        pushMBSSettings();
+        if (cache != Player.MBSSettings.CraftingCache) {
+            Player.MBSSettings.CraftingCache = cache;
+            pushMBSSettings(true, false);
+        }
     });
 
     if (getFunctionHash(CraftingSaveServer) !== "B5299AB2") {

@@ -14,6 +14,7 @@ interface PlayerCharacter {
 
 interface PlayerOnlineSettings {
     MBS: string,
+    MBSVersion: typeof import("common").MBS_VERSION,
 }
 
 /** Base type for fortune wheel options */
