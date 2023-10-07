@@ -85,7 +85,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
         }
         return p.every(i => typeof i === "string" && i.length <= ItemDevicesLuckyWheelMaxTextLength);
     },
-    TargetAngle: (p, _) => typeof p === "number",
+    TargetAngle: (p, _) => typeof p === "number" && p >= 0 && p <= 360,
     OverrideHeight: validateOverrideHeight,
     PunishStruggle: (p, _) => typeof p === "boolean",
     PunishStruggleOther: (p, _) => typeof p === "boolean",
@@ -96,6 +96,8 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     PunishProhibitedSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
     PublicModeCurrent: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltModes.length,
     PublicModePermission: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltPermissions.length,
+    ShockLevel: (p, _) => isInteger(p) && p >= 0 && p <= 2,
+    PortalLinkCode: (p, _) => typeof p === "string" && PortalLinkCodeRegex.test(p),
 });
 
 /**
@@ -107,13 +109,32 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
     if (properties === null || typeof properties !== "object") {
         return {};
     }
+
+    const validPropKeys: Set<keyof ItemProperties> = new Set(["OverridePriority"]);
+    if (asset.Archetype) {
+        const item: Item = { Asset: asset };
+        const options = ExtendedItemGatherOptions(item);
+        for (const option of options) {
+            if (option.OptionType === "VariableHeightOption") {
+                validPropKeys.add("OverrideHeight");
+            }
+            for (const key of CommonKeys(option.ParentData.baselineProperty || {})) {
+                if (!CraftingPropertyExclude.has(key)) {
+                    validPropKeys.add(key);
+                }
+            }
+        }
+    }
+
     const ret: ItemProperties = {};
-    const propMapping = <Record<keyof ItemProperties, PropValidator<any>>>PROP_MAPPING;
-    for (const [name, validate] of entries(propMapping)) {
-        const value: any = properties[name];
-        if (value != null && validate(value, asset)) {
+    for (const [key, value] of entries(properties)) {
+        const validate = PROP_MAPPING[key];
+        if (value == null || !validPropKeys.has(key) || validate === undefined) {
+            continue;
+        }
+        if (validate(value, asset)) {
             // @ts-ignore
-            ret[name] = value;
+            ret[key] = value;
         }
     }
     return ret;
