@@ -278,6 +278,9 @@ function blockedByEnclose(character: Character): boolean {
  * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
  * @param preRunCallback A callback (or `null`) executed before equipping any items from `itemList`
  * @param character The relevant player- or NPC-character
+ * @param strictRefresh Whether to refresh the character after equipping every single item and changing its type.
+ * Setting this value `false` is generally not safe, as asset prerequisite checks rely on the character being properly refreshed.
+ * Should be fine for preview characters though, and it does save a lot of time
  */
 export function fortuneWheelEquip(
     name: string,
@@ -286,6 +289,7 @@ export function fortuneWheelEquip(
     globalCallback: null | FortuneWheelCallback = null,
     preRunCallback: null | FortuneWheelPreRunCallback = null,
     character: Character = Player,
+    strictRefresh: boolean = true,
 ): void {
     if (!isArray(itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
@@ -315,7 +319,7 @@ export function fortuneWheelEquip(
     const equipFailureRecord: Record<string, string[]> = {};
     const equipCallbackOutputs: Set<AssetGroupName> = new Set();
     const isClubSlave = character.IsPlayer() && LogQuery("ClubSlave", "Management");
-    for (const {Name, Group, Equip, NoEquip} of <(FWItem & { NoEquip?: boolean })[]>[...blockingItems, ...itemList]) {
+    for (const { Name, Group, Equip, NoEquip } of <(FWItem & { NoEquip?: boolean })[]>[...blockingItems, ...itemList]) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const oldItem = InventoryGet(character, Group);
         const equip = typeof Equip === "function" ? Equip(character) : true;
@@ -360,17 +364,15 @@ export function fortuneWheelEquip(
         }
 
         // Equip the item while avoiding refreshes as much as possible until all items are
-        const color = Color ?? asset.DefaultColor;
-        const colorCopy = isArray(color) ? [...color] : color;
-        CharacterAppearanceSetItem(
-            character, Group, asset, colorCopy, SkillGetWithRatio(character, "Bondage"),
-            character.MemberNumber, false,
+        const color = [...(Color ?? asset.DefaultColor)];
+        const newItem = CharacterAppearanceSetItem(
+            character, Group, asset, color, SkillGetWithRatio(character, "Bondage"),
+            character.MemberNumber, strictRefresh,
         );
-        const newItem = InventoryGet(character, Group);
         if (newItem == null) {
             continue;
         }
-        itemSetType(newItem, character, Type);
+        itemSetType(newItem, character, Type, strictRefresh);
         if (Craft !== undefined) {
             newItem.Craft = cloneDeep(Craft);
             InventoryCraft(character, character, <AssetGroupItemName>Group, newItem.Craft, false, false);
@@ -386,14 +388,15 @@ export function fortuneWheelEquip(
         }
     }
 
+    if (!strictRefresh) {
+        // We need to manually refresh if we're not doing so automatically after every item equipping + type setting
+        CharacterRefresh(character, false, false);
+    }
     if (character.IsPlayer()) {
-        CharacterRefresh(character, true, false);
         ChatRoomCharacterUpdate(character);
         const nFailures = Object.values(equipFailureRecord).length;
         if (nFailures !== 0) {
             console.log(`MBS: Failed to equip ${nFailures} "${name}" wheel of fortune items`, equipFailureRecord);
         }
-    } else {
-        CharacterRefresh(character, false, false);
     }
 }

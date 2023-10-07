@@ -9,8 +9,11 @@ import { validateCharacter } from "common_bc";
  * @param item The Item in question
  * @param character The player or simple character
  * @param type The item's `Type` (or `Mode` in the case of vibrating items)
+ * @param refresh Whether to refresh the character after equipping every single item and changing its type.
+ * Setting this value `false` is generally not safe, as asset prerequisite checks rely on the character being properly refreshed.
+ * Should be fine for preview characters though, and it does save a lot of time
  */
-export function itemSetType(item: Item, character: Character, type: null | string): void {
+export function itemSetType(item: Item, character: Character, type: null | string, refresh: boolean = true): void {
     validateCharacter(character);
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
@@ -25,9 +28,9 @@ export function itemSetType(item: Item, character: Character, type: null | strin
         return;
     } else if (asset.Archetype) {
         const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
-        return setType(character, item, type);
+        return setType(character, item, type, refresh);
     } else {
-        return setTypeNoArch(item, character, type);
+        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
     }
 }
 
@@ -39,24 +42,20 @@ export function itemSetType(item: Item, character: Character, type: null | strin
  */
 export function getBaselineProperty(asset: Asset, character: Character, type: null | string): ItemProperties {
     const item: Item = { Asset: asset };
-    ExtendedItemInit(character, item, false);
-    itemSetType(item, character, type);
+    ExtendedItemInit(character, item, false, false);
+    itemSetType(item, character, type, false);
     return item.Property ?? {};
 }
 
 /** Type-setting callback type for {@link ITEM_SET_TYPE_DICT} */
-type setTypeCallback = (C: Character, item: Item, type: string) => void;
+type setTypeCallback = (C: Character, item: Item, type: string, refresh: boolean) => void;
 
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
-const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({ // R92
-    typed: (...args) => TypedItemSetOptionByName(...args),
-    vibrating: (...args) => VibratorModeSetOptionByName(...args),
-    modular: (...args) => ModularItemSetOptionByName(...args),
+const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({
+    typed: (C, item, type, refresh) => TypedItemSetOptionByName(C, item, type, false, null, null, refresh),
+    vibrating: (C, item, type, refresh) => VibratorModeSetOptionByName(C, item, type, false, undefined, undefined, refresh),
+    modular: (C, item, type, refresh) => ModularItemSetOptionByName(C, item, type, false, null, refresh),
     variableheight: () => { return; },
     text: () => { return; },
 });
 
-/** Set the {@link ItemProperties.Type} of a non-archetypical item. */
-function setTypeNoArch(item: Item, _character: Character, _type: string): void {
-    console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
-}
