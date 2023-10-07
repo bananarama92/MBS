@@ -6,10 +6,10 @@ declare function InventoryItemNeckAccessoriesCollarShockUnitResetCount(): void;
 /**
  * @typedef {{ ChangeTime?: number, DisplayCount?: number, LastTriggerCount?: number }} ShockUnitPersistentData
  */
-/** @type {ExtendedItemCallbacks.BeforeDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDraw(data: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
-/** @type {ExtendedItemCallbacks.ScriptDraw<ShockUnitPersistentData>} */
-declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDraw(data: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
+/** @type {ExtendedItemScriptHookCallbacks.BeforeDraw<ExtendedItemData, ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitBeforeDrawHook(data: ExtendedItemData<any>, originalFunction: (drawData: DynamicDrawingData<ShockUnitPersistentData>) => DynamicBeforeDrawOverrides, drawData: DynamicDrawingData<ShockUnitPersistentData>): DynamicBeforeDrawOverrides;
+/** @type {ExtendedItemScriptHookCallbacks.ScriptDraw<ExtendedItemData, ShockUnitPersistentData>} */
+declare function AssetsItemNeckAccessoriesCollarShockUnitScriptDrawHook(data: ExtendedItemData<any>, originalFunction: (drawData: DynamicScriptCallbackData<ShockUnitPersistentData>) => void, drawData: DynamicScriptCallbackData<ShockUnitPersistentData>): void;
 type ShockUnitPersistentData = {
     ChangeTime?: number;
     DisplayCount?: number;

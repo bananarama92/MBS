@@ -177,7 +177,9 @@ declare function CharacterChangeMoney(C: Character, Value: number): void;
 /**
  * Refreshes the character parameters (Effects, poses, canvas, settings, etc.)
  * @param {Character} C - Character to refresh
- * @param {boolean} [Push=true] - Pushes the data to the server if true or null
+ * @param {boolean} [Push=true] - Pushes the data to the server database if true or null.
+ * Note that this will *not* push appearance changes to the rest of the chatroom,
+ * which requires either {@link ChatRoomCharacterItemUpdate} or {@link ChatRoomCharacterUpdate}.
  * @param {boolean} [RefreshDialog=true] - Refreshes the character dialog
  * @returns {void} - Nothing
  */
@@ -292,13 +294,13 @@ declare function CharacterSetActivePose(C: Character, NewPose: null | AssetPoseN
  * Be careful that "Eyes" for this function means both eyes. Use Eyes1/Eyes2 to target the left or right one only.
  *
  * @param {Character} C - Character for which to set the expression of
- * @param {AssetGroupBodyName | "Eyes1"} AssetGroup - Asset group for the expression
+ * @param {ExpressionGroupName | "Eyes1"} AssetGroup - Asset group for the expression
  * @param {null | ExpressionName} Expression - Name of the expression to use
  * @param {number} [Timer] - Optional: time the expression will last
  * @param {string|string[]} [Color] - Optional: color of the expression to set
  * @returns {void} - Nothing
  */
-declare function CharacterSetFacialExpression(C: Character, AssetGroup: AssetGroupBodyName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[], fromQueue?: boolean): void;
+declare function CharacterSetFacialExpression(C: Character, AssetGroup: ExpressionGroupName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[], fromQueue?: boolean): void;
 /**
  * Resets the character's facial expression to the default
  * @param {Character} C - Character for which to reset the expression of

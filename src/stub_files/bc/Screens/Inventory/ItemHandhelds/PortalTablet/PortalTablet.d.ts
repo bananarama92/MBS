@@ -1,5 +1,5 @@
 /** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryItemHandheldPortalTabletInit(C: Character, Item: Item, Refresh: boolean): boolean;
+declare function InventoryItemHandheldPortalTabletInit(C: Character, Item: Item, Push: boolean, Refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemHandheldPortalTabletLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

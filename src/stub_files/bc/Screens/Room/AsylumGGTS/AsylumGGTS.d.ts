@@ -289,10 +289,10 @@ declare function AsylumGGTSDialogInteraction(Interaction: string): void;
  * Called from chat room, processes hidden GGTS messages
  * @param {Character} SenderCharacter - The character sending the message
  * @param {String} Interaction - The message sent
- * @param {IChatRoomMessage} data - The full message recieved
+ * @param {ServerChatRoomMessage} data - The full message recieved
  * @returns {Object} - Nothing to be used
  */
-declare function AsylumGGTSHiddenMessage(SenderCharacter: Character, Interaction: string, data: IChatRoomMessage): any;
+declare function AsylumGGTSHiddenMessage(SenderCharacter: Character, Interaction: string, data: ServerChatRoomMessage): any;
 /**
  * GGTS Draws the level, the number of strikes and a progress bar, level 6 shows the time in a gold frame
  * @param {Character} C - Character to draw the info for

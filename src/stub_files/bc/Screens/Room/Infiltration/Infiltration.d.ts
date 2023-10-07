@@ -54,6 +54,11 @@ declare function InfiltrationCanJoinPrivateRoom(): boolean;
  */
 declare function InfiltrationCanPlayClubCard(): boolean;
 /**
+ * Returns TRUE if the player has free space and is skilled enough.
+ * @returns {boolean} - * Returns TRUE if the player has free space and is skilled enough.
+ */
+declare function InfiltrationCanBrainwashCaptive(): boolean;
+/**
  * Loads the infiltration screen by generating the supervisor.
  * @returns {void} - Nothing
  */

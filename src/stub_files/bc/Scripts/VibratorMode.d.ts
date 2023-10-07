@@ -33,7 +33,7 @@ declare function VibratorModeGetDrawData(modeSet: readonly VibratorModeSet[], dr
  * @param {VibratingItemConfig} config - The item's extended item configuration
  * @returns {VibratingItemData} - The generated vibrating item data for the asset
  */
-declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix, DrawData, ChatTags }: VibratingItemConfig, parentOption?: any): VibratingItemData;
+declare function VibratorModeCreateData(asset: Asset, { Options, ScriptHooks, BaselineProperty, Dictionary, DialogPrefix, DrawData, ChatTags, AllowEffect }: VibratingItemConfig, parentOption?: any): VibratingItemData;
 /**
  * Gather all extended item options for a given list of modes.
  * @param {VibratingItemData} data - The extended item data
@@ -52,10 +52,12 @@ declare function VibratorModeLoad({ dialogPrefix: { header } }: VibratingItemDat
  * @param {Item} item - The item whose options are being validated
  * @param {VibratingItemOption} newOption - The new option
  * @param {VibratingItemOption} previousOption - The previously applied option
+ * @param {boolean} permitExisting - Determines whether the validation should allow the new option and previous option
+ * to be identical. Defaults to `false`.
  * @returns {string|undefined} - undefined or an empty string if the validation passes. Otherwise, returns a string
  * message informing the player of the requirements that are not met.
  */
-declare function VibratorModeValidate(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption): string | undefined;
+declare function VibratorModeValidate(data: VibratingItemData, C: Character, item: Item, newOption: VibratingItemOption, previousOption: VibratingItemOption, permitExisting?: boolean): string | undefined;
 /**
  * Publish a vibrator action and exit the dialog of applicable
  * @param {VibratingItemData} data
@@ -71,12 +73,6 @@ declare function VibratorModePublishAction(data: VibratingItemData, C: Character
  * @returns {void} - Nothing
  */
 declare function VibratorModeSetAssetProperties(data: VibratingItemData): void;
-/**
- * Sets the AllowEffect property for a vibrating item
- * @param {VibratingItemData} data - The vibrating item data for the asset
- * @returns {void} - Nothing
- */
-declare function VibratorModeSetAllowEffect({ asset, modeSet }: VibratingItemData): void;
 /**
  * @typedef {{ Mode?: VibratorMode, ChangeTime?: number, LastChange?: number }} VibratorModePersistentData
  */
@@ -115,15 +111,16 @@ declare function VibratorModePublish(data: VibratingItemData, C: Character, item
  * @param {VibratingItemData} data
  * @param {Item} Item - The item in question
  * @param {Character} C - The character that has the item equiped
- * @param {boolean} Refresh - Whether the character and relevant item should be refreshed and pushed to the server
+ * @param {boolean} Push - Whether to push to changes to the server
+ * @param {boolean} Refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {boolean} Whether properties were initialized or not
  */
-declare function VibratorModeInit(data: VibratingItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
+declare function VibratorModeInit(data: VibratingItemData, C: Character, Item: Item, Push?: boolean, Refresh?: boolean): boolean;
 /**
  * An alias for {@link TypedItemSetOptionByName}.
  * @type {typeof TypedItemSetOptionByName}
  */
-declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean, C_Source?: Character, subscreen?: [archetype: "typed" | "vibrating", screen: string]): string;
+declare function VibratorModeSetOptionByName(C: Character, itemOrGroupName: AssetGroupName | Item, optionName: string, push?: boolean, C_Source?: Character, subscreen?: [archetype: "typed" | "vibrating", screen: string], refresh?: boolean): string;
 /**
  * Return the (standard) vibrator mode one would get by incrementing/decrementing the passed mode.
  * @param {VibratorMode} mode - The current vibrator mode

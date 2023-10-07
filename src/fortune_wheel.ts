@@ -120,6 +120,14 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
     return itemList;
 }
 
+function getAllowTypes(asset: Asset): readonly string[] {
+    if (isArray(asset.AllowType)) {
+        return asset.AllowType;
+    } else {
+        return asset.AllowTypes ?? [];
+    }
+}
+
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>> {
     const protoRecord: Record<FortuneWheelNames, FWItemBase[]> = {
@@ -342,7 +350,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const allowType = [null, ...getAllowTypes(item.Asset)];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -358,7 +366,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const allowType = [null, ...getAllowTypes(item.Asset)];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -385,7 +393,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const allowType = [null, ...getAllowTypes(item.Asset)];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -426,7 +434,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Equip: () => (Math.random() > 0.5),
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = item.Asset.AllowType ? [null, ...item.Asset.AllowType] : [null];
+                    const allowType = [null, ...getAllowTypes(item.Asset)];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -843,16 +851,55 @@ waitFor(settingsMBSLoaded).then(() => {
         return next(args);
     });
 
+    MBS_MOD_API.patchFunction("WheelFortuneRun", {
+        'DrawButton(1770, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));':
+            ";",
+        'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");':
+            ";",
+    });
+
     MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
+        const canSpin = (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained());
+        if (!canSpin) {
+            WheelFortuneForced = false;
+        }
+
         next(args);
+
         const enabled = WheelFortuneVelocity === 0;
         const color = enabled ? "White" : "Silver";
         const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
         const description = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${name}'s option config`;
         DrawButton(1655, 25, 90, 90, "", color, "Icons/Crafting.png", description, !enabled);
+
+        const backColor = (WheelFortuneVelocity == 0 && canSpin) ? "White" : "Silver";
+        DrawButton(
+            1770, 25, 90, 90, "", backColor, "Icons/Random.png",
+            canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
+            !canSpin,
+        );
+
+        let text = "";
+        if (!enabled) {
+            text = TextGet("Wait");
+        } else if (!canSpin) {
+            text = "Cannot spin the wheel of fortune while restrained";
+        } else if (WheelFortuneForced) {
+            text = TextGet("Forced");
+        } else {
+            text = TextGet("Title");
+        }
+        DrawTextWrap(text, 1375, 200, 550, 200, "White");
     });
 
     MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
+        if (!Player.MBSSettings.RollWhenRestrained && Player.IsRestrained()) {
+            WheelFortuneForced = false;
+            if (MouseIn(1770, 25, 90, 90)) {
+                return;
+            }
+        }
+
         if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
             const struct = {
                 FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
@@ -863,6 +910,18 @@ waitFor(settingsMBSLoaded).then(() => {
             subScreen.load();
         }
         return next(args);
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneMouseUp", 11, (args, next) => {
+        if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+            next(args);
+        }
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneMouseDown", 11, (args, next) => {
+        if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+            next(args);
+        }
     });
 
     fortuneWheelState = new FWScreenProxy();

@@ -139,6 +139,8 @@ function initMBSSettings(): void {
         CraftingCache: settings.CraftingCache,
         FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
+        LockedWhenRestrained: typeof settings.LockedWhenRestrained === "boolean" ? settings.LockedWhenRestrained : false,
+        RollWhenRestrained: typeof settings.RollWhenRestrained === "boolean" ? settings.RollWhenRestrained : true,
     });
 
     // Ensure that the player's wheel of fortune settings are initialized
@@ -150,8 +152,9 @@ function initMBSSettings(): void {
 /**
  * Update the online (shared) settings and push all MBS settings to the server.
  * @param push Whether to actually push to the server or to merely assign the online (shared) settings.
+ * @param sharedSettings Whether to update the online shared settings in additin to the online settings.
  */
-export function pushMBSSettings(push: boolean = true): void {
+export function pushMBSSettings(push: boolean = true, sharedSettings: boolean = true): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
         const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
         throw new Error(`"Player.${settingsName}" still unitialized`);
@@ -163,18 +166,23 @@ export function pushMBSSettings(push: boolean = true): void {
         FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(i => i?.valueOf() ?? null),
     };
     Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
-    Player.OnlineSharedSettings.MBS = Object.freeze({
-        Version: MBS_VERSION,
-        FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.hidden === false ? set.valueOf() : null),
-        FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(set => set?.hidden === false ? set.valueOf() : null),
-    });
+    Player.OnlineSettings.MBSVersion = MBS_VERSION;
+
+    if (sharedSettings) {
+        Player.OnlineSharedSettings.MBS = Object.freeze({
+            Version: MBS_VERSION,
+            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.hidden === false ? set.valueOf() : null),
+            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(set => set?.hidden === false ? set.valueOf() : null),
+        });
+    }
 
     if (push) {
-        Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
-        ServerAccountUpdate.QueueData({
-            OnlineSettings: Player.OnlineSettings,
-            OnlineSharedSettings: Player.OnlineSharedSettings,
-        });
+        const data: Record<string, any> = { OnlineSettings: Player.OnlineSettings };
+        if (sharedSettings) {
+            Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
+            data.OnlineSharedSettings = Player.OnlineSharedSettings;
+        }
+        ServerAccountUpdate.QueueData(data);
     }
 }
 

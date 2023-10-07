@@ -4,6 +4,7 @@ import { MBS_MOD_API, MBS_VERSION, waitFor } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { MBSScreen, ScreenProxy } from "screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
+import { pushMBSSettings } from "settings";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -57,6 +58,32 @@ export class MBSPreferenceScreen extends MBSScreen {
                     subScreen.load();
                 },
             },
+            {
+                coords: [500, 284, 64, 64],
+                requiresPlayer: true,
+                next: () => {
+                    if (
+                        this.character.IsPlayer()
+                        && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
+                    ) {
+                        this.character.MBSSettings.RollWhenRestrained = !this.character.MBSSettings.RollWhenRestrained;
+                        pushMBSSettings(true, false);
+                    }
+                },
+            },
+            {
+                coords: [500, 360, 64, 64],
+                requiresPlayer: true,
+                next: () => {
+                    if (
+                        this.character.IsPlayer()
+                        && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
+                    ) {
+                        this.character.MBSSettings.LockedWhenRestrained = !this.character.MBSSettings.LockedWhenRestrained;
+                        pushMBSSettings(true, false);
+                    }
+                },
+            },
         ];
     }
 
@@ -74,12 +101,20 @@ export class MBSPreferenceScreen extends MBSScreen {
     run() {
         MainCanvas.textAlign = "left";
         DrawText(`- Maid's Bondage Scripts ${MBS_VERSION} -`, 500, 125, "Black");
-        DrawCharacter(Player, 50, 50, 0.9);
+        DrawCharacter(this.character, 50, 50, 0.9);
         DrawButton(1815, 75, 90, 90, "", "White", "Icons/Exit.png", "Exit");
 
         DrawButton(500, 172, 90, 90, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
-        DrawText("Configure the Wheel of Fortune", 625, 172 + 35, "Black");
+        DrawText("Configure the Wheel of Fortune", 625, 207, "Black");
 
+        if (this.character.IsPlayer()) {
+            const disable = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+            DrawCheckbox(500, 284, 64, 64, "", this.character.MBSSettings.RollWhenRestrained, disable);
+            DrawText("Allow wheel spinning while restrainted", 575, 317, "Black");
+
+            DrawCheckbox(500, 360, 64, 64, "", this.character.MBSSettings.LockedWhenRestrained, disable);
+            DrawText("Lock MBS settings while restrained", 575, 392, "Black");
+        }
         MainCanvas.textAlign = "center";
     }
 

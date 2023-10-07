@@ -9,7 +9,7 @@ declare function InventoryItemDevicesLuckyWheelDrawHook(data: ModularItemData, n
 /** @type {ExtendedItemScriptHookCallbacks.Click<ModularItemData>} */
 declare function InventoryItemDevicesLuckyWheelClickHook(data: ModularItemData, next: () => void): void;
 /** @type {ExtendedItemScriptHookCallbacks.Init<ModularItemData>} */
-declare function InventoryItemDevicesLuckyWheelInitHook(data: ModularItemData, originalFunction: (C: Character, item: Item, refresh: boolean) => boolean, character: Character, item: Item, refresh: boolean): boolean;
+declare function InventoryItemDevicesLuckyWheelInitHook(data: ModularItemData, originalFunction: (C: Character, item: Item, push: boolean, refresh: boolean) => boolean, character: Character, item: Item, push: boolean, refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemDevicesLuckyWheelg0Load(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

@@ -13,10 +13,11 @@ declare function ModularItemRegister(asset: Asset, config: ModularItemConfig): M
  * @param {ModularItemData} Data - The item's extended item data
  * @param {Item} Item - The item in question
  * @param {Character} C - The character that has the item equiped
- * @param {boolean} Refresh - Whether the character and relevant item should be refreshed and pushed to the server
+ * @param {boolean} Push - Whether to push to changes to the server
+ * @param {boolean} Refresh - Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {boolean} Whether properties were initialized or not
  */
-declare function ModularItemInit(Data: ModularItemData, C: Character, Item: Item, Refresh?: boolean): boolean;
+declare function ModularItemInit(Data: ModularItemData, C: Character, Item: Item, Push?: boolean, Refresh?: boolean): boolean;
 /**
  * @param {ModularItemData} data
  */
@@ -43,7 +44,7 @@ declare function ModularItemBuildModules(asset: Asset, modules: readonly Modular
  * @param {ModularItemConfig} config - The item's extended item configuration
  * @returns {ModularItemData} - The generated modular item data for the asset
  */
-declare function ModularItemCreateModularData(asset: Asset, { Modules, ChatSetting, ChatTags, ChangeWhenLocked, DialogPrefix, ScriptHooks, Dictionary, DrawData, BaselineProperty, DrawImages, }: ModularItemConfig): ModularItemData;
+declare function ModularItemCreateModularData(asset: Asset, { Modules, ChatSetting, ChatTags, ChangeWhenLocked, DialogPrefix, ScriptHooks, Dictionary, DrawData, AllowEffect, BaselineProperty, DrawImages, }: ModularItemConfig): ModularItemData;
 /**
  * Creates a modular item's base draw function (for the module selection screen)
  * @param {ModularItemData} data - The modular item data for the asset
@@ -173,10 +174,11 @@ declare function ModularItemSetType(module: ModularItemModule, index: number, da
  * @param {boolean} [push] - Whether or not appearance updates should be persisted (only applies if the character is the
  * player) - defaults to false.
  * @param {null | Character} [C_Source] - The character setting the new item option. If `null`, assume that it is _not_ the player character.
+ * @param refresh Whether to refresh the character. This should generally be `true`, with custom script hooks being a potential exception.
  * @returns {string|undefined} - undefined or an empty string if the type was set correctly. Otherwise, returns a string
  * informing the player of the requirements that are not met.
  */
-declare function ModularItemSetOptionByName(C: Character, itemOrGroupName: Item | AssetGroupName, optionNames: string, push?: boolean, C_Source?: null | Character): string | undefined;
+declare function ModularItemSetOptionByName(C: Character, itemOrGroupName: Item | AssetGroupName, optionNames: string, push?: boolean, C_Source?: null | Character, refresh?: boolean): string | undefined;
 /**
  * Publishes the chatroom message for a modular item when one of its modules has changed.
  * @param {ModularItemData} data

@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v0.6.24
+* Add support for BC R97Beta1
+* Add the option to disallow wheel spins while restrained
+* Made the wheel of fortune character preview more responsive (requires BC R97Beta1 or later)
+
 ## v0.6.23
 * Use heavier MBS settings compression
 

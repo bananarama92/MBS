@@ -1,53 +1,265 @@
-interface AssetGroupDefinition {
-	Asset: (AssetDefinition | string)[];
-	Group: AssetGroupName;
-	ParentGroup?: AssetGroupName;
-	Category?: 'Appearance' | 'Item' | 'Script';
-	/** Whether the group should have an asset selected at random at character creation. */
-	Default?: boolean;
-	IsRestraint?: boolean;
-	/** Whether the group is allowed to have no asset. Used for body-related characteristics. */
-	AllowNone?: boolean;
-	AllowColorize?: boolean;
-	AllowCustomize?: boolean;
-	/** @see {AssetDefinition.Random} */
-	Random?: boolean;
-	Color?: string[];
-	ParentSize?: AssetGroupName;
-	ParentColor?: AssetGroupName;
-	Clothing?: boolean;
-	Underwear?: boolean;
-	BodyCosplay?: boolean;
-	Hide?: AssetGroupName[];
-	Block?: AssetGroupItemName[];
-	Zone?: [number, number, number, number][];
-	SetPose?: AssetPoseName[];
-	AllowPose?: AssetPoseName[];
-	AllowExpression?: ExpressionName[];
-	Effect?: EffectName[];
-	MirrorGroup?: AssetGroupName;
-	RemoveItemOnRemove?: { Group: AssetGroupItemName, Name: string, Type?: string }[];
+/**
+ * Properties common to groups, assets and layers
+ *
+ * Those properties will be inherited by default from layer, to asset, to group.
+ * Defining it will override the parent's value altogether.
+ */
+interface AssetCommonPropertiesGroupAssetLayer {
+
+	/** The drawing priority of the target */
 	Priority?: number;
+
+	/** The left coordinate of the target draw rect */
 	Left?: number;
+	/** The top coordinate of the target draw rect */
 	Top?: number;
-	FullAlpha?: boolean;
-	Blink?: boolean;
+
+	/** The group the target should inherit its color from. */
 	InheritColor?: AssetGroupName;
+
+	/** A group identifier that will be used to inherit the body size */
+	ParentGroup?: AssetGroupName | null;
+
+	/**
+	 * The poses supported by the target
+	 *
+	 * Used when building the file paths for the asset's layers.
+	 */
+	AllowPose?: AssetPoseName[];
+
+	/**
+	 * Whether that layer is colorized
+	 *
+	 * @default true
+	 *
+	 * Set to `true`, the target will be colorized when drawing.
+	 * Set to `false`, the color will be used as part of the image file name.
+	 *
+	 * Mainly useful for inheriting the body color around.
+	 */
+	AllowColorize?: boolean;
+}
+
+/**
+ * Properties common to groups and assets
+ *
+ * Those properties will be inherited by default from the group.
+ * Defining it will override the parent's value altogether.
+ */
+interface AssetCommonPropertiesGroupAsset {
+
+	/** A list of group names the asset blocks access to */
+	Block?: AssetGroupItemName[];
+
+	/** A list of group names that get hidden when the asset is worn */
+	Hide?: AssetGroupName[];
+
+	/** A list of effects wearing the asset causes on the character */
+	Effect?: EffectName[];
+
+	/** A pose that the character should change to when wearing the asset */
+	SetPose?: AssetPoseName[];
+
+	/** A list of pose categories that the character will be prevented to change */
 	FreezeActivePose?: AssetPoseCategory[];
+
+	/** Which expression the group allows to be set on it */
+	AllowExpression?: ExpressionName[];
+
+	/**
+	 * Whether the asset can be selected for a random appearance.
+	 *
+	 * @default true
+	 */
+	Random?: boolean;
+
+	/**
+	 * Is the asset considered a restraint?
+	 *
+	 * Any asset with that property set will be removed when the character is released,
+	 * and the safeword system will consider them as freeable.
+	 *
+	 * @default false
+	 */
+	IsRestraint?: boolean;
+
+	/**
+	 * Is the asset considered body cosplay?
+	 *
+	 * Any asset with that property set will be blocked from being removed if the
+	 * character has {@link Character.OnlineSharedSettings.BlockBodyCosplay} set to true.
+	 *
+	 * They will also be considered their own strip layer when making a character naked in
+	 * the wardrobe.
+	 *
+	 * @default false
+	 */
+	BodyCosplay?: boolean;
+}
+
+interface AssetGroupDefinition extends AssetCommonPropertiesGroupAsset, AssetCommonPropertiesGroupAssetLayer {
+	/** The internal identifier for the group */
+	Group: AssetGroupName;
+	/** The list of assets defined by the group */
+	Asset: (AssetDefinition | string)[];
+
+	/**
+	 * The type of the group
+	 *
+	 * `Item` groups are the normal groups, and `Appearance` groups are only
+	 * accessible in the wardrobe.
+	 *
+	 * @default "Appearance"
+	 */
+	Category?: 'Appearance' | 'Item' | 'Script';
+
+	/**
+	 * Whether the group is considered clothing
+	 *
+	 * This is used when stripping a character, as well as automatically blocking
+	 * some groups if an asset is worn in those (like wearing a bra blocking nipples).
+	 *
+	 * @default false
+	 */
+	Clothing?: boolean;
+
+	/** Whether the group is considered underwear
+	 *
+	 * This is used when stripping a character.
+	 *
+	 * @default false
+	 */
+	Underwear?: boolean;
+
+	/**
+	 * Whether the group should have an asset selected at random at character creation
+	 *
+	 * @default true
+	 */
+	Default?: boolean;
+
+	/**
+	 * Whether the group is allowed to have no asset
+	 *
+	 * Used for body-related characteristics
+	 *
+	 * @default true
+	 */
+	AllowNone?: boolean;
+
+	/**
+	 * Whether the group can be customized
+	 *
+	 * Only applicable to Appearance groups.
+	 *
+	 * This is how groups like the expression groups are hidden from it.
+	 *
+	 * @default true
+	 */
+	AllowCustomize?: boolean;
+
+	/**
+	 * A list of color codes
+	 *
+	 * Those are used when generating random appearances or cycling colors in the wardrobe
+	 */
+	Color?: HexColor[];
+
+	/**
+	 * A group that will be used to copy the size info from
+	 *
+	 */
+	ParentSize?: AssetGroupName;
+
+	/**
+	 * A group that will be used to copy the color data from
+	 */
+	ParentColor?: AssetGroupName;
+
+	/**
+	 * The clickable area(s) of the group
+	 *
+	 * Only applicable for "Item" groups
+	 */
+	Zone?: [number, number, number, number][];
+
+	/**
+	 * If the group is empty, it'll automatically mirror an asset from the group specified
+	 */
+	MirrorGroup?: AssetGroupName;
+
+	/**
+	 * A list of assets that should also be removed if an asset in this group is removed
+	 *
+	 * Used for things like auto-removing collar accessories if the collar is removed.
+	 */
+	RemoveItemOnRemove?: { Group: AssetGroupItemName, Name: string, Type?: string }[];
+
+	/** Enable the special color drawing mode used for eyes */
+	FullAlpha?: boolean;
+
+	/**
+	 * Whether the group has a blinking variant
+	 *
+	 * Only used by eyes
+	 */
+	Blink?: boolean;
+
+	/** A rect used when generating dynamic previews of the group */
 	PreviewZone?: [number, number, number, number];
+
+	/**
+	 * An alternate name for the group
+	 *
+	 * If this is set, this will be used as the base group when generating layer file URLs.
+	 * Useful if you have a case like `ItemTorso`/`ItemTorso2` which shares all their layers.
+	 */
 	DynamicGroupName?: AssetGroupName;
+
+	/**
+	 * A group activities will be mirrored from
+	 *
+	 * If set, activities from the given group will be shown as if they applied to the
+	 * selected group.
+	 */
 	MirrorActivitiesFrom?: AssetGroupItemName;
 
-	/** The group actually recieving arousal events. Used to proxy around a group that does not have activities enabled (and thus arousal settings) */
+	/**
+	 * The group actually recieving arousal events
+	 *
+	 * Used to proxy around a group that does not have activities
+	 * enabled (and thus arousal settings.
+	 */
 	ArousalZone?: AssetGroupItemName;
+
 	ColorSuffix?: Record<string, string>;
 	ExpressionPrerequisite?: AssetPrerequisite[];
 	HasPreviewImages?: boolean;
 }
 
 type AssetBonusName = "KidnapDomination" | "KidnapSneakiness" | "KidnapBruteForce";
+type AssetGender = 'F' | 'M';
 
-interface AssetDefinition {
+interface AssetCommonPropertiesAssetLayer {
+	/** A list of poses that hide the asset when they get set. */
+	HideForPose?: (AssetPoseName | "")[];
+
+	Alpha?: AlphaDefinition[];
+
+	ColorSuffix?: Record<string, string>;
+
+	/** Whether the asset is drawn at an absolute position. */
+	FixedPosition?: boolean;
+
+	HasType?: boolean;
+	AllowTypes?: string[];
+
+	Opacity?: number;
+	MinOpacity?: number;
+	MaxOpacity?: number;
+}
+
+interface AssetDefinition extends AssetCommonPropertiesGroupAsset, AssetCommonPropertiesAssetLayer, AssetCommonPropertiesGroupAssetLayer {
 	/** The asset's internal name. */
 	Name: string,
 
@@ -59,11 +271,10 @@ interface AssetDefinition {
 	 */
 	ParentItem?: string;
 
-	/** The group the asset belongs to. Mainly useful to inherit the body size. */
-	ParentGroup?: AssetGroupName | null;
-
 	/**
-	 * Whether the asset is enabled or not. Defaults to true.
+	 * Whether the asset is enabled or not.
+	 *
+	 * @default true
 	 *
 	 * A disabled asset cannot be used on a character.
 	 * They will also never be used as part of a random appearance.
@@ -76,7 +287,12 @@ interface AssetDefinition {
 	/** A list of screens where current asset won't be shown. */
 	NotVisibleOnScreen?: string[];
 
-	/** Whether the asset can be worn. Defaults to true. An unwearable asset will not actually end up in the group it's used on. */
+	/**
+	 * Whether the asset can be worn.
+	 *
+	 * @default true
+	 * An unwearable asset will not actually end up in the group it's used on.
+	 */
 	Wear?: boolean;
 
 	/** Applying that asset triggers the following activity */
@@ -100,14 +316,8 @@ interface AssetDefinition {
 	/** Identifies a BuyGroup that, we bought one item of, will cause that asset to also be owned, without showing it in the shopping list. Only used by the SpankingToys */
 	PrerequisiteBuyGroups?: string[];
 
-	/** The list of effects wearing the asset causes on the character */
-	Effect?: EffectName[];
-
 	/** Whether wearing the asset gives a bonus in the Kidnap minigame. */
 	Bonus?: AssetBonusName;
-
-	/** A list of group names the asset blocks access to. */
-	Block?: AssetGroupItemName[];
 
 	/**
 	 * A list of group names the asset restores access to.
@@ -115,9 +325,6 @@ interface AssetDefinition {
 	 * Mostly used for clothes, and might be considered a duplicate of AllowActivityOn.
 	 */
 	Expose?: AssetGroupItemName[];
-
-	/** A list of group names that get hidden when the asset is worn. */
-	Hide?: AssetGroupName[];
 
 	/** A list of asset names that get hidden when the asset is worn. */
 	HideItem?: string[];
@@ -132,19 +339,6 @@ interface AssetDefinition {
 	 * from the required group when that asset is used.
 	 */
 	Require?: AssetGroupBodyName[];
-
-	/** A pose that the character should change to when wearing the asset. */
-	SetPose?: AssetPoseName[];
-
-	/**
-	 * The poses actually that the asset supports.
-	 *
-	 * Used when building the file paths for the asset's layers.
-	 */
-	AllowPose?: AssetPoseName[];
-
-	/** A list of poses that hide the asset when they get set. */
-	HideForPose?: AssetPoseName[];
 
 	/**
 	 * A mapping of poses for the purpose of fallbacks.
@@ -175,9 +369,6 @@ interface AssetDefinition {
 	SelfUnlock?: boolean;
 	ExclusiveUnlock?: boolean;
 
-	/** Whether the asset can be selected for a random appearance. Defaults to true. */
-	Random?: boolean;
-
 	/** Whether the asset gets removed automatically when the character log in. Defaults to false. */
 	RemoveAtLogin?: boolean;
 
@@ -188,13 +379,8 @@ interface AssetDefinition {
 	RemoveTimer?: number;
 	MaxTimer?: number;
 
-	/** The drawing priority of the asset. Defaults to the asset's group priority. */
-	Priority?: number;
-	Left?: number;
-	Top?: number;
 	Height?: number;
 	Zoom?: number;
-	Alpha?: AlphaDefinition[];
 	Prerequisite?: AssetPrerequisite | AssetPrerequisite[];
 	Extended?: boolean;
 	AlwaysExtend?: boolean;
@@ -222,12 +408,9 @@ interface AssetDefinition {
 	AllowBlock?: AssetGroupItemName[];
 	AllowHide?: AssetGroupItemName[];
 	AllowHideItem?: string[];
-	AllowType?: string[];
+
 	AllowTighten?: boolean;
 	DefaultColor?: ItemColor;
-	Opacity?: number;
-	MinOpacity?: number;
-	MaxOpacity?: number;
 	Audio?: string;
 
 	/** A list of categories. Used to prevent the asset to be used, per chatroom settings */
@@ -235,8 +418,7 @@ interface AssetDefinition {
 
 	Fetish?: FetishName[];
 	ArousalZone?: AssetGroupItemName;
-	IsRestraint?: boolean;
-	BodyCosplay?: boolean;
+
 	OverrideBlinking?: boolean;
 	DialogSortOverride?: DialogSortOrder;
 	DynamicDescription?: (C: Character) => string;
@@ -260,17 +442,10 @@ interface AssetDefinition {
 	CharacterRestricted?: boolean;
 	AllowRemoveExclusive?: boolean;
 
-	/** The group the asset should inherit its color from. */
-	InheritColor?: AssetGroupName;
-
 	DynamicBeforeDraw?: boolean;
 	DynamicAfterDraw?: boolean;
 	DynamicScriptDraw?: boolean;
-	HasType?: boolean;
 	AllowLockType?: AssetLockType[];
-
-	/** Whether that asset is drawn colorized, or uses the color name in its file asset */
-	AllowColorize?: boolean;
 
 	/** Whether the color picker shows a "Whole Item" layer. Defaults to true. */
 	AllowColorizeAll?: boolean;
@@ -279,16 +454,11 @@ interface AssetDefinition {
 	AvailableLocations?: string[];
 
 	OverrideHeight?: AssetOverrideHeight;
-	FreezeActivePose?: AssetPoseCategory[];
 
 	/** Whether the game should auto-add a Lock layer to the asset. */
 	DrawLocks?: boolean;
 
-	AllowExpression?: ExpressionName[];
 	MirrorExpression?: AssetGroupBodyName;
-
-	/** Whether the asset is drawn at an absolute position. */
-	FixedPosition?: boolean;
 
 	CustomBlindBackground?: string;
 
@@ -311,7 +481,7 @@ interface AssetDefinition {
 
 	Tint?: TintDefinition[];
 	DefaultTint?: string;
-	Gender?: "F" | "M";
+	Gender?: AssetGender;
 
 	/**
 	 * An identifier that marks the asset as being the same for the purpose of crafting.
@@ -322,16 +492,11 @@ interface AssetDefinition {
 
 	/** A list of prerequisite checks that must pass for the group's expressions to be selectable */
 	ExpressionPrerequisite?: AssetPrerequisite[];
-
-	ColorSuffix?: Record<string, string>;
 }
 
-interface AssetLayerDefinition {
+interface AssetLayerDefinition extends AssetCommonPropertiesGroupAssetLayer, AssetCommonPropertiesAssetLayer {
 	/** The layer's name */
 	Name: string;
-
-	/** Whether that layer is drawn colorized, or uses the color as part of its image file name */
-	AllowColorize?: boolean;
 
 	/** Uses the color of the named layer. */
 	CopyLayerColor?: string;
@@ -341,8 +506,6 @@ interface AssetLayerDefinition {
 
 	/** Whether the layer is hidden in the Color Picker UI. Defaults to false. */
 	HideColoring?: boolean;
-	AllowTypes?: string[];
-	HasType?: boolean;
 
 	/**
 	 * This can be used to make a layer invisible depending on certain conditions, provided the {@link AssetDefinition.LayerVisibility} is set correctly.
@@ -358,32 +521,10 @@ interface AssetLayerDefinition {
 	 */
 	Visibility?: "Player" | "AllExceptPlayerDialog" | "Others" | "OthersExceptDialog" | "Owner" | "Lovers" | "Mistresses";
 
-	/** The group the layer belongs to. Mainly useful to inherit the body's size. */
-	ParentGroup?: AssetGroupName | null,
-
-	/** A list of poses that layer supports. */
-	AllowPose?: AssetPoseName[];
-
-	/** The drawing priority for that layer. Defaults to the asset's priority. */
-	Priority?: number;
-
-	/** The name of the group to inherit the color from. */
-	InheritColor?: AssetGroupName;
-
-	Alpha?: AlphaDefinition[],
-	Left?: number;
-	Top?: number;
 	HideAs?: { Group: AssetGroupName, Asset?: string };
-
-	/** Whether the layer will be drawn at a fixed position. */
-	FixedPosition?: boolean;
 
 	/** Whether the layer uses an image. Defaults to true. */
 	HasImage?: boolean;
-
-	Opacity?: number;
-	MinOpacity?: number;
-	MaxOpacity?: number;
 
 	/** Set canvas globalCompositeOperation for current layer.
 	 *  Use "destination-in" if you want to use layer as an alpha mask.
@@ -396,7 +537,6 @@ interface AssetLayerDefinition {
 	LockLayer?: boolean;
 
 	MirrorExpression?: AssetGroupName;
-	HideForPose?: (AssetPoseName | "")[];
 	PoseMapping?: AssetPoseMapping;
 	AllowModuleTypes?: string[];
 	ModuleType?: string[];
@@ -404,7 +544,6 @@ interface AssetLayerDefinition {
 	HideForAttribute?: AssetAttribute[];
 	/* Specifies that this layer should not be drawn unless the character is wearing an item with one of the given attributes */
 	ShowForAttribute?: AssetAttribute[];
-	ColorSuffix?: Record<string, string>;
 }
 
 type ExtendedArchetype = "modular" | "typed" | "vibrating" | "variableheight" | "text";
@@ -457,6 +596,11 @@ interface ExtendedItemConfig<OptionType extends ExtendedItemOption> {
 	CopyConfig?: { GroupName?: AssetGroupName, AssetName: string };
 	/** An interface with element-specific drawing data for a given screen. */
 	DrawData?: ExtendedItemConfigDrawData<{}>;
+	/**
+	 * A list with extra to-be allowed effect names.
+	 * Should only defined when there are effects that are exclusively managed by script hooks and thus cannot be extracted from the normal extended item options.
+	 */
+	AllowEffect?: EffectName[];
 }
 
 /** Defines a single (partially parsed) extended item option */

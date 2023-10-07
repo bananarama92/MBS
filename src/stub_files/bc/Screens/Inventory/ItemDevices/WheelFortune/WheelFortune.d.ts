@@ -1,5 +1,5 @@
 /** @type {ExtendedItemCallbacks.Init} */
-declare function InventoryItemDevicesWheelFortuneInit(C: Character, item: Item, refresh: boolean): boolean;
+declare function InventoryItemDevicesWheelFortuneInit(C: Character, item: Item, push: boolean, refresh: boolean): boolean;
 /** @type {ExtendedItemCallbacks.Load} */
 declare function InventoryItemDevicesWheelFortuneLoad(): void;
 /** @type {ExtendedItemCallbacks.Draw} */

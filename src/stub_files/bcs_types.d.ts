@@ -135,6 +135,13 @@ interface MBSProtoSettings {
     FortuneWheelCommands?: (null | FWSimpleCommand)[],
     /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
     FortuneWheelSets?: MBSProtoSettings["FortuneWheelItemSets"],
+    /** Whether or not one can roll the wheel of fortune when restrained */
+    RollWhenRestrained?: boolean;
+    /**
+     * Whether or not one can modify MBS settings when restrained.
+     * Note that this does not affect the customization of wheel outfits themselves, which are always modifiable.
+     */
+    LockedWhenRestrained?: boolean;
 }
 
 /** The MBS settings */
@@ -147,6 +154,13 @@ interface MBSSettings {
     readonly FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
     readonly FortuneWheelCommands: (null | import("common_bc").FWCommand)[],
+    /** Whether or not one can roll the wheel of fortune when restrained */
+    RollWhenRestrained: boolean;
+    /**
+     * Whether or not one can modify MBS settings when restrained.
+     * Note that this does not affect the customization of wheel outfits themselves, which are always modifiable.
+     */
+    LockedWhenRestrained: boolean;
 }
 
 /** An interface for representing clickable buttons */

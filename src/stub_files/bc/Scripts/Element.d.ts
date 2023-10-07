@@ -13,20 +13,29 @@ declare function ElementValue(ID: string, Value?: string): string;
  */
 declare function ElementContent(ID: string, Content?: string): string;
 /**
+ * Creates a new from element in the main document.
+ *
+ * @param {string} ID - The id of the form to create
+ * @returns {HTMLFormElement}
+ */
+declare function ElementCreateForm(ID: string): HTMLFormElement;
+/**
  * Creates a new text area element in the main document. Does not create a new element if there is already an existing one with the same ID
  * @param {string} ID - The id of the text area to create.
- * @returns {void} - Nothing
+ * @param {HTMLFormElement} [form] - The form the element belongs to
+ * @returns {HTMLTextAreaElement}
  */
-declare function ElementCreateTextArea(ID: string): void;
+declare function ElementCreateTextArea(ID: string, form?: HTMLFormElement): HTMLTextAreaElement;
 /**
  * Creates a new text input element in the main document.Does not create a new element if there is already an existing one with the same ID
  * @param {string} ID - The id of the input tag to create.
  * @param {string} Type - Type of the input tag to create.
  * @param {string} Value - Value of the input tag to create.
  * @param {string | number} [MaxLength] - Maximum input tag of the input to create.
+ * * @param {HTMLFormElement} [form] - The form the element belongs to
  * @returns {HTMLInputElement} - The created HTML input element
  */
-declare function ElementCreateInput(ID: string, Type: string, Value: string, MaxLength?: string | number): HTMLInputElement;
+declare function ElementCreateInput(ID: string, Type: string, Value: string, MaxLength?: string | number, form?: HTMLFormElement): HTMLInputElement;
 /**
  * Creates a new range input element in the main document. Does not create a new element if there is already an
  * existing one with the same id

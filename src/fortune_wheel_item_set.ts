@@ -248,7 +248,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         });
         fortuneWheelEquip(
             "MBSPreview", items,
-            this.settings.stripLevel, null, null, this.preview,
+            this.settings.stripLevel, null, null, this.preview, false,
         );
     }
 
