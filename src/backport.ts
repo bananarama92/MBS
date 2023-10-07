@@ -42,45 +42,46 @@ function fixExtendedItemData(data: undefined | ModularItemData) {
 
 waitFor(settingsMBSLoaded).then(() => {
     if (GameVersion === "R96") {
-        backportIDs.add(4475);
-        MBS_MOD_API.patchFunction("CraftingValidate", {
-            "asset = Asset.find(a => a.Name === Craft.Item);":
-                "asset = Asset.find(a => a.Name === Craft.Item && a.DynamicGroupName === a.Group.Name);",
-        });
+        if (MBS_MOD_API.getOriginalHash("CraftingValidate") === "E114BD0E") {
+            backportIDs.add(4475);
+            MBS_MOD_API.patchFunction("CraftingValidate", {
+                "asset = Asset.find(a => a.Name === Craft.Item);":
+                    "asset = Asset.find(a => a.Name === Craft.Item && a.DynamicGroupName === a.Group.Name);",
+            });
+        }
 
-        backportIDs.add(4478);
+        if (
+            (typeof InventoryItemBreastForbiddenChastityBras1Click === "function" && MBS_MOD_API.getOriginalHash("InventoryItemBreastForbiddenChastityBras1Click") === "D53FC137")
+            && (typeof InventoryItemPelvisForbiddenChastityBelts1Click === "function" && MBS_MOD_API.getOriginalHash("InventoryItemPelvisForbiddenChastityBelts1Click") === "9FC51457")
+            && (typeof AssetsItemBreastForbiddenChastityBraScriptDraw === "function" && MBS_MOD_API.getOriginalHash("AssetsItemBreastForbiddenChastityBraScriptDraw") === "F618A0BB")
+            && (typeof AssetsItemPelvisForbiddenChastityBeltScriptDraw === "function" && MBS_MOD_API.getOriginalHash("AssetsItemPelvisForbiddenChastityBeltScriptDraw") === "A3AC2680")
+        ) {
+            backportIDs.add(4478);
 
-        // Fix asset data
-        fixAssetData("ForbiddenChastityBelt");
+            // Fix asset data
+            fixAssetData("ForbiddenChastityBelt");
 
-        // Fix extended item data
-        const extendedItemData = {
-            ForbiddenChastityBra: ModularItemDataLookup["ItemBreastForbiddenChastityBra"],
-            ForbiddenChastityBelt: ModularItemDataLookup["ItemPelvisForbiddenChastityBelt"],
-            ObedienceBelt: ModularItemDataLookup["ItemPelvisObedienceBelt"],
-        };
-        Object.values(extendedItemData).forEach(fixExtendedItemData);
+            // Fix extended item data
+            const extendedItemData = {
+                ForbiddenChastityBra: ModularItemDataLookup["ItemBreastForbiddenChastityBra"],
+                ForbiddenChastityBelt: ModularItemDataLookup["ItemPelvisForbiddenChastityBelt"],
+                ObedienceBelt: ModularItemDataLookup["ItemPelvisObedienceBelt"],
+            };
+            Object.values(extendedItemData).forEach(fixExtendedItemData);
 
-        // Fix the extended item scripthooks
-        if (typeof InventoryItemBreastForbiddenChastityBras1Click === "function") {
+            // Fix the extended item scripthooks
             MBS_MOD_API.patchFunction("InventoryItemBreastForbiddenChastityBras1Click", {
                 "const C = CurrentCharacter;":
                     "const C = CharacterGetCurrent();",
             });
-        }
-        if (typeof InventoryItemPelvisForbiddenChastityBelts1Click === "function") {
             MBS_MOD_API.patchFunction("InventoryItemPelvisForbiddenChastityBelts1Click", {
                 "const C = CurrentCharacter;":
                     "const C = CharacterGetCurrent();",
             });
-        }
-        if (typeof AssetsItemBreastForbiddenChastityBraScriptDraw === "function") {
             MBS_MOD_API.patchFunction("AssetsItemBreastForbiddenChastityBraScriptDraw", {
                 "AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime);":
                     "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime); }",
             });
-        }
-        if (typeof AssetsItemPelvisForbiddenChastityBeltScriptDraw === "function") {
             MBS_MOD_API.patchFunction("AssetsItemPelvisForbiddenChastityBeltScriptDraw", {
                 "AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime);":
                     "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime); }",

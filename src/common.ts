@@ -420,25 +420,3 @@ export function includes<T>(arg: readonly T[], value: unknown): value is T {
 export function isInteger(arg: unknown): arg is number {
     return Number.isInteger(arg);
 }
-
-/**
- * Return the (stringified and padded) base-16 CRC32 hash of the passed function.
- * @param func - The function in question
- * @returns The computed hash
- */
-export function getFunctionHash(func: (...args: never[]) => unknown): string {
-    if (typeof func !== "function") {
-        throw new TypeError(`"func" expected a function; observed type: ${typeof func}`);
-    }
-
-    let crc = 0 ^ -1;
-    const encoder = new TextEncoder();
-    for (const b of encoder.encode(func.toString())) {
-        let c = (crc ^ b) & 0xff;
-        for (let j = 0; j < 8; j++) {
-            c = (c & 1) ? (-306674912 ^ (c >>> 1)) : (c >>> 1);
-        }
-        crc = (crc >>> 8) ^ c;
-    }
-    return ((crc ^ -1) >>> 0).toString(16).padStart(8, "0").toUpperCase();
-}

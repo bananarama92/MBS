@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, padArray, getFunctionHash } from "common";
+import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings } from "settings";
 
@@ -117,21 +117,21 @@ waitFor(settingsMBSLoaded).then(() => {
         }
     });
 
-    if (getFunctionHash(CraftingSaveServer) !== "B5299AB2") {
+    if (MBS_MOD_API.getOriginalHash("CraftingSaveServer") !== "B5299AB2") {
         MBS_MOD_API.patchFunction("CraftingSaveServer", {
             "C.Description.substring(0, 100)":
                 "C.Description.substring(0, 200)",
         });
     }
 
-    if (getFunctionHash(CraftingConvertSelectedToItem) !== "B3F4D559") {
+    if (MBS_MOD_API.getOriginalHash("CraftingConvertSelectedToItem") !== "B3F4D559") {
         MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
             'ElementValue("InputDescription").trim().substring(0, 100)':
                 'ElementValue("InputDescription").trim().substring(0, 200)',
         });
     }
 
-    const dialogDrawCraftingR97: Record<string, string> = (getFunctionHash(DialogDrawCrafting) !== "871E7AF7") ? {
+    const dialogDrawCraftingR97: Record<string, string> = (MBS_MOD_API.getOriginalHash("DialogDrawCrafting") !== "871E7AF7") ? {
         "Item.Craft.Description.substring(0, 100)":
             "Item.Craft.Description.substring(0, 200)",
     } : {};
