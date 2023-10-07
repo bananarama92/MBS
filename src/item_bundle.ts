@@ -124,6 +124,7 @@ const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
     ["Unknown asset", (asset: null | Asset) => asset == null],
     ["Unsupported owner-only asset", (asset: null | Asset) => asset?.OwnerOnly],
     ["Unsupported lovers-only asset", (asset: null | Asset) => asset?.LoverOnly],
+    ["Unsupported D/S family-only asset", (asset: null | Asset) => asset?.FamilyOnly],
     ["Unsupported disabled asset", (asset: null | Asset) => !asset?.Enable],
     ["Unsupported script-asset", (asset: null | Asset) => asset?.Group?.Category === "Script"],
 ]));
