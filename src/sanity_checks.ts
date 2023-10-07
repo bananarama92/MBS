@@ -52,16 +52,18 @@ type HashList = readonly [
 /** A Map with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
-        ["WheelFortuneLoad", ["204D57D4"]],
-        ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
-        ["WheelFortuneClick", ["16991349"]],
-        ["WheelFortuneRun", ["E9E5F3D6"]],
         ["CraftingSaveServer", ["B5299AB2", "F0C798C7"]],
-        ["DialogDrawCrafting", ["871E7AF7", "B694AB2B"]],
         ["CraftingModeSet", ["B9806BAE"]],
         ["CraftingClick", ["BFE0FC95", "5A4845C6"]],
         ["CraftingRun", ["C5BAEE74"]],
         ["CraftingConvertSelectedToItem", ["B3F4D559", "E7A4C9DA"]],
+        ["DialogDrawCrafting", ["871E7AF7", "B694AB2B"]],
+        ["WheelFortuneLoad", ["204D57D4"]],
+        ["WheelFortuneClick", ["16991349"]],
+        ["WheelFortuneRun", ["E9E5F3D6"]],
+        ["WheelFortuneMouseUp", ["1465BDFA"]],
+        ["WheelFortuneMouseDown", ["306C80B6"]],
+        ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
     ];
     return Object.freeze(new Map(hashes.map(item => {
         const [key, value] = item;

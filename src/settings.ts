@@ -139,6 +139,8 @@ function initMBSSettings(): void {
         CraftingCache: settings.CraftingCache,
         FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
+        LockedWhenRestrained: typeof settings.LockedWhenRestrained === "boolean" ? settings.LockedWhenRestrained : false,
+        RollWhenRestrained: typeof settings.RollWhenRestrained === "boolean" ? settings.RollWhenRestrained : true,
     });
 
     // Ensure that the player's wheel of fortune settings are initialized
