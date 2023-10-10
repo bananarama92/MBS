@@ -278,9 +278,6 @@ function blockedByEnclose(character: Character): boolean {
  * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
  * @param preRunCallback A callback (or `null`) executed before equipping any items from `itemList`
  * @param character The relevant player- or NPC-character
- * @param strictRefresh Whether to refresh the character after equipping every single item and changing its type.
- * Setting this value `false` is generally not safe, as asset prerequisite checks rely on the character being properly refreshed.
- * Should be fine for preview characters though, and it does save a lot of time
  */
 export function fortuneWheelEquip(
     name: string,
@@ -289,7 +286,6 @@ export function fortuneWheelEquip(
     globalCallback: null | FortuneWheelCallback = null,
     preRunCallback: null | FortuneWheelPreRunCallback = null,
     character: Character = Player,
-    strictRefresh: boolean = true,
 ): void {
     if (!isArray(itemList)) {
         throw new TypeError(`Invalid "itemList" type: ${typeof itemList}`);
@@ -367,12 +363,12 @@ export function fortuneWheelEquip(
         const color = [...(Color ?? asset.DefaultColor)];
         const newItem = CharacterAppearanceSetItem(
             character, Group, asset, color, SkillGetWithRatio(character, "Bondage"),
-            character.MemberNumber, strictRefresh,
+            character.MemberNumber, false,
         );
         if (newItem == null) {
             continue;
         }
-        itemSetType(newItem, character, Type, strictRefresh);
+        itemSetType(newItem, character, Type);
         if (Craft !== undefined) {
             newItem.Craft = cloneDeep(Craft);
             InventoryCraft(character, character, <AssetGroupItemName>Group, newItem.Craft, false, false);
@@ -388,10 +384,7 @@ export function fortuneWheelEquip(
         }
     }
 
-    if (!strictRefresh) {
-        // We need to manually refresh if we're not doing so automatically after every item equipping + type setting
-        CharacterRefresh(character, false, false);
-    }
+    CharacterRefresh(character, false, false);
     if (character.IsPlayer()) {
         ChatRoomCharacterUpdate(character);
         const nFailures = Object.values(equipFailureRecord).length;
