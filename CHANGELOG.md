@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v0.6.25
+* Minor wheel of fortune performance improvement (requires BC R97Beta1 or later)
+* Backport two R97Beta2 bug fixes to R97Beta1:
+    - [BondageProjects/Bondage-College#4508](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4508): Fix items not being applicable anymore
+    - [BondageProjects/Bondage-College#4509](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4509): Fix `CantChangeWhileLocked` stopping player-made changes to the crafting preview character when tied up
+
 ## v0.6.24
 * Add support for BC R97Beta1
 * Add the option to disallow wheel spins while restrained
