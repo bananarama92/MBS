@@ -298,6 +298,7 @@ declare function CharacterSetActivePose(C: Character, NewPose: null | AssetPoseN
  * @param {null | ExpressionName} Expression - Name of the expression to use
  * @param {number} [Timer] - Optional: time the expression will last
  * @param {string|string[]} [Color] - Optional: color of the expression to set
+ * @param {boolean} [fromQueue] - Internal: used to skip queuing the expression change if it comes from the queued expressions
  * @returns {void} - Nothing
  */
 declare function CharacterSetFacialExpression(C: Character, AssetGroup: ExpressionGroupName | "Eyes1", Expression: null | ExpressionName, Timer?: number, Color?: string | string[], fromQueue?: boolean): void;

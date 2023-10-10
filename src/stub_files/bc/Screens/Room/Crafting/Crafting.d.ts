@@ -22,11 +22,6 @@ declare function CraftingLoad(): void;
  */
 declare function CraftingUpdatePreview(): void;
 /**
- * Check whether the item can safely be used with the crafting auto-type system.
- * @returns {Boolean}
- */
-declare function CraftingItemSupportsAutoType(): boolean;
-/**
  * Run the club crafting room if all possible modes
  * @returns {void} - Nothing
  */
