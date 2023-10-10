@@ -53,10 +53,10 @@ type HashList = readonly [
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
         ["CraftingSaveServer", ["B5299AB2", "F0C798C7"]],
-        ["CraftingModeSet", ["B9806BAE"]],
-        ["CraftingClick", ["BFE0FC95", "5A4845C6"]],
-        ["CraftingRun", ["C5BAEE74"]],
-        ["CraftingConvertSelectedToItem", ["B3F4D559", "E7A4C9DA"]],
+        ["CraftingModeSet", ["B9806BAE", "F8F456C7"]],
+        ["CraftingClick", ["BFE0FC95", "FF76A404"]],
+        ["CraftingRun", ["C5BAEE74", "5BE6E125"]],
+        ["CraftingConvertSelectedToItem", ["B3F4D559", "EC0B58B8"]],
         ["DialogDrawCrafting", ["871E7AF7", "B694AB2B"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["16991349"]],
