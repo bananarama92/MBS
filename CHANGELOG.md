@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v0.6.26
+* Fix the parsing of outfit codes with extended items sometimes raising
+* Refactor and deduplicate elements shared between `Settings` and `OnlineSharedSettings`
+* Install BC-stubs via NPM rather than vendoring them
+* Drop support for BC R97
+* Special case LSCG item-specific keywords, allowing them in wheel of fortune crafted item descriptions
+
 ## v0.6.25
 * Minor wheel of fortune performance improvement (requires BC R97Beta1 or later)
 * Backport two R97Beta2 bug fixes to R97Beta1:
