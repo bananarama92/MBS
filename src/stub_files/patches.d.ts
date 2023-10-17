@@ -1,23 +1,22 @@
-declare const LZString: import("lz-string").LZStringStatic;
-
 interface CharacterOnlineSharedSettings {
-    MBS: {
-        readonly Version: string,
-        readonly FortuneWheelItemSets: (null | Readonly<FWSimpleItemSet>)[],
-        readonly FortuneWheelCommands: (null | Readonly<FWSimpleCommand>)[],
-    },
+    /** UTF16-compressed MBS shared settings */
+    MBS: string,
+    /** The MBS version */
+    MBSVersion: string,
 }
 
 interface PlayerCharacter {
+    /** MBS settings */
     MBSSettings: MBSSettings,
 }
 
 interface PlayerOnlineSettings {
+    /** UTF16-compressed MBS settings */
     MBS: string,
-    MBSVersion: typeof import("common").MBS_VERSION,
+    /** @deprecated moved to {@link CharacterOnlineSharedSettings.MBSVersion} as of v0.6.26 */
+    MBSVersion?: string,
 }
 
-/** Base type for fortune wheel options */
 interface WheelFortuneOptionType {
     /** An optional description of the option */
     readonly Description?: string,

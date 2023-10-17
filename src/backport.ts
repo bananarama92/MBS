@@ -1,125 +1,15 @@
 /** Backports of R91 bug fixes */
 
-import { waitFor, MBS_MOD_API } from "common";
+import { waitFor } from "common";
 import { settingsMBSLoaded } from "common_bc";
 
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
-function fixAssetData(assetName: string) {
-    const asset = <undefined | Mutable<Asset>>Asset.find(a => a.Name === assetName);
-    if (asset !== undefined) {
-        asset.Effect = asset.Effect.filter(e => e !== "Chaste");
-    }
-}
-
-function fixExtendedItemData(data: undefined | ModularItemData) {
-    if (data === undefined) {
-        return;
-    }
-
-    if (["ForbiddenChastityBra", "ForbiddenChastityBelt"].includes(data.asset.Name)) {
-        if (!data.chatTags.includes(CommonChatTags.ASSET_NAME)) {
-            data.chatTags.push(CommonChatTags.ASSET_NAME);
-        }
-    }
-
-    const module = data.modules.find(m => m.Name === "CrotchShield");
-    if (data.asset.Name === "ForbiddenChastityBelt") {
-        (module?.Options ?? []).forEach(o => delete o.Property?.HideItem);
-    }
-    if (["ObedienceBelt", "ForbiddenChastityBelt"].includes(data.asset.Name)) {
-        const closeBack = (module?.Options ?? [])[2]?.Property;
-        const closeBoth = (module?.Options ?? [])[3]?.Property;
-        if (closeBack !== undefined) {
-            closeBack.Effect = ["ButtChaste"];
-        }
-        if (closeBoth !== undefined) {
-            closeBoth.Effect = ["Chaste", "ButtChaste"];
-        }
-    }
-}
-
-const extendedItemValidatePatch = {
-    "} else if (!canChangeWhenLocked && currentLockedBy && !DialogCanUnlock(C, Item)) {":
-        "} else if (!C.IsSimple() && !canChangeWhenLocked && currentLockedBy && !DialogCanUnlock(C, Item)) {",
-
-    '} else if (newOption.OptionType === "ExtendedItemOption" && CurrentScreen === "Crafting") {':
-        '} else if (newOption.OptionType === "ExtendedItemOption" && C.IsSimple()) {',
-};
-
 waitFor(settingsMBSLoaded).then(() => {
-    switch (GameVersion) {
-        case "R96": {
-            if (MBS_MOD_API.getOriginalHash("CraftingValidate") === "E114BD0E") {
-                backportIDs.add(4475);
-                MBS_MOD_API.patchFunction("CraftingValidate", {
-                    "asset = Asset.find(a => a.Name === Craft.Item);":
-                        "asset = Asset.find(a => a.Name === Craft.Item && a.DynamicGroupName === a.Group.Name);",
-                });
-            }
-
-            if (
-                (typeof InventoryItemBreastForbiddenChastityBras1Click === "function" && MBS_MOD_API.getOriginalHash("InventoryItemBreastForbiddenChastityBras1Click") === "D53FC137")
-                && (typeof InventoryItemPelvisForbiddenChastityBelts1Click === "function" && MBS_MOD_API.getOriginalHash("InventoryItemPelvisForbiddenChastityBelts1Click") === "9FC51457")
-                && (typeof AssetsItemBreastForbiddenChastityBraScriptDraw === "function" && MBS_MOD_API.getOriginalHash("AssetsItemBreastForbiddenChastityBraScriptDraw") === "F618A0BB")
-                && (typeof AssetsItemPelvisForbiddenChastityBeltScriptDraw === "function" && MBS_MOD_API.getOriginalHash("AssetsItemPelvisForbiddenChastityBeltScriptDraw") === "A3AC2680")
-            ) {
-                backportIDs.add(4478);
-
-                // Fix asset data
-                fixAssetData("ForbiddenChastityBelt");
-
-                // Fix extended item data
-                const extendedItemData = {
-                    ForbiddenChastityBra: ModularItemDataLookup["ItemBreastForbiddenChastityBra"],
-                    ForbiddenChastityBelt: ModularItemDataLookup["ItemPelvisForbiddenChastityBelt"],
-                    ObedienceBelt: ModularItemDataLookup["ItemPelvisObedienceBelt"],
-                };
-                Object.values(extendedItemData).forEach(fixExtendedItemData);
-
-                // Fix the extended item scripthooks
-                MBS_MOD_API.patchFunction("InventoryItemBreastForbiddenChastityBras1Click", {
-                    "const C = CurrentCharacter;":
-                        "const C = CharacterGetCurrent();",
-                });
-                MBS_MOD_API.patchFunction("InventoryItemPelvisForbiddenChastityBelts1Click", {
-                    "const C = CurrentCharacter;":
-                        "const C = CharacterGetCurrent();",
-                });
-                MBS_MOD_API.patchFunction("AssetsItemBreastForbiddenChastityBraScriptDraw", {
-                    "AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime);":
-                        "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemBreastForbiddenChastityBraUpdate(data, persistentData.CheckTime); }",
-                });
-                MBS_MOD_API.patchFunction("AssetsItemPelvisForbiddenChastityBeltScriptDraw", {
-                    "AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime);":
-                        "if ((ModularItemDeconstructType(property.Type) || []).includes('s1')) { AssetsItemPelvisForbiddenChastityBeltUpdate(data, persistentData.CheckTime); }",
-                });
-
-                backportIDs.add(4509);
-                MBS_MOD_API.patchFunction("ExtendedItemValidate", extendedItemValidatePatch);
-            }
-            break;
-        }
-        case "R97Beta1": {
-            backportIDs.add(4508);
-            MBS_MOD_API.patchFunction("CharacterSetFacialExpression", {
-                "CharacterRefresh(C, !inChatRoom);":
-                    "CharacterRefresh(C, !inChatRoom && !isTransient);",
-
-                "if (isTransient) {":
-                    "if (isTransient || C.IsPlayer()) {",
-            });
-
-            backportIDs.add(4509);
-            MBS_MOD_API.patchFunction("ExtendedItemValidate", extendedItemValidatePatch);
-            break;
-        }
-    }
-
     if (backportIDs.size) {
-        console.log("MBS: Initializing R97 bug fix backports", backportIDs);
+        console.log("MBS: Initializing R98 bug fix backports", backportIDs);
     } else {
-        console.log("MBS: No R97 bug fix backports");
+        console.log("MBS: No R98 bug fix backports");
     }
 });

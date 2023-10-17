@@ -24,7 +24,7 @@ import {
     enableFlags,
 } from "lock_flags";
 import { validateBuiltinWheelIDs } from "sanity_checks";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, SettingsType } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
@@ -118,14 +118,6 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
         colorItems(groupNames, character, "#484747");
     }
     return itemList;
-}
-
-function getAllowTypes(asset: Asset): readonly string[] {
-    if (isArray(asset.AllowType)) {
-        return asset.AllowType;
-    } else {
-        return asset.AllowTypes ?? [];
-    }
 }
 
 /** Return a record with all new MBS fortune wheel item sets. */
@@ -350,7 +342,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -366,7 +358,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -393,7 +385,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -434,7 +426,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Equip: () => (Math.random() > 0.5),
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -826,7 +818,7 @@ waitFor(settingsMBSLoaded).then(() => {
     FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
     FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
-    pushMBSSettings();
+    pushMBSSettings([SettingsType.SHARED]);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         fortuneWheelState.initialize();

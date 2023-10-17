@@ -112,13 +112,13 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
 
     const validPropKeys: Set<keyof ItemProperties> = new Set(["OverridePriority"]);
     if (asset.Archetype) {
-        const item: Item = { Asset: asset };
+        const item: Item = { Asset: asset, Property: properties };
         const options = ExtendedItemGatherOptions(item);
         for (const option of options) {
             if (option.OptionType === "VariableHeightOption") {
                 validPropKeys.add("OverrideHeight");
             }
-            for (const key of CommonKeys(option.ParentData.baselineProperty || {})) {
+            for (const key of CommonKeys(option.ParentData.baselineProperty ?? {})) {
                 if (!CraftingPropertyExclude.has(key)) {
                     validPropKeys.add(key);
                 }
@@ -138,6 +138,24 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
         }
     }
     return ret;
+}
+
+/**
+ * Shrink the crafted item description down to a minimum set of LSCG keywords
+ * @param description The to-be parsed description
+ * @returns The parsed description
+ */
+function minifyDescription(description?: null | string) {
+    if (!description || LSCG === undefined) {
+        return "";
+    }
+
+    const keywords = [
+        ...(LSCG?.NetgunKeywords() ?? []),
+        ...(LSCG?.DrugKeywords() ?? []),
+        ...(LSCG?.CraftableItemSpellNames() ?? []),
+    ];
+    return keywords.filter(i => description.includes(i)).join(" ");
 }
 
 /** A map with various {@link Asset} validation checks for {@link fromItemBundles}. */
@@ -177,7 +195,12 @@ export function fromItemBundle(
     if (item.Craft !== null && typeof item.Craft === "object") {
         craft = Object.assign(
             cloneDeep(item.Craft),
-            { Type: null, OverridePriority: null, Lock: "", Description: "" },
+            {
+                Type: null,
+                OverridePriority: null,
+                Lock: "",
+                Description: minifyDescription(item.Craft.Description),
+            },
         );
         CraftingValidate(craft, asset, false);
     }

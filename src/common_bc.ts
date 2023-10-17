@@ -12,7 +12,7 @@ import {
     isArray,
 } from "common";
 import { DEFAULT_FLAGS, parseLegacyFlags, applyFlag } from "lock_flags";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, SettingsType } from "settings";
 import { fromItemBundles } from "item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
 
@@ -465,7 +465,7 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
             start += 1;
         }
         if (push) {
-            pushMBSSettings();
+            pushMBSSettings([SettingsType.SHARED]);
         }
     }
 
@@ -480,7 +480,7 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
         WheelFortuneDefault = Array.from(WheelFortuneDefault).filter(i => !IDs.includes(i)).join("");
 
         if (push) {
-            pushMBSSettings();
+            pushMBSSettings([SettingsType.SHARED]);
         }
     }
 }
