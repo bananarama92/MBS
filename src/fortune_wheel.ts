@@ -120,14 +120,6 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
     return itemList;
 }
 
-function getAllowTypes(asset: Asset): readonly string[] {
-    if (isArray(asset.AllowType)) {
-        return asset.AllowType;
-    } else {
-        return asset.AllowTypes ?? [];
-    }
-}
-
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>> {
     const protoRecord: Record<FortuneWheelNames, FWItemBase[]> = {
@@ -350,7 +342,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -366,7 +358,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -393,7 +385,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },
@@ -434,7 +426,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Equip: () => (Math.random() > 0.5),
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const allowType = [null, ...getAllowTypes(item.Asset)];
+                    const allowType = [null, ...(item.Asset.AllowTypes ?? [])];
                     const type = randomElement(allowType);
                     itemSetType(item, character, type);
                 },

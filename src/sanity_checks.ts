@@ -24,7 +24,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-const BC_MIN_VERSION = Version.fromBCVersion("R96");
+const BC_MIN_VERSION = Version.fromBCVersion("R97");
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
@@ -52,12 +52,12 @@ type HashList = readonly [
 /** A Map with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
-        ["CraftingSaveServer", ["B5299AB2", "F0C798C7"]],
-        ["CraftingModeSet", ["B9806BAE", "F8F456C7"]],
-        ["CraftingClick", ["BFE0FC95", "FF76A404"]],
-        ["CraftingRun", ["C5BAEE74", "5BE6E125"]],
-        ["CraftingConvertSelectedToItem", ["B3F4D559", "EC0B58B8"]],
-        ["DialogDrawCrafting", ["871E7AF7", "B694AB2B"]],
+        ["CraftingSaveServer", [ "F0C798C7"]],
+        ["CraftingModeSet", ["F8F456C7"]],
+        ["CraftingClick", ["FF76A404"]],
+        ["CraftingRun", ["5BE6E125"]],
+        ["CraftingConvertSelectedToItem", ["EC0B58B8"]],
+        ["DialogDrawCrafting", ["B694AB2B"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
