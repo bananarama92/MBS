@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { omit } from "lodash-es";
+
 import {
     waitFor,
     MBS_VERSION,
@@ -16,6 +18,16 @@ import {
     MBS_MAX_SETS,
     FWObject,
 } from "common_bc";
+
+type SettingsType = 0 | 1;
+
+/** An enum with to-be synced settings types */
+export const SettingsType = Object.freeze({
+    /** @see {@link Player.OnlineSettings} */
+    SETTINGS: 0,
+    /** @see {@link Player.OnlineSharedSettings} */
+    SHARED: 1,
+});
 
 /** Check whether MBS has just been upgraded for the user in question. */
 function detectUpgrade(versionString?: string): boolean {
@@ -97,6 +109,36 @@ export function parseFWObjects<
     return wheelList;
 }
 
+/**
+ * Load the compressed MBS (shared) settings
+ * @param s The to-be unpacked settings
+ * @param type The settings type (shared or normal)
+ * @param warn Whether to emit a warning if the settings unpacking raises
+ * @returns The unpacked settings
+ */
+export function unpackSettings(
+    s: undefined | string,
+    type: "OnlineSettings" | "OnlineSharedSettings",
+    warn: boolean = true,
+): MBSProtoSettings {
+    let settings: null | MBSProtoSettings = null;
+    try {
+        if (s && typeof s === "string") {
+            let stringData = LZString.decompressFromUTF16(s);
+            if (!stringData) {
+                // Try again with pre-v0.6.23 compression
+                stringData = LZString.decompressFromBase64(s);
+            }
+            settings = JSON.parse(stringData || "null");
+        }
+    } catch (error) {
+        if (warn) {
+            console.warn(`MBS: failed to load corrupted MBS ${type}`, error);
+        }
+    }
+    return (settings !== null && typeof settings === "object") ? settings : {};
+}
+
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
@@ -105,23 +147,18 @@ function initMBSSettings(): void {
     }
 
     // Load saved settings and check whether MBS has been upgraded
-    let settings: null | MBSProtoSettings = null;
-    try {
-        if (Player.OnlineSettings.MBS) {
-            let stringData = LZString.decompressFromUTF16(Player.OnlineSettings.MBS);
-            if (!stringData) {
-                // Try again with pre-v0.6.23 compression
-                stringData = LZString.decompressFromBase64(Player.OnlineSettings.MBS);
-            }
-            settings = JSON.parse(stringData || "null");
-        }
-    } catch (error) {
-        console.warn("MBS: failed to load corrupted MBS settings", error);
-    }
+    const settings = {
+        ...unpackSettings(Player.OnlineSettings.MBS, "OnlineSettings"),
+        ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
+    };
 
-    settings = (settings !== null && typeof settings === "object") ? settings : {};
     if (settings.Version !== undefined && detectUpgrade(settings.Version)) {
         showChangelog();
+    }
+
+    // Moved to `Player.OnlineSharedSettings` as of v0.6.26
+    if (Player.OnlineSettings.MBSVersion) {
+        delete Player.OnlineSettings.MBSVersion;
     }
 
     // Check the crafting cache
@@ -151,43 +188,45 @@ function initMBSSettings(): void {
 
 /**
  * Update the online (shared) settings and push all MBS settings to the server.
+ * @param settingsType Which type of settings should be updated
  * @param push Whether to actually push to the server or to merely assign the online (shared) settings.
- * @param sharedSettings Whether to update the online shared settings in additin to the online settings.
  */
-export function pushMBSSettings(push: boolean = true, sharedSettings: boolean = true): void {
+export function pushMBSSettings(settingsType: readonly SettingsType[], push: boolean = true): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
         const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
         throw new Error(`"Player.${settingsName}" still unitialized`);
     }
 
-    const settings = {
-        ...Player.MBSSettings,
-        FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(i => i?.valueOf() ?? null),
-        FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(i => i?.valueOf() ?? null),
-    };
-    Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
-    Player.OnlineSettings.MBSVersion = MBS_VERSION;
+    const data: Record<string, any> = {};
 
-    if (sharedSettings) {
-        Player.OnlineSharedSettings.MBS = Object.freeze({
-            Version: MBS_VERSION,
-            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.hidden === false ? set.valueOf() : null),
-            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(set => set?.hidden === false ? set.valueOf() : null),
-        });
+    if (settingsType.includes(SettingsType.SETTINGS)) {
+        const settings = omit(Player.MBSSettings, "FortuneWheelItemSets", "FortuneWheelCommands");
+        Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
+        if (push) {
+            data.OnlineSettings = Player.OnlineSettings;
+        }
     }
 
-    if (push) {
-        const data: Record<string, any> = { OnlineSettings: Player.OnlineSettings };
-        if (sharedSettings) {
+    if (settingsType.includes(SettingsType.SHARED)) {
+        const settings = Object.freeze({
+            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.valueOf()),
+            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(set => set?.valueOf()),
+        });
+        Player.OnlineSharedSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
+        Player.OnlineSharedSettings.MBSVersion = MBS_VERSION;
+        if (push) {
             Player.OnlineSharedSettings.WheelFortune = sanitizeWheelFortuneIDs(Player.OnlineSharedSettings.WheelFortune);
             data.OnlineSharedSettings = Player.OnlineSharedSettings;
         }
+    }
+
+    if (push) {
         ServerAccountUpdate.QueueData(data);
     }
 }
 
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
-    pushMBSSettings(false);
+    pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
     console.log("MBS: Initializing settings module");
 });

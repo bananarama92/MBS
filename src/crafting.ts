@@ -4,7 +4,7 @@
 
 import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, SettingsType } from "settings";
 
 const BC_SLOT_MAX_ORIGINAL = 80;
 const MBS_SLOT_MAX_ORIGINAL = 160;
@@ -113,7 +113,7 @@ waitFor(settingsMBSLoaded).then(() => {
         );
         if (cache != Player.MBSSettings.CraftingCache) {
             Player.MBSSettings.CraftingCache = cache;
-            pushMBSSettings(true, false);
+            pushMBSSettings([SettingsType.SETTINGS], true);
         }
     });
 

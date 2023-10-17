@@ -24,7 +24,7 @@ import {
     enableFlags,
 } from "lock_flags";
 import { validateBuiltinWheelIDs } from "sanity_checks";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, SettingsType } from "settings";
 import { itemSetType } from "type_setting";
 import { StripLevel } from "equipper";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
@@ -826,7 +826,7 @@ waitFor(settingsMBSLoaded).then(() => {
     FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
     FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
     FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
-    pushMBSSettings();
+    pushMBSSettings([SettingsType.SHARED]);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         fortuneWheelState.initialize();

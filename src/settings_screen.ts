@@ -4,7 +4,7 @@ import { MBS_MOD_API, MBS_VERSION, waitFor } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { MBSScreen, ScreenProxy } from "screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
-import { pushMBSSettings } from "settings";
+import { pushMBSSettings, SettingsType } from "settings";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -67,7 +67,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
                     ) {
                         this.character.MBSSettings.RollWhenRestrained = !this.character.MBSSettings.RollWhenRestrained;
-                        pushMBSSettings(true, false);
+                        pushMBSSettings([SettingsType.SETTINGS]);
                     }
                 },
             },
@@ -80,7 +80,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
                     ) {
                         this.character.MBSSettings.LockedWhenRestrained = !this.character.MBSSettings.LockedWhenRestrained;
-                        pushMBSSettings(true, false);
+                        pushMBSSettings([SettingsType.SETTINGS]);
                     }
                 },
             },

@@ -4,7 +4,7 @@
 
 import { LoopIterator } from "common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
-import { parseFWObjects } from "settings";
+import { parseFWObjects, unpackSettings } from "settings";
 import { FWCommandScreen } from "fortune_wheel_command";
 import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { MBSScreen } from "screen_abc";
@@ -32,7 +32,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
     fieldName: T,
     name: string,
 ): MBSSettings[T] {
-    const mbs = character.OnlineSharedSettings?.MBS;
+    const mbs = unpackSettings(character.OnlineSharedSettings?.MBS, "OnlineSharedSettings", false);
     let protoWheelList = (mbs === undefined) ? undefined : mbs[fieldName];
     if (!Array.isArray(protoWheelList)) {
         if (protoWheelList !== undefined) {
