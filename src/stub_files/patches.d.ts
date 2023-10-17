@@ -1,5 +1,3 @@
-declare const LZString: import("lz-string").LZStringStatic;
-
 interface CharacterOnlineSharedSettings {
     /** UTF16-compressed MBS shared settings */
     MBS: string,
