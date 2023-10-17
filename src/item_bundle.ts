@@ -112,13 +112,13 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
 
     const validPropKeys: Set<keyof ItemProperties> = new Set(["OverridePriority"]);
     if (asset.Archetype) {
-        const item: Item = { Asset: asset };
+        const item: Item = { Asset: asset, Property: properties };
         const options = ExtendedItemGatherOptions(item);
         for (const option of options) {
             if (option.OptionType === "VariableHeightOption") {
                 validPropKeys.add("OverrideHeight");
             }
-            for (const key of CommonKeys(option.ParentData.baselineProperty || {})) {
+            for (const key of CommonKeys(option.ParentData.baselineProperty ?? {})) {
                 if (!CraftingPropertyExclude.has(key)) {
                     validPropKeys.add(key);
                 }
