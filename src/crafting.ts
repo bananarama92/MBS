@@ -37,7 +37,7 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
  * @param character The character in question
  * @param craftingCache The crafting cache
  */
-function loadCraftingCache(character: Character, craftingCache: string = ""): void {
+function loadCraftingCache(character: Character, craftingCache: string): void {
     character.Crafting ??= [];
     padArray(character.Crafting, BC_SLOT_MAX_ORIGINAL, null);
     if (!craftingCache) {
@@ -113,28 +113,19 @@ waitFor(settingsMBSLoaded).then(() => {
         );
         if (cache != Player.MBSSettings.CraftingCache) {
             Player.MBSSettings.CraftingCache = cache;
-            pushMBSSettings([SettingsType.SETTINGS], true);
+            pushMBSSettings([SettingsType.SETTINGS]);
         }
     });
 
-    if (MBS_MOD_API.getOriginalHash("CraftingSaveServer") !== "B5299AB2") {
-        MBS_MOD_API.patchFunction("CraftingSaveServer", {
-            "C.Description.substring(0, 100)":
-                "C.Description.substring(0, 200)",
-        });
-    }
+    MBS_MOD_API.patchFunction("CraftingSaveServer", {
+        "C.Description.substring(0, 100)":
+            "C.Description.substring(0, 200)",
+    });
 
-    if (MBS_MOD_API.getOriginalHash("CraftingConvertSelectedToItem") !== "B3F4D559") {
-        MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
-            'ElementValue("InputDescription").trim().substring(0, 100)':
-                'ElementValue("InputDescription").trim().substring(0, 200)',
-        });
-    }
-
-    const dialogDrawCraftingR97: Record<string, string> = (MBS_MOD_API.getOriginalHash("DialogDrawCrafting") !== "871E7AF7") ? {
-        "Item.Craft.Description.substring(0, 100)":
-            "Item.Craft.Description.substring(0, 200)",
-    } : {};
+    MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
+        'ElementValue("InputDescription").trim().substring(0, 100)':
+            'ElementValue("InputDescription").trim().substring(0, 200)',
+    });
 
     MBS_MOD_API.patchFunction("DialogDrawCrafting", {
         '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 3':
@@ -152,7 +143,8 @@ waitFor(settingsMBSLoaded).then(() => {
         '1050, 800, 900, 125, "White", null, 3':
             '1050, 600, 900, 215, "White", null, 7',
 
-        ...dialogDrawCraftingR97,
+        "Item.Craft.Description.substring(0, 100)":
+            "Item.Craft.Description.substring(0, 200)",
     });
 
     MBS_MOD_API.patchFunction("CraftingModeSet", {
