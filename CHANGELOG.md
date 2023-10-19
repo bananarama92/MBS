@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.27
+* Remove more R96 leftovers
+* Fix a faulty check for the presence of LSCG
+
 ## v0.6.26
 * Fix the parsing of outfit codes with extended items sometimes raising
 * Refactor and deduplicate elements shared between `Settings` and `OnlineSharedSettings`
