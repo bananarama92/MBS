@@ -146,7 +146,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
  * @returns The parsed description
  */
 function minifyDescription(description?: null | string) {
-    if (!description || LSCG === undefined) {
+    if (!description || typeof LSCG === "undefined") {
         return "";
     }
 
