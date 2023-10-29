@@ -16,3 +16,6 @@ This addon can either be installed using Tampermonkey by clicking on the [src/lo
 ```js
 javascript:(()=>{fetch(`https://bananarama92.github.io/MBS/main/mbs.js?_=${Date.now()}`).then(r=>r.text()).then(r=>eval(r));})();
 ```
+
+## Public API
+MBS exposes a small public [API](api#readme) that can be used by other addons. See the accompanying typescript declaration file for more details.

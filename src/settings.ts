@@ -143,7 +143,7 @@ export function unpackSettings(
 function initMBSSettings(): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
         const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
-        throw new Error(`"Player.${settingsName}" still unitialized`);
+        throw new Error(`"Player.${settingsName}" still uninitialized`);
     }
 
     // Load saved settings and check whether MBS has been upgraded
@@ -152,7 +152,7 @@ function initMBSSettings(): void {
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
-    if (settings.Version !== undefined && detectUpgrade(settings.Version)) {
+    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings.MBSVersion)) {
         showChangelog();
     }
 
@@ -194,7 +194,7 @@ function initMBSSettings(): void {
 export function pushMBSSettings(settingsType: readonly SettingsType[], push: boolean = true): void {
     if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
         const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
-        throw new Error(`"Player.${settingsName}" still unitialized`);
+        throw new Error(`"Player.${settingsName}" still uninitialized`);
     }
 
     const data: Record<string, any> = {};

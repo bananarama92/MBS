@@ -104,6 +104,22 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
 waitFor(settingsMBSLoaded).then(() => {
     console.log("MBS: Initializing crafting hooks");
 
+    const R97HASHES = Object.freeze({
+        CraftingSaveServer: "F0C798C7",
+        CraftingConvertSelectedToItem: "EC0B58B8",
+        CraftingModeSet: "F8F456C7",
+        DialogDrawCrafting: "B694AB2B",
+    });
+
+    function validateHash(funcName: keyof typeof R97HASHES): boolean {
+        const observedHash = MBS_MOD_API.getOriginalHash(funcName);
+        const expectedHash = R97HASHES[funcName];
+        if (expectedHash === undefined) {
+            throw new Error(`Unsupported function name: ${funcName}`);
+        }
+        return observedHash === expectedHash;
+    }
+
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
         next(args);
@@ -117,40 +133,48 @@ waitFor(settingsMBSLoaded).then(() => {
         }
     });
 
-    MBS_MOD_API.patchFunction("CraftingSaveServer", {
-        "C.Description.substring(0, 100)":
-            "C.Description.substring(0, 200)",
-    });
+    if (validateHash("CraftingSaveServer")) {
+        MBS_MOD_API.patchFunction("CraftingSaveServer", {
+            "C.Description.substring(0, 100)":
+                "C.Description.substring(0, 200)",
+        });
+    }
 
-    MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
-        'ElementValue("InputDescription").trim().substring(0, 100)':
-            'ElementValue("InputDescription").trim().substring(0, 200)',
-    });
+    if (validateHash("CraftingSaveServer")) {
+        MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
+            'ElementValue("InputDescription").trim().substring(0, 100)':
+                'ElementValue("InputDescription").trim().substring(0, 200)',
+        });
+    }
 
-    MBS_MOD_API.patchFunction("DialogDrawCrafting", {
-        '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 3':
-            '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 2',
+    if (validateHash("CraftingSaveServer")) {
+        MBS_MOD_API.patchFunction("CraftingModeSet", {
+            'ElementCreateInput("InputDescription", "text", "", "100");':
+                'ElementCreateInput("InputDescription", "text", "", "200");',
+        });
+    }
 
-        '1050, 200, 900, 125, "White", null, 3':
-            '1050, 150, 900, 125, "White", null, 2',
+    if (validateHash("CraftingSaveServer")) {
+        MBS_MOD_API.patchFunction("DialogDrawCrafting", {
+            '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 3':
+                '1000, 0, 975 - DialogMenuButton.length * 110, 125, "White", null, 2',
 
-        '1050, 400, 900, 125, "White", null, 3':
-            '1050, 300, 900, 125, "White", null, 2',
+            '1050, 200, 900, 125, "White", null, 3':
+                '1050, 150, 900, 125, "White", null, 2',
 
-        '1050, 600, 900, 125, "White", null, 3':
-            '1050, 450, 900, 125, "White", null, 2',
+            '1050, 400, 900, 125, "White", null, 3':
+                '1050, 300, 900, 125, "White", null, 2',
 
-        '1050, 800, 900, 125, "White", null, 3':
-            '1050, 600, 900, 215, "White", null, 7',
+            '1050, 600, 900, 125, "White", null, 3':
+                '1050, 450, 900, 125, "White", null, 2',
 
-        "Item.Craft.Description.substring(0, 100)":
-            "Item.Craft.Description.substring(0, 200)",
-    });
+            '1050, 800, 900, 125, "White", null, 3':
+                '1050, 600, 900, 215, "White", null, 7',
 
-    MBS_MOD_API.patchFunction("CraftingModeSet", {
-        'ElementCreateInput("InputDescription", "text", "", "100");':
-            'ElementCreateInput("InputDescription", "text", "", "200");',
-    });
+            "Item.Craft.Description.substring(0, 100)":
+                "Item.Craft.Description.substring(0, 200)",
+        });
+    }
 
     MBS_MOD_API.patchFunction("CraftingClick", {
         "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
