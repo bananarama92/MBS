@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v0.6.28
+* Add preliminarily R98 support
+* Formalize and expand the MBS API with `API_VERSION` and the `wheelOutfits` namespace
+
 ## v0.6.27
 * Remove more R96 leftovers
 * Fix a faulty check for the presence of LSCG
