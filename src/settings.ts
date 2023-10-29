@@ -152,7 +152,7 @@ function initMBSSettings(): void {
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
-    if (settings.Version !== undefined && detectUpgrade(settings.Version)) {
+    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings.MBSVersion)) {
         showChangelog();
     }
 
