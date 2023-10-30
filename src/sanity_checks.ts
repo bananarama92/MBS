@@ -24,7 +24,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-const BC_MIN_VERSION = Version.fromBCVersion("R97");
+const BC_MIN_VERSION = "R97" satisfies `R${number}`;
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
@@ -32,8 +32,9 @@ const BC_MIN_VERSION = Version.fromBCVersion("R97");
  */
 export function validateBCVersion(version: string): void {
     const BC_VERSION = Version.fromBCVersion(version);
-    if (BC_VERSION.lesser(BC_MIN_VERSION)) {
-        throw new Error(`BC ${GameVersion} detected; MBS requires version R94 or later`);
+    const bc_min_version = Version.fromBCVersion(BC_MIN_VERSION);
+    if (BC_VERSION.lesser(bc_min_version)) {
+        throw new Error(`BC ${GameVersion} detected; MBS requires version ${BC_MIN_VERSION} or later`);
     } else {
         console.log(`MBS: Detected BC ${GameVersion}`);
     }
