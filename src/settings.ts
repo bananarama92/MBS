@@ -18,6 +18,8 @@ import {
     MBS_MAX_SETS,
     FWObject,
 } from "common_bc";
+import { FORTUNE_WHEEL_DEFAULT_BASE } from "fortune_wheel";
+import { BC_SLOT_MAX_ORIGINAL } from "crafting";
 
 type SettingsType = 0 | 1;
 
@@ -63,13 +65,18 @@ function getGitTags(): [gitTag: string, mdTag: string] {
     return version.beta ? ["blob/devel", ""] : ["blob/main", mdTag];
 }
 
+/** Return the URL to the MBS changelog */
+export function getChangeLogURL(): string {
+    const mbs_tags = getGitTags();
+    return `https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
+}
+
 /** Show the MBS changelog to the player */
 function showChangelog(): void {
-    const mbs_tags = getGitTags();
     const message = `New MBS version detected: ${MBS_VERSION}
 
 See below for the updated changelog:
-https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
+${getChangeLogURL()}`;
     ServerAccountBeep({
         MemberNumber: Player.MemberNumber,
         MemberName: "MBS",
@@ -184,6 +191,40 @@ function initMBSSettings(): void {
     if (Player.OnlineSharedSettings.WheelFortune == null) {
         Player.OnlineSharedSettings.WheelFortune = WheelFortuneDefault;
     }
+}
+
+/**
+ * Clear all MBS settings.
+ */
+export function clearMBSSettings(): void {
+    if (Player.OnlineSettings !== undefined) {
+        // @ts-expect-error
+        delete Player.OnlineSettings.MBS;
+    }
+    if (Player.OnlineSharedSettings !== undefined) {
+        // @ts-expect-error
+        delete Player.OnlineSharedSettings.MBSVersion;
+        // @ts-expect-error
+        delete Player.OnlineSharedSettings.MBS;
+        Player.OnlineSharedSettings.WheelFortune = FORTUNE_WHEEL_DEFAULT_BASE;
+    }
+
+    WheelFortuneOption = WheelFortuneOption.filter(o => o.Custom !== true);
+    WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
+    Player.Crafting = Player.Crafting?.slice(0, BC_SLOT_MAX_ORIGINAL);
+    Player.MBSSettings = Object.seal({
+        Version: MBS_VERSION,
+        CraftingCache: "",
+        FortuneWheelItemSets: Array(MBS_MAX_SETS).fill(null),
+        FortuneWheelCommands: Array(MBS_MAX_SETS).fill(null),
+        LockedWhenRestrained: false,
+        RollWhenRestrained: true,
+    });
+
+    ServerAccountUpdate.QueueData({
+        OnlineSettings: Player.OnlineSettings,
+        OnlineSharedSettings: Player.OnlineSharedSettings,
+    }, true);
 }
 
 /**
