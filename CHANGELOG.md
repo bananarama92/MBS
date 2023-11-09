@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.0.0
+* Add full R98Beta1 support
+* Added a button for clearing all MBS data
+
 ## v0.6.28
 * Add preliminarily R98 support
 * Formalize and expand the MBS API with `API_VERSION` and the `wheelOutfits` namespace

@@ -121,7 +121,7 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
 }
 
 /** The MBS version. */
-export const MBS_VERSION = "0.6.28" satisfies `${number}.${number}.${number}${string}`;
+export const MBS_VERSION = "1.0.0" satisfies `${number}.${number}.${number}${string}`;
 
 /**
  * The version of the MBS API.
