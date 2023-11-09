@@ -8,6 +8,7 @@ import { FWItemSetScreen } from "fortune_wheel_item_set";
 import { FWCommandScreen } from "fortune_wheel_command";
 import { FWSelectScreen} from "fortune_wheel_select";
 import { MBSPreferenceScreen } from "settings_screen";
+import { ResetScreen } from "reset_screen";
 
 waitFor(settingsMBSLoaded).then(() => {
     const backgrounds = {
@@ -15,6 +16,7 @@ waitFor(settingsMBSLoaded).then(() => {
         [`${FWCommandScreen.screen}Background`]: FWCommandScreen.background,
         [`${FWSelectScreen.screen}Background`]: FWSelectScreen.background,
         [`${MBSPreferenceScreen.screen}Background`]: MBSPreferenceScreen.background,
+        [`${ResetScreen.screen}Background`]: ResetScreen.background,
     } as const;
     const w = <typeof window & typeof backgrounds>window;
     Object.assign(w, backgrounds);

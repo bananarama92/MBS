@@ -166,11 +166,22 @@ interface MBSSettings {
 /** An interface for representing clickable buttons */
 interface ClickAction {
     /** A 4-tuple with the buttons X & Y coordinates, its width and its height */
-    readonly coords: readonly [X: number, Y: number, W: number, H: number],
+    readonly coords: RectTuple,
     /** A callback to-be executed when the button is clicked */
     readonly next: () => void,
     /** Whether the button click requires a player character */
     readonly requiresPlayer: boolean,
+}
+
+/** An interface for representing click- and drawable buttons */
+interface ButtonAction {
+    readonly name: string,
+    /** A 4-tuple with the buttons X & Y coordinates, its width and its height */
+    readonly coords: RectTuple,
+    /** A callback to-be executed when the button is clicked */
+    readonly click: (event: MouseEvent | TouchEvent) => boolean,
+    /** A callback to-be executed when the button is drawn */
+    readonly draw: (...coords: RectTuple) => void,
 }
 
 /** A simplified interface representing {@link FWItemSet} */

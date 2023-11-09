@@ -4,7 +4,8 @@ import { MBS_MOD_API, MBS_VERSION, waitFor } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { MBSScreen, ScreenProxy } from "screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
-import { pushMBSSettings, SettingsType } from "settings";
+import { pushMBSSettings, SettingsType, getChangeLogURL } from "settings";
+import { ResetScreen } from "reset_screen";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -84,6 +85,22 @@ export class MBSPreferenceScreen extends MBSScreen {
                     }
                 },
             },
+            {
+                coords: [1500, 620, 400, 80],
+                requiresPlayer: true,
+                next: () => {
+                    const subScreen = new ResetScreen(this);
+                    this.children.set(subScreen.screen, subScreen);
+                    subScreen.load();
+                },
+            },
+            {
+                coords: [1500, 720, 400, 80],
+                requiresPlayer: false,
+                next: () => {
+                    window.open(getChangeLogURL(), "_blank");
+                },
+            },
         ];
     }
 
@@ -114,6 +131,14 @@ export class MBSPreferenceScreen extends MBSScreen {
 
             DrawCheckbox(500, 360, 64, 64, "", this.character.MBSSettings.LockedWhenRestrained, disable);
             DrawText("Lock MBS settings while restrained", 575, 392, "Black");
+
+            DrawButton(1500, 620, 400, 80, "", "#ffc9c9", "", "Clear all MBS data");
+            DrawImageResize("Icons/ServiceBell.png", 1510, 630, 60, 60);
+            DrawTextFit("Reset", 1580, 660, 320, "Black");
+
+            DrawButton(1500, 720, 400, 80, "", "White", "", "Open the MBS changelog", false);
+            DrawImageResize("Icons/Changelog.png", 1510, 730, 60, 60);
+            DrawTextFit("Latest Changes", 1580, 760, 320, "Black");
         }
         MainCanvas.textAlign = "center";
     }
@@ -137,9 +162,7 @@ MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
     DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
 });
 
-// TODO: Lower the priority again once BCTweaks has removed its `PreferenceClick` hook
-// XREF agicitag/BCTweaks#52
-MBS_MOD_API.hookFunction("PreferenceClick", 3, (args, next) => {
+MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
     const previousScreen = PreferenceSubscreen;
     next(args);
     if (!previousScreen && <string>PreferenceSubscreen === MBSPreferenceScreen.screen) {

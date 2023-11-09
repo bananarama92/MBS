@@ -6,7 +6,7 @@ import { MBS_MOD_API, waitFor, padArray } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings, SettingsType } from "settings";
 
-const BC_SLOT_MAX_ORIGINAL = 80;
+export const BC_SLOT_MAX_ORIGINAL = 80;
 const MBS_SLOT_MAX_ORIGINAL = 160;
 
 /** Serialize the passed crafting items. */
