@@ -121,7 +121,7 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
 }
 
 /** The MBS version. */
-export const MBS_VERSION = "1.0.0" satisfies `${number}.${number}.${number}${string}`;
+export const MBS_VERSION = "1.0.1" satisfies typeof mbs.MBS_VERSION;
 
 /**
  * The version of the MBS API.
@@ -134,7 +134,7 @@ export const API_VERSION = Object.freeze({
     major: 1,
     /** The major API versions; increments are reserved for additions */
     minor: 0,
-}) satisfies { major: number, minor: number };
+}) satisfies typeof mbs.API_VERSION;
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({

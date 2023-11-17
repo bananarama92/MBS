@@ -9,7 +9,7 @@ import * as test_fortune_wheel from "./test_fortune_wheel";
 
 export { testing_tools, test_common, test_common_bc, test_fortune_wheel };
 
-export function runTests(): boolean {
+export const runTests: typeof mbs.runTests = function runTests() {
     if (!settingsMBSLoaded()) {
         console.warn("MBS: MBS not fully loaded yet");
         return false;
@@ -37,4 +37,4 @@ export function runTests(): boolean {
     } else {
         return true;
     }
-}
+};
