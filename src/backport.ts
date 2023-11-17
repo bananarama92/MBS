@@ -19,6 +19,14 @@ waitFor(settingsMBSLoaded).then(() => {
         });
     }
 
+    if (MBS_MOD_API.getOriginalHash("VibratorModeInit") === "F8634616") {
+        backportIDs.add(4597);
+        MBS_MOD_API.patchFunction("VibratorModeInit", {
+            "delete newProps.OverridePriority;":
+                "delete newProps.OverridePriority; delete newProps.Effect;",
+        });
+    }
+
     if (backportIDs.size) {
         console.log(`MBS: Initializing R${BC_NEXT} bug fix backports`, backportIDs);
     } else {

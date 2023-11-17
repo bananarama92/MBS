@@ -57,6 +57,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["CraftingClick", ["FF76A404"]],
         ["CraftingRun", ["5BE6E125"]],
         ["ValidationSanitizeLock", ["21B423BF", "1C59B860"]],
+        ["VibratorModeInit", ["F8634616", "AE006E2B"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
