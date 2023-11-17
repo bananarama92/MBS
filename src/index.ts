@@ -32,3 +32,8 @@ import "crafting";
 import "window_register";
 import "backport";
 import "settings_screen";
+
+// Workaround for checking whether mbs satisfies its declared interface
+// Xref microsoft/TypeScript#38511
+import * as __self__ from "index";
+__self__ satisfies typeof mbs;
