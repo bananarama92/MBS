@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.0.1
+* Drop support for BC R98
+* Backport one BC R98 hotfix:
+    - [BondageProjects/Bondage-College#4597](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4597): Fix a validation loop triggered by the love chastity belt
+
 ## v1.0.0
 * Add full R98Beta1 support
 * Added a button for clearing all MBS data
