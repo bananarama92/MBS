@@ -13,22 +13,6 @@ export const backportIDs: Set<number> = new Set();
 waitFor(settingsMBSLoaded).then(() => {
     switch (GameVersion) {
         case "R98": {
-            if (MBS_MOD_API.getOriginalHash("ValidationSanitizeLock") === "21B423BF") {
-                backportIDs.add(4597);
-                MBS_MOD_API.patchFunction("ValidationSanitizeLock", {
-                    "if (!lock || !InventoryDoesItemAllowLock(item)) {":
-                        'if (!lock && item.Asset.Effect.includes("Lock")) { return; } else if (!lock || !InventoryDoesItemAllowLock(item)) {',
-                });
-            }
-
-            if (MBS_MOD_API.getOriginalHash("VibratorModeInit") === "F8634616") {
-                backportIDs.add(4597);
-                MBS_MOD_API.patchFunction("VibratorModeInit", {
-                    "delete newProps.OverridePriority;":
-                        "delete newProps.OverridePriority; delete newProps.Effect;",
-                });
-            }
-
             if (MBS_MOD_API.getOriginalHash("VibratorModeInit") === "AE006E2B") {
                 backportIDs.add(4605);
                 const option = VibratorModeOptions.Advanced.find(o => o.Name === VibratorMode.RANDOM);
