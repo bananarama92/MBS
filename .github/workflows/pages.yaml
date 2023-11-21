@@ -99,7 +99,7 @@ jobs:
         uses: actions/deploy-pages@v2
       - name: Attach release artifacts to GitHub release
         if: github.event_name == 'release'
-        uses: AButler/upload-release-assets@v2.0.2
+        uses: AButler/upload-release-assets@v3.0
         with:
           files: 'MBS-Artifacts/artifacts/${{ github.ref_name }}/*'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
