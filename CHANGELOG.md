@@ -1,5 +1,14 @@
 # MBS Changelog
 
+## v1.1.0
+* Add the ability to specify weights for wheel of fortune options
+* Move `OnlineSettings` to `ExtensionSettings`. Note that this does not affect data stored in `OnlineSharedSettings`.
+* Append the MBS version with the git tag on non-release commits
+* Backport three BC R99 fixes:
+    - [BondageProjects/Bondage-College#4602](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4602): Allow to specify `Top`/`Left` on a pose-by-pose basis
+    - [BondageProjects/Bondage-College#4604](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4604): Fix the futuristic gag auto inflation tripping up on the `Init` validation
+    - [BondageProjects/Bondage-College#4605](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4605): Properly implement Advanced vibrator mode support for the vibrating item `Init` validation
+
 ## v1.0.1
 * Drop support for BC R98
 * Backport one BC R98 hotfix:
