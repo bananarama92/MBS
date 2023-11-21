@@ -1,18 +1,25 @@
 {
     "name": "maids-bondage-scripts",
     "version": "1.0.1",
+    "private": true,
+    "description": "Various additions and utility scripts for BC",
+    "homepage": "https://github.com/bananarama92/MBS#readme",
+    "bugs": {
+        "url": "https://github.com/bananarama92/MBS/issues"
+    },
     "repository": {
         "type": "git",
         "url": "git+ssh://git@github.com/bananarama92/MBS.git"
     },
-    "author": "bananarama92 <bananarama921@outlook.com>",
     "license": "GPL-3.0",
-    "private": true,
-    "description": "Various additions and utility scripts for BC",
-    "bugs": {
-        "url": "https://github.com/bananarama92/MBS/issues"
+    "author": "bananarama92 <bananarama921@outlook.com>",
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "lint": "eslint --max-warnings 0 .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit -p ."
     },
-    "homepage": "https://github.com/bananarama92/MBS#readme",
     "dependencies": {
         "@types/lodash-es": "^4.17.9",
         "bc-stubs": "98.0.0",
@@ -21,6 +28,7 @@
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^25.0.4",
+        "@rollup/plugin-json": "^6.0.1",
         "@rollup/plugin-node-resolve": "^15.2.1",
         "@rollup/plugin-terser": "^0.4.3",
         "@rollup/plugin-typescript": "^11.1.3",
@@ -34,16 +42,8 @@
         "rollup": "^3.29.0",
         "rollup-plugin-progress": "^1.1.2",
         "rollup-plugin-serve": "^2.0.2",
-        "tslib": "^2.6.2",
-        "typescript": "^5.2.2",
         "simple-git": "^3.21.0",
-        "@rollup/plugin-json": "^6.0.1"
-    },
-    "scripts": {
-        "build": "rollup -c",
-        "dev": "rollup -c -w",
-        "typecheck": "tsc --noEmit -p .",
-        "lint": "eslint --max-warnings 0 .",
-        "lint:fix": "eslint --fix ."
+        "tslib": "^2.6.2",
+        "typescript": "^5.2.2"
     }
 }
