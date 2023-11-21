@@ -36,7 +36,7 @@ interface WheelBundle {
 declare namespace mbs {
     /**
      * The (semantic) MBS version.
-     * Guaranteed to match the `/^([0-9]+)\.([0-9]+)\.([0-9]+)(\S+)?$/` regex.
+     * Guaranteed to match the `/^([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/` regex.
      */
     const MBS_VERSION: `${number}.${number}.${number}${string}`;
     /**

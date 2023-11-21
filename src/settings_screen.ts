@@ -1,6 +1,6 @@
 "use strict";
 
-import { MBS_MOD_API, MBS_VERSION, waitFor } from "common";
+import { MBS_MOD_API, waitFor } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { MBSScreen, ScreenProxy } from "screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";

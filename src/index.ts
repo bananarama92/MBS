@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { MBS_VERSION, waitFor, MBS_MOD_API, API_VERSION } from "common";
+import { waitFor, MBS_MOD_API, API_VERSION } from "common";
 import { validateBCVersion, validateHookHashes } from "sanity_checks";
 import { settingsMBSLoaded } from "common_bc";
 import { runTests } from "testing";
@@ -11,10 +11,11 @@ import { unpackSettings as _unpackSettings } from "settings";
 import * as wheelOutfits from "api/wheel_outfits";
 
 const _getFunctionHash = MBS_MOD_API.getOriginalHash;
+const _version = MBS_VERSION;
 
 export {
     runTests,
-    MBS_VERSION,
+    _version as MBS_VERSION,
     API_VERSION,
     wheelOutfits,
     _getFunctionHash,

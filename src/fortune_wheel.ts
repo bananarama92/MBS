@@ -18,6 +18,7 @@ import {
     settingsMBSLoaded,
     canChangeCosplay,
     MBS_MAX_SETS,
+    createWeightedWheelIDs,
 } from "common_bc";
 import {
     DEFAULT_FLAGS,
@@ -725,6 +726,7 @@ class FWScreenProxy extends ScreenProxy {
     character: Character;
     FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[];
     FortuneWheelCommands: (null | import("common_bc").FWCommand)[];
+    weightedIDs: string;
 
     constructor() {
         super(
@@ -747,6 +749,7 @@ class FWScreenProxy extends ScreenProxy {
         this.character = Player;
         this.FortuneWheelItemSets = Array(MBS_MAX_SETS).fill(null);
         this.FortuneWheelCommands = Array(MBS_MAX_SETS).fill(null);
+        this.weightedIDs = this.character.OnlineSharedSettings?.WheelFortune ?? WheelFortuneDefault;
     }
 
     initialize() {
@@ -758,6 +761,7 @@ class FWScreenProxy extends ScreenProxy {
         this.character = WheelFortuneCharacter;
         this.FortuneWheelItemSets = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelItemSets", "item sets");
         this.FortuneWheelCommands = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelCommands", "commands");
+        this.weightedIDs = createWeightedWheelIDs(this.character.OnlineSharedSettings?.WheelFortune ?? WheelFortuneDefault);
     }
 }
 
@@ -914,6 +918,11 @@ waitFor(settingsMBSLoaded).then(() => {
         if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
             next(args);
         }
+    });
+
+    MBS_MOD_API.hookFunction("WheelFortuneDraw", 11, (args, next) => {
+        args[0] = fortuneWheelState.weightedIDs;
+        return next(args);
     });
 
     fortuneWheelState = new FWScreenProxy();

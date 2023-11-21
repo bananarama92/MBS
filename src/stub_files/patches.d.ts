@@ -11,10 +11,15 @@ interface PlayerCharacter {
 }
 
 interface PlayerOnlineSettings {
-    /** UTF16-compressed MBS settings */
-    MBS: string,
+    /** @deprecated moved to {@link ExtensionSettings.MBS} as of v1.1.0 */
+    MBS?: string,
     /** @deprecated moved to {@link CharacterOnlineSharedSettings.MBSVersion} as of v0.6.26 */
     MBSVersion?: string,
+}
+
+interface ExtensionSettings {
+    /** UTF16-compressed MBS settings */
+    MBS: string,
 }
 
 interface WheelFortuneOptionType {
@@ -28,4 +33,6 @@ interface WheelFortuneOptionType {
     readonly Parent?: import("common_bc").FWObject<WheelFortuneOptionType>,
     /** The type of lock flavor */
     readonly Flag?: FWFlag,
+    /** The weight of a particular option within the wheel of fortune */
+    readonly Weight?: number,
 }

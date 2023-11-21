@@ -7,6 +7,7 @@ import { clamp } from "lodash-es";
 import { toItemBundles } from "item_bundle";
 import {
     getTextInputElement,
+    getNumberInputElement,
     FWSelectedItemSet,
     FWItemSet,
 } from "common_bc";
@@ -195,15 +196,18 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         // Unhide all input elements
         const nameElement = getTextInputElement("name", this.settings, "Name", [1100, 300, 700, 64], "", 70);
         const outfitElement = getTextInputElement("outfitCache", this.settings, "Outfit code", [1150, 450, 700, 64]);
+        const weightElement = getNumberInputElement("weight", this.settings, [750, 850, 64, 64], 1, 1, 9);
         if (readonly) {
             nameElement.setAttribute("disabled", true);
             outfitElement.setAttribute("disabled", true);
+            weightElement.setAttribute("disabled", true);
         }
 
         // Load the settings
         const itemSet = this.mbsObject;
         if (itemSet !== null) {
             nameElement.value = itemSet.name;
+            weightElement.value = itemSet.weight.toString();
             this.settings.readSettings(itemSet);
             this.settings.outfitCache = outfitElement.value = LZString.compressToBase64(
                 JSON.stringify(toItemBundles(itemSet.itemList, this.preview)),
@@ -311,6 +315,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         DrawText("Supported lock types:", 1200, 500 + 16, "Black");
         DrawText("Clothing strip level:", 750, 500 + 16, "Black");
         DrawText("Clothing equip level:", 750, 650 + 16, "Black");
+        DrawText("Wheel option weight:", 750, 800 + 16, "Black");
+        ElementPosition("MBSweight", 790, 870, 80);
         for (const [i, flag] of this.settings.flags.entries()) {
             const y = 550 + (i % 4) * 100;
             const x = (i < 4) ? 1200 : 1550;
@@ -336,6 +342,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     unload(): void {
         ElementRemove("MBSname");
         ElementRemove("MBSoutfitCache");
+        ElementRemove("MBSweight");
         for (const [i, flag] of this.settings.flags.entries()) {
             switch (flag.type) {
                 case "TimerPasswordPadlock":

@@ -120,9 +120,6 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
     return true;
 }
 
-/** The MBS version. */
-export const MBS_VERSION = "1.0.1" satisfies typeof mbs.MBS_VERSION;
-
 /**
  * The version of the MBS API.
  *
@@ -248,11 +245,11 @@ export class LoopIterator<T> {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             list: this.list,
             index: this.index,
@@ -390,11 +387,11 @@ export class Version {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             major: this.major,
             minor: this.minor,

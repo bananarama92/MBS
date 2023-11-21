@@ -2,6 +2,8 @@
 
 "use strict";
 
+import { sortBy } from "lodash-es";
+
 import {
     toStringTemplate,
     LoopIterator,
@@ -118,14 +120,18 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
     name: null | string = null;
     /** A read-only view of the underlying list of wheel objects */
     readonly mbsList: readonly (null | T)[];
+    /** The weight of a particular option within the wheel of fortune */
+    weight: number;
 
-    constructor(mbsList: readonly (null | T)[]) {
+    constructor(mbsList: readonly (null | T)[], weight?: number) {
         this.mbsList = mbsList;
+        this.weight = Number.isInteger(weight) ? CommonClamp(<number>weight, 1, 9) : 1;
     }
 
     /** Reset all currently select options to their default. */
     reset(): void {
         this.name = null;
+        this.weight = 1;
     }
 
     /**
@@ -156,11 +162,11 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return an object representation of this instance. */
-    abstract valueOf(): object;
+    abstract toJSON(): object;
 }
 
 export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
@@ -189,15 +195,15 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
         this.equipIter.setPosition(index);
     }
 
-    constructor(wheelList: readonly (null | FWItemSet)[]) {
-        super(wheelList);
+    constructor(wheelList: readonly (null | FWItemSet)[], weight?: number) {
+        super(wheelList, weight);
         this.stripIter = new LoopIterator([StripLevel.NONE, StripLevel.CLOTHES, StripLevel.UNDERWEAR, StripLevel.COSPLAY], StripLevel.UNDERWEAR);
         this.equipIter = new LoopIterator([StripLevel.NONE, StripLevel.CLOTHES, StripLevel.UNDERWEAR, StripLevel.COSPLAY], StripLevel.UNDERWEAR);
     }
 
     /** Reset all currently select options to their default. */
     reset(): void {
-        this.name = null;
+        super.reset();
         this.itemList = null;
         this.outfitCache = null;
         this.stripLevel = StripLevel.UNDERWEAR;
@@ -218,6 +224,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
         this.stripLevel = itemSet.stripLevel;
         this.equipLevel = itemSet.equipLevel;
         this.outfitCache = null;
+        this.weight = itemSet.weight;
         itemSet.flags.forEach((flag, i) => Object.assign(this.flags[i], flag));
     }
 
@@ -242,6 +249,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
             true,
             hidden,
             preRunCallback,
+            this.weight,
         );
     }
 
@@ -284,7 +292,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             name: this.name,
             itemList: this.itemList,
@@ -297,11 +305,6 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
 }
 
 export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
-    /** Reset all currently select options to their default. */
-    reset(): void {
-        this.name = null;
-    }
-
     /**
      * Update this instance with settings from the provided command.
      * @param command The to-be read wheel of fortune command
@@ -311,6 +314,7 @@ export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
             throw new TypeError(`Invalid "command" type: ${typeof command}`);
         }
         this.name = command.name;
+        this.weight = command.weight;
     }
 
     /** Construct a new wheel of fortune command. */
@@ -318,11 +322,11 @@ export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
         if (this.name === null) {
             throw new Error("Cannot create a Command while \"name\" is null");
         }
-        return new FWCommand(this.name, this.mbsList, hidden);
+        return new FWCommand(this.name, this.mbsList, hidden, this.weight);
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             name: this.name,
         };
@@ -341,6 +345,8 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
     #hidden: boolean = true;
     /** A readonly view of the character's list of wheel objects */
     readonly mbsList: readonly (null | MBSObject<OptionType>)[];
+    /** The weight of a particular option within the wheel of fortune */
+    readonly weight: number;
 
     /** Get the registered options corresponding to this item set (if any) */
     get children(): null | readonly OptionType[] { return this.#children; }
@@ -362,11 +368,18 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
         return this.mbsList.findIndex(i => i === this);
     }
 
-    constructor(name: string, custom: boolean, wheelList: readonly (null | MBSObject<OptionType>)[], hidden: boolean) {
+    constructor(
+        name: string,
+        custom: boolean,
+        wheelList: readonly (null | MBSObject<OptionType>)[],
+        hidden: boolean,
+        weight: number,
+    ) {
         this.name = name;
         this.custom = custom;
         this.mbsList = wheelList;
         this.#hidden = hidden;
+        this.weight = weight;
     }
 
     /**
@@ -411,11 +424,11 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    abstract valueOf(): object;
+    abstract toJSON(): Record<string, any>;
 }
 
 /** A base class for fortune wheel sets. */
@@ -489,17 +502,7 @@ export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObj
 }
 
 /** {@link FWItemSet} constructor argument types in tuple form */
-type FWItemSetArgTypes = [
-    name: string,
-    itemList: readonly FWItem[],
-    mbsList: readonly (null | FWItemSet)[],
-    stripLevel?: StripLevel,
-    equipLevel?: StripLevel,
-    flags?: readonly Readonly<FWFlag>[],
-    custom?: boolean,
-    hidden?: boolean,
-    preRunCallback?: null | FortuneWheelPreRunCallback,
-];
+type FWItemSetArgTypes = ConstructorParameters<typeof FWItemSet>;
 
 /** {@link FWItemSet} constructor argument types in object form */
 type FWItemSetKwargTypes = {
@@ -512,6 +515,7 @@ type FWItemSetKwargTypes = {
     custom?: boolean,
     hidden?: boolean,
     preRunCallback?: null | FortuneWheelPreRunCallback,
+    weight?: number,
 };
 
 function validateFlags(flags: readonly Readonly<FWFlag>[]): FWFlag[] {
@@ -564,6 +568,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         custom?: boolean,
         hidden?: boolean,
         preRunCallback?: null | FortuneWheelPreRunCallback,
+        weight?: number,
     ) {
         const kwargs = FWItemSet.validate({
             name,
@@ -575,8 +580,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             custom,
             hidden,
             preRunCallback,
+            weight,
         });
-        super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.hidden);
+        super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.hidden, kwargs.weight);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
@@ -651,6 +657,12 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         if (kwargs.preRunCallback !== null && typeof kwargs.preRunCallback !== "function") {
             kwargs.preRunCallback = null;
         }
+
+        if (!Number.isInteger(kwargs.weight)) {
+            kwargs.weight = 1;
+        } else {
+            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+        }
         return <Required<FWItemSetKwargTypes>>kwargs;
     }
 
@@ -669,6 +681,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.custom,
             kwargs.hidden,
             kwargs.preRunCallback,
+            kwargs.weight,
         ];
         return new FWItemSet(...args);
     }
@@ -770,12 +783,13 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
                 Custom: this.custom,
                 Parent: this,
                 Flag: flag,
+                Weight: this.weight,
             };
         });
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf(): FWSimpleItemSet {
+    toJSON(): FWSimpleItemSet {
         return {
             name: this.name,
             itemList: this.itemList,
@@ -785,22 +799,20 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             custom: this.custom,
             hidden: this.hidden,
             preRunCallback: this.preRunCallback,
+            weight: this.weight,
         };
     }
 }
 
 /** {@link FWCommand} constructor argument types in tuple form */
-type FWCommandArgTypes = [
-    name: string,
-    mbsList: readonly (null | FWCommand)[],
-    hidden?: boolean,
-];
+type FWCommandArgTypes = ConstructorParameters<typeof FWCommand>;
 
 /** {@link FWCommand} constructor argument types in tuple form */
 type FWCommandKwargTypes = {
     name: string,
     mbsList: readonly (null | FWCommand)[],
     hidden?: boolean,
+    weight?: number
 };
 
 /** A class for storing custom user-specified wheel of fortune item sets. */
@@ -811,9 +823,14 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     readonly mbsList: readonly (null | FWCommand)[];
 
     /** Initialize the instance */
-    constructor(name: string, mbsList: readonly (null | FWCommand)[], hidden?: boolean) {
-        const kwargs = FWCommand.validate({ name, mbsList, hidden });
-        super(kwargs.name, true, kwargs.mbsList, kwargs.hidden);
+    constructor(
+        name: string,
+        mbsList: readonly (null | FWCommand)[],
+        hidden?: boolean,
+        weight?: number,
+    ) {
+        const kwargs = FWCommand.validate({ name, mbsList, hidden, weight });
+        super(kwargs.name, true, kwargs.mbsList, kwargs.hidden, kwargs.weight);
     }
 
     /** Validation function for the classes' constructor */
@@ -829,6 +846,12 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
         if (typeof kwargs.hidden !== "boolean") {
             kwargs.hidden = true;
         }
+
+        if (!Number.isInteger(kwargs.weight)) {
+            kwargs.weight = 1;
+        } else {
+            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+        }
         return <Required<FWCommandKwargTypes>>kwargs;
     }
 
@@ -841,6 +864,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
             kwargs.name,
             mbsList,
             kwargs.hidden,
+            kwargs.weight,
         ];
         return new FWCommand(...args);
     }
@@ -861,6 +885,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
             Parent: this,
             Script: undefined,
             Flag: undefined,
+            Weight: this.weight,
         }];
     }
 
@@ -873,8 +898,12 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf(): FWSimpleCommand {
-        return { name: this.name, hidden: this.hidden };
+    toJSON(): FWSimpleCommand {
+        return {
+            name: this.name,
+            hidden: this.hidden,
+            weight: this.weight,
+        };
     }
 }
 
@@ -927,4 +956,46 @@ export function getTextInputElement<T extends string>(
     }
     ElementPosition(`MBS${name}`, ...coords);
     return element;
+}
+
+export function getNumberInputElement<T extends string>(
+    name: T,
+    record: Record<T, number>,
+    coords: readonly [X: number, Y: number, W: number, H?: number],
+    value: number,
+    minValue: number = -Infinity,
+    maxValue: number = Infinity,
+): HTMLInputElement {
+    let element = ElementCreateInput(`MBS${name}`, "number", value.toString());
+    if (element) {
+        element.setAttribute("max", maxValue.toString());
+        element.setAttribute("min", minValue.toString());
+        element.addEventListener("input", CommonLimitFunction((e) => {
+            // @ts-ignore
+            const value = Number.parseInt(e.target?.value);
+            if (!Number.isNaN(value) && value >= minValue && value <= maxValue) {
+                record[name] = value;
+            }
+        }));
+    } else {
+        element = <HTMLInputElement>document.getElementById(`MBS${name}`);
+    }
+    ElementPosition(`MBS${name}`, ...coords);
+    return element;
+}
+
+export function createWeightedWheelIDs(ids: string): string {
+    const idBaseList = Array.from(ids).flatMap(id => {
+        const option = WheelFortuneOption.find(o => o.ID === id);
+        return option === undefined ? [] : Array(option.Weight ?? 1).fill(id);
+    });
+    if (idBaseList.length === 0) {
+        return Array.from(ids).sort(Math.random).join();
+    }
+
+    const idList: string[] = [];
+    while (idList.length < 50) {
+        idList.push(...sortBy(idBaseList, Math.random));
+    }
+    return idList.join("");
 }
