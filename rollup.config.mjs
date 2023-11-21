@@ -22,9 +22,7 @@ const config = {
         format: "iife",
         sourcemap: true,
         intro: async () => {
-            const packageVersion = packageJson.version;
-            let version = packageVersion.startsWith("v") ? packageVersion.slice(1) : packageVersion;
-
+            let version = packageJson.version;
 			const git = simpleGit();
             const latestTag = (await git.tags()).latest;
             devsuffix: {
@@ -41,7 +39,7 @@ const config = {
                 }
 
                 // Automatically increment the micro version by 1 w.r.t. the latest release if we haven't done so manually
-                if (latestTag === packageVersion) {
+                if (latestTag === `v${version}`) {
                     const versionSplit = version.split(".");
                     versionSplit[2] = (Number.parseInt(versionSplit[2]) + 1).toString();
                     if (Number.isNaN(versionSplit[2])) {
