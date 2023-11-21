@@ -74,13 +74,13 @@ jobs:
           MBS_HASH=$(git rev-parse HEAD)
 
           cd MBS-Artifacts
-          mkdir artifacts/${{ github.ref_name }}
-          cp artifacts/main/package-lock.json artifacts/main/mbs.js artifacts/main/mbs.js.map artifacts/${{ github.ref_name }}/
+          mkdir artifacts/${{ github.event.release.tag_name }}
+          cp artifacts/main/package-lock.json artifacts/main/mbs.js artifacts/main/mbs.js.map artifacts/${{ github.event.release.tag_name }}/
 
-          git add artifacts/${{ github.ref_name }}/*
+          git add artifacts/${{ github.event.release.tag_name }}/*
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "MAINT: Add MBS ${{ github.ref_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          git commit -m "MAINT: Add MBS ${{ github.event.release.tag_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           git push
       - name: Define the latest MBS release
         run: |
