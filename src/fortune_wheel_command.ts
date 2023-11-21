@@ -4,6 +4,7 @@
 
 import {
     getTextInputElement,
+    getNumberInputElement,
     FWSelectedCommand,
     FWCommand,
 } from "common_bc";
@@ -54,15 +55,18 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     load(): void {
         super.load();
 
+        const weightElement = getNumberInputElement("weight", this.settings, [750, 850, 64, 64], 1, 1, 9);
         const nameElement = getTextInputElement("name", this.settings, "Role play command", [900, 500, 900, 64], "", 210);
         if (!this.character.IsPlayer()) {
             nameElement.setAttribute("disabled", true);
+            weightElement.setAttribute("disabled", true);
         }
 
         // Load the settings
         if (this.mbsObject !== null) {
-            this.settings.readSettings(this.mbsObject);
             nameElement.value = this.mbsObject.name;
+            weightElement.value = this.mbsObject.weight.toString();
+            this.settings.readSettings(this.mbsObject);
         } else {
             this.settings.reset();
         }
@@ -93,9 +97,13 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
         }
         DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
         ElementPosition("MBSname", 900, 500, 900, 64);
+
+        DrawText("Wheel option weight:", 620, 560 + 16, "Black");
+        ElementPosition("MBSweight", 490, 630, 80);
     }
 
     unload(): void {
         ElementRemove("MBSname");
+        ElementRemove("MBSweight");
     }
 }

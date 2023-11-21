@@ -194,6 +194,7 @@ interface FWSimpleItemSet {
     custom: boolean,
     hidden: boolean,
     preRunCallback: FortuneWheelPreRunCallback | null,
+    weight: number,
 }
 
 /** A simplified (partial) interface representing {@link FWItemSet} */
@@ -206,6 +207,7 @@ interface FWSimplePartialItemSet extends Partial<FWSimpleItemSet>{
 interface FWSimpleCommand {
     name: string,
     hidden: boolean,
+    weight: number,
 }
 
 /** A simplified (partial) interface representing {@link FWCommand} */

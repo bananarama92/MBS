@@ -28,4 +28,6 @@ interface WheelFortuneOptionType {
     readonly Parent?: import("common_bc").FWObject<WheelFortuneOptionType>,
     /** The type of lock flavor */
     readonly Flag?: FWFlag,
+    /** The weight of a particular option within the wheel of fortune */
+    readonly Weight?: number,
 }
