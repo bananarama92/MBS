@@ -6,7 +6,6 @@ import { omit } from "lodash-es";
 
 import {
     waitFor,
-    MBS_VERSION,
     Version,
     trimArray,
 } from "common";

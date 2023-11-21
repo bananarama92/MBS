@@ -35,7 +35,9 @@
         "rollup-plugin-progress": "^1.1.2",
         "rollup-plugin-serve": "^2.0.2",
         "tslib": "^2.6.2",
-        "typescript": "^5.2.2"
+        "typescript": "^5.2.2",
+        "simple-git": "^3.21.0",
+        "@rollup/plugin-json": "^6.0.1"
     },
     "scripts": {
         "build": "rollup -c",

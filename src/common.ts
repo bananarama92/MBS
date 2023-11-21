@@ -120,9 +120,6 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
     return true;
 }
 
-/** The MBS version. */
-export const MBS_VERSION = "1.0.1" satisfies typeof mbs.MBS_VERSION;
-
 /**
  * The version of the MBS API.
  *

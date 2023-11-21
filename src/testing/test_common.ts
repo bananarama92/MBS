@@ -8,7 +8,6 @@ import {
     trimArray,
     randomElement,
     getRandomPassword,
-    MBS_VERSION,
     LoopIterator,
     generateIDs,
     isIterable,
