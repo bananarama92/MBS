@@ -232,8 +232,8 @@ export function test_LoopIterator(): void {
     output = assertPasses(`${name}:toString:${PASSES}:0`, () => iterator.toString());
     assertTypeof(`${name}:toString:${PASSES}:0`, output, "string");
 
-    output = assertPasses(`${name}:valueOf:${PASSES}:0`, () => iterator.valueOf());
-    assertEqual(`${name}:valueOf:${PASSES}:0`, iterator.valueOf(), { list: [0, 1, 2, 3], index: 3 });
+    output = assertPasses(`${name}:toJSON:${PASSES}:0`, () => iterator.toJSON());
+    assertEqual(`${name}:toJSON:${PASSES}:0`, iterator.toJSON(), { list: [0, 1, 2, 3], index: 3 });
 }
 
 export function test_generateIDs(): void {
@@ -380,6 +380,6 @@ export function test_Version(): void {
     output = assertPasses(`${name}:toString:${PASSES}:0`, () => version.toString());
     assertTypeof(`${name}:toString:${PASSES}:0`, output, "string");
 
-    output = assertPasses(`${name}:valueOf:${PASSES}:0`, () => version.valueOf());
-    assertEqual(`${name}:valueOf:${PASSES}:0`, output, { major: 1, minor: 0, micro: 5, beta: false });
+    output = assertPasses(`${name}:toJSON:${PASSES}:0`, () => version.toJSON());
+    assertEqual(`${name}:toJSON:${PASSES}:0`, output, { major: 1, minor: 0, micro: 5, beta: false });
 }

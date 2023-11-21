@@ -250,8 +250,8 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
 
     if (settingsType.includes(SettingsType.SHARED)) {
         const settings = Object.freeze({
-            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets.map(set => set?.valueOf()),
-            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands.map(set => set?.valueOf()),
+            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets,
+            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands,
         });
         Player.OnlineSharedSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
         Player.OnlineSharedSettings.MBSVersion = MBS_VERSION;

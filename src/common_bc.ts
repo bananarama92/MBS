@@ -162,11 +162,11 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return an object representation of this instance. */
-    abstract valueOf(): object;
+    abstract toJSON(): object;
 }
 
 export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
@@ -292,7 +292,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             name: this.name,
             itemList: this.itemList,
@@ -326,7 +326,7 @@ export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
     }
 
     /** Return an object representation of this instance. */
-    valueOf() {
+    toJSON() {
         return {
             name: this.name,
         };
@@ -424,11 +424,11 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 
     /** Return a string representation of this instance. */
     toString(): string {
-        return toStringTemplate(typeof this, this.valueOf());
+        return toStringTemplate(typeof this, this.toJSON());
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    abstract valueOf(): object;
+    abstract toJSON(): Record<string, any>;
 }
 
 /** A base class for fortune wheel sets. */
@@ -789,7 +789,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf(): FWSimpleItemSet {
+    toJSON(): FWSimpleItemSet {
         return {
             name: this.name,
             itemList: this.itemList,
@@ -898,7 +898,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     }
 
     /** Return a (JSON safe-ish) object representation of this instance. */
-    valueOf(): FWSimpleCommand {
+    toJSON(): FWSimpleCommand {
         return {
             name: this.name,
             hidden: this.hidden,
