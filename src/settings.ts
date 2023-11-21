@@ -25,7 +25,7 @@ type SettingsType = 0 | 1;
 
 /** An enum with to-be synced settings types */
 export const SettingsType = Object.freeze({
-    /** @see {@link Player.OnlineSettings} */
+    /** @see {@link Player.ExtensionSettings} */
     SETTINGS: 0,
     /** @see {@link Player.OnlineSharedSettings} */
     SHARED: 1,
@@ -125,7 +125,7 @@ export function parseFWObjects<
  */
 export function unpackSettings(
     s: undefined | string,
-    type: "OnlineSettings" | "OnlineSharedSettings",
+    type: "OnlineSettings" | "ExtensionSettings" | "OnlineSharedSettings",
     warn: boolean = true,
 ): MBSProtoSettings {
     let settings: null | MBSProtoSettings = null;
@@ -156,6 +156,7 @@ function initMBSSettings(): void {
     // Load saved settings and check whether MBS has been upgraded
     const settings = {
         ...unpackSettings(Player.OnlineSettings.MBS, "OnlineSettings"),
+        ...unpackSettings(Player.ExtensionSettings.MBS, "ExtensionSettings"),
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
@@ -164,8 +165,23 @@ function initMBSSettings(): void {
     }
 
     // Moved to `Player.OnlineSharedSettings` as of v0.6.26
-    if (Player.OnlineSettings.MBSVersion) {
+    let syncOnlineSettings = false;
+    if (Player.OnlineSettings.MBSVersion !== undefined) {
         delete Player.OnlineSettings.MBSVersion;
+        syncOnlineSettings = true;
+    }
+
+    // Moved to `Player.ExtensionSettings` as of v1.1.0
+    const v110 = new Version(1, 1, 0);
+    if (Player.OnlineSettings.MBS && Version.fromVersion(MBS_VERSION).greater(v110)) {
+        // Only actually start deleting older settings once we're in MBS 1.1.1 or later
+        delete Player.OnlineSettings.MBS;
+        syncOnlineSettings = true;
+    }
+
+    // Remove pre-v1.1.0 `Player.OnlineSettings` leftovers
+    if (syncOnlineSettings) {
+        ServerAccountUpdate.QueueData({ OnlineSettings: Player.OnlineSettings });
     }
 
     // Check the crafting cache
@@ -197,10 +213,8 @@ function initMBSSettings(): void {
  * Clear all MBS settings.
  */
 export function clearMBSSettings(): void {
-    if (Player.OnlineSettings !== undefined) {
-        // @ts-expect-error
-        delete Player.OnlineSettings.MBS;
-    }
+    // @ts-expect-error
+    delete Player.ExtensionSettings.MBS;
     if (Player.OnlineSharedSettings !== undefined) {
         // @ts-expect-error
         delete Player.OnlineSharedSettings.MBSVersion;
@@ -215,14 +229,14 @@ export function clearMBSSettings(): void {
     Player.MBSSettings = Object.seal({
         Version: MBS_VERSION,
         CraftingCache: "",
-        FortuneWheelItemSets: Array(MBS_MAX_SETS).fill(null),
-        FortuneWheelCommands: Array(MBS_MAX_SETS).fill(null),
+        FortuneWheelItemSets: Object.seal(Array(MBS_MAX_SETS).fill(null)),
+        FortuneWheelCommands: Object.seal(Array(MBS_MAX_SETS).fill(null)),
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
     });
 
     ServerAccountUpdate.QueueData({
-        OnlineSettings: Player.OnlineSettings,
+        ExtensionSettings: Player.ExtensionSettings,
         OnlineSharedSettings: Player.OnlineSharedSettings,
     }, true);
 }
@@ -233,18 +247,17 @@ export function clearMBSSettings(): void {
  * @param push Whether to actually push to the server or to merely assign the online (shared) settings.
  */
 export function pushMBSSettings(settingsType: readonly SettingsType[], push: boolean = true): void {
-    if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
-        const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
-        throw new Error(`"Player.${settingsName}" still uninitialized`);
+    if (Player.OnlineSharedSettings === undefined) {
+        throw new Error("Player.OnlineSharedSettings is still uninitialized");
     }
 
     const data: Record<string, any> = {};
 
     if (settingsType.includes(SettingsType.SETTINGS)) {
         const settings = omit(Player.MBSSettings, "FortuneWheelItemSets", "FortuneWheelCommands");
-        Player.OnlineSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
+        Player.ExtensionSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
         if (push) {
-            data.OnlineSettings = Player.OnlineSettings;
+            data["ExtensionSettings.MBS"] = Player.ExtensionSettings;
         }
     }
 
