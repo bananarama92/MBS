@@ -34,23 +34,25 @@ const config = {
                 // Grab all commits since the latest release
                 const commits = (await git.log({ from: latestTag })).all;
                 if (commits.length === 0) {
-                    console.log(`MBS: No new commits since ${latestTag} tag`);
+                    console.log(`MBS: No new commits since the "${latestTag}" tag`);
                     break devsuffix;
                 }
 
                 // Automatically increment the micro version by 1 w.r.t. the latest release if we haven't done so manually
                 if (latestTag === `v${version}`) {
                     const versionSplit = version.split(".");
-                    versionSplit[2] = (Number.parseInt(versionSplit[2]) + 1).toString();
-                    if (Number.isNaN(versionSplit[2])) {
-                        console.error(`MBS: Failed to parse ${version} micro version, invalid integer type`);
+                    const micro = Number.parseInt(versionSplit[2]) + 1;
+                    if (Number.isNaN(micro)) {
+                        console.error(`MBS: Failed to parse the "${version}" micro version, invalid integer type`);
                         break devsuffix;
                     }
+                    versionSplit[2] = micro.toString();
                     version = versionSplit.join(".");
                 }
 
                 const hash = commits.at(-1).hash;
                 version += `.dev${commits.length - 1}+${hash.slice(0, 8)}`;
+                console.log(`MBS: Updated version "${packageJson.version}" to "${version}"`);
             }
             return `const MBS_VERSION="${version}"`;
         },
