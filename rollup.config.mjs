@@ -23,7 +23,7 @@ const config = {
         sourcemap: true,
         intro: async () => {
             let version = packageJson.version;
-			const git = simpleGit();
+            const git = simpleGit();
             const latestTag = (await git.tags()).latest;
             devsuffix: {
                 if (latestTag === undefined) {
@@ -53,7 +53,7 @@ const config = {
                 version += `.dev${commits.length - 1}+${hash.slice(0, 8)}`;
             }
             return `const MBS_VERSION="${version}"`;
-		},
+        },
     },
     treeshake: false,
     plugins: [
