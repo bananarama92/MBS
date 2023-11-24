@@ -93,11 +93,10 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/** Return whether all vanilla BC online settings are loaded. */
+/** Return whether all vanilla BC online shared settings are loaded. */
 export function settingsLoaded(): boolean {
     return (
         typeof Player !== "undefined"
-        && Player.OnlineSettings !== undefined
         && Player.OnlineSharedSettings !== undefined
     );
 }
