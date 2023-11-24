@@ -33,6 +33,7 @@ import "crafting";
 import "window_register";
 import "backport";
 import "settings_screen";
+import "fusam";
 
 // Workaround for checking whether mbs satisfies its declared interface
 // Xref microsoft/TypeScript#38511
