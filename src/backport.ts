@@ -10,6 +10,9 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
+// R99
+declare const InventoryItemMouthFuturisticPanelGagSetOptionHook: undefined | ExtendedItemScriptHookCallbacks.SetOption<ModularItemData, ModularItemOption>;
+
 waitFor(settingsMBSLoaded).then(() => {
     switch (GameVersion) {
         case "R98": {
@@ -26,11 +29,19 @@ waitFor(settingsMBSLoaded).then(() => {
                 });
             }
 
-            if (MBS_MOD_API.getOriginalHash("ModularItemInit") === "EF5C06E1") {
+            if (MBS_MOD_API.getOriginalHash("ModularItemInit") === "EF5C06E1" && typeof InventoryItemMouthFuturisticPanelGagSetOptionHook === "undefined") {
                 backportIDs.add(4604);
                 MBS_MOD_API.patchFunction("ModularItemInit", {
                     "delete newProps.OverridePriority;":
                         "delete newProps.OverridePriority; delete newProps.OriginalSetting;",
+                });
+            }
+
+            if (MBS_MOD_API.getOriginalHash("DialogMenuButtonBuild") === "A2421841") {
+                backportIDs.add(4610);
+                MBS_MOD_API.patchFunction("DialogMenuButtonBuild", {
+                    "InventoryAllow(":
+                        "(() => true)(",
                 });
             }
 
