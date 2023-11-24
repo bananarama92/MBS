@@ -18,7 +18,7 @@ const ALPHABET = Object.freeze([
 ]);
 
 /** Regular expression for the MBS version */
-const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.dev0)?$/;
+const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
 
 /**
  * Check whether an integer falls within the specified range and raise otherwise.
