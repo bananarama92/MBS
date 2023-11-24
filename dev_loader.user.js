@@ -8,12 +8,11 @@
 // @match        http://127.0.0.1:5500/*
 // @homepage     https://github.com/bananarama92/MBS.git#readme
 // @source       https://github.com/bananarama92/MBS.git
-// @downloadURL  https://github.com/bananarama92/MBS/raw/main/src/dev_loader.user.js
+// @downloadURL  https://github.com/bananarama92/MBS/raw/main/dev_loader.user.js
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
 
-// eslint-disable-next-line no-restricted-globals
 setTimeout(
     () => {
         const n = document.createElement("script");
