@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.1.1
+* Misc CI updates
+* Remove the last `OnlineSettings` remnants
+* Provide more console output upon encountering errors related to MBS extra crafting items
+* Register an MBS debugger to FUSAM
+* Backport one BC R99 fix:
+    - [BondageProjects/Bondage-College#4610](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4610): Remove `InventoryAllow` checks from `DialogMenuButtonBuild()`
+
 ## v1.1.0
 * Add the ability to specify weights for wheel of fortune options
 * Move `OnlineSettings` to `ExtensionSettings`. Note that this does not affect data stored in `OnlineSharedSettings`.

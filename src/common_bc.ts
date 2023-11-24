@@ -93,11 +93,10 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/** Return whether all vanilla BC online settings are loaded. */
+/** Return whether all vanilla BC online shared settings are loaded. */
 export function settingsLoaded(): boolean {
     return (
         typeof Player !== "undefined"
-        && Player.OnlineSettings !== undefined
         && Player.OnlineSharedSettings !== undefined
     );
 }
@@ -990,7 +989,7 @@ export function createWeightedWheelIDs(ids: string): string {
         return option === undefined ? [] : Array(option.Weight ?? 1).fill(id);
     });
     if (idBaseList.length === 0) {
-        return Array.from(ids).sort(Math.random).join();
+        return Array.from(ids.length > 0 ? ids : WheelFortuneDefault).sort(Math.random).join();
     }
 
     const idList: string[] = [];

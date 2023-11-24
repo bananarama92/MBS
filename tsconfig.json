@@ -22,5 +22,7 @@
         "./src/**/*",
         "./api/**/*",
         "rollup.config.mjs"
+        ,"dev_loader.user.js"
+        ,"loader.user.js"
     ]
 }

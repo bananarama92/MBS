@@ -47,44 +47,54 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     const packet = LZString.compressToUTF16(craftingCache);
     const data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
     const oldCrafts = new Set(character.Crafting.map(i => JSON.stringify(i)));
+
     let refresh = false;
-    let i = -1;
-    for (const item of data) {
-        i += 1;
+    for (const [i, item] of CommonEnumerate(data)) {
+        if (item == null) {
+            continue;
+        }
 
         // Make sure that the item is a valid craft
-        switch (CraftingValidate(<CraftingItem>item)) {
+        validate: switch (CraftingValidate(item)) {
             case CraftingStatusType.OK: {
                 const key = JSON.stringify(item);
                 if (oldCrafts.has(key)) {
+                    console.warn(`MBS: Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item.Name} (${item.Item})"`);
                     data[i] = null;
                 }
-                break;
+                break validate;
             }
             case CraftingStatusType.ERROR: {
                 const key = JSON.stringify(item);
                 if (oldCrafts.has(key)) {
+                    console.warn(`MBS: Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}:"${item.Name} (${item.Item})"`);
                     data[i] = null;
                 } else {
                     refresh = true;
                 }
-                break;
+                break validate;
             }
             case CraftingStatusType.CRITICAL_ERROR:
+                console.error(`MBS: Removing corrupt crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item?.Name} (${item?.Item})"`);
                 data[i] = null;
-                break;
+                break validate;
         }
     }
+
     for (const item of data) {
         // Too many items, try to remove `null` entries or skip the rest if not possible
         if (character.Crafting.length >= MBS_SLOT_MAX_ORIGINAL) {
             if (item == null) {
                 continue;
             } else if (character.Crafting.includes(null, BC_SLOT_MAX_ORIGINAL)) {
+                console.warn(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [80, 160)-interval null entries`);
                 character.Crafting = character.Crafting.filter((item, i) => i < BC_SLOT_MAX_ORIGINAL || item != null);
             } else if (character.Crafting.includes(null)) {
+                console.warn(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [0, 80)-interval null entries`);
                 character.Crafting = character.Crafting.filter(item => item != null);
             } else {
+                const n = character.Crafting.length - MBS_SLOT_MAX_ORIGINAL;
+                console.error(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, the last ${n} will be deleted`);
                 break;
             }
         } else {

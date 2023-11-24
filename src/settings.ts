@@ -147,33 +147,30 @@ export function unpackSettings(
 
 /** Initialize the MBS settings. */
 function initMBSSettings(): void {
-    if (Player.OnlineSettings === undefined || Player.OnlineSharedSettings === undefined) {
-        const settingsName = Player.OnlineSettings === undefined ? "OnlineSettings" : "OnlineSharedSettings";
-        throw new Error(`"Player.${settingsName}" still uninitialized`);
+    if (Player.OnlineSharedSettings === undefined) {
+        throw new Error("\"Player.OnlineSharedSettings\" still uninitialized");
     }
 
     // Load saved settings and check whether MBS has been upgraded
     const settings = {
-        ...unpackSettings(Player.OnlineSettings.MBS, "OnlineSettings"),
+        ...unpackSettings(Player.OnlineSettings?.MBS, "OnlineSettings"),
         ...unpackSettings(Player.ExtensionSettings.MBS, "ExtensionSettings"),
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
-    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings.MBSVersion)) {
+    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings?.MBSVersion)) {
         showChangelog();
     }
 
     // Moved to `Player.OnlineSharedSettings` as of v0.6.26
     let syncOnlineSettings = false;
-    if (Player.OnlineSettings.MBSVersion !== undefined) {
+    if (Player.OnlineSettings?.MBSVersion !== undefined) {
         delete Player.OnlineSettings.MBSVersion;
         syncOnlineSettings = true;
     }
 
     // Moved to `Player.ExtensionSettings` as of v1.1.0
-    const v110 = new Version(1, 1, 0);
-    if (Player.OnlineSettings.MBS && Version.fromVersion(MBS_VERSION).greater(v110)) {
-        // Only actually start deleting older settings once we're in MBS 1.1.1 or later
+    if (Player.OnlineSettings?.MBS) {
         delete Player.OnlineSettings.MBS;
         syncOnlineSettings = true;
     }

@@ -56,6 +56,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["CraftingSaveServer", ["F3A8C2AF"]],
         ["CraftingClick", ["FF76A404"]],
         ["CraftingRun", ["5BE6E125"]],
+        ["DialogMenuButtonBuild", ["A2421841", "9DFB967C"]],
         ["VibratorModeInit", ["AE006E2B", "CC985272"]],
         ["ModularItemInit", ["EF5C06E1"]],
         ["WheelFortuneLoad", ["204D57D4"]],

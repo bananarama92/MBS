@@ -11,7 +11,11 @@ A repo with a number of Bondage Club-related additions, including:
 ![image](docs/config_button.png)
 
 ## Installation
-This addon can either be installed using Tampermonkey by clicking on the [src/loader.user.js](https://github.com/bananarama92/MBS/raw/main/src/loader.user.js) link or, alternatively, by passing assigning (and activating) the following link to a bookmark or directly using it in the address bar:
+There are a number of (mutually exclusive!) options to install MBS these days:
+* Recommended: Install the [FUSAM](https://sidiousious.gitlab.io/bc-addon-loader/) BC Addon Manager and use that to enable MBS
+* Install the [FBC](https://sidiousious.gitlab.io/bce/) addon and enable MBS from inside the BC preference menu under `FBC Settings` -> `Other Addons`
+* Install the Tampermonkey addon for your browser of choice and click on the MBS [loader.user.js](https://github.com/bananarama92/MBS/raw/main/src/loader.user.js) file
+* Assigning (and activating) the following link to a bookmark or directly using it in the address bar:
 
 ```js
 javascript:(()=>{fetch(`https://bananarama92.github.io/MBS/main/mbs.js?_=${Date.now()}`).then(r=>r.text()).then(r=>eval(r));})();
