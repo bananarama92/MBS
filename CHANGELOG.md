@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.1.3
+* Fix (non-shared) MBS settings not saving
+
 ## v1.1.1
 * Misc CI updates
 * Remove the last `OnlineSettings` remnants
