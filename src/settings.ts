@@ -253,7 +253,7 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
         const settings = omit(Player.MBSSettings, "FortuneWheelItemSets", "FortuneWheelCommands");
         Player.ExtensionSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
         if (push) {
-            data["ExtensionSettings.MBS"] = Player.ExtensionSettings;
+            data["ExtensionSettings.MBS"] = Player.ExtensionSettings.MBS;
         }
     }
 
