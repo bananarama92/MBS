@@ -4,7 +4,7 @@
 
 import { cloneDeep, clone } from "lodash-es";
 
-import { isArray, entries, isInteger } from "common";
+import { isArray, entries, isInteger, logger } from "common";
 import { getBaselineProperty } from "type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
@@ -265,7 +265,7 @@ export function fromItemBundles(items: ItemBundle | readonly ItemBundle[]): FWIt
         }
     });
     if (caughtErrors.size !== 0) {
-        console.log(`MBS: Failed to parse ${caughtErrors.size} of the provided items`, caughtErrors);
+        logger.log(`Failed to parse ${caughtErrors.size} of the provided items`, caughtErrors);
     }
     return ret;
 }

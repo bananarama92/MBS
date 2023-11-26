@@ -20,6 +20,59 @@ const ALPHABET = Object.freeze([
 /** Regular expression for the MBS version */
 const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
 
+type LogLevel = "debug" | "log" | "warn" | "error";
+
+interface LogEntry {
+    readonly date: Date,
+    readonly level: LogLevel,
+    readonly args: readonly unknown[],
+}
+
+/**
+ * The MBS logging class.
+ * Combines the {@link console} logging methods with an {@link Array} for storing the output.
+ */
+class MBSLog extends Array<LogEntry> {
+    #log(level: LogLevel, args: readonly unknown[]) {
+        const date = new Date(Date.now());
+        console[level]("MBS:", ...args);
+        this.push({ date, level, args });
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug) */
+    debug(...args: unknown[]) {
+        this.#log("debug", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log) */
+    log(...args: unknown[]) {
+        this.#log("log", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn) */
+    warn(...args: unknown[]) {
+        this.#log("warn", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error) */
+    error(...args: unknown[]) {
+        this.#log("error", args);
+    }
+
+    toJSON() {
+        return this.map(arg => {
+            return {
+                date: arg.date.toUTCString(),
+                level: arg.level,
+                args: arg.args.map(i => (i instanceof Map || i instanceof Set) ? Array.from(i) : i),
+            };
+        });
+    }
+}
+
+/** The MBS logger */
+export const logger = new MBSLog();
+
 /**
  * Check whether an integer falls within the specified range and raise otherwise.
  * @param int The to-be validate integer

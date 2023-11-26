@@ -6,7 +6,7 @@ import { cloneDeep, sortBy } from "lodash-es";
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { BCX_MOD_API, waitFor, isArray, entries, includes } from "common";
+import { BCX_MOD_API, waitFor, isArray, entries, includes, logger } from "common";
 import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
 
 /**
@@ -293,7 +293,7 @@ export function fortuneWheelEquip(
 
     // Abort if the character is enclosed and the lock of the enclosing item cannot be removed
     if (blockedByEnclose(character)) {
-        console.log(`MBS: Failed to equip all "${name}" wheel of fortune items: cannot unlock enclosing item`);
+        logger.log(`Failed to equip all "${name}" wheel of fortune items: cannot unlock enclosing item`);
         return;
     }
     characterStrip(stripLevel, character);
@@ -389,7 +389,7 @@ export function fortuneWheelEquip(
         ChatRoomCharacterUpdate(character);
         const nFailures = Object.values(equipFailureRecord).length;
         if (nFailures !== 0) {
-            console.log(`MBS: Failed to equip ${nFailures} "${name}" wheel of fortune items`, equipFailureRecord);
+            logger.log(`Failed to equip ${nFailures} "${name}" wheel of fortune items`, equipFailureRecord);
         }
     }
 }

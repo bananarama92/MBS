@@ -12,6 +12,7 @@ import {
     BCX_MOD_API,
     includes,
     isArray,
+    logger,
 } from "common";
 import { DEFAULT_FLAGS, parseLegacyFlags, applyFlag } from "lock_flags";
 import { pushMBSSettings, SettingsType } from "settings";
@@ -267,7 +268,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
             items = JSON.parse(<string>LZString.decompressFromBase64(this.outfitCache));
             itemList = fromItemBundles(items);
         } catch (ex) {
-            console.warn("MBS: Failed to parse outfit code:", ex);
+            logger.warn("Failed to parse outfit code:", ex);
             return false;
         }
 
@@ -611,7 +612,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             }
             kwargs.itemList = Object.freeze(itemList);
             if (invalid.length !== 0) {
-                console.warn(`MBS: Found ${invalid.length} items in wheel of fortune item set "${this.name}": ${invalid}`);
+                logger.warn(`Found ${invalid.length} items in wheel of fortune item set "${this.name}": ${invalid}`);
             }
         } else {
             throw new TypeError(`Invalid "itemList" type: ${typeof kwargs.itemList}`);

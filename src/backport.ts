@@ -1,8 +1,9 @@
 /** Backports of R91 bug fixes */
 
-import { waitFor, MBS_MOD_API } from "common";
+import { waitFor, MBS_MOD_API, logger } from "common";
 import { settingsMBSLoaded } from "common_bc";
-import {BC_MIN_VERSION} from "sanity_checks";
+import { sortBy } from "lodash-es";
+import { BC_MIN_VERSION } from "sanity_checks";
 
 /** The next BC version */
 const BC_NEXT = BC_MIN_VERSION + 1;
@@ -70,8 +71,8 @@ waitFor(settingsMBSLoaded).then(() => {
     }
 
     if (backportIDs.size) {
-        console.log(`MBS: Initializing R${BC_NEXT} bug fix backports`, backportIDs);
+        logger.log(`Initializing R${BC_NEXT} bug fix backports`, sortBy(Array.from(backportIDs)));
     } else {
-        console.log(`MBS: No R${BC_NEXT} bug fix backports`);
+        logger.log(`No R${BC_NEXT} bug fix backports`);
     }
 });

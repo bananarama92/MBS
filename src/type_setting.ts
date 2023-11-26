@@ -2,6 +2,7 @@
 
 "use strict";
 
+import { logger } from "common";
 import { validateCharacter } from "common_bc";
 
 /**
@@ -27,7 +28,7 @@ export function itemSetType(item: Item, character: Character, type: null | strin
         const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
         return setType(character, item, type);
     } else {
-        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
+        logger.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
     }
 }
 

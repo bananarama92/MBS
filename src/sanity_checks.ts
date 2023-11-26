@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { Version, MBS_MOD_API } from "common";
+import { Version, MBS_MOD_API, logger } from "common";
 
 /**
  * Check whether all builtin wheel of fortune IDs are (extended) ASCII characters.
@@ -12,8 +12,8 @@ export function validateBuiltinWheelIDs(): boolean {
     const non_ascii = String.fromCharCode(2**8);
     const option = WheelFortuneOption.find(i => i.Custom === undefined && i.ID >= non_ascii);
     if (option !== undefined) {
-        console.warn(
-            "MBS: Aborting wheel of fortune module initialization: "
+        logger.warn(
+            "Aborting wheel of fortune module initialization: "
             + "Found a builtin wheel of fortune option-ID outside of the extended ASCII range",
             option,
         );
@@ -36,7 +36,7 @@ export function validateBCVersion(version: string): void {
     if (BC_VERSION.lesser(bc_min_version)) {
         throw new Error(`BC ${GameVersion} detected; MBS requires version R${BC_MIN_VERSION} or later`);
     } else {
-        console.log(`MBS: Detected BC ${GameVersion}`);
+        logger.log(`Detected BC ${GameVersion}`);
     }
 }
 
@@ -80,7 +80,7 @@ export function generateNewHookFuncHashes(): void {
         const funcHash = MBS_MOD_API.getOriginalHash(funcName);
         ret += `["${funcName}", ["${funcHash}"]],\n`;
     }
-    console.log(ret);
+    logger.log(ret);
 }
 
 /** Check whether all MBS-hooked functions have a supported hash. */
@@ -95,6 +95,6 @@ export function validateHookHashes(): void {
 
     const unknownCount = Object.values(unkownHashes).length;
     if (unknownCount !== 0) {
-        console.warn(`MBS: Found ${unknownCount} patched functions with an unknown hash`, unkownHashes);
+        logger.warn(`Found ${unknownCount} patched functions with an unknown hash`, unkownHashes);
     }
 }

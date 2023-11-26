@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { LoopIterator } from "common";
+import { LoopIterator, logger } from "common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
 import { parseFWObjects, unpackSettings } from "settings";
 import { FWCommandScreen } from "fortune_wheel_command";
@@ -36,7 +36,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
     let protoWheelList = (mbs === undefined) ? undefined : mbs[fieldName];
     if (!Array.isArray(protoWheelList)) {
         if (protoWheelList !== undefined) {
-            console.warn(`MBS: Failed to load "${character.AccountName}" wheel of fortune ${name}`);
+            logger.warn(`Failed to load "${character.AccountName}" wheel of fortune ${name}`);
         }
         protoWheelList = Array(MBS_MAX_SETS).fill(null);
     }

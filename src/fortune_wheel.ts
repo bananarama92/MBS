@@ -12,6 +12,7 @@ import {
     isArray,
     entries,
     fromEntries,
+    logger,
 } from "common";
 import {
     FWItemSet,
@@ -769,7 +770,7 @@ export let fortuneWheelState: FWScreenProxy;
 
 // Requires BC R88Beta1 or higher
 waitFor(settingsMBSLoaded).then(() => {
-    console.log("MBS: Initializing wheel of fortune module");
+    logger.log("Initializing wheel of fortune module");
     if (!validateBuiltinWheelIDs()) {
         return;
     }
