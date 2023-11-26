@@ -686,7 +686,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Lock: "",
                     Type: null,
                     Name: protoItem.Craft.Name || asset.Description,
-                    OverridePriority: protoItem.Craft.OverridePriority ?? null,
                     MemberNumber: undefined,
                     MemberName: "",
                 };

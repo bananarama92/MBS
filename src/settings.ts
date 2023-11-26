@@ -1,5 +1,7 @@
 /** Function for managing all MBS related settings. */
 
+/* eslint deprecation/deprecation: 0 */
+
 "use strict";
 
 import { omit } from "lodash-es";
