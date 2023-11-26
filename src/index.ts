@@ -2,13 +2,13 @@
 
 "use strict";
 
-import { waitFor, MBS_MOD_API, API_VERSION, logger } from "common";
+import { waitFor, MBS_MOD_API, logger } from "common";
 import { validateBCVersion, validateHookHashes } from "sanity_checks";
 import { settingsMBSLoaded } from "common_bc";
 import { runTests } from "testing";
 import { toItemBundles as _toItemBundles } from "item_bundle";
 import { unpackSettings as _unpackSettings } from "settings";
-import { wheelOutfits, getDebug } from "api";
+import { wheelOutfits, getDebug, API_VERSION } from "api";
 
 const _getFunctionHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
@@ -18,6 +18,7 @@ export {
     _version as MBS_VERSION,
     API_VERSION,
     wheelOutfits,
+    getDebug,
     _getFunctionHash,
     _toItemBundles,
     _unpackSettings,
@@ -33,7 +34,6 @@ import "crafting";
 import "window_register";
 import "backport";
 import "settings_screen";
-import "fusam";
 
 // Workaround for checking whether mbs satisfies its declared interface
 // Xref microsoft/TypeScript#38511

@@ -56,6 +56,13 @@ declare namespace mbs {
      * @returns Whether the test suite succeeded or not
      */
     function runTests(): boolean;
+    /**
+     * Return MBS debug output in human-readable, stringified form.
+     * @note The API provides no guarantees regarding the outputs machine readability.
+     * While the output type is guaranteed by the API, the exact value is not and MBS is free to change it at any point without prior warning.
+     * @returns The MBS debug output in stringified form
+     */
+    function getDebug(): string;
     /** Public MBS API for retrieving wheel outfit data. */
     namespace wheelOutfits {
         /**

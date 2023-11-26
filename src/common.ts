@@ -173,19 +173,6 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
     return true;
 }
 
-/**
- * The version of the MBS API.
- *
- * * Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
- * * Additions are only accompanied by a `minor` increment
- */
-export const API_VERSION = Object.freeze({
-    /** The major API versions; increments are reserved for changes and removals */
-    major: 1,
-    /** The major API versions; increments are reserved for additions */
-    minor: 0,
-}) satisfies typeof mbs.API_VERSION;
-
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({
     name: "MBS",
