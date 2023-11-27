@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.1.4
+* Add R99Beta1 support
+* Add a dedicated MBS logger.
+* Increment the MBS API to version 1.1:
+    - Expose `mbs.getDebug()` to the API
+* Backport one BC R99Beta2 fix to R99Beta1:
+    - [BondageProjects/Bondage-College#4662](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4662): Various `TypeRecord`-related fixes
+
 ## v1.1.3
 * Fix (non-shared) MBS settings not saving
 
