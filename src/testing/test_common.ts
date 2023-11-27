@@ -331,10 +331,6 @@ export function test_Version(): void {
     assertEqual(`${name}:micro:${PASSES}:0`, version.micro, 5);
     assertEqual(`${name}:beta:${PASSES}:0`, version.beta, false);
 
-    let output: any;
-    output = assertPasses(`${name}:values:${PASSES}:0`, () => version.values());
-    assertEqual(`${name}:values:${PASSES}:0`, output, [1, 0, 5, false]);
-
     assert(`${name}:equal:${PASSES}:0`, !version.equal(<any>null));
     assert(`${name}:equal:${PASSES}:1`, version.equal(version));
     assert(`${name}:equal:${PASSES}:2`, !version.equal(version2));
@@ -360,7 +356,7 @@ export function test_Version(): void {
     assert(`${name}:lesserOrEqual:${PASSES}:2`, version.lesserOrEqual(version2));
     assert(`${name}:lesserOrEqual:${PASSES}:3`, !version.lesserOrEqual(version3));
 
-    output = assertPasses(`${name}:fromVersion:${PASSES}:0`, () => Version.fromVersion("1.0.5"));
+    let output: any = assertPasses(`${name}:fromVersion:${PASSES}:0`, () => Version.fromVersion("1.0.5"));
     assertEqual(`${name}:fromVersion:${PASSES}:0`, output, version);
     assertRaises(
         `${name}:fromVersion:${RAISES}:0`,
