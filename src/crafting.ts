@@ -17,16 +17,21 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
     return items.map(C => {
         let P = "";
         if (C?.Item) {
-            P += C.Item + "¶";
-            P += (C.Property == null ? "" : C.Property) + "¶";
-            P += (C.Lock == null ? "" : C.Lock) + "¶";
-            P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
-            P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
-            P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
-            P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
-            P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
-            P += "¶";
-            P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
+            if (GameVersion === "R98") {
+                P += C.Item + "¶";
+                P += (C.Property == null ? "" : C.Property) + "¶";
+                P += (C.Lock == null ? "" : C.Lock) + "¶";
+                P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
+                P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
+                P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
+                P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
+                // eslint-disable-next-line
+                P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
+                P += "¶";
+                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
+            } else {
+                P += CraftingSerialize(C);
+            }
         }
         return P;
     }).join("§");

@@ -82,6 +82,8 @@ interface FWItemBase {
     Custom?: boolean,
     /** The type of the item; should preferably be specified in `Craft.Type` */
     Type?: null | string,
+    /** The type of the item; should preferably be specified in `Craft.Type` */
+    TypeRecord?: TypeRecord,
     /**
      * The properties of the item.
      * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
@@ -96,6 +98,8 @@ interface FWItem extends Readonly<FWItemBase> {
     readonly Custom: boolean,
     /** The type of the item; should preferably be specified in `Craft.Type` */
     readonly Type: null | string,
+    /** The type of the item; should preferably be specified in `Craft.Type` */
+    readonly TypeRecord?: Readonly<TypeRecord>,
     /**
      * The properties of the item.
      * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
