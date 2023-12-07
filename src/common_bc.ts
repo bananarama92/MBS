@@ -972,7 +972,7 @@ export function getNumberInputElement<T extends string>(
         element.setAttribute("min", minValue.toString());
         element.addEventListener("input", CommonLimitFunction((e) => {
             // @ts-ignore
-            const value = Number.parseInt(e.target?.value);
+            const value = Number.parseInt(e.target?.value, 10);
             if (!Number.isNaN(value) && value >= minValue && value <= maxValue) {
                 record[name] = value;
             }

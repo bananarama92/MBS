@@ -29,8 +29,8 @@ function incrementVersion(pkgVersion, gitVersion) {
         return pkgVersion;
     }
 
-    const gitArray = gitExec.slice(2, 5).map(i => Number.parseInt(i));
-    const pkgArray = pkgExec.slice(2, 5).map(i => Number.parseInt(i));
+    const gitArray = gitExec.slice(2, 5).map(i => Number.parseInt(i, 10));
+    const pkgArray = pkgExec.slice(2, 5).map(i => Number.parseInt(i, 10));
     for (let i=0; i < 3; i++) {
         if (pkgArray[i] > gitArray[i]) {
             return pkgVersion;
