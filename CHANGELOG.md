@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.1.5
+* Fix a faulty `TypeRecord` check
+
 ## v1.1.4
 * Add R99Beta1 support
 * Add a dedicated MBS logger.

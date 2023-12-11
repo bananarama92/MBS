@@ -382,9 +382,9 @@ export function fortuneWheelEquip(
         }
 
         if (TypeRecord) {
-            itemSetType(newItem, character, Type);
-        } else {
             itemSetType(newItem, character, undefined, TypeRecord);
+        } else {
+            itemSetType(newItem, character, Type);
         }
 
         if (Craft !== undefined) {
