@@ -64,9 +64,38 @@ waitFor(settingsMBSLoaded).then(() => {
                 bunPlush !== undefined
                 && CommonArraysEqual(bunPlush.DefaultColor, ["Default", "Default"])
             ) {
+                backportIDs.add(4664);
                 (bunPlush as Mutable<Asset>).DefaultColor = ["#848484", "#C26969"];
             }
             break;
+        }
+        case "R99Beta1": {
+            const bunPlush = Asset.find(a => a.Name === "BunPlush" && a.Group.Name === "ItemHandheld");
+            if (
+                bunPlush !== undefined
+                && CommonArraysEqual(bunPlush.DefaultColor, ["Default", "Default"])
+            ) {
+                backportIDs.add(4664);
+                (bunPlush as Mutable<Asset>).DefaultColor = ["#848484", "#C26969"];
+            }
+
+            backportIDs.add(4662);
+            MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
+                "Private: CraftingSelectedItem.Private,":
+                    "Private: CraftingSelectedItem.Private, Type: CraftingSelectedItem.Type || null,",
+            });
+            MBS_MOD_API.patchFunction("CraftingConvertItemToSelected", {
+                "Private: Craft.Private,":
+                    "Private: Craft.Private, Type: Craft.Type || null,",
+            });
+            MBS_MOD_API.patchFunction("ActivityGenerateItemActivitiesFromNeed", {
+                "const typeList = CommonIsObject(item.Property.TypeRecord) ? PropertyTypeRecordToStrings(item.Property.TypeRecord) : [null];":
+                    "const typeList = CommonIsObject(item.Property?.TypeRecord) ? PropertyTypeRecordToStrings(item.Property.TypeRecord) : [null];",
+            });
+            MBS_MOD_API.patchFunction("ExtendedItemSetOptionByRecord", {
+                "const module = newOption.ParentData.modules[newOption.Index];":
+                    "const module = newOption.ParentData.modules.find(m => m.Name === newOption.ModuleName);",
+            });
         }
     }
 
