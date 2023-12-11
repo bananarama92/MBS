@@ -2,6 +2,7 @@
 
 "use strict";
 
+import { logger } from "common";
 import { validateCharacter } from "common_bc";
 
 /**
@@ -9,8 +10,14 @@ import { validateCharacter } from "common_bc";
  * @param item The Item in question
  * @param character The player or simple character
  * @param type The item's `Type` (or `Mode` in the case of vibrating items)
+ * @param typeRecord the item's type
  */
-export function itemSetType(item: Item, character: Character, type: null | string): void {
+export function itemSetType(
+    item: Item,
+    character: Character,
+    type?: null | string,
+    typeRecord?: TypeRecord,
+): void {
     validateCharacter(character);
     if (item === null || typeof item !== "object") {
         throw new TypeError(`Invalid "item" type: ${typeof item}`);
@@ -21,13 +28,22 @@ export function itemSetType(item: Item, character: Character, type: null | strin
         return;
     }
 
-    if (type === null) {
-        return;
-    } else if (asset.Archetype) {
-        const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
-        return setType(character, item, type);
+    if (GameVersion === "R98") {
+        if (type == null) {
+            return;
+        } else if (asset.Archetype) {
+            const setType = ITEM_SET_TYPE_DICT[asset.Archetype];
+            setType(character, item, type);
+        } else {
+            logger.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
+        }
     } else {
-        console.warn(`${item.Asset.Group.Name}${item.Asset.Name}: Unsupported non-archetypical item, aborting type-setting`);
+        if (typeRecord !== undefined) {
+            ExtendedItemSetOptionByRecord(character, item, typeRecord, { refresh: false, push: false });
+        } else if (type !== undefined) {
+            const typeRecord = ExtendedItemTypeToRecord(item.Asset, type);
+            ExtendedItemSetOptionByRecord(character, item, typeRecord, { refresh: false, push: false });
+        }
     }
 }
 
@@ -37,10 +53,10 @@ export function itemSetType(item: Item, character: Character, type: null | strin
  * @param character The player or simple character
  * @param type The item's `Type` (or `Mode` in the case of vibrating items)
  */
-export function getBaselineProperty(asset: Asset, character: Character, type: null | string): ItemProperties {
+export function getBaselineProperty(asset: Asset, character: Character, type?: null | string, typeRecord?: TypeRecord): ItemProperties {
     const item: Item = { Asset: asset };
     ExtendedItemInit(character, item, false, false);
-    itemSetType(item, character, type);
+    itemSetType(item, character, type, typeRecord);
     return item.Property ?? {};
 }
 
@@ -49,10 +65,12 @@ type setTypeCallback = (C: Character, item: Item, type: string) => void;
 
 /** A record with template functions for setting the {@link ItemProperties.Type} of various archetypical items. */
 const ITEM_SET_TYPE_DICT: Readonly<Record<ExtendedArchetype, setTypeCallback>> = Object.freeze({
+    // @ts-expect-error: R98-exclusive
     typed: (...args) => TypedItemSetOptionByName(...args, false, null, null, false),
+    // @ts-expect-error: R98-exclusive
     vibrating: (...args) => VibratorModeSetOptionByName(...args, false, undefined, undefined, false),
+    // @ts-expect-error: R98-exclusive
     modular: (...args) => ModularItemSetOptionByName(...args, false, null, false),
     variableheight: () => { return; },
     text: () => { return; },
 });
-

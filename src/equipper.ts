@@ -6,7 +6,7 @@ import { cloneDeep, sortBy } from "lodash-es";
 
 import { itemSetType } from "type_setting";
 import { getBaselineProperty } from "type_setting";
-import { BCX_MOD_API, waitFor, isArray, entries, includes } from "common";
+import { BCX_MOD_API, waitFor, isArray, entries, includes, logger } from "common";
 import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
 
 /**
@@ -89,7 +89,12 @@ type Node = {
 };
 
 /** A minimalistic (extended) item representation as used in {@link itemsArgSort}. */
-type SimpleItem = Readonly<{ Name: string, Group: AssetGroupName, Type?: string | null }>;
+type SimpleItem = Readonly<{
+    Name: string,
+    Group: AssetGroupName,
+    Type?: string | null,
+    TypeRecord?: TypeRecord,
+}>;
 
 /**
  * Depth-first-search helper function for {@link itemsArgSort}.
@@ -140,7 +145,7 @@ export function itemsArgSort(
     // Map all equipped item groups to the groups that they block
     const graph: Map<AssetGroupName, Node> = new Map();
     [itemList, itemSuperList].forEach((list, i) => {
-        for (const { Group, Name, Type } of list) {
+        for (const { Group, Name, Type, TypeRecord } of list) {
             if (graph.has(Group)) {
                 continue;
             }
@@ -152,7 +157,7 @@ export function itemsArgSort(
                 continue;
             }
 
-            const property = getBaselineProperty(asset, character, Type ?? null);
+            const property = getBaselineProperty(asset, character, Type, TypeRecord);
             const node = <Node>{
                 superSet: i === 1,
                 block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
@@ -293,7 +298,7 @@ export function fortuneWheelEquip(
 
     // Abort if the character is enclosed and the lock of the enclosing item cannot be removed
     if (blockedByEnclose(character)) {
-        console.log(`MBS: Failed to equip all "${name}" wheel of fortune items: cannot unlock enclosing item`);
+        logger.log(`Failed to equip all "${name}" wheel of fortune items: cannot unlock enclosing item`);
         return;
     }
     characterStrip(stripLevel, character);
@@ -305,7 +310,14 @@ export function fortuneWheelEquip(
     const blockingItems = getBlockSuperset(
         itemList,
         character.Appearance.map(i => {
-            return { Group: i.Asset.Group.Name, Name: i.Asset.Name, Type: i.Property?.Type, NoEquip: true };
+            return {
+                Group: i.Asset.Group.Name,
+                Name: i.Asset.Name,
+                // eslint-disable-next-line
+                Type: i.Property?.Type,
+                TypeRecord: i.Property?.TypeRecord,
+                NoEquip: true,
+            };
         }),
         character,
     );
@@ -349,7 +361,7 @@ export function fortuneWheelEquip(
     }
 
     // Second pass: equip the new items
-    for (const {Name, Group, Craft, ItemCallback, Color, Type, Property} of itemList) {
+    for (const { Name, Group, Craft, ItemCallback, Color, Type, TypeRecord, Property } of itemList) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const errList = equipFailureRecord[asset?.Description ?? Name];
         if (asset == null || errList !== undefined || equipCallbackOutputs.has(Group)) {
@@ -368,7 +380,13 @@ export function fortuneWheelEquip(
         if (newItem == null) {
             continue;
         }
-        itemSetType(newItem, character, Type);
+
+        if (TypeRecord) {
+            itemSetType(newItem, character, Type);
+        } else {
+            itemSetType(newItem, character, undefined, TypeRecord);
+        }
+
         if (Craft !== undefined) {
             newItem.Craft = cloneDeep(Craft);
             InventoryCraft(character, character, <AssetGroupItemName>Group, newItem.Craft, false, false);
@@ -389,7 +407,7 @@ export function fortuneWheelEquip(
         ChatRoomCharacterUpdate(character);
         const nFailures = Object.values(equipFailureRecord).length;
         if (nFailures !== 0) {
-            console.log(`MBS: Failed to equip ${nFailures} "${name}" wheel of fortune items`, equipFailureRecord);
+            logger.log(`Failed to equip ${nFailures} "${name}" wheel of fortune items`, equipFailureRecord);
         }
     }
 }

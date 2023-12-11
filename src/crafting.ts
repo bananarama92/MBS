@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { MBS_MOD_API, waitFor, padArray } from "common";
+import { MBS_MOD_API, waitFor, padArray, logger } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import { pushMBSSettings, SettingsType } from "settings";
 
@@ -17,16 +17,21 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
     return items.map(C => {
         let P = "";
         if (C?.Item) {
-            P += C.Item + "¶";
-            P += (C.Property == null ? "" : C.Property) + "¶";
-            P += (C.Lock == null ? "" : C.Lock) + "¶";
-            P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
-            P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
-            P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
-            P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
-            P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
-            P += "¶";
-            P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
+            if (GameVersion === "R98") {
+                P += C.Item + "¶";
+                P += (C.Property == null ? "" : C.Property) + "¶";
+                P += (C.Lock == null ? "" : C.Lock) + "¶";
+                P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
+                P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
+                P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
+                P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
+                // eslint-disable-next-line
+                P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
+                P += "¶";
+                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
+            } else {
+                P += CraftingSerialize(C);
+            }
         }
         return P;
     }).join("§");
@@ -59,7 +64,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
             case CraftingStatusType.OK: {
                 const key = JSON.stringify(item);
                 if (oldCrafts.has(key)) {
-                    console.warn(`MBS: Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item.Name} (${item.Item})"`);
+                    logger.warn(`Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item.Name} (${item.Item})"`);
                     data[i] = null;
                 }
                 break validate;
@@ -67,7 +72,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
             case CraftingStatusType.ERROR: {
                 const key = JSON.stringify(item);
                 if (oldCrafts.has(key)) {
-                    console.warn(`MBS: Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}:"${item.Name} (${item.Item})"`);
+                    logger.warn(`Filtering duplicate crafting item ${BC_SLOT_MAX_ORIGINAL + i}:"${item.Name} (${item.Item})"`);
                     data[i] = null;
                 } else {
                     refresh = true;
@@ -75,7 +80,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
                 break validate;
             }
             case CraftingStatusType.CRITICAL_ERROR:
-                console.error(`MBS: Removing corrupt crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item?.Name} (${item?.Item})"`);
+                logger.error(`Removing corrupt crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item?.Name} (${item?.Item})"`);
                 data[i] = null;
                 break validate;
         }
@@ -87,14 +92,14 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
             if (item == null) {
                 continue;
             } else if (character.Crafting.includes(null, BC_SLOT_MAX_ORIGINAL)) {
-                console.warn(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [80, 160)-interval null entries`);
+                logger.warn(`Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [80, 160)-interval null entries`);
                 character.Crafting = character.Crafting.filter((item, i) => i < BC_SLOT_MAX_ORIGINAL || item != null);
             } else if (character.Crafting.includes(null)) {
-                console.warn(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [0, 80)-interval null entries`);
+                logger.warn(`Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, trimming down [0, 80)-interval null entries`);
                 character.Crafting = character.Crafting.filter(item => item != null);
             } else {
                 const n = character.Crafting.length - MBS_SLOT_MAX_ORIGINAL;
-                console.error(`MBS: Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, the last ${n} will be deleted`);
+                logger.error(`Found more than ${MBS_SLOT_MAX_ORIGINAL} crafting items, the last ${n} will be deleted`);
                 break;
             }
         } else {
@@ -112,7 +117,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
 }
 
 waitFor(settingsMBSLoaded).then(() => {
-    console.log("MBS: Initializing crafting hooks");
+    logger.log("Initializing crafting hooks");
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
     MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {

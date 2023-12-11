@@ -1,8 +1,9 @@
 /** Backports of R91 bug fixes */
 
-import { waitFor, MBS_MOD_API } from "common";
+import { waitFor, MBS_MOD_API, logger } from "common";
 import { settingsMBSLoaded } from "common_bc";
-import {BC_MIN_VERSION} from "sanity_checks";
+import { sortBy } from "lodash-es";
+import { BC_MIN_VERSION } from "sanity_checks";
 
 /** The next BC version */
 const BC_NEXT = BC_MIN_VERSION + 1;
@@ -63,15 +64,44 @@ waitFor(settingsMBSLoaded).then(() => {
                 bunPlush !== undefined
                 && CommonArraysEqual(bunPlush.DefaultColor, ["Default", "Default"])
             ) {
+                backportIDs.add(4664);
                 (bunPlush as Mutable<Asset>).DefaultColor = ["#848484", "#C26969"];
             }
             break;
         }
+        case "R99Beta1": {
+            const bunPlush = Asset.find(a => a.Name === "BunPlush" && a.Group.Name === "ItemHandheld");
+            if (
+                bunPlush !== undefined
+                && CommonArraysEqual(bunPlush.DefaultColor, ["Default", "Default"])
+            ) {
+                backportIDs.add(4664);
+                (bunPlush as Mutable<Asset>).DefaultColor = ["#848484", "#C26969"];
+            }
+
+            backportIDs.add(4662);
+            MBS_MOD_API.patchFunction("CraftingConvertSelectedToItem", {
+                "Private: CraftingSelectedItem.Private,":
+                    "Private: CraftingSelectedItem.Private, Type: CraftingSelectedItem.Type || null,",
+            });
+            MBS_MOD_API.patchFunction("CraftingConvertItemToSelected", {
+                "Private: Craft.Private,":
+                    "Private: Craft.Private, Type: Craft.Type || null,",
+            });
+            MBS_MOD_API.patchFunction("ActivityGenerateItemActivitiesFromNeed", {
+                "const typeList = CommonIsObject(item.Property.TypeRecord) ? PropertyTypeRecordToStrings(item.Property.TypeRecord) : [null];":
+                    "const typeList = CommonIsObject(item.Property?.TypeRecord) ? PropertyTypeRecordToStrings(item.Property.TypeRecord) : [null];",
+            });
+            MBS_MOD_API.patchFunction("ExtendedItemSetOptionByRecord", {
+                "const module = newOption.ParentData.modules[newOption.Index];":
+                    "const module = newOption.ParentData.modules.find(m => m.Name === newOption.ModuleName);",
+            });
+        }
     }
 
     if (backportIDs.size) {
-        console.log(`MBS: Initializing R${BC_NEXT} bug fix backports`, backportIDs);
+        logger.log(`Initializing R${BC_NEXT} bug fix backports`, sortBy(Array.from(backportIDs)));
     } else {
-        console.log(`MBS: No R${BC_NEXT} bug fix backports`);
+        logger.log(`No R${BC_NEXT} bug fix backports`);
     }
 });

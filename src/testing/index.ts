@@ -1,6 +1,6 @@
 "use strict";
 
-import { entries } from "common";
+import { entries, logger } from "common";
 import { settingsMBSLoaded } from "common_bc";
 import * as testing_tools from "./testing_tools";
 import * as test_common from "./test_common";
@@ -11,7 +11,7 @@ export { testing_tools, test_common, test_common_bc, test_fortune_wheel };
 
 export const runTests: typeof mbs.runTests = function runTests() {
     if (!settingsMBSLoaded()) {
-        console.warn("MBS: MBS not fully loaded yet");
+        logger.warn("MBS not fully loaded yet");
         return false;
     }
 
@@ -32,7 +32,7 @@ export const runTests: typeof mbs.runTests = function runTests() {
 
     const nFailures = Object.values(excDict).length;
     if (nFailures !== 0) {
-        console.warn(excDict);
+        logger.warn(excDict);
         return false;
     } else {
         return true;

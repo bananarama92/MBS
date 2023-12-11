@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { range, isEqual, random } from "lodash-es";
+import { range, random } from "lodash-es";
 
 import bcModSdk from "bondage-club-mod-sdk";
 
@@ -19,6 +19,59 @@ const ALPHABET = Object.freeze([
 
 /** Regular expression for the MBS version */
 const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
+
+type LogLevel = "debug" | "log" | "warn" | "error";
+
+interface LogEntry {
+    readonly date: Date,
+    readonly level: LogLevel,
+    readonly args: readonly unknown[],
+}
+
+/**
+ * The MBS logging class.
+ * Combines the {@link console} logging methods with an {@link Array} for storing the output.
+ */
+class MBSLog extends Array<LogEntry> {
+    #log(level: LogLevel, args: readonly unknown[]) {
+        const date = new Date(Date.now());
+        console[level]("MBS:", ...args);
+        this.push({ date, level, args });
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug) */
+    debug(...args: unknown[]) {
+        this.#log("debug", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log) */
+    log(...args: unknown[]) {
+        this.#log("log", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn) */
+    warn(...args: unknown[]) {
+        this.#log("warn", args);
+    }
+
+    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error) */
+    error(...args: unknown[]) {
+        this.#log("error", args);
+    }
+
+    toJSON() {
+        return this.map(arg => {
+            return {
+                date: arg.date.toUTCString(),
+                level: arg.level,
+                args: arg.args.map(i => (i instanceof Map || i instanceof Set) ? Array.from(i) : i),
+            };
+        });
+    }
+}
+
+/** The MBS logger */
+export const logger = new MBSLog();
 
 /**
  * Check whether an integer falls within the specified range and raise otherwise.
@@ -119,19 +172,6 @@ export async function waitFor(predicate: () => boolean, timeout: number = 100): 
     }
     return true;
 }
-
-/**
- * The version of the MBS API.
- *
- * * Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
- * * Additions are only accompanied by a `minor` increment
- */
-export const API_VERSION = Object.freeze({
-    /** The major API versions; increments are reserved for changes and removals */
-    major: 1,
-    /** The major API versions; increments are reserved for additions */
-    minor: 0,
-}) satisfies typeof mbs.API_VERSION;
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
 export const MBS_MOD_API = bcModSdk.registerMod({
@@ -267,13 +307,13 @@ export function generateIDs(
     start: number,
     indices: readonly number[],
 ): string[] {
-    validateInt(start, "start", 0, 2**16);
+    validateInt(start, "start", 0, 2**16 - 1);
     if (!isArray(indices)) {
         throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
     }
 
     const stop = start + Math.max(0, ...indices) + 1;
-    validateInt(stop, "stop", start + 1, 2**16);
+    validateInt(stop, "stop", start + 1, 2**16 - 1);
 
     const charcodeRange = range(start, stop);
     return indices.map(i => String.fromCharCode(charcodeRange[i]));
@@ -294,11 +334,13 @@ export class Version {
     readonly micro: number;
     /** Whether this concerns a beta version or not */
     readonly beta: boolean;
+    /** Length-4 UTF16 string encoding the major, minor, micro & beta components of the version. */
+    readonly #string: string;
 
     constructor(major: number = 0, minor: number = 0, micro: number = 0, beta: boolean = false) {
-        validateInt(major, "major", 0);
-        validateInt(minor, "minor", 0);
-        validateInt(micro, "micro", 0);
+        validateInt(major, "major", 0, 2**16 - 1);
+        validateInt(minor, "minor", 0, 2**16 - 1);
+        validateInt(micro, "micro", 0, 2**16 - 1);
         if (typeof beta !== "boolean") {
             throw new TypeError(`Invalid "beta" type: ${typeof beta}`);
         }
@@ -307,59 +349,33 @@ export class Version {
         this.minor = minor;
         this.micro = micro;
         this.beta = beta;
+        this.#string = [major, minor, micro].map(i => String.fromCharCode(i)) + String.fromCharCode(beta ? 0 : 1);
         Object.freeze(this);
-    }
-
-    /** Return an array with all version values. */
-    values(): [major: number, minor: number, micro: number, beta: boolean] {
-        return [this.major, this.minor, this.micro, this.beta];
     }
 
     /** Check whether two versions are equal */
     equal(other: Version): boolean {
-        if (!(other instanceof Version)) {
-            return false;
-        }
-        return isEqual(this.values(), other.values());
+        return other instanceof Version ? this.valueOf() === other.valueOf() : false;
     }
 
     /** Check whether this version is greater than the other */
     greater(other: Version): boolean {
-        if (!(other instanceof Version)) {
-            return false;
-        }
-
-        for (const attr of ["major", "minor", "micro"] as const) {
-            if (this[attr] > other[attr]) {
-                return true;
-            } else if (this[attr] < other[attr]) {
-                return false;
-            }
-        }
-
-        if (!this.beta && other.beta) {
-            return true;
-        } else {
-            return false;
-        }
+        return other instanceof Version ? this.valueOf() > other.valueOf() : false;
     }
 
     /** Check whether this version is lesser than the other */
     lesser(other: Version): boolean {
-        if (!(other instanceof Version)) {
-            return false;
-        }
-        return other.greater(this);
+        return other instanceof Version ? this.valueOf() < other.valueOf() : false;
     }
 
     /** Check whether this version is greater than or equal to the other */
     greaterOrEqual(other: Version): boolean {
-        return this.equal(other) || this.greater(other);
+        return other instanceof Version ? this.valueOf() >= other.valueOf() : false;
     }
 
     /** Check whether this version is lesser than or equal to the other */
     lesserOrEqual(other: Version): boolean {
-        return this.equal(other) || this.lesser(other);
+        return other instanceof Version ? this.valueOf() <= other.valueOf() : false;
     }
 
     /** Construct a new instance from the passed version string */
@@ -388,6 +404,11 @@ export class Version {
     /** Return a string representation of this instance. */
     toString(): string {
         return toStringTemplate(typeof this, this.toJSON());
+    }
+
+    /** Return a length-4 UTF16 string encoding the major, minor, micro & beta components of the version */
+    valueOf(): string {
+        return this.#string;
     }
 
     /** Return an object representation of this instance. */

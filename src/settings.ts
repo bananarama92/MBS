@@ -1,5 +1,7 @@
 /** Function for managing all MBS related settings. */
 
+/* eslint deprecation/deprecation: 0 */
+
 "use strict";
 
 import { omit } from "lodash-es";
@@ -8,6 +10,7 @@ import {
     waitFor,
     Version,
     trimArray,
+    logger,
 } from "common";
 import {
     FWItemSet,
@@ -33,7 +36,7 @@ export const SettingsType = Object.freeze({
 /** Check whether MBS has just been upgraded for the user in question. */
 function detectUpgrade(versionString?: string): boolean {
     if (versionString === undefined) {
-        console.log("MBS: Detecting first-time MBS initialization");
+        logger.log("Detecting first-time MBS initialization");
         return false;
     }
 
@@ -42,15 +45,15 @@ function detectUpgrade(versionString?: string): boolean {
     try {
         oldVersion = Version.fromVersion(versionString);
     } catch (error) {
-        console.warn(`MBS: Failed to parse previous MBS version: ${versionString}`);
+        logger.warn(`Failed to parse previous MBS version: ${versionString}`);
         return false;
     }
 
     if (newVersion.greater(oldVersion)) {
-        console.log(`MBS: Upgrading MBS from ${versionString} to ${MBS_VERSION}`);
+        logger.log(`Upgrading MBS from ${versionString} to ${MBS_VERSION}`);
         return true;
     } else if (newVersion.lesser(oldVersion)) {
-        console.warn(`MBS: Downgrading MBS from ${versionString} to ${MBS_VERSION}`);
+        logger.warn(`Downgrading MBS from ${versionString} to ${MBS_VERSION}`);
         return false;
     } else {
         return false;
@@ -109,7 +112,7 @@ export function parseFWObjects<
             const wheelObject = wheelList[i] = constructor(wheelList, simpleObject);
             wheelObject.register(false);
         } catch (ex) {
-            console.warn(`MBS: Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
+            logger.warn(`Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
         }
     });
     return wheelList;
@@ -139,7 +142,7 @@ export function unpackSettings(
         }
     } catch (error) {
         if (warn) {
-            console.warn(`MBS: failed to load corrupted MBS ${type}`, error);
+            logger.warn(`failed to load corrupted MBS ${type}`, error);
         }
     }
     return (settings !== null && typeof settings === "object") ? settings : {};
@@ -278,5 +281,5 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
 waitFor(settingsLoaded).then(() => {
     initMBSSettings();
     pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
-    console.log("MBS: Initializing settings module");
+    logger.log("Initializing settings module");
 });

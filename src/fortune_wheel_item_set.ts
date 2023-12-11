@@ -67,10 +67,10 @@ function fromInputTime(time: string): number | null {
 
     const [d, h, m, s] = [match[2], match[4], match[6], match[8]];
     let seconds = 0;
-    seconds += d === undefined ? 0 : Number.parseInt(d) * (24 * 60 * 60);
-    seconds += h === undefined ? 0 : Number.parseInt(h) * (60 * 60);
-    seconds += m === undefined ? 0 : Number.parseInt(m) * 60;
-    seconds += s === undefined ? 0 : Number.parseInt(s);
+    seconds += d === undefined ? 0 : Number.parseInt(d, 10) * (24 * 60 * 60);
+    seconds += h === undefined ? 0 : Number.parseInt(h, 10) * (60 * 60);
+    seconds += m === undefined ? 0 : Number.parseInt(m, 10) * 60;
+    seconds += s === undefined ? 0 : Number.parseInt(s, 10);
     return seconds;
 }
 
