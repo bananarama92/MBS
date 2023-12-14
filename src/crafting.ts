@@ -14,26 +14,7 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
     if (items == null) {
         return "";
     }
-    return items.map(C => {
-        let P = "";
-        if (C?.Item) {
-            if (GameVersion === "R98") {
-                P += C.Item + "¶";
-                P += (C.Property == null ? "" : C.Property) + "¶";
-                P += (C.Lock == null ? "" : C.Lock) + "¶";
-                P += (C.Name == null ? "" : C.Name.replace("¶", " ").replace("§", " ")) + "¶";
-                P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
-                P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
-                P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
-                P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
-                P += "¶";
-                P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));
-            } else {
-                P += CraftingSerialize(C);
-            }
-        }
-        return P;
-    }).join("§");
+    return items.map(C => C?.Item ? CraftingSerialize(C) : "").join(CraftingSerializeItemSep);
 }
 
 /**

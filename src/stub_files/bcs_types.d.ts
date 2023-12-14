@@ -80,36 +80,24 @@ interface FWItemBase {
     ItemCallback?: FortuneWheelCallback;
     /** Whether this is a custom user-specified item set */
     Custom?: boolean,
-    /** The type of the item; should preferably be specified in `Craft.Type` */
-    Type?: null | string,
-    /** The type of the item; should preferably be specified in `Craft.Type` */
+    /** The type of the item */
     TypeRecord?: TypeRecord,
     /**
      * The properties of the item.
-     * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
+     * Note that {@link FWItemBase.TypeRecord}-specific properties should be excluded from here.
      */
     Property?: ItemProperties,
 }
 
 interface FWItem extends Readonly<FWItemBase> {
-    /** Optional crafted item data */
     readonly Craft: undefined | Readonly<CraftingItem>,
-    /** Whether this is a custom user-specified item set */
     readonly Custom: boolean,
-    /** The type of the item; should preferably be specified in `Craft.Type` */
-    readonly Type: null | string,
-    /** The type of the item; should preferably be specified in `Craft.Type` */
-    readonly TypeRecord?: Readonly<TypeRecord>,
-    /**
-     * The properties of the item.
-     * Note that {@link FWItemBase.Type}-specific properties should be excluded from here.
-     */
+    readonly TypeRecord: undefined | Readonly<TypeRecord>,
+    /** @deprecated superseded by {@link FWItem.TypeRecord} */
+    readonly Type?: never;
     readonly Property: Readonly<ItemProperties>,
-    /** The optional color of the item */
     readonly Color: undefined | readonly string[],
-    /** An optional callback for post-processing the item after it's equipped and its type is set */
     readonly ItemCallback: undefined | FortuneWheelCallback;
-    /** An optional callback whose output denotes whether the item should be equipped */
     readonly Equip: undefined | ((character: Character) => boolean),
 }
 

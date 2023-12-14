@@ -11,7 +11,7 @@ type filterCallback = (wheelItem: FWItem, character: Character) => null | FWItem
 
 const OptionFilters = Object.freeze(<Record<string, filterCallback>>{
     Mummification: (wheelItem) => {
-        return { ...wheelItem, Type: null };
+        return { ...wheelItem, TypeRecord: undefined };
     },
 });
 

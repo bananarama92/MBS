@@ -92,7 +92,6 @@ type Node = {
 type SimpleItem = Readonly<{
     Name: string,
     Group: AssetGroupName,
-    Type?: string | null,
     TypeRecord?: TypeRecord,
 }>;
 
@@ -145,7 +144,7 @@ export function itemsArgSort(
     // Map all equipped item groups to the groups that they block
     const graph: Map<AssetGroupName, Node> = new Map();
     [itemList, itemSuperList].forEach((list, i) => {
-        for (const { Group, Name, Type, TypeRecord } of list) {
+        for (const { Group, Name, TypeRecord } of list) {
             if (graph.has(Group)) {
                 continue;
             }
@@ -157,7 +156,7 @@ export function itemsArgSort(
                 continue;
             }
 
-            const property = getBaselineProperty(asset, character, Type, TypeRecord);
+            const property = getBaselineProperty(asset, character, TypeRecord);
             const node = <Node>{
                 superSet: i === 1,
                 block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
@@ -313,7 +312,6 @@ export function fortuneWheelEquip(
             return {
                 Group: i.Asset.Group.Name,
                 Name: i.Asset.Name,
-                Type: i.Property?.Type,
                 TypeRecord: i.Property?.TypeRecord,
                 NoEquip: true,
             };
@@ -360,7 +358,7 @@ export function fortuneWheelEquip(
     }
 
     // Second pass: equip the new items
-    for (const { Name, Group, Craft, ItemCallback, Color, Type, TypeRecord, Property } of itemList) {
+    for (const { Name, Group, Craft, ItemCallback, Color, TypeRecord, Property } of itemList) {
         const asset = AssetGet(character.AssetFamily, Group, Name);
         const errList = equipFailureRecord[asset?.Description ?? Name];
         if (asset == null || errList !== undefined || equipCallbackOutputs.has(Group)) {
@@ -381,9 +379,7 @@ export function fortuneWheelEquip(
         }
 
         if (TypeRecord) {
-            itemSetType(newItem, character, undefined, TypeRecord);
-        } else {
-            itemSetType(newItem, character, Type);
+            itemSetType(newItem, character, TypeRecord);
         }
 
         if (Craft !== undefined) {

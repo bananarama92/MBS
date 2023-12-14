@@ -145,7 +145,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "FuturisticMittens",
                 Group: "ItemHands",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -156,7 +155,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "InteractiveVRHeadset",
                 Group: "ItemHead",
-                Type: "b3f3g1",
                 TypeRecord: { b: 3, f: 3, g: 1 },
                 Craft: {
                     Property: "Secure",
@@ -185,7 +183,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "FuturisticMuzzle",
                 Group: "ItemMouth3",
-                Type: "n1h0s3",
                 TypeRecord: { n: 1, h: 0, s: 3 },
                 Craft: {
                     Property: "Secure",
@@ -197,7 +194,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "FuturisticVibrator",
                 Group: "ItemVulva",
-                Type: "Edge",
                 TypeRecord: { "vibrating": 9 },
                 Craft: {
                     Property: "Secure",
@@ -208,7 +204,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "SciFiPleasurePanties",
                 Group: "ItemPelvis",
-                Type: "c3i4o1s2",
                 TypeRecord: { c: 3, i: 4, o: 1, s: 2 },
                 Craft: {
                     Property: "Secure",
@@ -221,7 +216,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "BonedNeckCorset",
                 Group: "ItemNeck",
                 Color: ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"],
-                Type: "Ring",
                 TypeRecord: { typed: 1 },
                 Craft: {
                     Property: "Secure",
@@ -254,7 +248,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "HeavyLatexCorset",
                 Group: "ItemTorso",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -265,7 +258,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "FuturisticHarness",
                 Group: "ItemTorso2",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -280,7 +272,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "FuturisticEarphones",
                 Group: "ItemEars",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -292,7 +283,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "CeilingChain",
                 Group: "ItemAddon",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -304,7 +294,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "RoundPiercing",
                 Group: "ItemNipplesPiercings",
-                Type: "Chain",
                 TypeRecord: { typed: 1 },
                 Craft: {
                     Property: "Secure",
@@ -316,7 +305,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "CollarAutoShockUnit",
                 Group: "ItemNeckAccessories",
-                Type: "s2y0",
                 TypeRecord: { s: 2, y: 0 },
                 Craft: {
                     Property: "Secure",
@@ -336,7 +324,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "DroneMask",
                 Group: "ItemHood",
-                Type: "m0e0p1g0s1h2j0",
                 TypeRecord: { m: 0, e: 0, p: 1, g: 0, s: 1, h: 2, j: 0 },
                 Craft: {
                     Property: "Thin",
@@ -349,7 +336,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "DuctTape",
                 Group: "ItemFeet",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -359,24 +345,17 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
-                    if (GameVersion === "R98") {
-                        const allowType = [null, ...(data?.options ?? []).slice(1).map(o => o.Name)];
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, type);
-                    } else {
-                        const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
-                        if (allowType.length === 0) {
-                            return;
-                        }
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, undefined, type);
+                    const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                    if (allowType.length === 0) {
+                        return;
                     }
+                    const typeRecord = randomElement(allowType);
+                    itemSetType(item, character, typeRecord);
                 },
             },
             {
                 Name: "DuctTape",
                 Group: "ItemLegs",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -386,24 +365,17 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
-                    if (GameVersion === "R98") {
-                        const allowType = [null, ...(data?.options ?? []).slice(1).map(o => o.Name)];
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, type);
-                    } else {
-                        const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
-                        if (allowType.length === 0) {
-                            return;
-                        }
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, undefined, type);
+                    const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                    if (allowType.length === 0) {
+                        return;
                     }
+                    const typeRecord = randomElement(allowType);
+                    itemSetType(item, character, typeRecord);
                 },
             },
             {
                 Name: "DuctTape",
                 Group: "ItemHands",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -415,7 +387,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "DuctTape",
                 Group: "ItemArms",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -425,18 +396,12 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
-                    if (GameVersion === "R98") {
-                        const allowType = [null, ...(data?.options ?? []).slice(1).map(o => o.Name)];
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, type);
-                    } else {
-                        const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
-                        if (allowType.length === 0) {
-                            return;
-                        }
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, undefined, type);
+                    const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                    if (allowType.length === 0) {
+                        return;
                     }
+                    const typeRecord = randomElement(allowType);
+                    itemSetType(item, character, typeRecord);
                 },
             },
             {
@@ -451,7 +416,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "DuctTape",
                 Group: "ItemMouth2",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Large",
@@ -460,14 +424,18 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
-                    const type = randomElement(["Full", "Double", "Cover"]);
-                    itemSetType(item, character, type);
+                    const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
+                    const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                    if (allowType.length < 2) {
+                        return;
+                    }
+                    const typeRecord = randomElement(allowType.slice(1));
+                    itemSetType(item, character, typeRecord);
                 },
             },
             {
                 Name: "DuctTape",
                 Group: "ItemMouth3",
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Large",
@@ -478,18 +446,12 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 ItemCallback: (item, character) => {
                     copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
-                    if (GameVersion === "R98") {
-                        const allowType = [null, ...(data?.options ?? []).slice(1).map(o => o.Name)];
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, type);
-                    } else {
-                        const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
-                        if (allowType.length === 0) {
-                            return;
-                        }
-                        const type = randomElement(allowType);
-                        itemSetType(item, character, undefined, type);
+                    const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                    if (allowType.length === 0) {
+                        return;
                     }
+                    const typeRecord = randomElement(allowType);
+                    itemSetType(item, character, typeRecord);
                 },
             },
         ],
@@ -528,7 +490,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "FuturisticHeels2",
                 Group: "Shoes",
                 Color:  ["#101010", "Default", "#F1FAFF", "#898989", "#898989"],
-                Type: "Matte",
                 TypeRecord: { typed: 1 },
             },
             {
@@ -545,7 +506,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "FuturisticMittens",
                 Group: "ItemHands",
                 Color:  ["#FFFFFF", "#FFFFFF", "#2E2E2E", "#050505"],
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -557,7 +517,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "FuturisticHeels2",
                 Group: "ItemBoots",
                 Color:  ["#101010", "#101010", "Default", "#F1FAFF", "#898989", "#898989", "#898989"],
-                Type: "Matte",
                 TypeRecord: { typed: 1 },
                 Craft: {
                     Property: "Secure",
@@ -569,7 +528,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "WiredEgg",
                 Group: "ItemVulva",
                 Color:  ["Default", "#141414"],
-                Type: "Low",
                 TypeRecord: { vibrating: 1 },
                 Craft: {
                     Property: "Arousing",
@@ -584,7 +542,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "StraitLeotard",
                 Group: "ItemArms",
                 Color:  ["#FFFFFF", "#1A1A1A", "#FFFFFF"],
-                Type: "cl1co1np0vp0",
                 TypeRecord: { cl: 1, co: 1, np: 0, vp: 0 },
                 Craft: {
                     Property: "Secure",
@@ -596,7 +553,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "LeatherAnkleCuffs",
                 Group: "ItemFeet",
                 Color:  ["#969696", "#191919", "#969696"],
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -607,7 +563,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "BallGag",
                 Group: "ItemMouth",
-                Type: "Tight",
                 TypeRecord: { typed: 2 },
                 Craft: {
                     Property: "Large",
@@ -697,7 +652,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "KirugumiMask",
                 Group: "ItemHood",
                 Color: ["#484747", "#484747", "#484747", "#484747"],
-                Type: "e0m3b0br0op0ms0",
                 TypeRecord: { e: 0, m: 3, b: 0, br: 0, op: 0, ms: 0 },
                 Craft: {
                     Property: "Secure",
@@ -708,7 +662,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "MonoHeel",
                 Group: "ItemBoots",
                 Color: ["#737070", "#737070", "#101010"],
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -719,7 +672,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "FuturisticMittens",
                 Group: "ItemHands",
                 Color:  ["#767676", "#5F5F5F", "#3C3C3C", "#4F4F4F"],
-                Type: null,
                 TypeRecord: { typed: 0 },
                 Craft: {
                     Property: "Secure",
@@ -730,7 +682,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "SmoothLeatherArmbinder1",
                 Group: "ItemArms",
                 Color: ["#191919", "#3D3D3D", "#191919", "#191919", "#191919"],
-                Type: "b1s3",
                 Craft: {
                     Property: "Secure",
                     Name: "Statue Arms",
@@ -753,7 +704,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Item: protoItem.Name,
                     Private: true,
                     Lock: "",
-                    Type: null,
+                    TypeRecord: undefined,
                     Name: protoItem.Craft.Name || asset.Description,
                     MemberNumber: undefined,
                     MemberName: "",
@@ -765,11 +716,11 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 ...protoItem,
                 Custom: false,
                 Property: Object.freeze(protoItem.Property ?? {}),
-                Type: protoItem.Type ?? null,
+                TypeRecord: protoItem.TypeRecord,
                 Craft: Object.freeze(craft),
-                Color: protoItem.Color ?? undefined,
-                ItemCallback: protoItem.ItemCallback ?? undefined,
-                Equip: protoItem.Equip ?? undefined,
+                Color: protoItem.Color,
+                ItemCallback: protoItem.ItemCallback,
+                Equip: protoItem.Equip,
             });
         }));
         return [setName, itemListNew];
