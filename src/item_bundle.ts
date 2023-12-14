@@ -209,9 +209,7 @@ export function fromItemBundle(
     let typeRecord = item.Property?.TypeRecord;
     if (CommonIsObject(typeRecord)) {
         typeRecord = Object.freeze({ ...typeRecord });
-        // eslint-disable-next-line
     } else if (typeof item.Property?.Type === "string" || item.Property?.Type === null) {
-        // eslint-disable-next-line
         type = item.Property.Type;
     } else if (typeof item.Property?.Mode === "string") {
         type = item.Property.Mode;

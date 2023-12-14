@@ -313,7 +313,6 @@ export function fortuneWheelEquip(
             return {
                 Group: i.Asset.Group.Name,
                 Name: i.Asset.Name,
-                // eslint-disable-next-line
                 Type: i.Property?.Type,
                 TypeRecord: i.Property?.TypeRecord,
                 NoEquip: true,

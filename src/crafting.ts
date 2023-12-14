@@ -25,7 +25,6 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
                 P += (C.Description == null ? "" : C.Description.replace("¶", " ").replace("§", " ")) + "¶";
                 P += (C.Color == null ? "" : C.Color.replace("¶", " ").replace("§", " ")) + "¶";
                 P += ((C.Private != null && C.Private) ? "T" : "") + "¶";
-                // eslint-disable-next-line
                 P += (C.Type == null ? "" : C.Type.replace("¶", " ").replace("§", " ")) + "¶";
                 P += "¶";
                 P += (C.ItemProperty == null ? "" : JSON.stringify(C.ItemProperty));

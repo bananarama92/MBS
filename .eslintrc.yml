@@ -4,7 +4,6 @@ env:
 extends: [
   "eslint:recommended",
   "plugin:@typescript-eslint/recommended",
-  "plugin:deprecation/recommended",
 ]
 plugins: ["@typescript-eslint"]
 ignorePatterns: [
