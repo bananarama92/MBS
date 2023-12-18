@@ -39,7 +39,7 @@ jobs:
       - run: |
           mkdir ./dist/"${{ matrix.branch }}"
           mv ./package-lock.json ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: artifact
           path: ./dist
