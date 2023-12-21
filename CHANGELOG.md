@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.1.6
+* Drop BC R98 support
+
 ## v1.1.5
 * Fix a faulty `TypeRecord` check
 

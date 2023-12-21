@@ -2,7 +2,7 @@
 
 "use strict";
 
-import { sortBy } from "lodash-es";
+import { sortBy, omit } from "lodash-es";
 
 import {
     toStringTemplate,
@@ -599,16 +599,25 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         if (isArray(kwargs.itemList)) {
             const itemList: FWItem[] = [];
             const invalid: string[] = [];
-            for (const item of kwargs.itemList) {
+            for (let item of kwargs.itemList) {
                 const asset = AssetGet("Female3DCG", item.Group, item.Name);
                 if (asset == null) {
                     invalid.push(`${item.Group}:${item.Name}`);
-                } else if (
+                    continue;
+                } else if (!(
                     asset.Group.IsItem()
                     || (asset.Group.IsAppearance() && asset.Group.AllowNone)
-                ) {
-                    itemList.push(item);
+                )) {
+                    continue;
                 }
+
+                if (!item.TypeRecord && item.Type !== undefined) {
+                    item = Object.freeze({
+                        ...omit(item, "Type"),
+                        TypeRecord: ExtendedItemTypeToRecord(asset, item.Type),
+                    });
+                }
+                itemList.push(item);
             }
             kwargs.itemList = Object.freeze(itemList);
             if (invalid.length !== 0) {

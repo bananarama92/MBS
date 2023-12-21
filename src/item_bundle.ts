@@ -196,7 +196,7 @@ export function fromItemBundle(
         craft = Object.assign(
             cloneDeep(item.Craft),
             {
-                Type: null,
+                TypeRecord: undefined,
                 OverridePriority: null,
                 Lock: "",
                 Description: minifyDescription(item.Craft.Description),
@@ -205,16 +205,14 @@ export function fromItemBundle(
         CraftingValidate(craft, asset, false);
     }
 
-    let type: null | string = null;
-    let typeRecord = item.Property?.TypeRecord;
-    if (CommonIsObject(typeRecord)) {
-        typeRecord = Object.freeze({ ...typeRecord });
-        // eslint-disable-next-line
-    } else if (typeof item.Property?.Type === "string" || item.Property?.Type === null) {
-        // eslint-disable-next-line
-        type = item.Property.Type;
-    } else if (typeof item.Property?.Mode === "string") {
-        type = item.Property.Mode;
+    const property = item.Property ?? {};
+    let typeRecord: undefined | TypeRecord = undefined;
+    if (CommonIsObject(property.TypeRecord)) {
+        typeRecord = Object.freeze({ ...property.TypeRecord });
+    } else if (typeof property.Type === "string" || property.Type === null) {
+        typeRecord = ExtendedItemTypeToRecord(<Asset>asset, property.Type);
+    } else if (typeof property.Mode === "string") {
+        typeRecord = ExtendedItemTypeToRecord(<Asset>asset, property.Mode);
     }
 
     return Object.freeze({
@@ -222,7 +220,6 @@ export function fromItemBundle(
         Group: item.Group,
         Custom: custom,
         Property: Object.freeze(sanitizeProperties(<Asset>asset, item.Property)),
-        Type: type,
         TypeRecord: typeRecord,
         Color: color,
         Craft: Object.freeze(craft),
@@ -281,7 +278,7 @@ export function fromItemBundles(items: ItemBundle | readonly ItemBundle[]): FWIt
  * @param item The original wheel of fortune item
  */
 export function toItemBundle(item: FWItem, character: Character): ItemBundle {
-    const { Group, Name, Color, Craft, Type, Property } = item;
+    const { Group, Name, Color, Craft, TypeRecord, Property } = item;
     const asset = AssetGet(character.AssetFamily, Group, Name);
     if (asset == null) {
         throw new Error(`Unknown asset: ${Group}${Name}`);
@@ -292,7 +289,7 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
         Color: clone(<string[] | undefined>Color),
         Craft: clone(Craft),
         Property: Object.assign(
-            getBaselineProperty(asset, character, Type),
+            getBaselineProperty(asset, character, TypeRecord),
             cloneDeep(Property),
         ),
     };

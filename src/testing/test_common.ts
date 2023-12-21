@@ -245,7 +245,7 @@ export function test_generateIDs(): void {
         },
         {
             args: [2**16 - 1, [5]],
-            excMessage: "\"stop\" must fall in the [65536, 65536] interval: 65541",
+            excMessage: "\"stop\" must fall in the [65536, 65535] interval: 65541",
         },
     ];
     raiseList.forEach(({ args, excMessage }, i) => {
