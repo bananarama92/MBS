@@ -64,8 +64,9 @@ export abstract class MBSScreen {
     /**
      * Called when user presses any key
      * @param event - The event that triggered this
+     * @returns Whether a key was pressed
      */
-    keyDown?(event: KeyboardEvent): void;
+    keyDown?(event: KeyboardEvent): boolean;
 
     /**
      * Helper function for exiting all parents.
@@ -104,13 +105,13 @@ export abstract class MBSScreen {
 export class ScreenProxy extends MBSScreen {
     readonly module: string;
     readonly background: string;
-    readonly screenFunctions: Readonly<Required<ScreenFunctions>>;
+    readonly screenFunctions: Readonly<ScreenFunctions>;
 
     constructor(
         parent: null | MBSScreen,
         module: string,
         background: string,
-        screenFunctions: Readonly<Required<ScreenFunctions>>,
+        screenFunctions: Readonly<ScreenFunctions>,
     ) {
         super(parent);
         this.module = module;
@@ -120,11 +121,11 @@ export class ScreenProxy extends MBSScreen {
 
     run(time: number) { return this.screenFunctions.Run(time); }
     click(event: MouseEvent | TouchEvent) { return this.screenFunctions.Click(event); }
-    load() { return this.screenFunctions.Load(); }
-    unload() { return this.screenFunctions.Unload(); }
-    resize(load: boolean) { return this.screenFunctions.Resize(load); }
-    keyDown(event: KeyboardEvent) { return this.screenFunctions.KeyDown(event); }
-    exit() { return this.screenFunctions.Exit(); }
+    load() { return this.screenFunctions.Load?.(); }
+    unload() { return this.screenFunctions.Unload?.(); }
+    resize(load: boolean) { return this.screenFunctions.Resize?.(load); }
+    keyDown(event: KeyboardEvent) { return this.screenFunctions.KeyDown?.(event) ?? false; }
+    exit() { return this.screenFunctions.Exit?.(); }
 }
 
 export type ExitAction = 0 | 1 | 2;

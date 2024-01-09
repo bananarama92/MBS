@@ -761,9 +761,6 @@ class FWScreenProxy extends ScreenProxy {
                     CommonSetScreen("MiniGame", "WheelFortune");
                     WheelFortuneLoad();
                 },
-                Unload: CommonNoop,
-                Resize: CommonNoop,
-                KeyDown: CommonNoop,
             },
         );
         this.character = Player;

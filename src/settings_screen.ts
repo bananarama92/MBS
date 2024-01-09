@@ -22,9 +22,6 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
                 Load: () => CommonSetScreen("Character", "Preference"),
-                Unload: CommonNoop,
-                Resize: CommonNoop,
-                KeyDown: CommonNoop,
             },
         );
         this.character = Player;
