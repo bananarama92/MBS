@@ -67,6 +67,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: MBS-Artifacts/artifacts
+      - run: |
+          mv MBS-Artifacts/artifacts/artifact-main/main MBS-Artifacts/artifacts/main
+          mv MBS-Artifacts/artifacts/artifact-devel/devel MBS-Artifacts/artifacts/devel
       - name: Push new release artifacts to the MBS release archive
         if: github.event_name == 'release'
         run: |
