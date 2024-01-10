@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.1.7
+* Add R100Beta1 support
+* Backport two BC R100Beta2 fixes to R100Beta1:
+    - [BondageProjects/Bondage-College#4740](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4740): Fix `PreferenceArousalSettingsValidate` calling the wrong cloning function
+    - [BondageProjects/Bondage-College#4741](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4741): Ensure that the `GameVersion` validation modifies the players game version when required
+
 ## v1.1.6
 * Drop BC R98 support
 
