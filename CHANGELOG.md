@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.2.2
+* Fix a the Show New Item menu preview again only partially resetting
+
 ## v1.2.1
 * Fix a the Show New Item menu preview only partially resetting
 * Fix a crash when paginating in the Show New Item menu
