@@ -34,6 +34,7 @@ import "crafting";
 import "window_register";
 import "backport";
 import "settings_screen";
+import "new_items_screen";
 
 // Workaround for checking whether mbs satisfies its declared interface
 // Xref microsoft/TypeScript#38511
