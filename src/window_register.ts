@@ -1,4 +1,4 @@
-/** Module for managing the {@link window} exporting of MBS functions. */
+/** Module for managing the {@link globalThis} exporting of MBS functions. */
 
 "use strict";
 
@@ -18,6 +18,6 @@ waitFor(settingsMBSLoaded).then(() => {
         [`${MBSPreferenceScreen.screen}Background`]: MBSPreferenceScreen.background,
         [`${ResetScreen.screen}Background`]: ResetScreen.background,
     } as const;
-    const w = <typeof window & typeof backgrounds>window;
+    const w = <typeof globalThis & typeof backgrounds>globalThis;
     Object.assign(w, backgrounds);
 });

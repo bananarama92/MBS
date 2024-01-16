@@ -95,7 +95,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                 coords: [1500, 720, 400, 80],
                 requiresPlayer: false,
                 next: () => {
-                    window.open(getChangeLogURL(), "_blank");
+                    globalThis.open(getChangeLogURL(), "_blank");
                 },
             },
         ];
