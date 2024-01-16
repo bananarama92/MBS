@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.2.0
+* Add a new button in the main hallway for showing all new items added in the current version (beta or otherwise):
+![New items](docs/new_beta_items.png)
+
 ## v1.1.7
 * Add R100Beta1 support
 * Backport two BC R100Beta2 fixes to R100Beta1:
