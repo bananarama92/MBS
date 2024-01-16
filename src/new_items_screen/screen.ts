@@ -54,7 +54,7 @@ interface ClothesState {
     /** The name of the state */
     readonly name: "Clothes" | "Underwear" | "Nude",
     /** A callback for equipping all state-appropriate items */
-    readonly callback: (C: Character, apperance: Item[]) => void,
+    readonly callback: (C: Character, appearance: Item[]) => void,
 }
 
 /** The BC version (well, its numerical part) for which new items should be displayed */
@@ -99,7 +99,7 @@ export class NewItemsScreen extends MBSScreen {
     /** The preview character */
     readonly preview: Character;
     /** Default preview character appaerance */
-    readonly previewApperanceDefault: readonly Item[];
+    readonly previewAppearanceDefault: Item[];
     /** An iterator for switching between the clothing levels (Clothes, Underwear and Nude) */
     clothes: LoopIterator<ClothesState>;
     /** A record containing the name of the previously equipped set of new items (if any) and a list of the actual item objects */
@@ -108,7 +108,7 @@ export class NewItemsScreen extends MBSScreen {
     constructor(parent: null | MBSScreen) {
         super(parent);
         this.preview = CharacterLoadSimple("MBSNewItemsScreen");
-        this.previewApperanceDefault = [...Player.Appearance];
+        this.previewAppearanceDefault = Player.Appearance.filter(i => i.Asset.Group.IsAppearance());
         this.previousItems = { name: null, items: [] };
         const newAssets = this.#generateAssetUIElements(NEW_ASSETS);
 
@@ -134,8 +134,8 @@ export class NewItemsScreen extends MBSScreen {
             Character: {
                 coords: [500, 0, 0, 0],
                 load: () => {
-                    this.preview.Appearance = [...this.previewApperanceDefault];
-                    CharacterReleaseTotal(this.preview);
+                    this.preview.Appearance = [...this.previewAppearanceDefault];
+                    CharacterRefresh(this.preview, false, false);
                 },
                 run: (x, y) => DrawCharacter(this.preview, x, y, 1),
                 exit: () => CharacterDelete(this.preview.AccountName),
@@ -162,8 +162,8 @@ export class NewItemsScreen extends MBSScreen {
                 },
                 click: () => {
                     const { callback } = this.clothes.next();
-                    this.preview.Appearance = [...this.previewApperanceDefault];
-                    callback(this.preview, this.preview.Appearance);
+                    this.preview.Appearance = [...this.previewAppearanceDefault];
+                    callback(this.preview, this.previewAppearanceDefault);
                     this.previousItems = { name: null, items: [] };
                 },
             },
@@ -211,12 +211,12 @@ export class NewItemsScreen extends MBSScreen {
                         DrawItemPreview({ Asset: asset }, this.preview, x, y, { Background: background, Width: w, Height: h });
                     },
                     click: () => {
-                        this.preview.Appearance = [...this.previewApperanceDefault];
+                        this.preview.Appearance = [...this.previewAppearanceDefault];
                         this.clothes.value.callback(this.preview, Player.Appearance);
                         if (this.previousItems.name !== assetName) {
                             this.previousItems = {
                                 name: assetName,
-                                items: assets.map(a => CharacterAppearanceSetItem(this.preview, a.Group.Name, a, undefined, undefined, undefined, false)).filter(i => i != null) as Item[],
+                                items: assets.map(a => CharacterAppearanceSetItem(this.preview, a.Group.Name, a, [...a.DefaultColor], undefined, undefined, false)).filter(i => i != null) as Item[],
                             };
                         } else {
                             this.previousItems = { name: null, items: [] };
