@@ -6,6 +6,7 @@ import { MBSScreen, ScreenProxy } from "screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
 import { pushMBSSettings, SettingsType, getChangeLogURL } from "settings";
 import { ResetScreen } from "reset_screen";
+import { NewItemsScreen, NEW_ASSETS_VERSION } from "new_items_screen";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -45,6 +46,15 @@ export class MBSPreferenceScreen extends MBSScreen {
             },
             {
                 coords: [500, 172, 90, 90],
+                requiresPlayer: true,
+                next: () => {
+                    const subScreen = new NewItemsScreen(this);
+                    this.children.set(subScreen.screen, subScreen);
+                    subScreen.load();
+                },
+            },
+            {
+                coords: [500, 282, 90, 90],
                 requiresPlayer: false,
                 next: () => {
                     const wheelStruct = {
@@ -57,7 +67,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                 },
             },
             {
-                coords: [500, 284, 64, 64],
+                coords: [500, 394, 64, 64],
                 requiresPlayer: true,
                 next: () => {
                     if (
@@ -70,7 +80,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                 },
             },
             {
-                coords: [500, 360, 64, 64],
+                coords: [500, 470, 64, 64],
                 requiresPlayer: true,
                 next: () => {
                     if (
@@ -118,16 +128,19 @@ export class MBSPreferenceScreen extends MBSScreen {
         DrawCharacter(this.character, 50, 50, 0.9);
         DrawButton(1815, 75, 90, 90, "", "White", "Icons/Exit.png", "Exit");
 
-        DrawButton(500, 172, 90, 90, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
-        DrawText("Configure the Wheel of Fortune", 625, 207, "Black");
+        DrawButton(500, 172, 90, 90, "", "White", "Icons/Changelog.png");
+        DrawText(`MBS: Show new R${NEW_ASSETS_VERSION} items`, 625, 207, "Black");
+
+        DrawButton(500, 282, 90, 90, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
+        DrawText("Configure the Wheel of Fortune", 625, 317, "Black");
 
         if (this.character.IsPlayer()) {
             const disable = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
-            DrawCheckbox(500, 284, 64, 64, "", this.character.MBSSettings.RollWhenRestrained, disable);
-            DrawText("Allow wheel spinning while restrainted", 575, 317, "Black");
+            DrawCheckbox(500, 394, 64, 64, "", this.character.MBSSettings.RollWhenRestrained, disable);
+            DrawText("Allow wheel spinning while restrainted", 575, 427, "Black");
 
-            DrawCheckbox(500, 360, 64, 64, "", this.character.MBSSettings.LockedWhenRestrained, disable);
-            DrawText("Lock MBS settings while restrained", 575, 392, "Black");
+            DrawCheckbox(500, 470, 64, 64, "", this.character.MBSSettings.LockedWhenRestrained, disable);
+            DrawText("Lock MBS settings while restrained", 575, 502, "Black");
 
             DrawButton(1500, 620, 400, 80, "", "#ffc9c9", "", "Clear all MBS data");
             DrawImageResize("Icons/ServiceBell.png", 1510, 630, 60, 60);

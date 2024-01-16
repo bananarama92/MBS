@@ -252,9 +252,9 @@ export class NewItemsScreen extends MBSScreen {
         });
     }
 
-    exit(fullExit=true) {
+    exit() {
         Object.values(this.elements).forEach((e) => e.exit?.());
-        this.exitScreens(fullExit);
+        this.exitScreens(false);
     }
 }
 
