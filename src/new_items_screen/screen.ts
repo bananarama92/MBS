@@ -22,7 +22,7 @@ function generateGrid(
     let x = grid.x;
     let y = grid.y;
     const ret: RectTuple[] = [];
-    for (i = 0; i < nItems && y <= grid.y + grid.height; i++) {
+    for (i = 0; i < nItems; i++) {
         if ((i % itemsPerPage) === 0) {
             x = grid.x;
             y = grid.y;
