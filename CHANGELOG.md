@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.2.1
+* Fix a the Show New Item menu preview only partially resetting
+* Fix a crash when paginating in the Show New Item menu
+* Add a button the to MBS preference screen for accessing the Show New Item menu
+
 ## v1.2.0
 * Add a new button in the main hallway for showing all new items added in the current version (beta or otherwise):
 ![New items](docs/new_beta_items.png)

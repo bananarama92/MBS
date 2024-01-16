@@ -22,7 +22,7 @@ function generateGrid(
     let x = grid.x;
     let y = grid.y;
     const ret: RectTuple[] = [];
-    for (i = 0; i < nItems && y <= grid.y + grid.height; i++) {
+    for (i = 0; i < nItems; i++) {
         if ((i % itemsPerPage) === 0) {
             x = grid.x;
             y = grid.y;
@@ -98,6 +98,8 @@ export class NewItemsScreen extends MBSScreen {
 
     /** The preview character */
     readonly preview: Character;
+    /** Default preview character appaerance */
+    readonly previewApperanceDefault: readonly Item[];
     /** An iterator for switching between the clothing levels (Clothes, Underwear and Nude) */
     clothes: LoopIterator<ClothesState>;
     /** A record containing the name of the previously equipped set of new items (if any) and a list of the actual item objects */
@@ -106,6 +108,7 @@ export class NewItemsScreen extends MBSScreen {
     constructor(parent: null | MBSScreen) {
         super(parent);
         this.preview = CharacterLoadSimple("MBSNewItemsScreen");
+        this.previewApperanceDefault = [...Player.Appearance];
         this.previousItems = { name: null, items: [] };
         const newAssets = this.#generateAssetUIElements(NEW_ASSETS);
 
@@ -131,7 +134,7 @@ export class NewItemsScreen extends MBSScreen {
             Character: {
                 coords: [500, 0, 0, 0],
                 load: () => {
-                    this.preview.Appearance = [...Player.Appearance];
+                    this.preview.Appearance = [...this.previewApperanceDefault];
                     CharacterReleaseTotal(this.preview);
                 },
                 run: (x, y) => DrawCharacter(this.preview, x, y, 1),
@@ -159,7 +162,8 @@ export class NewItemsScreen extends MBSScreen {
                 },
                 click: () => {
                     const { callback } = this.clothes.next();
-                    callback(this.preview, Player.Appearance);
+                    this.preview.Appearance = [...this.previewApperanceDefault];
+                    callback(this.preview, this.preview.Appearance);
                     this.previousItems = { name: null, items: [] };
                 },
             },
@@ -207,6 +211,7 @@ export class NewItemsScreen extends MBSScreen {
                         DrawItemPreview({ Asset: asset }, this.preview, x, y, { Background: background, Width: w, Height: h });
                     },
                     click: () => {
+                        this.preview.Appearance = [...this.previewApperanceDefault];
                         this.clothes.value.callback(this.preview, Player.Appearance);
                         if (this.previousItems.name !== assetName) {
                             this.previousItems = {
@@ -247,9 +252,9 @@ export class NewItemsScreen extends MBSScreen {
         });
     }
 
-    exit(fullExit=true) {
+    exit() {
         Object.values(this.elements).forEach((e) => e.exit?.());
-        this.exitScreens(fullExit);
+        this.exitScreens(false);
     }
 }
 
