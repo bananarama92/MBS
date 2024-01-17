@@ -7,6 +7,7 @@ A repo with a number of Bondage Club-related additions, including:
   * Wrapped up mummies
   * Petrified statue
 * Backports of a number of BC bug fixes (subject to change based on the particular release cycle)
+* A new screen showing all items added in the current BC version
 * The ability to create custom wheel of fortune outfits that can be used by you and anyone else using MBS:
 ![image](docs/config_button.png)
 
