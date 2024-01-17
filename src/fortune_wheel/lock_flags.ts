@@ -1,9 +1,7 @@
 /** Module with functionality related to applying fortune wheel lock flags. */
 
-"use strict";
-
-import { validateInt, getRandomPassword } from "common";
-import { validateCharacter } from "common_bc";
+import { validateInt, getRandomPassword } from "../common";
+import { validateCharacter } from "../common_bc";
 
 /**
  * Legacy fortune wheel flag from prior to MBS v0.6.0.

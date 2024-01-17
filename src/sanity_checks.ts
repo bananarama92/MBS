@@ -1,8 +1,6 @@
 /** Various sanity checks for BC */
 
-"use strict";
-
-import { Version, MBS_MOD_API, logger } from "common";
+import { Version, MBS_MOD_API, logger } from "./common";
 
 /**
  * Check whether all builtin wheel of fortune IDs are (extended) ASCII characters.

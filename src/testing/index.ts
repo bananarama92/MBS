@@ -1,7 +1,6 @@
-"use strict";
+import { entries, logger } from "../common";
+import { settingsMBSLoaded } from "../common_bc";
 
-import { entries, logger } from "common";
-import { settingsMBSLoaded } from "common_bc";
 import * as testing_tools from "./testing_tools";
 import * as test_common from "./test_common";
 import * as test_common_bc from "./test_common_bc";

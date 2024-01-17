@@ -1,5 +1,3 @@
-"use strict";
-
 import { range } from "lodash-es";
 
 import {
@@ -15,7 +13,7 @@ import {
     equipTimerLock,
     equipHighSecLock,
     equipLock,
-} from "../lock_flags";
+} from "../fortune_wheel/lock_flags";
 
 import {
     RAISES,

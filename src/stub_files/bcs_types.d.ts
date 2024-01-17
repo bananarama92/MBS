@@ -12,7 +12,7 @@ interface FWItemSetOption extends Required<FWObjectOption> {
      */
     readonly Script: (character?: null | Character) => void,
     /** The parent item set */
-    readonly Parent: import("common_bc").FWItemSet,
+    readonly Parent: import("../common_bc").FWItemSet,
 }
 
 /** Type representing MBS `FWCommand` fortune wheel options */
@@ -34,7 +34,7 @@ interface FWCommandOption extends FWObjectOption {
     /** Whether this is a custom user-specified option */
     readonly Custom: true,
     /** The parent item set */
-    readonly Parent: import("common_bc").FWCommand,
+    readonly Parent: import("../common_bc").FWCommand,
 }
 
 interface FWFlagBase<Type extends null | AssetLockType> {
@@ -147,9 +147,9 @@ interface MBSSettings {
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
     CraftingCache: string,
     /** A sealed array with all custom user-created wheel of fortune item sets */
-    readonly FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[],
+    readonly FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
-    readonly FortuneWheelCommands: (null | import("common_bc").FWCommand)[],
+    readonly FortuneWheelCommands: (null | import("../common_bc").FWCommand)[],
     /** Whether or not one can roll the wheel of fortune when restrained */
     RollWhenRestrained: boolean;
     /**

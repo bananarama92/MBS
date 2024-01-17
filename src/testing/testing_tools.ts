@@ -1,5 +1,3 @@
-"use strict";
-
 import { isEqual } from "lodash-es";
 
 export const RAISES = "raises";

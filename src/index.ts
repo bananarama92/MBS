@@ -1,14 +1,12 @@
 /** Various additions and utility scripts for BC */
 
-"use strict";
-
-import { waitFor, MBS_MOD_API, logger } from "common";
-import { validateBCVersion, validateHookHashes } from "sanity_checks";
-import { settingsMBSLoaded } from "common_bc";
-import { runTests } from "testing";
-import { toItemBundles as _toItemBundles } from "item_bundle";
-import { unpackSettings as _unpackSettings } from "settings";
-import { wheelOutfits, getDebug, API_VERSION } from "api";
+import { waitFor, MBS_MOD_API, logger } from "./common";
+import { validateBCVersion, validateHookHashes } from "./sanity_checks";
+import { settingsMBSLoaded } from "./common_bc";
+import { toItemBundles as _toItemBundles } from "./fortune_wheel";
+import { unpackSettings as _unpackSettings } from "./settings";
+import { wheelOutfits, getDebug, API_VERSION } from "./api";
+import { runTests } from "./testing";
 
 const _getFunctionHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
@@ -28,15 +26,11 @@ logger.log(`Initializing MBS version ${MBS_VERSION}`);
 waitFor(() => typeof GameVersion === "string" && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));
 waitFor(settingsMBSLoaded).then(validateHookHashes);
 
-import "settings";
-import "fortune_wheel";
-import "crafting";
-import "window_register";
-import "backport";
-import "settings_screen";
-import "new_items_screen";
+import "./window_register";
+import "./crafting";
+import "./backport";
 
 // Workaround for checking whether mbs satisfies its declared interface
 // Xref microsoft/TypeScript#38511
-import * as __self__ from "index";
+import * as __self__ from "./index";
 __self__ satisfies typeof mbs;

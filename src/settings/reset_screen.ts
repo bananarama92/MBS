@@ -1,5 +1,5 @@
-import { MBSScreen } from "screen_abc";
-import { clearMBSSettings } from "settings";
+import { MBSScreen } from "../screen_abc";
+import { clearMBSSettings } from "./settings";
 
 export class ResetScreen extends MBSScreen {
     static readonly background = "Sheet";

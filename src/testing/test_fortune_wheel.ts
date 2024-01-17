@@ -1,10 +1,8 @@
-"use strict";
-
 import { flatten } from "lodash-es";
 
 import { FWItemSet } from "../common_bc";
-import { FORTUNE_WHEEL_ITEM_SETS } from "../fortune_wheel";
-import { fromItemBundle } from "../item_bundle";
+import { FORTUNE_WHEEL_ITEM_SETS, fromItemBundle } from "../fortune_wheel";
+
 import { assertEqual, assert, PASSES } from "./testing_tools";
 
 type filterCallback = (wheelItem: FWItem, character: Character) => null | FWItem;

@@ -1,9 +1,6 @@
 /** Miscellaneous common functions and classes */
 
-"use strict";
-
 import { range, random } from "lodash-es";
-
 import bcModSdk from "bondage-club-mod-sdk";
 
 /** An array with all alpha-numerical characters. */

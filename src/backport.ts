@@ -1,8 +1,9 @@
 /** Backports of R91 bug fixes */
 
-import { waitFor, logger, MBS_MOD_API } from "common";
 import { sortBy } from "lodash-es";
-import { BC_MIN_VERSION } from "sanity_checks";
+
+import { waitFor, logger, MBS_MOD_API } from "./common";
+import { BC_MIN_VERSION } from "./sanity_checks";
 
 /** The next BC version */
 const BC_NEXT = BC_MIN_VERSION + 1;

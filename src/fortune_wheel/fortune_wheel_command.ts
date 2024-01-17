@@ -1,18 +1,16 @@
 /** Configuration screen for custom wheel of fortune options */
 
-"use strict";
-
 import {
     getTextInputElement,
     getNumberInputElement,
     FWSelectedCommand,
     FWCommand,
-} from "common_bc";
+} from "../common_bc";
 import {
     MBSScreen,
     MBSObjectScreen,
     ExitAction,
-} from "screen_abc";
+} from "../screen_abc";
 
 export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     static readonly screen = "MBS_FWCommandScreen";

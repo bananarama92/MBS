@@ -1,7 +1,5 @@
 /** Main module for managing all fortune wheel-related additions */
 
-"use strict";
-
 import { clone } from "lodash-es";
 
 import {
@@ -13,24 +11,22 @@ import {
     entries,
     fromEntries,
     logger,
-} from "common";
+} from "../common";
 import {
     FWItemSet,
     settingsMBSLoaded,
     canChangeCosplay,
     MBS_MAX_SETS,
     createWeightedWheelIDs,
-} from "common_bc";
-import {
-    DEFAULT_FLAGS,
-    enableFlags,
-} from "lock_flags";
-import { validateBuiltinWheelIDs } from "sanity_checks";
-import { pushMBSSettings, SettingsType } from "settings";
-import { itemSetType } from "type_setting";
-import { StripLevel } from "equipper";
-import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
-import { ScreenProxy } from "screen_abc";
+} from "../common_bc";
+import { validateBuiltinWheelIDs } from "../sanity_checks";
+import { ScreenProxy } from "../screen_abc";
+import { pushMBSSettings, SettingsType } from "../settings";
+
+import { DEFAULT_FLAGS, enableFlags } from "./lock_flags";
+import { itemSetType } from "./type_setting";
+import { StripLevel } from "./equipper";
+import { FWSelectScreen, loadFortuneWheelObjects } from "./fortune_wheel_select";
 
 /**
  * Copy the character's hair color the to passed item.
@@ -744,8 +740,8 @@ class FWScreenProxy extends ScreenProxy {
     static readonly screen = "WheelFortune";
     readonly screen = FWScreenProxy.screen;
     character: Character;
-    FortuneWheelItemSets: (null | import("common_bc").FWItemSet)[];
-    FortuneWheelCommands: (null | import("common_bc").FWCommand)[];
+    FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[];
+    FortuneWheelCommands: (null | import("../common_bc").FWCommand)[];
     weightedIDs: string;
 
     constructor() {

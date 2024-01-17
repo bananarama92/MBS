@@ -1,7 +1,5 @@
 /** Function for managing all MBS related settings. */
 
-"use strict";
-
 import { omit } from "lodash-es";
 
 import {
@@ -9,7 +7,7 @@ import {
     Version,
     trimArray,
     logger,
-} from "common";
+} from "../common";
 import {
     FWItemSet,
     FWCommand,
@@ -17,9 +15,9 @@ import {
     sanitizeWheelFortuneIDs,
     MBS_MAX_SETS,
     FWObject,
-} from "common_bc";
-import { FORTUNE_WHEEL_DEFAULT_BASE } from "fortune_wheel";
-import { BC_SLOT_MAX_ORIGINAL } from "crafting";
+} from "../common_bc";
+import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
+import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
 
 type SettingsType = 0 | 1;
 

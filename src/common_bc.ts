@@ -1,7 +1,5 @@
 /** Miscellaneous common BC-related functions and classes */
 
-"use strict";
-
 import { sortBy, omit } from "lodash-es";
 
 import {
@@ -13,11 +11,19 @@ import {
     includes,
     isArray,
     logger,
-} from "common";
-import { DEFAULT_FLAGS, parseLegacyFlags, applyFlag } from "lock_flags";
-import { pushMBSSettings, SettingsType } from "settings";
-import { fromItemBundles } from "item_bundle";
-import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
+} from "./common";
+import { pushMBSSettings, SettingsType } from "./settings";
+import {
+    DEFAULT_FLAGS,
+    parseLegacyFlags,
+    applyFlag,
+    fromItemBundles,
+    fortuneWheelEquip,
+    StripLevel,
+    getStripCondition,
+    fortuneItemsSort,
+} from "./fortune_wheel";
+
 
 /** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
 const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
