@@ -44,6 +44,7 @@ declare namespace mbs {
      *
      * * Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
      * * Additions are only accompanied by a `minor` increment
+     * * Documentation changes can be implemented without incrementing `major` or `minor`
      */
     const API_VERSION: {
         /** The major API versions; increments are reserved for changes and removals */
