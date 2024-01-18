@@ -22,7 +22,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 99 satisfies number;
+export const BC_MIN_VERSION = 100 satisfies number;
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
@@ -52,9 +52,10 @@ type HashList = readonly [
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["571D9763", "FF1A7B21"]],
+        ["CraftingClick", ["FF1A7B21"]],
         ["CraftingRun", ["5BE6E125"]],
-        ["CraftingDeserialize", ["208F6080", "09304F9E"]],
+        ["MainHallRun", ["735A1207"]],
+        ["MainHallClick", ["7A6D741A"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["16991349"]],
         ["WheelFortuneRun", ["E9E5F3D6"]],
