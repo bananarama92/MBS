@@ -164,7 +164,12 @@ export class NewItemsScreen extends MBSScreen {
                     const { callback } = this.clothes.next();
                     this.preview.Appearance = [...this.previewAppearanceDefault];
                     callback(this.preview, this.previewAppearanceDefault);
-                    this.previousItems = { name: null, items: [] };
+                    if (this.previousItems.name !== null) {
+                        this.previousItems.items = this.previousItems.items.map(i => {
+                            return CharacterAppearanceSetItem(this.preview, i.Asset.Group.Name, i.Asset, i.Color, undefined, undefined, false);
+                        }).filter((i): i is Item => i != null);
+                        CharacterRefresh(this.preview, false, false);
+                    }
                 },
             },
             PageNext: {
@@ -216,7 +221,7 @@ export class NewItemsScreen extends MBSScreen {
                         if (this.previousItems.name !== assetName) {
                             this.previousItems = {
                                 name: assetName,
-                                items: assets.map(a => CharacterAppearanceSetItem(this.preview, a.Group.Name, a, [...a.DefaultColor], undefined, undefined, false)).filter(i => i != null) as Item[],
+                                items: assets.map(a => CharacterAppearanceSetItem(this.preview, a.Group.Name, a, [...a.DefaultColor], undefined, undefined, false)).filter((i): i is Item => i != null),
                             };
                         } else {
                             this.previousItems = { name: null, items: [] };
