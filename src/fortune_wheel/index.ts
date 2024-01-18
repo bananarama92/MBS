@@ -4,7 +4,7 @@ import { FWItemSetScreen } from "./fortune_wheel_item_set";
 import { FWCommandScreen } from "./fortune_wheel_command";
 import { FWSelectScreen, loadFortuneWheelObjects } from "./fortune_wheel_select";
 import { FORTUNE_WHEEL_DEFAULT_BASE, FORTUNE_WHEEL_ITEM_SETS } from "./fortune_wheel";
-import { parseLegacyFlags, applyFlag, DEFAULT_FLAGS } from "./lock_flags";
+import { parseLegacyFlags, applyFlag, DEFAULT_FLAGS, getFlagDescription } from "./lock_flags";
 import { fromItemBundles, fromItemBundle } from "./item_bundle";
 
 export {
@@ -24,4 +24,5 @@ export {
     fortuneWheelEquip,
     StripLevel,
     getStripCondition,
+    getFlagDescription,
 };

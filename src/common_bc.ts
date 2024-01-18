@@ -22,6 +22,7 @@ import {
     StripLevel,
     getStripCondition,
     fortuneItemsSort,
+    getFlagDescription,
 } from "./fortune_wheel";
 
 
@@ -771,19 +772,16 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         const flags = this.flags.filter(flag => flag.enabled);
         const IDs = this.getIDs();
         return flags.map((flag, i) => {
-            let Description = this.name;
+            const Description = flag.type === null ? this.name : `${this.name}: ${getFlagDescription(flag)}`;
             let Default = true;
             switch (flag.type) {
                 case "HighSecurityPadlock":
-                    Description += ": High Security";
                     Default = false;
                     break;
                 case "TimerPasswordPadlock":
-                    Description += `: ${Math.floor(flag.time / 60)} minutes`;
                     Default = i !== 4;
                     break;
                 case "ExclusivePadlock":
-                    Description += ": Exclusive";
                     break;
                 case null:
                     Default = false;

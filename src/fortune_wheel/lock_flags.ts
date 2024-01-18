@@ -146,3 +146,18 @@ export function parseLegacyFlags(flags: readonly string[]): FWFlag[] {
         return flag;
     });
 }
+
+export function getFlagDescription(flag: FWFlag): string {
+    switch (flag.type) {
+        case "ExclusivePadlock":
+            return "Exclusive";
+        case "HighSecurityPadlock":
+            return "High Security";
+        case "TimerPasswordPadlock":
+            return `${Math.floor(flag.time / 60)} Minutes`;
+        case null:
+            return "No Lock";
+        default:
+            throw new Error(`Invalid flag type: ${(flag as any).type}`);
+    }
+}
