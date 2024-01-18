@@ -27,6 +27,7 @@ import { DEFAULT_FLAGS, enableFlags } from "./lock_flags";
 import { itemSetType } from "./type_setting";
 import { StripLevel } from "./equipper";
 import { FWSelectScreen, loadFortuneWheelObjects } from "./fortune_wheel_select";
+import { WheelPresetScreen } from "./preset_screen";
 
 /**
  * Copy the character's hair color the to passed item.
@@ -875,11 +876,17 @@ waitFor(settingsMBSLoaded).then(() => {
 
         next(args);
 
-        const enabled = WheelFortuneVelocity === 0;
-        const color = enabled ? "White" : "Silver";
-        const name = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
-        const description = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${name}'s option config`;
-        DrawButton(1655, 25, 90, 90, "", color, "Icons/Crafting.png", description, !enabled);
+        const enabledConfig = WheelFortuneVelocity === 0;
+        const colorConfig = enabledConfig ? "White" : "Silver";
+        const nameConfig = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+        const descriptionConfig = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${nameConfig}'s option config`;
+        DrawButton(1655, 25, 90, 90, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
+
+        const enabledPreset = !!(WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
+        const colorPreset = enabledPreset ? "White" : "Silver";
+        const namePreset = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+        const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
+        DrawButton(1545, 25, 90, 90, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
 
         const backColor = (WheelFortuneVelocity == 0 && canSpin) ? "White" : "Silver";
         DrawButton(
@@ -889,7 +896,7 @@ waitFor(settingsMBSLoaded).then(() => {
         );
 
         let text = "";
-        if (!enabled) {
+        if (WheelFortuneVelocity !== 0) {
             text = TextGet("Wait");
         } else if (!canSpin) {
             text = "Cannot spin the wheel of fortune while restrained";
@@ -915,6 +922,10 @@ waitFor(settingsMBSLoaded).then(() => {
                 FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
             };
             const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
+            fortuneWheelState.children.set(subScreen.screen, subScreen);
+            subScreen.load();
+        } else if (WheelFortuneVelocity === 0 && MouseIn(1545, 25, 90, 90) && WheelFortuneCharacter?.IsPlayer()) {
+            const subScreen = new WheelPresetScreen(fortuneWheelState, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
             fortuneWheelState.children.set(subScreen.screen, subScreen);
             subScreen.load();
         }

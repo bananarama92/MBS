@@ -129,6 +129,8 @@ interface MBSProtoSettings {
     FortuneWheelItemSets?: (null | FWSimpleItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
     FortuneWheelCommands?: (null | FWSimpleCommand)[],
+    /** A sealed array with various ID-string presets */
+    FortuneWheelPresets?: (null | Mutable<WheelPreset>)[],
     /** @deprecated alias for {@link MBSSettings.FortuneWheelItemSets} */
     FortuneWheelSets?: MBSProtoSettings["FortuneWheelItemSets"],
     /** Whether or not one can roll the wheel of fortune when restrained */
@@ -150,6 +152,8 @@ interface MBSSettings {
     readonly FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[],
     /** A sealed array with all custom user-created wheel of fortune command sets */
     readonly FortuneWheelCommands: (null | import("../common_bc").FWCommand)[],
+    /** A sealed array with various ID-string presets */
+    FortuneWheelPresets: (null | WheelPreset)[],
     /** Whether or not one can roll the wheel of fortune when restrained */
     RollWhenRestrained: boolean;
     /**
@@ -178,6 +182,16 @@ interface ButtonAction {
     readonly click: (event: MouseEvent | TouchEvent) => boolean,
     /** A callback to-be executed when the button is drawn */
     readonly draw: (...coords: RectTuple) => void,
+}
+
+interface UIElement {
+    readonly coords: RectTuple,
+    readonly load?: () => void,
+    readonly click?: (event: MouseEvent | TouchEvent) => void,
+    readonly run: (...coords: RectTuple) => void,
+    readonly exit?: () => void,
+    readonly unload?: () => void,
+    readonly page?: number,
 }
 
 /** A simplified interface representing {@link FWItemSet} */
@@ -209,4 +223,9 @@ interface FWSimpleCommand {
 /** A simplified (partial) interface representing {@link FWCommand} */
 interface FWSimplePartialCommand extends Partial<FWSimpleCommand> {
     name: string,
+}
+
+interface WheelPreset {
+    readonly name: string,
+    readonly ids: string,
 }

@@ -14,12 +14,13 @@ import {
     settingsLoaded,
     sanitizeWheelFortuneIDs,
     MBS_MAX_SETS,
+    MBS_MAX_ID_SETS,
     FWObject,
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
 
-type SettingsType = 0 | 1;
+export type SettingsType = 0 | 1;
 
 /** An enum with to-be synced settings types */
 export const SettingsType = Object.freeze({
@@ -114,6 +115,29 @@ export function parseFWObjects<
     return wheelList;
 }
 
+function parsePresetArray(presets: readonly (null | WheelPreset)[]): (null | WheelPreset)[] {
+    // Pad/trim the item sets if necessary
+    if (!Array.isArray(presets)) {
+        presets = [];
+    } else if (presets.length > MBS_MAX_ID_SETS) {
+        trimArray(presets, MBS_MAX_ID_SETS);
+    }
+
+    const ret: (null | WheelPreset)[] = Object.seal(Array(MBS_MAX_ID_SETS).fill(null));
+    presets.forEach((preset, i) => {
+        if (preset === null || Array.isArray(preset) || typeof preset !== "object" || typeof preset.ids !== "string") {
+            return;
+        }
+
+        const { name, ids } = preset;
+        ret[i] = {
+            name: (typeof name === "string" && name.length > 0 && name.length <= 20) ? name : `Preset ${i}`,
+            ids,
+        };
+    });
+    return ret;
+}
+
 /**
  * Load the compressed MBS (shared) settings
  * @param s The to-be unpacked settings
@@ -194,6 +218,7 @@ function initMBSSettings(): void {
         CraftingCache: settings.CraftingCache,
         FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
+        FortuneWheelPresets: parsePresetArray(settings.FortuneWheelPresets ?? []),
         LockedWhenRestrained: typeof settings.LockedWhenRestrained === "boolean" ? settings.LockedWhenRestrained : false,
         RollWhenRestrained: typeof settings.RollWhenRestrained === "boolean" ? settings.RollWhenRestrained : true,
     });
@@ -228,6 +253,7 @@ export function clearMBSSettings(): void {
         FortuneWheelCommands: Object.seal(Array(MBS_MAX_SETS).fill(null)),
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
+        FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
     });
 
     ServerAccountUpdate.QueueData({

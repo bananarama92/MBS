@@ -6,11 +6,13 @@ import { FWSelectScreen, loadFortuneWheelObjects } from "./fortune_wheel_select"
 import { FORTUNE_WHEEL_DEFAULT_BASE, FORTUNE_WHEEL_ITEM_SETS } from "./fortune_wheel";
 import { parseLegacyFlags, applyFlag, DEFAULT_FLAGS, getFlagDescription } from "./lock_flags";
 import { fromItemBundles, fromItemBundle } from "./item_bundle";
+import { WheelPresetScreen } from "./preset_screen";
 
 export {
     FWItemSetScreen,
     FWCommandScreen,
     FWSelectScreen,
+    WheelPresetScreen,
     FORTUNE_WHEEL_DEFAULT_BASE,
     FORTUNE_WHEEL_ITEM_SETS,
     loadFortuneWheelObjects,

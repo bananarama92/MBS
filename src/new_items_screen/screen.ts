@@ -41,15 +41,6 @@ function generateGrid(
 /** The maximum number of new items to-be displayed per page */
 const MAX_ITEMS_PER_PAGE = 12;
 
-interface UIElement {
-    readonly coords: RectTuple,
-    readonly load?: () => void,
-    readonly click?: () => void,
-    readonly run: (...coords: RectTuple) => void,
-    readonly exit?: () => void,
-    readonly page?: number,
-}
-
 interface ClothesState {
     /** The name of the state */
     readonly name: "Clothes" | "Underwear" | "Nude",
@@ -238,10 +229,10 @@ export class NewItemsScreen extends MBSScreen {
         Object.values(this.elements).forEach((e) => e.load?.());
     }
 
-    click() {
+    click(event: MouseEvent | TouchEvent) {
         return Object.values(this.elements).some((e) => {
             if (e.click && (e.page ?? this.page) === this.page && MouseIn(...e.coords)) {
-                e.click();
+                e.click(event);
                 return true;
             } else {
                 return false;

@@ -35,6 +35,9 @@ const ITEM_SET_FLAG_COUNT = 16; // 2**4
 /** The maximum number of custom user-specified wheel of fortune item sets. */
 export const MBS_MAX_SETS = 32;
 
+/** The maximum number of custom wheel of fortune ID presets. */
+export const MBS_MAX_ID_SETS = 8;
+
 /** A list of all valid wheel of fortune colors. */
 export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([
     "Blue",
