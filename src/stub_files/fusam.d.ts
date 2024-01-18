@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+declare const FUSAM: undefined | FUSAMPublicAPI;
+
 interface FUSAMAddonState {
     readonly distribution: string;
     readonly status: "loading" | "loaded" | "error";
@@ -29,5 +31,3 @@ interface FUSAMPublicAPI {
         method: () => string | Promise<string>
     ) => void;
 }
-
-declare const FUSAM: undefined | FUSAMPublicAPI;
