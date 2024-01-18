@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.3.0
+* Ensure that the Show New Item preview does not remove new items when switching clothing mode
+* Restructure the MBS files and directories
+* Add a new screen for storing wheel of fortune option presets
+![New items](docs/preset.png)
+
 ## v1.2.2
 * Fix a the Show New Item menu preview again only partially resetting
 
