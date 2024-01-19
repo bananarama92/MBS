@@ -1,7 +1,7 @@
 /** Public MBS API for retrieving wheel outfit data. */
 
-import { FWItemSet } from "common_bc";
-import { toItemBundles } from "item_bundle";
+import { FWItemSet } from "../common_bc";
+import { toItemBundles } from "../fortune_wheel";
 
 let MBSAPIDummy: null | Character = null;
 

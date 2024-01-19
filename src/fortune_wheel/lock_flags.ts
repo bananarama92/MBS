@@ -1,9 +1,7 @@
 /** Module with functionality related to applying fortune wheel lock flags. */
 
-"use strict";
-
-import { validateInt, getRandomPassword } from "common";
-import { validateCharacter } from "common_bc";
+import { validateInt, getRandomPassword } from "../common";
+import { validateCharacter } from "../common_bc";
 
 /**
  * Legacy fortune wheel flag from prior to MBS v0.6.0.
@@ -147,4 +145,19 @@ export function parseLegacyFlags(flags: readonly string[]): FWFlag[] {
         flag.enabled = flags.includes(LEGACY_FLAGS[i]);
         return flag;
     });
+}
+
+export function getFlagDescription(flag: FWFlag): string {
+    switch (flag.type) {
+        case "ExclusivePadlock":
+            return "Exclusive";
+        case "HighSecurityPadlock":
+            return "High Security";
+        case "TimerPasswordPadlock":
+            return `${Math.floor(flag.time / 60)} Minutes`;
+        case null:
+            return "No Lock";
+        default:
+            throw new Error(`Invalid flag type: ${(flag as any).type}`);
+    }
 }

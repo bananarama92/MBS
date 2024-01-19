@@ -1,13 +1,13 @@
 /** Selection screen for custom wheel of fortune options */
 
-"use strict";
+import { LoopIterator, logger } from "../common";
+import { MBS_MAX_SETS, FWItemSet, FWCommand } from "../common_bc";
+import { MBSScreen } from "../screen_abc";
 
-import { LoopIterator, logger } from "common";
-import { MBS_MAX_SETS, FWItemSet, FWCommand } from "common_bc";
-import { parseFWObjects, unpackSettings } from "settings";
-import { FWCommandScreen } from "fortune_wheel_command";
-import { FWItemSetScreen } from "fortune_wheel_item_set";
-import { MBSScreen } from "screen_abc";
+import { parseFWObjects, unpackSettings } from "../settings";
+import { FWCommandScreen } from "./fortune_wheel_command";
+import { FWItemSetScreen } from "./fortune_wheel_item_set";
+
 
 type PageStruct = {
     readonly index: 0 | 1 | 2 | 3,

@@ -1,18 +1,17 @@
 /** Configuration screen for custom wheel of fortune options */
 
-"use strict";
-
 import { clamp } from "lodash-es";
 
-import { toItemBundles } from "item_bundle";
 import {
     getTextInputElement,
     getNumberInputElement,
     FWSelectedItemSet,
     FWItemSet,
-} from "common_bc";
-import { fortuneWheelEquip, StripLevel, getStripCondition } from "equipper";
-import { MBSScreen, MBSObjectScreen, ExitAction } from "screen_abc";
+} from "../common_bc";
+import { MBSScreen, MBSObjectScreen, ExitAction } from "../screen_abc";
+
+import { toItemBundles } from "./item_bundle";
+import { fortuneWheelEquip, StripLevel, getStripCondition } from "./equipper";
 
 /** A mapping that maps {@link StripLevel} values to a description. */
 const STRIP_MAPPING = Object.freeze({

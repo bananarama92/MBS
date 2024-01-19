@@ -8,7 +8,6 @@
         "sourceMap": true,
         "removeComments": false,
         "outDir": "./dist",
-        "baseUrl": "./src",
         "strict": true,
         "noEmit": true,
         "experimentalDecorators": true,

@@ -1,10 +1,8 @@
 /** Main module for managing all crafting-related additions */
 
-"use strict";
-
-import { MBS_MOD_API, waitFor, padArray, logger } from "common";
-import { settingsMBSLoaded } from "common_bc";
-import { pushMBSSettings, SettingsType } from "settings";
+import { MBS_MOD_API, waitFor, padArray, logger } from "../common";
+import { settingsMBSLoaded } from "../common_bc";
+import { pushMBSSettings, SettingsType } from "../settings";
 
 export const BC_SLOT_MAX_ORIGINAL = 80;
 const MBS_SLOT_MAX_ORIGINAL = 160;

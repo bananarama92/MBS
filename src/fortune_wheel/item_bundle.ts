@@ -1,11 +1,10 @@
 /** Functions for the parsing and (inter-)conversion of {@link ItemBundle} lists. */
 
-"use strict";
-
 import { cloneDeep, clone } from "lodash-es";
 
-import { isArray, entries, isInteger, logger } from "common";
-import { getBaselineProperty } from "type_setting";
+import { isArray, entries, isInteger, logger } from "../common";
+
+import { getBaselineProperty } from "./type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
 type PropMappingType = {[T in keyof ItemProperties]: PropValidator<T>};

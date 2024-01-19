@@ -1,12 +1,11 @@
-"use strict";
+import { MBS_MOD_API, waitFor } from "../common";
+import { settingsMBSLoaded } from "../common_bc";
+import { MBSScreen, ScreenProxy } from "../screen_abc";
+import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
+import { NewItemsScreen, NEW_ASSETS_VERSION } from "../new_items_screen";
 
-import { MBS_MOD_API, waitFor } from "common";
-import { settingsMBSLoaded } from "common_bc";
-import { MBSScreen, ScreenProxy } from "screen_abc";
-import { FWSelectScreen, loadFortuneWheelObjects } from "fortune_wheel_select";
-import { pushMBSSettings, SettingsType, getChangeLogURL } from "settings";
-import { ResetScreen } from "reset_screen";
-import { NewItemsScreen, NEW_ASSETS_VERSION } from "new_items_screen";
+import { pushMBSSettings, SettingsType, getChangeLogURL } from "./settings";
+import { ResetScreen } from "./reset_screen";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";

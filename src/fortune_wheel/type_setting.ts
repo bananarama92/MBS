@@ -1,8 +1,6 @@
 /** Function for setting the types of extended items. */
 
-"use strict";
-
-import { validateCharacter } from "common_bc";
+import { validateCharacter } from "../common_bc";
 
 /**
  * Load and assign the type to the passed item without refreshing.

@@ -1,6 +1,4 @@
-"use strict";
-
-import { validateInt } from "common";
+import { validateInt } from "./common";
 
 export abstract class MBSScreen {
     /** The name of the screen's background. */
@@ -141,10 +139,10 @@ export const ExitAction = Object.freeze({
 });
 
 export abstract class MBSObjectScreen<
-    T extends import("common_bc").MBSObject<FWObjectOption>,
+    T extends import("./common_bc").MBSObject<FWObjectOption>,
 > extends MBSScreen {
     /** The selected settings for the screen's {@link MBSObjectScreen.mbsList} */
-    abstract readonly settings: import("common_bc").MBSSelectedObject<T>;
+    abstract readonly settings: import("./common_bc").MBSSelectedObject<T>;
     /** The selected character */
     readonly character: Character;
     /** The screen's (fixed-size) list of fortune wheel objects */

@@ -1,7 +1,5 @@
 /** Miscellaneous common BC-related functions and classes */
 
-"use strict";
-
 import { sortBy, omit } from "lodash-es";
 
 import {
@@ -13,11 +11,20 @@ import {
     includes,
     isArray,
     logger,
-} from "common";
-import { DEFAULT_FLAGS, parseLegacyFlags, applyFlag } from "lock_flags";
-import { pushMBSSettings, SettingsType } from "settings";
-import { fromItemBundles } from "item_bundle";
-import { fortuneWheelEquip, StripLevel, getStripCondition, fortuneItemsSort } from "equipper";
+} from "./common";
+import { pushMBSSettings, SettingsType } from "./settings";
+import {
+    DEFAULT_FLAGS,
+    parseLegacyFlags,
+    applyFlag,
+    fromItemBundles,
+    fortuneWheelEquip,
+    StripLevel,
+    getStripCondition,
+    fortuneItemsSort,
+    getFlagDescription,
+} from "./fortune_wheel";
+
 
 /** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
 const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
@@ -27,6 +34,9 @@ const ITEM_SET_FLAG_COUNT = 16; // 2**4
 
 /** The maximum number of custom user-specified wheel of fortune item sets. */
 export const MBS_MAX_SETS = 32;
+
+/** The maximum number of custom wheel of fortune ID presets. */
+export const MBS_MAX_ID_SETS = 8;
 
 /** A list of all valid wheel of fortune colors. */
 export const FORTUNE_WHEEL_COLORS: readonly FortuneWheelColor[] = Object.freeze([
@@ -765,19 +775,16 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         const flags = this.flags.filter(flag => flag.enabled);
         const IDs = this.getIDs();
         return flags.map((flag, i) => {
-            let Description = this.name;
+            const Description = flag.type === null ? this.name : `${this.name}: ${getFlagDescription(flag)}`;
             let Default = true;
             switch (flag.type) {
                 case "HighSecurityPadlock":
-                    Description += ": High Security";
                     Default = false;
                     break;
                 case "TimerPasswordPadlock":
-                    Description += `: ${Math.floor(flag.time / 60)} minutes`;
                     Default = i !== 4;
                     break;
                 case "ExclusivePadlock":
-                    Description += ": Exclusive";
                     break;
                 case null:
                     Default = false;

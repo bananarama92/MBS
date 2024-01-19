@@ -1,5 +1,3 @@
-"use strict";
-
 import { range } from "lodash-es";
 
 import {

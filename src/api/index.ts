@@ -1,5 +1,6 @@
-import { logger, waitFor } from "common";
-import { settingsMBSLoaded } from "common_bc";
+import { logger, waitFor } from "../common";
+import { settingsMBSLoaded } from "../common_bc";
+
 import * as wheelOutfits from "./wheel_outfits";
 
 export { wheelOutfits };

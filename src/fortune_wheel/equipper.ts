@@ -1,13 +1,11 @@
 /** Module related to the equipping and removing of wheel of fortune items. */
 
-"use strict";
-
 import { cloneDeep, sortBy } from "lodash-es";
 
-import { itemSetType } from "type_setting";
-import { getBaselineProperty } from "type_setting";
-import { BCX_MOD_API, waitFor, isArray, entries, includes, logger } from "common";
-import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "common_bc";
+import { BCX_MOD_API, waitFor, isArray, entries, includes, logger } from "../common";
+import { settingsMBSLoaded, canChangeCosplay, validateCharacter } from "../common_bc";
+
+import { itemSetType, getBaselineProperty } from "./type_setting";
 
 /**
  * An enum with various strip levels for {@link characterStrip}.
