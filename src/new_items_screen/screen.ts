@@ -225,8 +225,18 @@ export class NewItemsScreen extends MBSScreen {
     }
 
     load() {
+        const customBackground = (
+            ServerPlayerIsInChatRoom()
+            || (CurrentScreen === "MBSPreferenceScreen" && InformationSheetPreviousScreen === "ChatRoom")
+        ) ? ChatRoomData?.Background : undefined;
+
         super.load();
         Object.values(this.elements).forEach((e) => e.load?.());
+
+        if (customBackground != undefined) {
+            const w = <typeof globalThis & Record<string, string>>globalThis;
+            w[`${NewItemsScreen.screen}Background`] = customBackground;
+        }
     }
 
     click(event: MouseEvent | TouchEvent) {
@@ -250,6 +260,8 @@ export class NewItemsScreen extends MBSScreen {
 
     exit() {
         Object.values(this.elements).forEach((e) => e.exit?.());
+        const w = <typeof globalThis & Record<string, string>>globalThis;
+        w[`${NewItemsScreen.screen}Background`] = NewItemsScreen.background;
         this.exitScreens(false);
     }
 }
