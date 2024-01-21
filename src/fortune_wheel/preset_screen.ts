@@ -112,15 +112,15 @@ export class WheelPresetScreen extends MBSScreen {
                 run: (x, y) => DrawText("Preset Name", x, y, "Black"),
             },
             HeaderBuiltinBC: {
-                coords: [DELTA * 10, DELTA * 3, 0, 0],
+                coords: [DELTA * 9, DELTA * 3, 0, 0],
                 run: (x, y) => DrawText("Builtin BC Options", x, y, "Black"),
             },
             HeaderBuiltinMBS: {
-                coords: [DELTA * 15.5, DELTA * 3, 0, 0],
+                coords: [DELTA * 13.5, DELTA * 3, 0, 0],
                 run: (x, y) => DrawText("Builtin MBS Options", x, y, "Black"),
             },
             HeaderMBS: {
-                coords: [DELTA * 21, DELTA * 3, 0, 0],
+                coords: [DELTA * 20, DELTA * 3, 0, 0],
                 run: (x, y) => DrawText("Custom MBS Options", x, y, "Black"),
             },
             Exit: {
@@ -189,9 +189,9 @@ export class WheelPresetScreen extends MBSScreen {
                 },
                 unload: () => ElementRemove(`${WheelPresetScreen.name}_DropDown`),
             },
-            ...this.#getBuiltinBCElements({ xOffset: DELTA * 6, yOffset: 300, xDelta: DELTA, yDelta: DELTA }),
-            ...this.#getMBSElements({ xOffset: DELTA * (6 + 9), yOffset: 300, xDelta: DELTA, yDelta: DELTA }, true),
-            ...this.#getMBSElements({ xOffset: DELTA * (6 + 11), yOffset: 300, xDelta: DELTA, yDelta: DELTA }, false),
+            ...this.#getBuiltinBCElements({ xOffset: DELTA * 7, yOffset: 300, xDelta: DELTA, yDelta: DELTA }),
+            ...this.#getMBSElements({ xOffset: DELTA * (6 + 7), yOffset: 300, xDelta: DELTA, yDelta: DELTA }, true),
+            ...this.#getMBSElements({ xOffset: DELTA * (6 + 10), yOffset: 300, xDelta: DELTA, yDelta: DELTA }, false),
         };
 
         this.index = 0;
@@ -218,18 +218,46 @@ export class WheelPresetScreen extends MBSScreen {
     }
 
     #getBuiltinBCElements(gridSpec: GridSpec): Record<string, UIElement> {
-        return fromEntries(WheelFortuneOption.filter(o => o.Custom === undefined).slice(0, 64).map(({ ID }, i) => {
+        const pattern = /^([a-zA-Z0-9_\s]+) for ([0-9]+) (minutes|hours)$/;
+        const builtinOptions = WheelFortuneOption.filter(o => o.Custom === undefined).slice(0, 64);
+
+        // Group builtin wheel options together by duration (if applicable)
+        const optionRecord: Record<string, { prefix: string, suffix: string[], ids: string[] }> = {};
+        for (const o of builtinOptions) {
+            const description = SCREEN_CACHE.get(`Option${o.ID}`);
+            const match = pattern.exec(description);
+            if (!match) {
+                optionRecord[description] = { ids: [o.ID], prefix: description, suffix: [] };
+                continue;
+            }
+
+            const [key, unit] = [match[1], match[3]];
+            let duration = Number.parseInt(match[2]);
+            if (unit === "hours") {
+                duration *= 60;
+            }
+
+            const obj = optionRecord[key];
+            if (obj) {
+                obj.suffix.push(`• ${duration} Minutes`);
+                obj.ids.push(o.ID);
+            } else {
+                optionRecord[key] = { ids: [o.ID], prefix: description, suffix: [`• ${duration} Minutes`] };
+            }
+        }
+
+        return fromEntries(Object.values(optionRecord).map(({ ids, prefix, suffix }, i) => {
             const x = gridSpec.xOffset + Math.floor(i / OPTIONS_PER_ROW) * gridSpec.xDelta;
             const y = gridSpec.yOffset + (i % OPTIONS_PER_ROW) * gridSpec.yDelta;
-            const tooltip = [SCREEN_CACHE.get(`Option${ID}`)];
             return [
-                `BuiltinBCOption${ID}`,
+                `BuiltinBCOption${i}`,
                 {
                     coords: [x, y, 64, 64],
                     run: (x, y, w, h) => {
                         DrawEmptyRect(x, y, w, h, "Black");
-                        DrawRect(x + 3, y + 3, w - 6, h - 6, this.activePreset.ids.has(ID) ? "Green" : "Red");
+                        DrawRect(x + 3, y + 3, w - 6, h - 6, ids.some(i => this.activePreset.ids.has(i)) ? "Green" : "Red");
                         if (MouseIn(x, y, w, h) && !CommonIsMobile) {
+                            const tooltip = [prefix, ...suffix.filter((_, i) => this.activePreset.ids.has(ids[i]))];
                             DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
                             drawPresetTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, tooltip);
                         }
