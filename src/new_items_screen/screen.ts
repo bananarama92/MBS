@@ -144,7 +144,10 @@ export class NewItemsScreen extends MBSScreen {
             Header: {
                 coords: [1000, 123, 975, 60],
                 run: (...coords) => {
-                    DrawTextWrap(`New R${NEW_ASSETS_VERSION} items`, ...coords, "White", undefined, 1);
+                    DrawTextWrap(
+                        `New R${NEW_ASSETS_VERSION} Items: Page ${1 + this.page}/${this.pageCount}`,
+                        ...coords, "White", undefined, 1,
+                    );
                 },
             },
             Character: {
