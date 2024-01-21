@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.3.1
+* Add a duration-tooltip for the builtin BC wheel options in the preset config screen
+* Add extended item screen support to the Show New Item menu
+* Allow chatroom backgrounds to show in the Show New Item menu
+
 ## v1.3.0
 * Ensure that the Show New Item preview does not remove new items when switching clothing mode
 * Restructure the MBS files and directories
