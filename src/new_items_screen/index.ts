@@ -1,6 +1,6 @@
 import { MBS_MOD_API, waitFor, logger } from "../common";
 
-import { NEW_ASSETS_VERSION, NewItemsScreen, MainHallProxy } from "./screen";
+import { NEW_ASSETS_VERSION, NewItemsScreen, MainHallProxy, itemScreenDummy } from "./screen";
 
 export {
     NewItemsScreen,
@@ -32,5 +32,15 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
             return;
         }
         next(args);
+    });
+
+    MBS_MOD_API.patchFunction("DialogLeaveFocusItem", {
+        "default:":
+            `case "${NewItemsScreen.screen}": { return; } default:`,
+    });
+
+    MBS_MOD_API.hookFunction("CharacterGetCurrent", 0, (args, next) => {
+        const ret = next(args);
+        return CurrentScreen === NewItemsScreen.screen ? itemScreenDummy : ret;
     });
 });
