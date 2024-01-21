@@ -51,9 +51,11 @@ type HashList = readonly [
 /** A Map with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
+        ["CharacterGetCurrent", ["45608177"]],
         ["CraftingSaveServer", ["025B434F"]],
         ["CraftingClick", ["FF1A7B21"]],
         ["CraftingRun", ["5BE6E125"]],
+        ["DialogLeaveFocusItem", ["429F9FBF"]],
         ["MainHallRun", ["735A1207"]],
         ["MainHallClick", ["7A6D741A"]],
         ["WheelFortuneLoad", ["204D57D4"]],
