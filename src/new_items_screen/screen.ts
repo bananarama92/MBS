@@ -214,8 +214,8 @@ export class NewItemsScreen extends MBSScreen {
                             item.Property = this.previousItem.Property;
                         }
                         this.previousItem = item ?? null;
-                        CharacterRefresh(this.preview, false, false);
                     }
+                    CharacterRefresh(this.preview, false, false);
                 },
             },
             PageNext: {
@@ -267,10 +267,10 @@ export class NewItemsScreen extends MBSScreen {
                     },
                     click: () => {
                         const prevItem = this.previousItem;
-                        this.preview.Appearance = [...this.previewAppearanceDefault];
-                        this.clothes.value.callback(this.preview, Player.Appearance);
+                        this.clothes.value.callback(this.preview, this.previewAppearanceDefault);
                         if (prevItem && `${prevItem.Asset.Group.Name}${prevItem.Asset.Name}` === assetID) {
                             this.previousItem = null;
+                            CharacterRefresh(this.preview, false, false);
                         } else {
                             this.previousItem = CharacterAppearanceSetItem(this.preview, asset.Group.Name, asset, [...asset.DefaultColor]) ?? null;
                         }
