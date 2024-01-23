@@ -24,10 +24,17 @@ export const API_VERSION = Object.freeze({
  * @returns The MBS debug output in stringified form
  */
 export const getDebug: typeof mbs.getDebug = function getDebug() {
-    return JSON.stringify({
-        log: logger,
-        settings: Player.MBSSettings,
-    }, undefined, 4);
+    if (settingsMBSLoaded()) {
+        return JSON.stringify({
+            log: logger,
+            settings: Player.MBSSettings,
+        }, undefined, 4);
+    } else {
+        return JSON.stringify({
+            log: logger,
+            settings: "ERROR: MBS not fully loaded yet",
+        }, undefined, 4);
+    }
 };
 
 // Register the debugger to FUSAM
