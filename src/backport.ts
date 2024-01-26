@@ -2,7 +2,7 @@
 
 import { sortBy } from "lodash-es";
 
-import { waitFor, logger } from "./common";
+import { waitFor, logger, MBS_MOD_API } from "./common";
 import { BC_MIN_VERSION } from "./sanity_checks";
 
 /** The next BC version */
@@ -11,9 +11,33 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
-waitFor(() => typeof GameVersion === "string").then(() => {
+waitFor(() => typeof MainCanvas !== "undefined").then(() => {
     switch (GameVersion) {
         case "R100": {
+            if (MBS_MOD_API.getOriginalHash("CharacterResetFacialExpression") === "C22A83C0") {
+                backportIDs.add(4777);
+                MBS_MOD_API.patchFunction("CharacterResetFacialExpression", {
+                    "const name = /** @type {ExpressionGroupName} */ (group.Name);":
+                        "const name = group.Name === 'Eyes' ? 'Eyes1' : group.Name;",
+                });
+            }
+            if (MBS_MOD_API.getOriginalHash("ArcadeKinkyDungeonStart") === "A62E58E4") {
+                let kdPatch = false;
+                MBS_MOD_API.hookFunction("ArcadeKinkyDungeonStart", 0, (args, next) => {
+                    next(args);
+                    if (!kdPatch) {
+                        MBS_MOD_API.patchFunction("KDApplyItemLegacy", {
+                            'placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;':
+                                'placed.Property ??= {}; placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;',
+                        });
+                        kdPatch = true;
+                    }
+                });
+            }
+
+            const data = ModularItemDataLookup["ItemMouthFuturisticHarnessBallGag"];
+            const module = data?.modules?.find(m => m.Name === "Gag");
+            module?.Options?.forEach(o => delete o.Property.OriginalSetting);
             break;
         }
     }
