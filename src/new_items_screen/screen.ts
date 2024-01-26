@@ -1,6 +1,7 @@
 import { assetVersion } from "bc-data";
+import { inRange, omit } from "lodash-es";
 
-import { entries, fromEntries, LoopIterator, waitFor, logger } from "../common";
+import { keys, entries, fromEntries, LoopIterator, waitFor, logger } from "../common";
 import { MBSScreen, ScreenProxy } from "../screen_abc";
 
 /**
@@ -55,8 +56,14 @@ export let itemScreenDummy: Character;
 
 type AssetKey = `${AssetGroupName}${string}`;
 
+interface BuyGroupData {
+    readonly group: AssetGroupName,
+    readonly name: string,
+}
+
 /** A record mapping asset names to actual assets for all assets added in {@link NEW_ASSETS_VERSION} */
 const NEW_ASSETS: Record<AssetKey, Asset> = {};
+const BUY_GROUPS: Record<string, { readonly money: number, readonly data: BuyGroupData[] }> = {};
 waitFor(() => typeof MainCanvas !== "undefined").then(() => {
     const result = GameVersionFormat.exec(GameVersion);
     if (result == null) {
@@ -66,6 +73,7 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
     NEW_ASSETS_VERSION = Number.parseInt(result[1]);
     itemScreenDummy = CharacterLoadSimple("MBSNewItemsScreen");
 
+    const buyGroups: Record<string, ({ money: number } & BuyGroupData)[]> = {};
     for (const [groupName, assetRecord] of entries(assetVersion)) {
         for (const [assetName, version] of entries(assetRecord)) {
             if (version === `R${NEW_ASSETS_VERSION}`) {
@@ -74,8 +82,24 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
                     continue;
                 }
                 NEW_ASSETS[`${asset.Group.Name}${asset.Name}`] = asset;
+
+                if (asset.BuyGroup) {
+                    buyGroups[asset.BuyGroup] ??= [];
+                    buyGroups[asset.BuyGroup].push({ group: asset.Group.Name, name: asset.Name, money: asset.Value });
+                }
             }
         }
+    }
+
+    for (const [buyGroup, members] of entries(buyGroups)) {
+        const allMoney = members.map(i => i.money);
+
+        // Find the smallest >0 money value; fall back to -1 | 0 | >0 if it cannot be found
+        let money = Math.min(...allMoney.filter(i => i > 0));
+        if (inRange(money, 1, Infinity)) {
+            money = (money === 0) ? 0 : -1;
+        }
+        BUY_GROUPS[buyGroup] = { money, data: members.map(i => omit(i, "money")) };
     }
 });
 
@@ -100,12 +124,21 @@ export class NewItemsScreen extends MBSScreen {
     /** A record containing the name of the previously equipped set of new items (if any) and a list of the actual item objects */
     previousItem: null | Item;
 
+    mode: "buy" | "preview" = "preview";
+    inventory: Set<AssetKey>;
+    push: boolean = false;
+
     constructor(parent: null | MBSScreen) {
         super(parent);
         this.preview = itemScreenDummy;
         this.previewAppearanceDefault = Player.Appearance.filter(i => i.Asset.Group.IsAppearance());
         this.previousItem = null;
-        const newAssets = this.#generateAssetUIElements(NEW_ASSETS);
+
+        const inventorySet = new Set(Player.Inventory.map(({ Group, Name }): AssetKey => `${Group}${Name}`));
+        this.inventory = new Set(keys(NEW_ASSETS).filter(k => inventorySet.has(k)));
+
+        const assets = fromEntries(entries(NEW_ASSETS).filter(([_, asset]) => !ShopHideGenderedAsset(asset)));
+        const assetUIElements = this.#generateAssetUIElements(assets);
 
         this.clothes = new LoopIterator([
             {
@@ -134,7 +167,7 @@ export class NewItemsScreen extends MBSScreen {
             },
         ]);
         this.page = 0;
-        this.pageCount = Math.ceil(Object.keys(newAssets).length / MAX_ITEMS_PER_PAGE);
+        this.pageCount = Math.ceil(Object.keys(assetUIElements).length / MAX_ITEMS_PER_PAGE);
 
         this.elements = {
             DarkFactor: {
@@ -144,8 +177,9 @@ export class NewItemsScreen extends MBSScreen {
             Header: {
                 coords: [1000, 123, 975, 60],
                 run: (...coords) => {
+                    const prefix = this.mode === "preview" ? "Preview" : "Buy";
                     DrawTextWrap(
-                        `New R${NEW_ASSETS_VERSION} Items: Page ${1 + this.page}/${this.pageCount}`,
+                        `${prefix} new R${NEW_ASSETS_VERSION} items: Page ${1 + this.page}/${this.pageCount}`,
                         ...coords, "White", undefined, 1,
                     );
                 },
@@ -159,19 +193,44 @@ export class NewItemsScreen extends MBSScreen {
                 run: (x, y) => DrawCharacter(this.preview, x, y, 1),
                 exit: () => CharacterDelete(this.preview.AccountName),
             },
+            Money: {
+                coords: [1115, 25, 200, 90],
+                run: (x, y, w, h) => {
+                    if (this.mode === "buy") {
+                        DrawButton(x, y, w, h, "", "White", undefined, "Player money", true);
+                        DrawTextFit(`$ ${Player.Money}`, x + (w / 2), y + (h / 2), w * 0.9, Player.Money <= 0 ? "Red" : "Black");
+                    }
+                },
+            },
+            BuyMode: {
+                coords: [1335, 25, 90, 90],
+                run: (...coords) => {
+                    switch (this.mode) {
+                        case "buy":
+                            DrawButton(...coords, "", "Lime", "Icons/Shop.png", "Mode: Shop", true);
+                            break;
+                        case "preview":
+                            DrawButton(...coords, "", "White", "Icons/Shop.png", "Mode: Preview", true);
+                            break;
+                    }
+                },
+                click: () => {
+                    this.mode = this.mode === "buy" ? "preview" : "buy";
+                },
+            },
             ExtendedItem: {
                 coords: [1445, 25, 90, 90],
                 run: (...coords) => {
                     const asset = this.previousItem?.Asset;
-                    if (!asset || !asset.Archetype || asset.IsLock) {
-                        DrawButton(...coords, "", "Gray", "Icons/Use.png", "Use Item", true);
+                    if (!asset || !asset.Archetype || asset.IsLock || this.mode !== "preview") {
+                        DrawButton(...coords, "", "Gray", "Icons/Use.png", "Use item", true);
                     } else {
-                        DrawButton(...coords, "", "White", "Icons/Use.png", "Use Item");
+                        DrawButton(...coords, "", "White", "Icons/Use.png", "Use item");
                     }
                 },
                 click: () => {
                     const asset = this.previousItem?.Asset;
-                    if (!asset || !asset.Archetype || asset.IsLock) {
+                    if (!asset || !asset.Archetype || asset.IsLock || this.mode !== "preview") {
                         return;
                     }
                     DialogExtendItem(this.previousItem as Item);
@@ -214,8 +273,8 @@ export class NewItemsScreen extends MBSScreen {
                             item.Property = this.previousItem.Property;
                         }
                         this.previousItem = item ?? null;
-                        CharacterRefresh(this.preview, false, false);
                     }
+                    CharacterRefresh(this.preview, false, false);
                 },
             },
             PageNext: {
@@ -238,7 +297,113 @@ export class NewItemsScreen extends MBSScreen {
                 run: (...coords) => DrawButton(...coords, "", "White", "Icons/Exit.png", "Exit"),
                 click: () => this.exit(),
             },
-            ...newAssets,
+            ...assetUIElements,
+        };
+    }
+
+    #generateUIElementRun(assetID: AssetKey, asset: Asset): UIElement["run"] {
+        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, assets: [{ group: asset.Group.Name, name: asset.Name }] };
+        const money = inRange(buyGroups.money, -1, Infinity) ? buyGroups.money : 0;
+        return (x, y, w, h) => {
+            const options: PreviewDrawOptions = { Width: w, Height: h };
+            const hover = MouseIn(x, y, w, h) && !CommonIsMobile;
+            switch (this.mode) {
+                case "preview": {
+                    const item = this.previousItem;
+                    if (hover) {
+                        options.Background = "cyan";
+                    } else if (item && `${item.Asset.Group.Name}${item.Asset.Name}` === assetID) {
+                        options.Background = "gray";
+                    } else {
+                        options.Background = "white";
+                    }
+                    DrawItemPreview({ Asset: asset }, this.preview, x, y, options);
+                    break;
+                }
+                case "buy": {
+                    let label: string;
+                    if (this.inventory.has(assetID)) {
+                        options.Background = "gray";
+                        options.Hover = false;
+                        label = "Sold";
+                    } else if (money <= 0) {
+                        options.Background = "gray";
+                        options.Hover = false;
+                        label = "N.A.";
+                    } else if (money > Player.Money) {
+                        options.Background = "gray";
+                        options.Hover = false;
+                        label = `$${money}`;
+                    } else if (hover) {
+                        options.Background = "cyan";
+                        label = `$${money}`;
+                    } else {
+                        options.Background = "white";
+                        label = `$${money}`;
+                    }
+
+                    DrawItemPreview({ Asset: asset }, this.preview, x, y, options);
+
+                    // Draw a ribbon (i.e. triangle with the tip removed)
+                    const triangle = 85;
+                    const tip = 30;
+                    MainCanvas.beginPath();
+                    MainCanvas.fillStyle = "Red";
+                    MainCanvas.moveTo(x + w - triangle, y);
+                    MainCanvas.lineTo(x + w - tip, y);
+                    MainCanvas.lineTo(x + w, y + tip);
+                    MainCanvas.lineTo(x + w, y + triangle);
+                    MainCanvas.closePath();
+                    MainCanvas.fill();
+                    MainCanvas.strokeStyle = "Black";
+                    MainCanvas.lineWidth = 1;
+                    MainCanvas.stroke();
+
+                    // Draw 45 degree rotated text inside the triangle
+                    const textX = x + w - 30;
+                    const textY = y + 30;
+                    MainCanvas.save();
+                    MainCanvas.translate(textX, textY);
+                    MainCanvas.rotate(Math.PI / 4);
+                    MainCanvas.translate(-textX, -textY);
+                    DrawTextFit(label, textX, textY, triangle * 0.8, "White");
+                    MainCanvas.restore();
+                    break;
+                }
+            }
+        };
+    }
+
+    #generateUIElementClick(assetID: AssetKey, asset: Asset): UIElement["click"] {
+        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, data: [{ group: asset.Group.Name, name: asset.Name }] };
+        const money = inRange(buyGroups.money, -1, Infinity) ? buyGroups.money : 0;
+        return () => {
+            switch (this.mode) {
+                case "preview": {
+                    const prevItem = this.previousItem;
+                    this.clothes.value.callback(this.preview, this.previewAppearanceDefault);
+                    if (prevItem && `${prevItem.Asset.Group.Name}${prevItem.Asset.Name}` === assetID) {
+                        this.previousItem = null;
+                        CharacterRefresh(this.preview, false, false);
+                    } else {
+                        this.previousItem = CharacterAppearanceSetItem(this.preview, asset.Group.Name, asset, [...asset.DefaultColor]) ?? null;
+                    }
+                    break;
+                }
+                case "buy": {
+                    if (this.inventory.has(assetID) || money <= 0 || money > Player.Money) {
+                        return;
+                    }
+
+                    this.push = true;
+                    for (const { group, name } of buyGroups.data) {
+                        InventoryAdd(Player, name, group, false);
+                        this.inventory.add(`${group}${name}`);
+                    }
+                    Player.Money -= money;
+                    break;
+                }
+            }
         };
     }
 
@@ -254,27 +419,8 @@ export class NewItemsScreen extends MBSScreen {
                 {
                     page: Math.floor(i / MAX_ITEMS_PER_PAGE),
                     coords: coords[i],
-                    run: (x, y, w, h) => {
-                        const item = this.previousItem;
-                        const hover = MouseIn(x, y, w, h) && !CommonIsMobile;
-                        let background = "white";
-                        if (hover) {
-                            background = "cyan";
-                        } else if (item && `${item.Asset.Group.Name}${item.Asset.Name}` === assetID) {
-                            background = "gray";
-                        }
-                        DrawItemPreview({ Asset: asset }, this.preview, x, y, { Background: background, Width: w, Height: h });
-                    },
-                    click: () => {
-                        const prevItem = this.previousItem;
-                        this.preview.Appearance = [...this.previewAppearanceDefault];
-                        this.clothes.value.callback(this.preview, Player.Appearance);
-                        if (prevItem && `${prevItem.Asset.Group.Name}${prevItem.Asset.Name}` === assetID) {
-                            this.previousItem = null;
-                        } else {
-                            this.previousItem = CharacterAppearanceSetItem(this.preview, asset.Group.Name, asset, [...asset.DefaultColor]) ?? null;
-                        }
-                    },
+                    run: this.#generateUIElementRun(assetID, asset),
+                    click: this.#generateUIElementClick(assetID, asset),
                 },
             ];
         }));
@@ -292,6 +438,10 @@ export class NewItemsScreen extends MBSScreen {
         if (customBackground != undefined) {
             const w = <typeof globalThis & Record<string, string>>globalThis;
             w[`${NewItemsScreen.screen}Background`] = customBackground;
+        }
+
+        if (!inRange(Player.Money, 0, Infinity)) {
+            Player.Money = 0;
         }
     }
 
@@ -331,6 +481,12 @@ export class NewItemsScreen extends MBSScreen {
         Object.values(this.elements).forEach((e) => e.exit?.());
         const w = <typeof globalThis & Record<string, string>>globalThis;
         w[`${NewItemsScreen.screen}Background`] = NewItemsScreen.background;
+
+        if (this.push) {
+            ServerPlayerInventorySync();
+            ServerPlayerSync();
+        }
+
         this.exitScreens(false);
     }
 }

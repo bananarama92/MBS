@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.3.2
+* Add the ability to buy items from the Show New Items menu
+* Add safeguards in the MBS API for checking whether MBS is fully loaded already
+* Fix the new item preview refreshing to the wrong outfit
+* Ensure that the Show New Items menu respect the players `HideShopItems` setting
+
 ## v1.3.1
 * Add a duration-tooltip for the builtin BC wheel options in the preset config screen
 * Add extended item screen support to the Show New Item menu

@@ -1,6 +1,7 @@
 /** Public MBS API for retrieving wheel outfit data. */
 
-import { FWItemSet } from "../common_bc";
+import { logger } from "../common";
+import { FWItemSet, settingsMBSLoaded } from "../common_bc";
 import { toItemBundles } from "../fortune_wheel";
 
 let MBSAPIDummy: null | Character = null;
@@ -17,6 +18,11 @@ function getDummyChar(): Character {
  * @returns All MBS outfit data
  */
 export const getAll: typeof mbs.wheelOutfits.getAll = function getAll() {
+    if (!settingsMBSLoaded()) {
+        logger.error("MBS not fully loaded yet");
+        return {};
+    }
+
     const itemSets = Player.MBSSettings.FortuneWheelItemSets;
     const itemRecord: Record<string, WheelBundle> = {};
     for (const [i, set] of CommonEnumerate(itemSets)) {
@@ -40,6 +46,9 @@ export const getAll: typeof mbs.wheelOutfits.getAll = function getAll() {
 export const getByName: typeof mbs.wheelOutfits.getByName = function getByName(name) {
     if (typeof name !== "string") {
         throw new TypeError(`Invalid "name" type: ${typeof name}`);
+    } else if (!settingsMBSLoaded()) {
+        logger.error("MBS not fully loaded yet");
+        return undefined;
     }
 
     let index: number = -1;
@@ -66,6 +75,9 @@ export const getByName: typeof mbs.wheelOutfits.getByName = function getByName(n
 export const getByIndex: typeof mbs.wheelOutfits.getByIndex = function getByIndex(index) {
     if (typeof index !== "number") {
         throw new TypeError(`Invalid "index" type: ${typeof index}`);
+    } else if (!settingsMBSLoaded()) {
+        logger.error("MBS not fully loaded yet");
+        return undefined;
     }
 
     const itemSet = Player.MBSSettings.FortuneWheelItemSets[index];
@@ -78,10 +90,20 @@ export const getByIndex: typeof mbs.wheelOutfits.getByIndex = function getByInde
 
 /** Return a list of all the players wheel outfit names. */
 export const getNames: typeof mbs.wheelOutfits.getNames = function getNames() {
-    return Player.MBSSettings.FortuneWheelItemSets.filter(i => i !== null).map(i => (<FWItemSet>i).name);
+    if (!settingsMBSLoaded()) {
+        logger.error("MBS not fully loaded yet");
+        return [];
+    } else {
+        return Player.MBSSettings.FortuneWheelItemSets.filter((i): i is FWItemSet => i !== null).map(i => i.name);
+    }
 };
 
 /** Return a list of all the players wheel outfit indices. */
 export const getIndices: typeof mbs.wheelOutfits.getIndices = function getIndices() {
-    return Player.MBSSettings.FortuneWheelItemSets.filter(i => i !== null).map((_, i) => i);
+    if (!settingsMBSLoaded()) {
+        logger.error("MBS not fully loaded yet");
+        return [];
+    } else {
+        return Player.MBSSettings.FortuneWheelItemSets.filter(i => i !== null).map((_, i) => i);
+    }
 };

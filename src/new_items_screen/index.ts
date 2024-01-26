@@ -34,9 +34,17 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
         next(args);
     });
 
-    MBS_MOD_API.patchFunction("DialogLeaveFocusItem", {
-        "default:":
-            `case "${NewItemsScreen.screen}": { return; } default:`,
+    MBS_MOD_API.hookFunction("DialogLeaveFocusItem", 10, (args, next) => {
+        if (
+            DialogTightenLoosenItem == null
+            && DialogFocusItem != null
+            && CurrentScreen === NewItemsScreen.screen
+        ) {
+            ExtendedItemExit();
+            return;
+        } else {
+            return next(args);
+        }
     });
 
     MBS_MOD_API.hookFunction("CharacterGetCurrent", 0, (args, next) => {
