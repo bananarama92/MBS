@@ -136,7 +136,9 @@ export class NewItemsScreen extends MBSScreen {
 
         const inventorySet = new Set(Player.Inventory.map(({ Group, Name }): AssetKey => `${Group}${Name}`));
         this.inventory = new Set(keys(NEW_ASSETS).filter(k => inventorySet.has(k)));
-        const newAssets = this.#generateAssetUIElements(NEW_ASSETS);
+
+        const assets = fromEntries(entries(NEW_ASSETS).filter(([_, asset]) => !ShopHideGenderedAsset(asset)));
+        const assetUIElements = this.#generateAssetUIElements(assets);
 
         this.clothes = new LoopIterator([
             {
@@ -165,7 +167,7 @@ export class NewItemsScreen extends MBSScreen {
             },
         ]);
         this.page = 0;
-        this.pageCount = Math.ceil(Object.keys(newAssets).length / MAX_ITEMS_PER_PAGE);
+        this.pageCount = Math.ceil(Object.keys(assetUIElements).length / MAX_ITEMS_PER_PAGE);
 
         this.elements = {
             DarkFactor: {
@@ -295,7 +297,7 @@ export class NewItemsScreen extends MBSScreen {
                 run: (...coords) => DrawButton(...coords, "", "White", "Icons/Exit.png", "Exit"),
                 click: () => this.exit(),
             },
-            ...newAssets,
+            ...assetUIElements,
         };
     }
 
