@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.3.3
+* Backport three BC R101 fixes to R100 (and fixed the KD one from MBS v1.3.2):
+    - [BondageProjects/Bondage-College#4777](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4777): Fix eye colour reset on expression clear
+    - [BondageProjects/Bondage-College#4779](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4779): Fix `Item.Property` not always properly initializing in KD
+    - [BondageProjects/Bondage-College#4780](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4780): Fix the futuristic harness ball gag auto-inflation triggering validation
+
 ## v1.3.2
 * Add the ability to buy items from the Show New Items menu
 * Add safeguards in the MBS API for checking whether MBS is fully loaded already
