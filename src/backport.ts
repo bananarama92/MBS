@@ -21,20 +21,25 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
                         "const name = group.Name === 'Eyes' ? 'Eyes1' : group.Name;",
                 });
             }
+
             if (MBS_MOD_API.getOriginalHash("ArcadeKinkyDungeonStart") === "A62E58E4") {
                 let kdPatch = false;
+                backportIDs.add(4779);
                 MBS_MOD_API.hookFunction("ArcadeKinkyDungeonStart", 0, (args, next) => {
                     next(args);
                     if (!kdPatch) {
-                        MBS_MOD_API.patchFunction("KDApplyItemLegacy", {
-                            'placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;':
-                                'placed.Property ??= {}; placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;',
+                        waitFor(() => typeof ArcadeKinkyDungeonStart === "function").then(() => {
+                            MBS_MOD_API.patchFunction("KDApplyItemLegacy", {
+                                'placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;':
+                                    'placed.Property ??= {}; placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;',
+                            });
+                            kdPatch = true;
                         });
-                        kdPatch = true;
                     }
                 });
             }
 
+            backportIDs.add(4780);
             const data = ModularItemDataLookup["ItemMouthFuturisticHarnessBallGag"];
             const module = data?.modules?.find(m => m.Name === "Gag");
             module?.Options?.forEach(o => delete o.Property.OriginalSetting);
