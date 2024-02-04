@@ -176,6 +176,16 @@ export class NewItemsScreen extends MBSScreen {
         this.page = 0;
         this.pageCount = Math.ceil(Object.keys(assetUIElements).length / MAX_ITEMS_PER_PAGE);
 
+        let genderHeader: string;
+        const hideShopItems = Player.GenderSettings.HideShopItems;
+        if (hideShopItems.Male === hideShopItems.Female) {
+            genderHeader = "";
+        } else if (hideShopItems.Male) {
+            genderHeader = " male-only";
+        } else if (hideShopItems.Female) {
+            genderHeader = " female-only";
+        }
+
         this.elements = {
             DarkFactor: {
                 coords: [0, 0, 2000, 1000],
@@ -186,7 +196,7 @@ export class NewItemsScreen extends MBSScreen {
                 run: (...coords) => {
                     const prefix = this.mode === "preview" ? "Preview" : "Buy";
                     DrawTextWrap(
-                        `${prefix} new R${NEW_ASSETS_VERSION} items: Page ${1 + this.page}/${this.pageCount}`,
+                        `${prefix} new${genderHeader} R${NEW_ASSETS_VERSION} items: Page ${1 + this.page}/${this.pageCount}`,
                         ...coords, "White", undefined, 1,
                     );
                 },
