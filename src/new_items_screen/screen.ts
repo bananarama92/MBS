@@ -78,10 +78,12 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
         for (const [assetName, version] of entries(assetRecord)) {
             if (version === `R${NEW_ASSETS_VERSION}`) {
                 const asset = AssetGet("Female3DCG", groupName, assetName);
-                if (asset == null || asset.Group.Name !== asset.DynamicGroupName) {
+                if (asset == null) {
                     continue;
                 }
-                NEW_ASSETS[`${asset.Group.Name}${asset.Name}`] = asset;
+                if (asset.Group.Name === asset.DynamicGroupName) {
+                    NEW_ASSETS[`${asset.Group.Name}${asset.Name}`] = asset;
+                }
 
                 if (asset.BuyGroup) {
                     buyGroups[asset.BuyGroup] ??= [];
@@ -96,7 +98,7 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
 
         // Find the smallest >0 money value; fall back to -1 | 0 | >0 if it cannot be found
         let money = Math.min(...allMoney.filter(i => i > 0));
-        if (inRange(money, 1, Infinity)) {
+        if (!inRange(money, 1, Infinity)) {
             money = (money === 0) ? 0 : -1;
         }
         BUY_GROUPS[buyGroup] = { money, assets: members.map(i => omit(i, "money")) };
