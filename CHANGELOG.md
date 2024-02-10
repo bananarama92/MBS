@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.3.4
+* Add R101Beta2 support; no support for Beta1 will be added
+* Let the Show New Items menu display whether the player has F-/M-only shop items enabled
+* Bump the MBS build target from ES2020 to ES2021
+
 ## v1.3.3
 * Backport three BC R101 fixes to R100 (and fixed the KD one from MBS v1.3.2):
     - [BondageProjects/Bondage-College#4777](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4777): Fix eye colour reset on expression clear

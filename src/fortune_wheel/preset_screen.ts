@@ -257,9 +257,11 @@ export class WheelPresetScreen extends MBSScreen {
                         DrawEmptyRect(x, y, w, h, "Black");
                         DrawRect(x + 3, y + 3, w - 6, h - 6, ids.some(i => this.activePreset.ids.has(i)) ? "Green" : "Red");
                         if (MouseIn(x, y, w, h) && !CommonIsMobile) {
-                            const tooltip = [prefix, ...suffix.filter((_, i) => this.activePreset.ids.has(ids[i]))];
-                            DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
-                            drawPresetTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, tooltip);
+                            DrawHoverElements.push(() => {
+                                const tooltip = [prefix, ...suffix.filter((_, i) => this.activePreset.ids.has(ids[i]))];
+                                DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
+                                drawPresetTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, tooltip);
+                            });
                         }
                     },
                 },

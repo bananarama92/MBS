@@ -52,18 +52,18 @@ interface ClothesState {
 /** The BC version (well, its numerical part) for which new items should be displayed */
 export let NEW_ASSETS_VERSION: number;
 
+/** Preview character while in the `MBS_NewItemsScreen` screen */
 export let itemScreenDummy: Character;
 
+/** Type representing a concatenation of a group and asset name */
 type AssetKey = `${AssetGroupName}${string}`;
-
-interface BuyGroupData {
-    readonly group: AssetGroupName,
-    readonly name: string,
-}
 
 /** A record mapping asset names to actual assets for all assets added in {@link NEW_ASSETS_VERSION} */
 const NEW_ASSETS: Record<AssetKey, Asset> = {};
-const BUY_GROUPS: Record<string, { readonly money: number, readonly data: BuyGroupData[] }> = {};
+
+/** A record mapping {@link Asset.BuyGroup} names to the (adjusted) cost of each asset plus a list of all minified assets */
+const BUY_GROUPS: Record<string, { readonly money: number, readonly assets: ItemBundle[] }> = {};
+
 waitFor(() => typeof MainCanvas !== "undefined").then(() => {
     const result = GameVersionFormat.exec(GameVersion);
     if (result == null) {
@@ -73,19 +73,21 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
     NEW_ASSETS_VERSION = Number.parseInt(result[1]);
     itemScreenDummy = CharacterLoadSimple("MBSNewItemsScreen");
 
-    const buyGroups: Record<string, ({ money: number } & BuyGroupData)[]> = {};
+    const buyGroups: Record<string, ({ money: number } & ItemBundle)[]> = {};
     for (const [groupName, assetRecord] of entries(assetVersion)) {
         for (const [assetName, version] of entries(assetRecord)) {
             if (version === `R${NEW_ASSETS_VERSION}`) {
                 const asset = AssetGet("Female3DCG", groupName, assetName);
-                if (asset == null || asset.Group.Name !== asset.DynamicGroupName) {
+                if (asset == null) {
                     continue;
                 }
-                NEW_ASSETS[`${asset.Group.Name}${asset.Name}`] = asset;
+                if (asset.Group.Name === asset.DynamicGroupName) {
+                    NEW_ASSETS[`${asset.Group.Name}${asset.Name}`] = asset;
+                }
 
                 if (asset.BuyGroup) {
                     buyGroups[asset.BuyGroup] ??= [];
-                    buyGroups[asset.BuyGroup].push({ group: asset.Group.Name, name: asset.Name, money: asset.Value });
+                    buyGroups[asset.BuyGroup].push({ Group: asset.Group.Name, Name: asset.Name, money: asset.Value });
                 }
             }
         }
@@ -96,10 +98,10 @@ waitFor(() => typeof MainCanvas !== "undefined").then(() => {
 
         // Find the smallest >0 money value; fall back to -1 | 0 | >0 if it cannot be found
         let money = Math.min(...allMoney.filter(i => i > 0));
-        if (inRange(money, 1, Infinity)) {
+        if (!inRange(money, 1, Infinity)) {
             money = (money === 0) ? 0 : -1;
         }
-        BUY_GROUPS[buyGroup] = { money, data: members.map(i => omit(i, "money")) };
+        BUY_GROUPS[buyGroup] = { money, assets: members.map(i => omit(i, "money")) };
     }
 });
 
@@ -115,17 +117,24 @@ export class NewItemsScreen extends MBSScreen {
     /** The current page */
     page: number;
 
+    /** Whether the shop or preview mode is active */
+    mode: "buy" | "preview" = "preview";
+
     /** The preview character */
     readonly preview: Character;
     /** Default preview character appearance. Must only contain items belonging to the `Appearance` group. */
     readonly previewAppearanceDefault: readonly Item[];
     /** An iterator for switching between the clothing levels (Clothes, Underwear and Nude) */
-    clothes: LoopIterator<ClothesState>;
-    /** A record containing the name of the previously equipped set of new items (if any) and a list of the actual item objects */
+    readonly clothes: LoopIterator<ClothesState>;
+    /** The applied item (if any) while in `preview` mode */
     previousItem: null | Item;
 
-    mode: "buy" | "preview" = "preview";
-    inventory: Set<AssetKey>;
+    /**
+     * A subset of all {@link NEW_ASSETS} keys + their {@link Asset.BuyGroup} members that the player already owns.
+     * Note that due to inclusion of the asset's buygroup members there can be non-intersecting members w.r.t. {@link NEW_ASSETS}.
+     */
+    readonly inventory: Set<AssetKey>;
+    /** Whether there is data that has to be pushed to the server when exiting the screen */
     push: boolean = false;
 
     constructor(parent: null | MBSScreen) {
@@ -169,6 +178,16 @@ export class NewItemsScreen extends MBSScreen {
         this.page = 0;
         this.pageCount = Math.ceil(Object.keys(assetUIElements).length / MAX_ITEMS_PER_PAGE);
 
+        let genderHeader: string;
+        const hideShopItems = Player.GenderSettings.HideShopItems;
+        if (hideShopItems.Male === hideShopItems.Female) {
+            genderHeader = "";
+        } else if (hideShopItems.Male) {
+            genderHeader = " male-only";
+        } else if (hideShopItems.Female) {
+            genderHeader = " female-only";
+        }
+
         this.elements = {
             DarkFactor: {
                 coords: [0, 0, 2000, 1000],
@@ -179,7 +198,7 @@ export class NewItemsScreen extends MBSScreen {
                 run: (...coords) => {
                     const prefix = this.mode === "preview" ? "Preview" : "Buy";
                     DrawTextWrap(
-                        `${prefix} new R${NEW_ASSETS_VERSION} items: Page ${1 + this.page}/${this.pageCount}`,
+                        `${prefix} new${genderHeader} R${NEW_ASSETS_VERSION} items: Page ${1 + this.page}/${this.pageCount}`,
                         ...coords, "White", undefined, 1,
                     );
                 },
@@ -301,6 +320,7 @@ export class NewItemsScreen extends MBSScreen {
         };
     }
 
+    /** Generate a `run` function for a particular asset. */
     #generateUIElementRun(assetID: AssetKey, asset: Asset): UIElement["run"] {
         const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, assets: [{ group: asset.Group.Name, name: asset.Name }] };
         const money = inRange(buyGroups.money, -1, Infinity) ? buyGroups.money : 0;
@@ -374,8 +394,9 @@ export class NewItemsScreen extends MBSScreen {
         };
     }
 
+    /** Generate a `click` function for a particular asset. */
     #generateUIElementClick(assetID: AssetKey, asset: Asset): UIElement["click"] {
-        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, data: [{ group: asset.Group.Name, name: asset.Name }] };
+        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, assets: [{ group: asset.Group.Name, name: asset.Name }] };
         const money = inRange(buyGroups.money, -1, Infinity) ? buyGroups.money : 0;
         return () => {
             switch (this.mode) {
@@ -396,9 +417,9 @@ export class NewItemsScreen extends MBSScreen {
                     }
 
                     this.push = true;
-                    for (const { group, name } of buyGroups.data) {
-                        InventoryAdd(Player, name, group, false);
-                        this.inventory.add(`${group}${name}`);
+                    for (const { Group, Name } of buyGroups.assets) {
+                        InventoryAdd(Player, Name, Group, false);
+                        this.inventory.add(`${Group}${Name}`);
                     }
                     Player.Money -= money;
                     break;
@@ -407,6 +428,7 @@ export class NewItemsScreen extends MBSScreen {
         };
     }
 
+    /** Generate UI callbacks for the passed assets. */
     #generateAssetUIElements(assetRecord: Record<AssetKey, Asset>): Record<string, UIElement> {
         const coords = generateGrid(
             Object.keys(assetRecord).length,
