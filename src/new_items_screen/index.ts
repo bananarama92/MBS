@@ -1,4 +1,5 @@
 import { MBS_MOD_API, waitFor, logger } from "../common";
+import { bcLoaded } from "../common_bc";
 
 import { NEW_ASSETS_VERSION, NewItemsScreen, MainHallProxy, itemScreenDummy } from "./screen";
 
@@ -7,7 +8,7 @@ export {
     NEW_ASSETS_VERSION,
 };
 
-waitFor(() => typeof MainCanvas !== "undefined").then(() => {
+waitFor(bcLoaded).then(() => {
     logger.log("Initializing new item screen hooks");
 
     const mainHallState = new MainHallProxy();

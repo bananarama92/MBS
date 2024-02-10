@@ -1,5 +1,5 @@
 import { MBS_MOD_API, waitFor } from "../common";
-import { settingsMBSLoaded } from "../common_bc";
+import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 import { NewItemsScreen, NEW_ASSETS_VERSION } from "../new_items_screen";
@@ -184,7 +184,7 @@ MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
 
 let preferenceState: PreferenceScreenProxy;
 
-waitFor(settingsMBSLoaded).then(() => {
+waitFor(bcLoaded).then(() => {
     (<string[]>PreferenceSubscreenList).push(
         MBSPreferenceScreen.screen,
     );

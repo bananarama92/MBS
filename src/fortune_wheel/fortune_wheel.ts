@@ -18,6 +18,7 @@ import {
     canChangeCosplay,
     MBS_MAX_SETS,
     createWeightedWheelIDs,
+    bcLoaded,
 } from "../common_bc";
 import { validateBuiltinWheelIDs } from "../sanity_checks";
 import { ScreenProxy } from "../screen_abc";
@@ -781,62 +782,11 @@ class FWScreenProxy extends ScreenProxy {
 
 export let fortuneWheelState: FWScreenProxy;
 
-// Requires BC R88Beta1 or higher
-waitFor(settingsMBSLoaded).then(() => {
-    logger.log("Initializing wheel of fortune module");
+waitFor(bcLoaded).then(() => {
+    logger.log("Initializing wheel of fortune hooks");
     if (!validateBuiltinWheelIDs()) {
         return;
     }
-
-    // Load and register the default MBS item sets
-    FORTUNE_WHEEL_ITEMS = generateItems();
-    FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
-        new FWItemSet(
-            "PSO Bondage",
-            FORTUNE_WHEEL_ITEMS.leash_candy,
-            Player.MBSSettings.FortuneWheelItemSets,
-            StripLevel.UNDERWEAR,
-            StripLevel.UNDERWEAR,
-            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
-            false,
-            false,
-        ),
-        new FWItemSet(
-            "Mummification",
-            FORTUNE_WHEEL_ITEMS.mummy,
-            Player.MBSSettings.FortuneWheelItemSets,
-            StripLevel.CLOTHES,
-            StripLevel.UNDERWEAR,
-            enableFlags(DEFAULT_FLAGS.map(clone), [3]),
-            false,
-            false,
-        ),
-        new FWItemSet(
-            "Bondage Maid",
-            FORTUNE_WHEEL_ITEMS.maid,
-            Player.MBSSettings.FortuneWheelItemSets,
-            StripLevel.UNDERWEAR,
-            StripLevel.UNDERWEAR,
-            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
-            false,
-            false,
-        ),
-        new FWItemSet(
-            "Petrification",
-            FORTUNE_WHEEL_ITEMS.statue,
-            Player.MBSSettings.FortuneWheelItemSets,
-            StripLevel.UNDERWEAR,
-            StripLevel.UNDERWEAR,
-            enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
-            false,
-            false,
-            statueCopyColors,
-        ),
-    ]);
-    FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
-    FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
-    FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
-    pushMBSSettings([SettingsType.SHARED]);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         fortuneWheelState.initialize();
@@ -950,4 +900,58 @@ waitFor(settingsMBSLoaded).then(() => {
     });
 
     fortuneWheelState = new FWScreenProxy();
+
+    waitFor(settingsMBSLoaded).then(() => {
+        logger.log("Initializing wheel of fortune module");
+
+        // Load and register the default MBS item sets
+        FORTUNE_WHEEL_ITEMS = generateItems();
+        FORTUNE_WHEEL_ITEM_SETS = Object.freeze([
+            new FWItemSet(
+                "PSO Bondage",
+                FORTUNE_WHEEL_ITEMS.leash_candy,
+                Player.MBSSettings.FortuneWheelItemSets,
+                StripLevel.UNDERWEAR,
+                StripLevel.UNDERWEAR,
+                enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
+                false,
+                false,
+            ),
+            new FWItemSet(
+                "Mummification",
+                FORTUNE_WHEEL_ITEMS.mummy,
+                Player.MBSSettings.FortuneWheelItemSets,
+                StripLevel.CLOTHES,
+                StripLevel.UNDERWEAR,
+                enableFlags(DEFAULT_FLAGS.map(clone), [3]),
+                false,
+                false,
+            ),
+            new FWItemSet(
+                "Bondage Maid",
+                FORTUNE_WHEEL_ITEMS.maid,
+                Player.MBSSettings.FortuneWheelItemSets,
+                StripLevel.UNDERWEAR,
+                StripLevel.UNDERWEAR,
+                enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
+                false,
+                false,
+            ),
+            new FWItemSet(
+                "Petrification",
+                FORTUNE_WHEEL_ITEMS.statue,
+                Player.MBSSettings.FortuneWheelItemSets,
+                StripLevel.UNDERWEAR,
+                StripLevel.UNDERWEAR,
+                enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
+                false,
+                false,
+                statueCopyColors,
+            ),
+        ]);
+        FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
+        FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
+        FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
+        pushMBSSettings([SettingsType.SHARED]);
+    });
 });

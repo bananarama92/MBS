@@ -1,7 +1,7 @@
 import { clamp } from "lodash-es";
 
 import { fromEntries, validateInt, waitFor } from "../common";
-import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet } from "../common_bc";
+import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, bcLoaded } from "../common_bc";
 import { MBSScreen } from "../screen_abc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
@@ -20,7 +20,7 @@ interface GridSpec {
 
 /** A {@link TextCache} cache for the `MiniGame/WheelFortune` screen */
 let SCREEN_CACHE: TextCache;
-waitFor(() => typeof MainCanvas !== "undefined").then(() => {
+waitFor(bcLoaded).then(() => {
     const csvPath = "Screens/MiniGame/WheelFortune/Text_WheelFortune.csv";
     SCREEN_CACHE = new TextCache(csvPath, "MISSING VALUE FOR TAG: ");
 });

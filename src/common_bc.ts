@@ -104,12 +104,14 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
+/** Whether BC had been loaded. */
+export function bcLoaded(testGameVersion=true): boolean {
+    return typeof MainCanvas === "object" && (testGameVersion ? GameVersionFormat.test(GameVersion) : true);
+}
+
 /** Return whether all vanilla BC online shared settings are loaded. */
 export function settingsLoaded(): boolean {
-    return (
-        typeof Player !== "undefined"
-        && Player.OnlineSharedSettings !== undefined
-    );
+    return bcLoaded() && Player.OnlineSharedSettings !== undefined;
 }
 
 /** Return whether all online settings (including MBS ones) are loaded. */
