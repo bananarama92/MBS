@@ -139,24 +139,6 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
     return ret;
 }
 
-/**
- * Shrink the crafted item description down to a minimum set of LSCG keywords
- * @param description The to-be parsed description
- * @returns The parsed description
- */
-function minifyDescription(description?: null | string) {
-    if (!description || typeof LSCG === "undefined") {
-        return "";
-    }
-
-    const keywords = [
-        ...(LSCG?.NetgunKeywords() ?? []),
-        ...(LSCG?.DrugKeywords() ?? []),
-        ...(LSCG?.CraftableItemSpellNames() ?? []),
-    ];
-    return keywords.filter(i => description.includes(i)).join(" ");
-}
-
 /** A map with various {@link Asset} validation checks for {@link fromItemBundles}. */
 const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
     ["Unknown asset", (asset: null | Asset) => asset == null],
@@ -198,7 +180,6 @@ export function fromItemBundle(
                 TypeRecord: undefined,
                 OverridePriority: null,
                 Lock: "",
-                Description: minifyDescription(item.Craft.Description),
             },
         );
         CraftingValidate(craft, asset, false);

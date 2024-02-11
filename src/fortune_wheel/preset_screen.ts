@@ -1,7 +1,5 @@
-import { clamp } from "lodash-es";
-
 import { fromEntries, validateInt, waitFor } from "../common";
-import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, bcLoaded } from "../common_bc";
+import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, bcLoaded, drawHeaderedTooltip } from "../common_bc";
 import { MBSScreen } from "../screen_abc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
@@ -24,29 +22,6 @@ waitFor(bcLoaded).then(() => {
     const csvPath = "Screens/MiniGame/WheelFortune/Text_WheelFortune.csv";
     SCREEN_CACHE = new TextCache(csvPath, "MISSING VALUE FOR TAG: ");
 });
-
-function drawPresetTooltip(x: number, y: number, w: number, tooltip: string[]) {
-    const [header, ...rest] = tooltip;
-    const h = DELTA + rest.length * 48 + (rest.length > 0 ? 16 : 0);
-    x = clamp(x, 0, 2000 - w);
-    y = clamp(y, 0, 1000 - h);
-
-    DrawRect(x, y, w, h, "White");
-    DrawEmptyRect(x, y, w, h, "Black", 2);
-    MainCanvas.beginPath();
-    MainCanvas.moveTo(x, y + DELTA);
-    MainCanvas.lineTo(x + w, y + DELTA);
-    MainCanvas.stroke();
-
-    MainCanvas.textBaseline = "middle";
-    DrawTextFit(header, x + (w / 2), y + DELTA / 2, w - 32, "black");
-    MainCanvas.textAlign = "left";
-    MainCanvas.font = '30px "Arial", sans-serif';
-    rest.forEach((str, i) => DrawText(str, x + 16, y + DELTA + 8 + 24 + i * 48, "black"));
-    MainCanvas.textAlign = "center";
-    MainCanvas.font = '36px "Arial", sans-serif';
-    MainCanvas.textBaseline = "top";
-}
 
 export class WheelPresetScreen extends MBSScreen {
     static readonly background = "Sheet";
@@ -246,7 +221,7 @@ export class WheelPresetScreen extends MBSScreen {
             }
         }
 
-        return fromEntries(Object.values(optionRecord).map(({ ids, prefix, suffix }, i) => {
+        return fromEntries(Object.values(optionRecord).map(({ ids, prefix, suffix }, i): [string, UIElement] => {
             const x = gridSpec.xOffset + Math.floor(i / OPTIONS_PER_ROW) * gridSpec.xDelta;
             const y = gridSpec.yOffset + (i % OPTIONS_PER_ROW) * gridSpec.yDelta;
             return [
@@ -260,7 +235,7 @@ export class WheelPresetScreen extends MBSScreen {
                             DrawHoverElements.push(() => {
                                 const tooltip = [prefix, ...suffix.filter((_, i) => this.activePreset.ids.has(ids[i]))];
                                 DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
-                                drawPresetTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, tooltip);
+                                drawHeaderedTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, DELTA, tooltip);
                             });
                         }
                     },
@@ -304,7 +279,7 @@ export class WheelPresetScreen extends MBSScreen {
                             const tooltip = [`${prefix}: ${middle}`, ...suffix];
 
                             DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
-                            drawPresetTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, tooltip);
+                            drawHeaderedTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, DELTA, tooltip);
                         }
                     },
                 },

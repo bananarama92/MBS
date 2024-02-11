@@ -1,6 +1,6 @@
 /** Function for managing all MBS related settings. */
 
-import { omit } from "lodash-es";
+import { omit, sumBy } from "lodash-es";
 
 import {
     waitFor,
@@ -19,6 +19,8 @@ import {
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
+
+import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
 export type SettingsType = 0 | 1;
 
@@ -304,4 +306,12 @@ waitFor(settingsLoaded).then(() => {
     initMBSSettings();
     pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
     logger.log("Initializing settings module");
+
+    const fields = ["ExtensionSettings", "OnlineSharedSettings"] as const;
+    for (const fieldName of fields) {
+        const dataB = measureDataSize(Player[fieldName]);
+        const dataKB = Object.fromEntries(Object.entries(dataB).map(([k, v]) => [k, byteToKB(v)]));
+        const nKB = byteToKB(sumBy(Object.values(dataB), (i) => Number.isNaN(i) ? 0 : i));
+        logger.log(`Total ${fieldName} data usage at ${nKB} / ${MAX_DATA / 1000} KB`, dataKB);
+    }
 });

@@ -1,11 +1,17 @@
 /** Selection screen for custom wheel of fortune options */
 
-import { range } from "lodash-es";
+import { range, sumBy } from "lodash-es";
 
 import { LoopIterator, logger } from "../common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "../common_bc";
 import { MBSScreen } from "../screen_abc";
-import { parseFWObjects, unpackSettings } from "../settings";
+import {
+    parseFWObjects,
+    unpackSettings,
+    getStorageElement,
+    MAX_DATA,
+    measureDataSize,
+} from "../settings";
 
 import { FWCommandScreen } from "./fortune_wheel_command";
 import { FWItemSetScreen } from "./fortune_wheel_item_set";
@@ -62,6 +68,7 @@ export class FWSelectScreen extends MBSScreen {
     readonly pageSelector: LoopIterator<PageStruct>;
     readonly wheelStruct: WheelStruct;
     readonly character: Character;
+    readonly dataSize: DataSize;
 
     /** A record containing element names mapped to a set of UI functions */
     readonly elements: Readonly<Record<string, UIElement>>;
@@ -104,6 +111,7 @@ export class FWSelectScreen extends MBSScreen {
         ]);
         this.wheelStruct = wheelStruct;
         this.character = character;
+        this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
 
         const isPlayer = this.character.IsPlayer();
         this.elements = Object.freeze({
@@ -146,6 +154,7 @@ export class FWSelectScreen extends MBSScreen {
                 },
             },
             ...this.#generateUIElements(),
+            OnlineSharedSettings: getStorageElement.bind(this)([200, 200, 128, 7 * 90 - 26]),
         });
     }
 
@@ -215,6 +224,13 @@ export class FWSelectScreen extends MBSScreen {
                 ],
             ];
         }));
+    }
+
+    load() {
+        const nByte = measureDataSize(this.character.OnlineSharedSettings);
+        this.dataSize.value = sumBy(Object.values(nByte), (i) => Number.isNaN(i) ? 0 : i);
+        this.dataSize.valueRecord = nByte;
+        super.load();
     }
 
     run(): void {

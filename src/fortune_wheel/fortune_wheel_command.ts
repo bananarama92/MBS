@@ -11,6 +11,7 @@ import {
     MBSObjectScreen,
     ExitAction,
 } from "../screen_abc";
+import { byteToKB } from "../settings";
 
 export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     static readonly screen = "MBS_FWCommandScreen";
@@ -41,7 +42,7 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
             {
                 coords: [1610, 60, 90, 90],
                 next: () => {
-                    if (this.settings.isValid(this.index)) {
+                    if (this.settings.isValid(this.index) && this.hasStorageSpace()) {
                         this.exit(false, ExitAction.SAVE);
                     }
                 },
@@ -92,6 +93,10 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
             acceptDisabled = true;
             acceptColor = "Gray";
             acceptDescription += (this.settings.name === null) ? ": Missing name" : ": Duplicate name";
+        } else if (!this.hasStorageSpace()) {
+            acceptDisabled = true;
+            acceptColor = "Gray";
+            acceptDescription = `Max allowed OnlineSharedSettings storage size exceeded (${byteToKB(this.dataSize.value)} / ${byteToKB(this.dataSize.max)} KB)`;
         }
         DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
         ElementPosition("MBSname", 900, 500, 900, 64);
