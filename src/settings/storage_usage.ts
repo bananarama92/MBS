@@ -33,7 +33,7 @@ export function byteToKB(nByte: number) {
 }
 
 export function getStorageElement(
-    this: { dataSize: DataSize },
+    this: { readonly dataSize: DataSize, readonly character: Character },
     coords: RectTuple,
 ): UIElement {
     const nColorHalfID = 216;
@@ -42,6 +42,18 @@ export function getStorageElement(
     return {
         coords: [...coords],
         run: (x, y, w, h) => {
+            if (!this.character.IsPlayer()) {
+                DrawRect(x, y, w, h, "Gray");
+                DrawEmptyRect(x, y, w, h, "Black", 2);
+                DrawText(`- / ${MAX_DATA / 1000} KB`, x + (w / 2), y + h + 58, "Black");
+                if (MouseIn(x, y, w, h)) {
+                    DrawHoverElements.push(() => {
+                        drawHeaderedTooltip(x + w + 36, y - 64, 550, 64, ["OnlineSharedSettings Data Usage"]);
+                    });
+                }
+                return;
+            }
+
             const heightFrac = clamp(this.dataSize.value / MAX_DATA, 0, 1);
             const topColorID = Math.round(clamp((heightFrac - 0.2) / 0.6, 0, 1) * 2 * nColorHalfID);
             const topColor = (topColorID % nColorHalfID).toString(16).padStart(2, "0");
