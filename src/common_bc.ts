@@ -1,6 +1,6 @@
 /** Miscellaneous common BC-related functions and classes */
 
-import { sortBy, omit } from "lodash-es";
+import { sortBy, omit, clamp } from "lodash-es";
 
 import {
     toStringTemplate,
@@ -104,12 +104,14 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
+/** Whether BC had been loaded. */
+export function bcLoaded(testGameVersion=true): boolean {
+    return typeof MainCanvas === "object" && (testGameVersion ? GameVersionFormat.test(GameVersion) : true);
+}
+
 /** Return whether all vanilla BC online shared settings are loaded. */
 export function settingsLoaded(): boolean {
-    return (
-        typeof Player !== "undefined"
-        && Player.OnlineSharedSettings !== undefined
-    );
+    return bcLoaded() && Player.OnlineSharedSettings !== undefined;
 }
 
 /** Return whether all online settings (including MBS ones) are loaded. */
@@ -1014,4 +1016,29 @@ export function createWeightedWheelIDs(ids: string): string {
         idList.push(...sortBy(idBaseList, Math.random));
     }
     return idList.join("");
+}
+
+export function drawHeaderedTooltip(x: number, y: number, w: number, deltaH: number, tooltip: string[]) {
+    MainCanvas.save();
+    try {
+        const [header, ...rest] = tooltip;
+        const h = deltaH + rest.length * 48 + (rest.length > 0 ? 16 : 0);
+        x = clamp(x, 0, 2000 - w);
+        y = clamp(y, 0, 1000 - h);
+
+        DrawRect(x, y, w, h, "White");
+        DrawEmptyRect(x, y, w, h, "Black", 2);
+        MainCanvas.beginPath();
+        MainCanvas.moveTo(x, y + deltaH);
+        MainCanvas.lineTo(x + w, y + deltaH);
+        MainCanvas.stroke();
+
+        MainCanvas.textBaseline = "middle";
+        DrawTextFit(header, x + (w / 2), y + deltaH / 2, w - 32, "black");
+        MainCanvas.textAlign = "left";
+        MainCanvas.font = '30px "Arial", sans-serif';
+        rest.forEach((str, i) => DrawText(str, x + 16, y + deltaH + 8 + 24 + i * 48, "black"));
+    } finally {
+        MainCanvas.restore();
+    }
 }

@@ -1,4 +1,7 @@
+import { sumBy } from "lodash-es";
+
 import { validateInt } from "./common";
+import { MAX_DATA, measureDataSize } from "./settings";
 
 export abstract class MBSScreen {
     /** The name of the screen's background. */
@@ -149,6 +152,8 @@ export abstract class MBSObjectScreen<
     readonly mbsList: (null | T)[];
     /** A list with interfaces for representing clickable buttons */
     abstract readonly clickList: readonly ClickAction[];
+    /** The maximum and actually used size of {@link Character.OnlineSharedSettings} in KB */
+    readonly dataSize: DataSize;
     /** The current index within {@link MBSObjectScreen.mbsList} */
     #index: number = 0;
 
@@ -161,11 +166,32 @@ export abstract class MBSObjectScreen<
     /** Get current wheel object within {@link MBSObjectScreen.mbsList} */
     get mbsObject() { return this.mbsList[this.#index]; }
 
+    hasStorageSpace(): boolean {
+        if (this.mbsList[this.index] === null) {
+            return this.dataSize.value <= (this.dataSize.max * this.dataSize.marigin);
+        } else {
+            return true;
+        }
+    }
+
     constructor(parent: null | MBSScreen, wheelList: (null | T)[], index: number, character: Character) {
         super(parent);
         this.character = character;
         this.mbsList = wheelList;
         this.index = index;
+        this.dataSize = Object.seal({
+            value: 0,
+            valueRecord: {},
+            max: MAX_DATA,
+            marigin: 0.9,
+        });
+    }
+
+    load() {
+        const nByte = measureDataSize(this.character.OnlineSharedSettings);
+        this.dataSize.value = sumBy(Object.values(nByte), (i) => Number.isNaN(i) ? 0 : i);
+        this.dataSize.valueRecord = nByte;
+        super.load();
     }
 
     /** Handle clicks within the customization screen. */
@@ -196,7 +222,7 @@ export abstract class MBSObjectScreen<
             case ExitAction.NONE:
                 break;
             case ExitAction.SAVE: {
-                if (this.settings.isValid(this.index)) {
+                if (this.settings.isValid(this.index) && this.hasStorageSpace()) {
                     const hidden = this.mbsList[this.index]?.hidden ?? false;
                     this.mbsList[this.index] = this.settings.writeSettings(hidden);
                     this.mbsList[this.index]?.register();

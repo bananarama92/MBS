@@ -3,6 +3,7 @@
 import { sortBy } from "lodash-es";
 
 import { waitFor, logger, MBS_MOD_API } from "./common";
+import { bcLoaded } from "./common_bc";
 import { BC_MIN_VERSION } from "./sanity_checks";
 
 /** The next BC version */
@@ -11,7 +12,7 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
-waitFor(() => typeof MainCanvas !== "undefined").then(() => {
+waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
         case "R100": {
             if (MBS_MOD_API.getOriginalHash("CharacterResetFacialExpression") === "C22A83C0") {

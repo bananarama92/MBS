@@ -9,6 +9,7 @@ import {
     FWItemSet,
 } from "../common_bc";
 import { MBSScreen, MBSObjectScreen, ExitAction } from "../screen_abc";
+import { byteToKB } from "../settings";
 
 import { toItemBundles } from "./item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "./equipper";
@@ -126,7 +127,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             {
                 coords: [1610, 60, 90, 90],
                 next: () => {
-                    if (this.settings.isValid(this.index)) {
+                    if (this.settings.isValid(this.index) && this.hasStorageSpace()) {
                         this.exit(false, ExitAction.SAVE);
                     }
                 },
@@ -288,6 +289,10 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             } else {
                 acceptDescription += ": Duplicate name";
             }
+        } else if (!this.hasStorageSpace()) {
+            acceptDisabled = true;
+            acceptColor = "Gray";
+            acceptDescription = `Max allowed OnlineSharedSettings storage size exceeded (${byteToKB(this.dataSize.value)} / ${byteToKB(this.dataSize.max)} KB)`;
         }
         DrawButton(1610, 60, 90, 90, "", acceptColor, "Icons/Accept.png", acceptDescription, acceptDisabled);
         DrawCharacter(this.preview, 300, 175, 0.78, false);

@@ -2,7 +2,7 @@
 
 import { waitFor, MBS_MOD_API, logger } from "./common";
 import { validateBCVersion, validateHookHashes } from "./sanity_checks";
-import { settingsMBSLoaded } from "./common_bc";
+import { bcLoaded } from "./common_bc";
 import { toItemBundles as _toItemBundles } from "./fortune_wheel";
 import { unpackSettings as _unpackSettings } from "./settings";
 import { wheelOutfits, getDebug, API_VERSION } from "./api";
@@ -23,8 +23,8 @@ export {
 };
 
 logger.log(`Initializing MBS version ${MBS_VERSION}`);
-waitFor(() => typeof GameVersion === "string" && GameVersion !== "R0").then(() => validateBCVersion(GameVersion));
-waitFor(settingsMBSLoaded).then(validateHookHashes);
+waitFor(() => bcLoaded(false)).then(() => validateBCVersion(GameVersion));
+waitFor(bcLoaded).then(validateHookHashes);
 
 import "./window_register";
 import "./crafting";

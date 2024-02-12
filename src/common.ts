@@ -393,7 +393,7 @@ export class Version {
     static fromBCVersion(version: string): Version {
         const match = GameVersionFormat.exec(version);
         if (match === null) {
-            throw new Error(`Invalid BC "version": ${version}`);
+            throw new Error(`Invalid BC version: "${version}"`);
         }
         return new Version(Number(match[1]), 0, 0, match[2] !== undefined);
     }

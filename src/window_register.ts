@@ -1,12 +1,12 @@
 /** Module for managing the {@link globalThis} exporting of MBS functions. */
 
 import { waitFor } from "./common";
-import { settingsMBSLoaded } from "./common_bc";
+import { bcLoaded } from "./common_bc";
 import { FWItemSetScreen, FWCommandScreen, FWSelectScreen, WheelPresetScreen } from "./fortune_wheel";
 import { MBSPreferenceScreen, ResetScreen } from "./settings";
 import { NewItemsScreen } from "./new_items_screen";
 
-waitFor(settingsMBSLoaded).then(() => {
+waitFor(bcLoaded).then(() => {
     const backgrounds = {
         [`${FWItemSetScreen.screen}Background`]: FWItemSetScreen.background,
         [`${FWCommandScreen.screen}Background`]: FWCommandScreen.background,

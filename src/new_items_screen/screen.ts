@@ -3,6 +3,7 @@ import { inRange, omit } from "lodash-es";
 
 import { keys, entries, fromEntries, LoopIterator, waitFor, logger } from "../common";
 import { MBSScreen, ScreenProxy } from "../screen_abc";
+import { bcLoaded } from "../common_bc";
 
 /**
  * Adapted from {@link CommonGenerateGridParameters}.
@@ -64,7 +65,7 @@ const NEW_ASSETS: Record<AssetKey, Asset> = {};
 /** A record mapping {@link Asset.BuyGroup} names to the (adjusted) cost of each asset plus a list of all minified assets */
 const BUY_GROUPS: Record<string, { readonly money: number, readonly assets: ItemBundle[] }> = {};
 
-waitFor(() => typeof MainCanvas !== "undefined").then(() => {
+waitFor(bcLoaded).then(() => {
     const result = GameVersionFormat.exec(GameVersion);
     if (result == null) {
         logger.error(`Invalid BC version: "${GameVersion}"`);

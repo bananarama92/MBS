@@ -1,7 +1,7 @@
 /** Main module for managing all crafting-related additions */
 
 import { MBS_MOD_API, waitFor, padArray, logger } from "../common";
-import { settingsMBSLoaded } from "../common_bc";
+import { settingsMBSLoaded, bcLoaded } from "../common_bc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
 export const BC_SLOT_MAX_ORIGINAL = 80;
@@ -94,7 +94,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     }
 }
 
-waitFor(settingsMBSLoaded).then(() => {
+waitFor(bcLoaded).then(() => {
     logger.log("Initializing crafting hooks");
 
     // Mirror the extra MBS-specific crafted items to the MBS settings
@@ -122,5 +122,8 @@ waitFor(settingsMBSLoaded).then(() => {
             `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
     });
 
-    loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
+    waitFor(settingsMBSLoaded).then(() => {
+        logger.log("Initializing crafting cache");
+        loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
+    });
 });

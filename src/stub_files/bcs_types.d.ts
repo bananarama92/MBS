@@ -229,3 +229,15 @@ interface WheelPreset {
     readonly name: string,
     readonly ids: string,
 }
+
+/** The maximum and actually used size of {@link Character.OnlineSharedSettings} */
+interface DataSize {
+    /** The currently used data size in bytes */
+    value: number,
+    /** The currently used data size in bytes per key */
+    valueRecord: Record<string, number>;
+    /** The maximum data size in bytes */
+    readonly max: number,
+    /** A safety marigin in the `[0, 1]` interval applied as a factor to `max` */
+    readonly marigin: number,
+}

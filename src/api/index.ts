@@ -1,5 +1,5 @@
 import { logger, waitFor } from "../common";
-import { settingsMBSLoaded } from "../common_bc";
+import { settingsMBSLoaded, bcLoaded } from "../common_bc";
 
 import * as wheelOutfits from "./wheel_outfits";
 
@@ -38,7 +38,7 @@ export const getDebug: typeof mbs.getDebug = function getDebug() {
 };
 
 // Register the debugger to FUSAM
-waitFor(settingsMBSLoaded).then(() => {
+waitFor(bcLoaded).then(() => {
     if (typeof FUSAM !== "undefined" && typeof FUSAM.registerDebugMethod === "function") {
         FUSAM.registerDebugMethod("mbs", getDebug);
     }

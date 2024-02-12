@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.3.5
+* Refactor the logic for checking whether BC is properly loaded or not
+* Re-enable the storing of crafted item descriptions in the wheel of fortune, reverting their previous removal in MBS v0.6.22
+* Add checks to ensure that MBS does not exceed the 180 KB storage limit for its shared settings, exceeding of which can cause crashes and unstable behavior in BC
+
 ## v1.3.4
 * Add R101Beta2 support; no support for Beta1 will be added
 * Let the Show New Items menu display whether the player has F-/M-only shop items enabled
