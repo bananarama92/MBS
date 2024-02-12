@@ -22,8 +22,8 @@
     },
     "dependencies": {
         "@types/lodash-es": "^4.17.9",
-        "bc-data": "101.0.0-Beta.1",
-        "bc-stubs": "101.0.0-Beta.1",
+        "bc-data": "101.0.0-Beta.2",
+        "bc-stubs": "101.0.0-Beta.2",
         "bondage-club-mod-sdk": "^1.1.0",
         "lodash-es": "^4.17.21"
     },
