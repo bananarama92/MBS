@@ -202,7 +202,7 @@ export class FWSelectScreen extends MBSScreen {
                                 name = `${name.slice(0, 50)}...`;
                             }
                             DrawButton(
-                                ...coords, `${i + this.pageSelector.value.slice[0]}: ${name}`,
+                                ...coords, `${i}: ${name}`,
                                 buttonDisabled ? "Gray" : "White", "", "", buttonDisabled,
                             );
                         },
