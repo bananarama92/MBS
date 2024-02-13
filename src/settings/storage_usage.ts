@@ -14,17 +14,30 @@ export const MAX_DATA = 180_000;
  * @returns A record mapping all keys in `data` to their respective byte size or `NaN` if it cannot be determined
  */
 export function measureDataSize(data: unknown): Record<string, number> {
-    const addonSize: Record<string, number> = {};
+    const addonSize: [name: string, nByte: number][] = [];
     const dataRecord = CommonIsObject(data) ? data : {};
     for (const [key, value] of Object.entries(dataRecord)) {
         try {
             const stringData = JSON.stringify(value ?? "");
-            addonSize[key] = (new TextEncoder()).encode(stringData).byteLength;
+            addonSize.push([key, (new TextEncoder()).encode(stringData).byteLength]);
         } catch {
-            addonSize[key] = NaN;
+            addonSize.push([key, NaN]);
         }
     }
-    return addonSize;
+
+    return Object.fromEntries(addonSize.sort(([k1, nByte1], [k2, nByte2]) => {
+        nByte1 = Math.round(nByte1 / 100);
+        nByte2 = Math.round(nByte2 / 100);
+        const isNan1 = Number.isNaN(nByte1);
+        const isNan2 = Number.isNaN(nByte2);
+        if (nByte1 === nByte2 || (isNan1 && isNan2)) {
+            return k1.localeCompare(k2);
+        } else if (isNan1 || isNan2) {
+            return isNan2 ? -1 : 1;
+        } else {
+            return nByte2 - nByte1;
+        }
+    }));
 }
 
 /** Convert B to KB with up to one decimal digit. */
@@ -92,13 +105,18 @@ export function getStorageElement(
             MainCanvas.stroke();
 
             if (MouseIn(x, y, w, h)) {
-                const entries = Object.entries(this.dataSize.valueRecord).map(([k, v]) => {
+                let entries = Object.entries(this.dataSize.valueRecord).map(([k, v]) => {
                     if (k.length > 28) {
                         k = `${k.slice(0, 25)}...`;
                     }
                     const nKB = Number.isNaN(v) ? "Unknown" : `${byteToKB(v)} KB`;
                     return [k, nKB] as const;
                 });
+                if (entries.length >= 11) {
+                    entries = entries.slice(0, 10);
+                    entries.push(["...", ""]);
+                }
+
                 DrawHoverElements.push(() => {
                     drawHeaderedTooltip(x + w + 36, y - 64, 550, 64, ["OnlineSharedSettings Data Usage", ...entries.map(i => i[0])]);
                     MainCanvas.save();
