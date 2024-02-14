@@ -1018,13 +1018,21 @@ export function createWeightedWheelIDs(ids: string): string {
     return idList.join("");
 }
 
-export function drawHeaderedTooltip(x: number, y: number, w: number, deltaH: number, tooltip: string[]) {
+export function drawHeaderedTooltip(
+    x: number,
+    y: number,
+    w: number,
+    deltaH: number,
+    tooltip: readonly string[],
+    marigin: null | Readonly<Partial<{ x0: number, y0: number, x1: number, y1: number }>> = null,
+) {
+    const mariginParsed = { x0: marigin?.x0 ?? 0, y0: marigin?.y0 ?? 0, x1: marigin?.x1 ?? 2000, y1: marigin?.y1 ?? 1000 } as const;
     MainCanvas.save();
     try {
         const [header, ...rest] = tooltip;
         const h = deltaH + rest.length * 48 + (rest.length > 0 ? 16 : 0);
-        x = clamp(x, 0, 2000 - w);
-        y = clamp(y, 0, 1000 - h);
+        x = clamp(x, mariginParsed.x0, mariginParsed.x1 - w);
+        y = clamp(y, mariginParsed.y0, mariginParsed.y1 - h);
 
         DrawRect(x, y, w, h, "White");
         DrawEmptyRect(x, y, w, h, "Black", 2);
