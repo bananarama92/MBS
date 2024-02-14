@@ -312,6 +312,10 @@ waitFor(settingsLoaded).then(() => {
         const dataB = measureDataSize(Player[fieldName]);
         const dataKB = Object.fromEntries(Object.entries(dataB).map(([k, v]) => [k, byteToKB(v)]));
         const nKB = byteToKB(sumBy(Object.values(dataB), (i) => Number.isNaN(i) ? 0 : i));
-        logger.log(`Total ${fieldName} data usage at ${nKB} / ${MAX_DATA / 1000} KB`, dataKB);
+        if (nKB >= (MAX_DATA * 0.9 / 1000)) {
+            logger.warn(`Total ${fieldName} data usage at ${nKB} / ${MAX_DATA / 1000} KB`, dataKB);
+        } else {
+            logger.log(`Total ${fieldName} data usage at ${nKB} / ${MAX_DATA / 1000} KB`, dataKB);
+        }
     }
 });

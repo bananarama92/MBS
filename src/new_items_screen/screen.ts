@@ -63,7 +63,7 @@ type AssetKey = `${AssetGroupName}${string}`;
 const NEW_ASSETS: Record<AssetKey, Asset> = {};
 
 /** A record mapping {@link Asset.BuyGroup} names to the (adjusted) cost of each asset plus a list of all minified assets */
-const BUY_GROUPS: Record<string, { readonly money: number, readonly assets: ItemBundle[] }> = {};
+const BUY_GROUPS: Record<string, undefined | { readonly money: number, readonly assets: ItemBundle[] }> = {};
 
 waitFor(bcLoaded).then(() => {
     const result = GameVersionFormat.exec(GameVersion);
@@ -397,7 +397,7 @@ export class NewItemsScreen extends MBSScreen {
 
     /** Generate a `click` function for a particular asset. */
     #generateUIElementClick(assetID: AssetKey, asset: Asset): UIElement["click"] {
-        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, assets: [{ group: asset.Group.Name, name: asset.Name }] };
+        const buyGroups = BUY_GROUPS[asset.BuyGroup as string] ?? { money: asset.Value, assets: [{ Group: asset.Group.Name, Name: asset.Name }] };
         const money = inRange(buyGroups.money, -1, Infinity) ? buyGroups.money : 0;
         return () => {
             switch (this.mode) {

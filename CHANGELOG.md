@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.3.6
+* Do not display the wheel storage size for non-player characters
+* Fix the reported index for entries in the wheel customization menu
+* Fix the show now item buy menu failing to update for items with no buygroup
+* Misc minor changes to how the data storage size is reported
+
 ## v1.3.5
 * Refactor the logic for checking whether BC is properly loaded or not
 * Re-enable the storing of crafted item descriptions in the wheel of fortune, reverting their previous removal in MBS v0.6.22
