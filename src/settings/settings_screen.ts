@@ -10,7 +10,7 @@ import { ResetScreen } from "./reset_screen";
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
     readonly screen = PreferenceScreenProxy.screen;
-    readonly character: Character;
+    readonly character: PlayerCharacter;
 
     constructor() {
         super(
@@ -31,31 +31,73 @@ export class PreferenceScreenProxy extends ScreenProxy {
 export class MBSPreferenceScreen extends MBSScreen {
     static readonly screen = "MBSPreferenceScreen";
     readonly screen = MBSPreferenceScreen.screen;
-    readonly character: Character;
-    readonly clickList: readonly ClickAction[];
+    readonly character: PlayerCharacter;
+    readonly elements: Record<string, UIElement>;
 
-    constructor(parent: null | MBSScreen, character: Character) {
+    constructor(parent: null | MBSScreen) {
         super(parent);
-        this.character = character;
-        this.clickList = [
-            {
-                coords: [1815, 75, 90, 90],
-                requiresPlayer: false,
-                next: () => this.exit(),
+        this.character = Player;
+
+        const descriptionOffset = 125;
+        this.elements = {
+            header: {
+                coords: [500, 125, 0, 0],
+                run: (x, y) => DrawText(`- Maid's Bondage Scripts ${MBS_VERSION} -`, x, y, "Black"),
             },
-            {
+            previewCharacter: {
+                coords: [50, 50, 0, 0],
+                run: (x, y) => DrawCharacter(this.character, x, y, 0.9),
+            },
+            exit: {
+                coords: [1815, 75, 90, 90],
+                run: (...coords) => DrawButton(...coords, "", "White", "Icons/Exit.png", "Exit"),
+                click: () => this.exit(),
+            },
+            reset: {
+                coords: [1500, 620, 400, 80],
+                run: (x, y, w, h) => {
+                    const iconMarigin = 10;
+                    DrawButton(x, y, w, h, "", "#ffc9c9", "", "Clear all MBS data");
+                    DrawImageResize("Icons/ServiceBell.png", x + iconMarigin, y + iconMarigin, h - 2 * iconMarigin, h - 2 * iconMarigin);
+                    DrawTextFit("Reset MBS", x + h, y + (h / 2), w - h, "Black");
+                },
+                click: () => {
+                    const subScreen = new ResetScreen(this);
+                    this.children.set(subScreen.screen, subScreen);
+                    subScreen.load();
+                },
+            },
+            changelog: {
+                coords: [1500, 720, 400, 80],
+                run: (x, y, w, h) => {
+                    const iconMarigin = 10;
+                    DrawButton(x, y, w, h, "", "White", "", "Open the MBS changelog");
+                    DrawImageResize("Icons/Changelog.png", x + iconMarigin, y + iconMarigin, h - 2 * iconMarigin, h - 2 * iconMarigin);
+                    DrawTextFit("Latest Changes", x + h, y + (h / 2), w - h, "Black");
+                },
+                click: () => {
+                    open(getChangeLogURL(), "_blank");
+                },
+            },
+            newAssets: {
                 coords: [500, 172, 90, 90],
-                requiresPlayer: true,
-                next: () => {
+                run: (x, y, w, h) => {
+                    DrawButton(x, y, w, h, "", "White", "Icons/Changelog.png");
+                    DrawText(`MBS: Show new R${NEW_ASSETS_VERSION} items`, x + descriptionOffset, y + h / 2, "Black");
+                },
+                click: () => {
                     const subScreen = new NewItemsScreen(this);
                     this.children.set(subScreen.screen, subScreen);
                     subScreen.load();
                 },
             },
-            {
+            wheelConfig: {
                 coords: [500, 282, 90, 90],
-                requiresPlayer: false,
-                next: () => {
+                run: (x, y, w, h) => {
+                    DrawButton(x, y, w, h, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
+                    DrawText("Configure the Wheel of Fortune", x + descriptionOffset, y + h / 2, "Black");
+                },
+                click: () => {
                     const wheelStruct = {
                         FortuneWheelItemSets: loadFortuneWheelObjects(this.character, "FortuneWheelItemSets", "item sets"),
                         FortuneWheelCommands: loadFortuneWheelObjects(this.character, "FortuneWheelCommands", "commands"),
@@ -65,90 +107,53 @@ export class MBSPreferenceScreen extends MBSScreen {
                     subScreen.load();
                 },
             },
-            {
+            rollWhenRestrained: {
                 coords: [500, 394, 64, 64],
-                requiresPlayer: true,
-                next: () => {
-                    if (
-                        this.character.IsPlayer()
-                        && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
-                    ) {
+                run: (x, y, w, h) => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    DrawCheckbox(x, y, w, h, "", this.character.MBSSettings.RollWhenRestrained, disabled);
+                    DrawText("Allow wheel spinning while restrainted", x + descriptionOffset, y + h / 2, "Black");
+                },
+                click: () => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    if (!disabled) {
                         this.character.MBSSettings.RollWhenRestrained = !this.character.MBSSettings.RollWhenRestrained;
                         pushMBSSettings([SettingsType.SETTINGS]);
                     }
                 },
             },
-            {
+            lockedWhenRestrained: {
                 coords: [500, 470, 64, 64],
-                requiresPlayer: true,
-                next: () => {
-                    if (
-                        this.character.IsPlayer()
-                        && !(this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained())
-                    ) {
+                run: (x, y, w, h) => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    DrawCheckbox(x, y, w, h, "", this.character.MBSSettings.LockedWhenRestrained, disabled);
+                    DrawText("Lock MBS settings while restrained", x + descriptionOffset, y + h / 2, "Black");
+                },
+                click: () => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    if (!disabled) {
                         this.character.MBSSettings.LockedWhenRestrained = !this.character.MBSSettings.LockedWhenRestrained;
                         pushMBSSettings([SettingsType.SETTINGS]);
                     }
                 },
             },
-            {
-                coords: [1500, 620, 400, 80],
-                requiresPlayer: true,
-                next: () => {
-                    const subScreen = new ResetScreen(this);
-                    this.children.set(subScreen.screen, subScreen);
-                    subScreen.load();
-                },
-            },
-            {
-                coords: [1500, 720, 400, 80],
-                requiresPlayer: false,
-                next: () => {
-                    globalThis.open(getChangeLogURL(), "_blank");
-                },
-            },
-        ];
+        };
     }
 
-    click() {
-        const isPlayer = this.character.IsPlayer();
-        for (const { coords, requiresPlayer, next } of this.clickList) {
-            const canClick = isPlayer ? true : !requiresPlayer;
-            if (MouseIn(...coords) && canClick) {
-                next();
-                return;
+    click(event: MouseEvent | TouchEvent) {
+        return Object.values(this.elements).some((e) => {
+            if (MouseIn(...e.coords)) {
+                e.click?.(event);
+                return true;
+            } else {
+                return false;
             }
-        }
+        });
     }
 
     run() {
         MainCanvas.textAlign = "left";
-        DrawText(`- Maid's Bondage Scripts ${MBS_VERSION} -`, 500, 125, "Black");
-        DrawCharacter(this.character, 50, 50, 0.9);
-        DrawButton(1815, 75, 90, 90, "", "White", "Icons/Exit.png", "Exit");
-
-        DrawButton(500, 172, 90, 90, "", "White", "Icons/Changelog.png");
-        DrawText(`MBS: Show new R${NEW_ASSETS_VERSION} items`, 625, 207, "Black");
-
-        DrawButton(500, 282, 90, 90, "", "White", "Icons/Crafting.png", "Configure Wheel of Fortune");
-        DrawText("Configure the Wheel of Fortune", 625, 317, "Black");
-
-        if (this.character.IsPlayer()) {
-            const disable = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
-            DrawCheckbox(500, 394, 64, 64, "", this.character.MBSSettings.RollWhenRestrained, disable);
-            DrawText("Allow wheel spinning while restrainted", 575, 427, "Black");
-
-            DrawCheckbox(500, 470, 64, 64, "", this.character.MBSSettings.LockedWhenRestrained, disable);
-            DrawText("Lock MBS settings while restrained", 575, 502, "Black");
-
-            DrawButton(1500, 620, 400, 80, "", "#ffc9c9", "", "Clear all MBS data");
-            DrawImageResize("Icons/ServiceBell.png", 1510, 630, 60, 60);
-            DrawTextFit("Reset", 1580, 660, 320, "Black");
-
-            DrawButton(1500, 720, 400, 80, "", "White", "", "Open the MBS changelog", false);
-            DrawImageResize("Icons/Changelog.png", 1510, 730, 60, 60);
-            DrawTextFit("Latest Changes", 1580, 760, 320, "Black");
-        }
+        Object.values(this.elements).forEach((e) => e.run(...e.coords));
         MainCanvas.textAlign = "center";
     }
 
@@ -157,34 +162,34 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 }
 
-MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
-    next(args);
-    if (TextScreenCache != null) {
-        TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
-    }
-
-    const img = new Image();
-    img.addEventListener("error", function () {
-        DrawGetImageOnError(img, false);
-    });
-    img.src = "Icons/Maid.png";
-    DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
-});
-
-MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
-    const previousScreen = PreferenceSubscreen;
-    next(args);
-    if (!previousScreen && <string>PreferenceSubscreen === MBSPreferenceScreen.screen) {
-        PreferenceExit();
-        const subScreen = new MBSPreferenceScreen(preferenceState, preferenceState.character);
-        preferenceState.children.set(subScreen.screen, subScreen);
-        return subScreen.load();
-    }
-});
-
 let preferenceState: PreferenceScreenProxy;
 
 waitFor(bcLoaded).then(() => {
+    MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
+        next(args);
+        if (TextScreenCache != null) {
+            TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
+        }
+
+        const img = new Image();
+        img.addEventListener("error", function () {
+            DrawGetImageOnError(img, false);
+        });
+        img.src = "Icons/Maid.png";
+        DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+    });
+
+    MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
+        const previousScreen = PreferenceSubscreen;
+        next(args);
+        if (!previousScreen && <string>PreferenceSubscreen === MBSPreferenceScreen.screen) {
+            PreferenceExit();
+            const subScreen = new MBSPreferenceScreen(preferenceState);
+            preferenceState.children.set(subScreen.screen, subScreen);
+            return subScreen.load();
+        }
+    });
+
     (<string[]>PreferenceSubscreenList).push(
         MBSPreferenceScreen.screen,
     );
