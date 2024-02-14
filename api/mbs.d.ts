@@ -18,7 +18,8 @@
 /**
  * Uncomment the `ItemBundle` declaration below if, for one reason or another, you do not
  * have access to the builtin BC type annotations.
- * @note Use of the builtin `ItemBundle` BC type is *strongly* recommended
+ *
+ * Use of the builtin `ItemBundle` BC type is *strongly* recommended.
  */
 // type ItemBundle = Record<string, any>;
 
@@ -42,9 +43,9 @@ declare namespace mbs {
     /**
      * The version of the MBS API.
      *
-     * * Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
-     * * Additions are only accompanied by a `minor` increment
-     * * Documentation changes can be implemented without incrementing `major` or `minor`
+     * - Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
+     * - Additions are only accompanied by a `minor` increment
+     * - Documentation changes can be implemented without incrementing `major` or `minor`
      */
     const API_VERSION: {
         /** The major API versions; increments are reserved for changes and removals */
@@ -59,7 +60,8 @@ declare namespace mbs {
     function runTests(): boolean;
     /**
      * Return MBS debug output in human-readable, stringified form.
-     * @note The API provides no guarantees regarding the outputs machine readability.
+     *
+     * Note that the API provides no guarantees regarding the outputs machine readability.
      * While the output type is guaranteed by the API, the exact value is not and MBS is free to change it at any point without prior warning.
      * @returns The MBS debug output in stringified form
      */
@@ -83,9 +85,15 @@ declare namespace mbs {
          * @returns The MBS outfit data or `undefined`
          */
         function getByIndex(index: number): undefined | WheelBundle;
-        /** Return a list of all the players wheel outfit names. */
+        /**
+         * Return a list of all the players wheel outfit names.
+         * @returns The list of wheel outfit names
+         */
         function getNames(): string[];
-        /** Return a list of all the players wheel outfit indices. */
+        /**
+         * Return a list of all the players wheel outfit indices.
+         * @returns The list of wheel outfit indices
+         */
         function getIndices(): number[];
     }
 }

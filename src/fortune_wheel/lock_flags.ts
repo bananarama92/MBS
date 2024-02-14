@@ -16,8 +16,8 @@ const LEGACY_FLAGS = Object.freeze([
  * New style fortune wheel flags from MBS v0.6.0.
  *
  * Used by {@link FWItemSet.toOptions} for assigning itemOption-IDs, relying on the following two properties:
- * * The order of list elements is *never* changed; new entries can be appended though
- * * The list consists of <= 16 elements
+ * - The order of list elements is *never* changed; new entries can be appended though
+ * - The list consists of <= 16 elements
  */
 export const DEFAULT_FLAGS: readonly Readonly<FWFlag>[] = Object.freeze([
     Object.freeze({ type: "ExclusivePadlock", enabled: true }),
@@ -53,6 +53,7 @@ export function equipTimerLock(item: Item, seconds: number, character: Character
 /**
  * Attach a high security padlock to the passed item.
  * @param item The item in question
+ * @param character
  */
 export function equipHighSecLock(item: Item, character: Character): void {
     // Equip the timer lock if desired and possible
@@ -66,6 +67,7 @@ export function equipHighSecLock(item: Item, character: Character): void {
  * Note that no lock-specific {@link Item.Property} values are set on the item.
  * @param item The item in question
  * @param lockName The to-be attached lock
+ * @param character
  * @returns whether the lock was equipped or not
  */
 export function equipLock(item: Item, lockName: AssetLockType, character: Character): boolean {

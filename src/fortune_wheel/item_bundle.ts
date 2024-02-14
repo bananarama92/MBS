@@ -151,7 +151,9 @@ const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
 
 /**
  * Convert an item bundle into a wheel of fortune item.
+ * @param asset
  * @param item The original bundled item
+ * @param custom
  * @returns The new wheel of fortune item
  */
 export function fromItemBundle(
@@ -256,6 +258,7 @@ export function fromItemBundles(items: ItemBundle | readonly ItemBundle[]): FWIt
 /**
  * Convert a single wheel of fortune item into an item bundle
  * @param item The original wheel of fortune item
+ * @param character
  */
 export function toItemBundle(item: FWItem, character: Character): ItemBundle {
     const { Group, Name, Color, Craft, TypeRecord, Property } = item;
@@ -278,6 +281,7 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
 /**
  * Convert wheel of fortune items into an item bundle
  * @param items The original wheel of fortune items
+ * @param character
  */
 export function toItemBundles(items: readonly FWItem[], character: Character): ItemBundle[] {
     if (!isArray(items)) {

@@ -23,6 +23,7 @@ export function itemSetType(
 /**
  * Construct a baseline property object for the passed object and given type.
  * @param item The Item in question
+ * @param asset
  * @param character The player or simple character
  * @param typeRecord The item's `TypeRecord`
  */

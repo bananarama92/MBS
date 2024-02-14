@@ -32,6 +32,7 @@ export interface WheelStruct {
 
 /**
  * A {@link loadFortuneWheel} helper function for loading item- or command sets.
+ * @param character
  * @param fieldName The name of the sets-field
  * @param name The name of the sets
  */

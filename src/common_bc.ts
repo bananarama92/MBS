@@ -104,7 +104,10 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/** Whether BC had been loaded. */
+/**
+ * Return Whether BC had been loaded.
+ * @param testGameVersion Whether the game version should be validated or not
+ */
 export function bcLoaded(testGameVersion=true): boolean {
     return typeof MainCanvas === "object" && (testGameVersion ? GameVersionFormat.test(GameVersion) : true);
 }
@@ -242,6 +245,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
 
     /**
      * Update this instance with settings from the provided item set.
+     * @param hidden Whether the settings should be hidden or not
      * @param preRunCallback An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
      */
     writeSettings(
@@ -329,7 +333,10 @@ export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
         this.weight = command.weight;
     }
 
-    /** Construct a new wheel of fortune command. */
+    /**
+     * Construct a new wheel of fortune command.
+     * @param hidden
+     */
     writeSettings(hidden: boolean = false): FWCommand {
         if (this.name === null) {
             throw new Error("Cannot create a Command while \"name\" is null");
@@ -709,7 +716,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
     /**
      * Factory method for generating {@link FWItemSetOption.Script} callbacks.
-     * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
+     * @param globalCallback A callback (or `null`) that will be applied to all items after they're equipped
      * @returns A valid {@link FWItemSetOption.Script} callback
      */
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
@@ -745,9 +752,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         }
 
         /**
-         * * Reserve the `[0, 2**8)` range (extended ASCII) for BC's default
-         * * Reserve the `[2**8, 2**9)` range for MBS's builtin options
-         * * "Reserve" the `[2**9, 2**16)` range for MBS's custom options
+         * - Reserve the `[0, 2**8)` range (extended ASCII) for BC's default
+         * - Reserve the `[2**8, 2**9)` range for MBS's builtin options
+         * - "Reserve" the `[2**9, 2**16)` range for MBS's custom options
          */
         let start: number;
         if (!this.custom) {
@@ -771,6 +778,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
      * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
+     * @param colors
      * @returns A list of wheel of fortune options
      */
     toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
@@ -875,6 +883,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
 
     /**
      * Construct a new {@link FWItemSet} instance from the passed object
+     * @param mbsList
      * @param kwargs The to-be parsed object
      */
     static fromObject(mbsList: readonly (null | FWCommand)[], kwargs: FWSimplePartialCommand): FWCommand {
@@ -890,6 +899,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
      * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
+     * @param colors
      * @returns A list of wheel of fortune options
      */
     toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWCommandOption[] {

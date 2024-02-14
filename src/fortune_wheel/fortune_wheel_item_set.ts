@@ -78,6 +78,7 @@ function fromInputTime(time: string): number | null {
  * Construct the timer input field for the timer-lock based flags
  * @param flag The timer lock flag
  * @param index The index of the flag within the flag list
+ * @param readonly
  */
 function createTimerElement(flag: FWFlagTimerPasswordPadlock, index: number, readonly: boolean): void {
     const element = ElementCreateInput(`MBSFlag${index}`, "text", toInputTime(flag.time), 11);
