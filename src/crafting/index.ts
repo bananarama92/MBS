@@ -97,19 +97,6 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing crafting hooks");
 
-    // Mirror the extra MBS-specific crafted items to the MBS settings
-    MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
-        next(args);
-
-        const cache = craftingSerialize(
-            Player.Crafting ? Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL) : null,
-        );
-        if (cache != Player.MBSSettings.CraftingCache) {
-            Player.MBSSettings.CraftingCache = cache;
-            pushMBSSettings([SettingsType.SETTINGS]);
-        }
-    });
-
     MBS_MOD_API.patchFunction("CraftingClick", {
         "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
             `if (CraftingOffset < 0) CraftingOffset = ${MBS_SLOT_MAX_ORIGINAL} - 20;`,
@@ -124,6 +111,20 @@ waitFor(bcLoaded).then(() => {
 
     waitFor(settingsMBSLoaded).then(() => {
         logger.log("Initializing crafting cache");
+
+        // Mirror the extra MBS-specific crafted items to the MBS settings
+        MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
+            next(args);
+
+            const cache = craftingSerialize(
+                Player.Crafting ? Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL) : null,
+            );
+            if (cache != Player.MBSSettings.CraftingCache) {
+                Player.MBSSettings.CraftingCache = cache;
+                pushMBSSettings([SettingsType.SETTINGS]);
+            }
+        });
+
         loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
     });
 });
