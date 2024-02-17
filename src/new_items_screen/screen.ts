@@ -56,6 +56,8 @@ export let NEW_ASSETS_VERSION: number;
 /** Preview character while in the `MBS_NewItemsScreen` screen */
 export let itemScreenDummy: Character;
 
+let ITEM_COLOR_COORDS: RectTuple;
+
 /** Type representing a concatenation of a group and asset name */
 type AssetKey = `${AssetGroupName}${string}`;
 
@@ -104,6 +106,13 @@ waitFor(bcLoaded).then(() => {
         }
         BUY_GROUPS[buyGroup] = { money, assets: members.map(i => omit(i, "money")) };
     }
+
+    ITEM_COLOR_COORDS = [
+        37 + DialogInventoryGrid.x,
+        25,
+        937 - 37,
+        DialogInventoryGrid.height + (DialogInventoryGrid.y - 25),
+    ];
 });
 
 export class NewItemsScreen extends MBSScreen {
@@ -214,7 +223,7 @@ export class NewItemsScreen extends MBSScreen {
                 exit: () => CharacterDelete(this.preview.AccountName),
             },
             Money: {
-                coords: [1115, 25, 200, 90],
+                coords: [1005, 25, 200, 90],
                 run: (x, y, w, h) => {
                     if (this.mode === "buy") {
                         DrawButton(x, y, w, h, "", "White", undefined, "Player money", true);
@@ -223,19 +232,46 @@ export class NewItemsScreen extends MBSScreen {
                 },
             },
             BuyMode: {
-                coords: [1335, 25, 90, 90],
+                coords: [1225, 25, 90, 90],
                 run: (...coords) => {
                     switch (this.mode) {
                         case "buy":
-                            DrawButton(...coords, "", "Lime", "Icons/Shop.png", "Mode: Shop", true);
+                            DrawButton(...coords, "", "Lime", "Icons/Shop.png", "Mode: Shop");
                             break;
                         case "preview":
-                            DrawButton(...coords, "", "White", "Icons/Shop.png", "Mode: Preview", true);
+                            DrawButton(...coords, "", "White", "Icons/Shop.png", "Mode: Preview");
                             break;
                     }
                 },
                 click: () => {
                     this.mode = this.mode === "buy" ? "preview" : "buy";
+                },
+            },
+            Color: {
+                coords: [1335, 25, 90, 90],
+                run: (...coords) => {
+                    switch (this.mode) {
+                        case "buy":
+                        case "preview": {
+                            const asset = this.previousItem?.Asset;
+                            const icon = (asset?.DefaultColor?.length ?? 1) <= 1 ? "ColorChange" : "ColorChangeMulti";
+                            if (!asset || this.mode === "buy") {
+                                DrawButton(...coords, "", "Gray", `Icons/${icon}.png`, "Change item color", true);
+                            } else {
+                                DrawButton(...coords, "", "White", `Icons/${icon}.png`, "Change item color");
+                            }
+                            break;
+                        }
+                    }
+                },
+                click: () => {
+                    switch (this.mode) {
+                        case "preview":
+                            if (this.previousItem) {
+                                ItemColorLoad(this.preview, this.previousItem, ...ITEM_COLOR_COORDS, true);
+                            }
+                            break;
+                    }
                 },
             },
             ExtendedItem: {
@@ -433,7 +469,7 @@ export class NewItemsScreen extends MBSScreen {
     #generateAssetUIElements(assetRecord: Record<AssetKey, Asset>): Record<string, UIElement> {
         const coords = generateGrid(
             Object.keys(assetRecord).length,
-            { ...DialogInventoryGrid, y: 10 + DialogInventoryGrid.y },
+            { ...DialogInventoryGrid, x: 37 + DialogInventoryGrid.x, y: 10 + DialogInventoryGrid.y },
             MAX_ITEMS_PER_PAGE,
         );
         return fromEntries(entries(assetRecord).map(([assetID, asset], i) => {
@@ -472,6 +508,9 @@ export class NewItemsScreen extends MBSScreen {
         if (DialogFocusItem && DialogMenuMode === "extended") {
             CommonCallFunctionByNameWarn(`Inventory${DialogFocusItem.Asset.Group.Name}${DialogFocusItem.Asset.Name}Click`);
             return;
+        } else if (ItemColorItem && ItemColorState) {
+            ItemColorClick(this.preview, ItemColorItem.Asset.Group.Name, ...ITEM_COLOR_COORDS, true);
+            return;
         }
 
         return Object.values(this.elements).some((e) => {
@@ -491,6 +530,11 @@ export class NewItemsScreen extends MBSScreen {
             this.elements.Character.run?.(...this.elements.Character.coords);
             CommonCallFunctionByNameWarn(`Inventory${DialogFocusItem.Asset.Group.Name}${DialogFocusItem.Asset.Name}Draw`);
             return;
+        } else if (ItemColorItem && ItemColorState) {
+            this.elements.DarkFactor.run?.(...this.elements.DarkFactor.coords);
+            this.elements.Character.run?.(...this.elements.Character.coords);
+            ItemColorDraw(this.preview, ItemColorItem.Asset.Group.Name, ...ITEM_COLOR_COORDS, true);
+            return;
         }
 
         Object.values(this.elements).forEach((e) => {
@@ -501,6 +545,14 @@ export class NewItemsScreen extends MBSScreen {
     }
 
     exit() {
+        if (DialogFocusItem && DialogMenuMode === "extended") {
+            ExtendedItemExit();
+            return;
+        } else if (ItemColorItem && ItemColorState) {
+            ItemColorExitClick();
+            return;
+        }
+
         Object.values(this.elements).forEach((e) => e.exit?.());
         const w = <typeof globalThis & Record<string, string>>globalThis;
         w[`${NewItemsScreen.screen}Background`] = NewItemsScreen.background;

@@ -40,11 +40,23 @@ export function measureDataSize(data: unknown): Record<string, number> {
     }));
 }
 
-/** Convert B to KB with up to one decimal digit. */
+/**
+ * Convert B to KB with up to one decimal digit.
+ * @param nByte The value in byte
+ * @returns The passed value converted to kilo byte
+ */
 export function byteToKB(nByte: number) {
     return Math.round(nByte / 100) / 10;
 }
 
+/**
+ * Construct a {@link UIElement} for displaying BC data usage.
+ * @param this -
+ * @param this.dataSize The maximum and actually used size of {@link Character.OnlineSharedSettings}
+ * @param this.character The character in question
+ * @param coords A 4-tuple with the elements X & Y coordinates, width and height
+ * @returns The new UI element
+ */
 export function getStorageElement(
     this: { readonly dataSize: DataSize, readonly character: Character },
     coords: RectTuple,

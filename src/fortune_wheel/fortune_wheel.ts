@@ -783,10 +783,36 @@ class FWScreenProxy extends ScreenProxy {
 export let fortuneWheelState: FWScreenProxy;
 
 waitFor(bcLoaded).then(() => {
+    const COORDS = {
+        exit: [1830, 60, 90, 90],
+        roll: [1720, 60, 90, 90],
+        select: [1610, 60, 90, 90],
+        preset: [1500, 60, 90, 90],
+    } satisfies Record<string, RectTuple>;
+
     logger.log("Initializing wheel of fortune hooks");
     if (!validateBuiltinWheelIDs()) {
         return;
     }
+
+    const wheelFortuneRunPatches: Record<string, string> = {
+        'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");': ";",
+    };
+    if (MBS_MOD_API.getOriginalHash("WheelFortuneRun") === "E9E5F3D6") {
+        wheelFortuneRunPatches['DrawButton(1770, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
+        wheelFortuneRunPatches["DrawButton(1885, 25, 90, 90"] = `DrawButton(${COORDS.exit.join(", ")}`;
+    } else {
+        wheelFortuneRunPatches['DrawButton(1720, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
+    }
+
+    const wheelFortuneClickPatches: Record<string, string> = {};
+    if (MBS_MOD_API.getOriginalHash("WheelFortuneClick") === "16991349") {
+        wheelFortuneClickPatches["MouseIn(1885, 25, 90, 90)"] = `MouseIn(${COORDS.exit.join(", ")})`;
+        wheelFortuneClickPatches["MouseIn(1770, 25, 90, 90)"] = `MouseIn(${COORDS.roll.join(", ")})`;
+    }
+
+    MBS_MOD_API.patchFunction("WheelFortuneRun", wheelFortuneRunPatches);
+    MBS_MOD_API.patchFunction("WheelFortuneClick", wheelFortuneClickPatches);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         fortuneWheelState.initialize();
@@ -811,13 +837,6 @@ waitFor(bcLoaded).then(() => {
         return next(args);
     });
 
-    MBS_MOD_API.patchFunction("WheelFortuneRun", {
-        'DrawButton(1770, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));':
-            ";",
-        'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");':
-            ";",
-    });
-
     MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
         const canSpin = (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained());
         if (!canSpin) {
@@ -830,17 +849,17 @@ waitFor(bcLoaded).then(() => {
         const colorConfig = enabledConfig ? "White" : "Silver";
         const nameConfig = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
         const descriptionConfig = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${nameConfig}'s option config`;
-        DrawButton(1655, 25, 90, 90, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
+        DrawButton(...COORDS.select, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
 
         const enabledPreset = !!(WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
         const colorPreset = enabledPreset ? "White" : "Silver";
         const namePreset = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
         const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
-        DrawButton(1545, 25, 90, 90, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
+        DrawButton(...COORDS.preset, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
 
         const backColor = (WheelFortuneVelocity == 0 && canSpin) ? "White" : "Silver";
         DrawButton(
-            1770, 25, 90, 90, "", backColor, "Icons/Random.png",
+            ...COORDS.roll, "", backColor, "Icons/Random.png",
             canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
             !canSpin,
         );
@@ -849,7 +868,7 @@ waitFor(bcLoaded).then(() => {
         if (WheelFortuneVelocity !== 0) {
             text = TextGet("Wait");
         } else if (!canSpin) {
-            text = "Cannot spin the wheel of fortune while restrained";
+            text = "MBS: Cannot spin the wheel of fortune while restrained";
         } else if (WheelFortuneForced) {
             text = TextGet("Forced");
         } else {
@@ -861,12 +880,12 @@ waitFor(bcLoaded).then(() => {
     MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
         if (!Player.MBSSettings.RollWhenRestrained && Player.IsRestrained()) {
             WheelFortuneForced = false;
-            if (MouseIn(1770, 25, 90, 90)) {
+            if (MouseIn(...COORDS.roll)) {
                 return;
             }
         }
 
-        if (WheelFortuneVelocity === 0 && MouseIn(1655, 25, 90, 90)) {
+        if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.select)) {
             const struct = {
                 FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
                 FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
@@ -874,7 +893,7 @@ waitFor(bcLoaded).then(() => {
             const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
             fortuneWheelState.children.set(subScreen.screen, subScreen);
             subScreen.load();
-        } else if (WheelFortuneVelocity === 0 && MouseIn(1545, 25, 90, 90) && WheelFortuneCharacter?.IsPlayer()) {
+        } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
             const subScreen = new WheelPresetScreen(fortuneWheelState, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
             fortuneWheelState.children.set(subScreen.screen, subScreen);
             subScreen.load();

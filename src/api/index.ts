@@ -8,8 +8,8 @@ export { wheelOutfits };
 /**
  * The version of the MBS API.
  *
- * * Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
- * * Additions are only accompanied by a `minor` increment
+ * - Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
+ * - Additions are only accompanied by a `minor` increment
  */
 export const API_VERSION = Object.freeze({
     /** The major API versions; increments are reserved for changes and removals */
@@ -20,7 +20,8 @@ export const API_VERSION = Object.freeze({
 
 /**
  * Return MBS debug output in human-readable, stringified form.
- * @note The API provides no guarantees regarding the outputs machine readability, and MBS is free to change its structure at any point without prior warning
+ *
+ * Note that the API provides no guarantees regarding the outputs machine readability, and MBS is free to change its structure at any point without prior warning
  * @returns The MBS debug output in stringified form
  */
 export const getDebug: typeof mbs.getDebug = function getDebug() {

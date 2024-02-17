@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.3.7
+* Minor UI adjustments in the wheel of fortune screens
+* Add the option to change an items color in the show new items menu
+* Drop support for BC R100
+
 ## v1.3.6
 * Do not display the wheel storage size for non-player characters
 * Fix the reported index for entries in the wheel customization menu

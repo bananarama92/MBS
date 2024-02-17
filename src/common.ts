@@ -36,22 +36,34 @@ class MBSLog extends Array<LogEntry> {
         this.push({ date, level, args });
     }
 
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug) */
+    /**
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug)
+     * @param args Parameters to be passed to {@link console.debug}
+     */
     debug(...args: unknown[]) {
         this.#log("debug", args);
     }
 
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log) */
+    /**
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log)
+     * @param args Parameters to be passed to {@link console.log}
+     */
     log(...args: unknown[]) {
         this.#log("log", args);
     }
 
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn) */
+    /**
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn)
+     * @param args Parameters to be passed to {@link console.warn}
+     */
     warn(...args: unknown[]) {
         this.#log("warn", args);
     }
 
-    /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error) */
+    /**
+     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error)
+     * @param args Parameters to be passed to {@link console.error}
+     */
     error(...args: unknown[]) {
         this.#log("error", args);
     }
@@ -162,6 +174,7 @@ export function getRandomPassword(n: number): string {
  * Wait for the passed predicate to evaluate to `true`.
  * @param predicate A predicate
  * @param timeout The timeout in milliseconds for when the predicate fails
+ * @returns Whether the predicate has returned `true`
  */
 export async function waitFor(predicate: () => boolean, timeout: number = 100): Promise<boolean> {
     while (!predicate()) {
@@ -183,10 +196,8 @@ class ModAPIProxy implements BCX_ModAPI {
     /** The lazily loaded BCX mod API */
     #api: null | BCX_ModAPI = null;
 
-    /** Name of the mod this API was requested for */
     get modName(): string { return "MBS"; }
 
-    /** Returns state handler for a rule or `null` for unknown rule */
     getRuleState<T extends BCX_Rule>(rule: T): BCX_RuleStateAPI<T> | null {
         if (this.#api === null && typeof bcx !== "undefined") {
             this.#api = bcx.getModApi("MBS");
@@ -198,7 +209,12 @@ class ModAPIProxy implements BCX_ModAPI {
 /** A lazily-loaded version of the BCX mod API */
 export const BCX_MOD_API = new ModAPIProxy();
 
-/** Helper function for creating {@link Object.prototype.toString} methods. */
+/**
+ * Helper function for creating {@link Object.prototype.toString} methods.
+ * @param typeName The name of the object
+ * @param obj The object
+ * @returns A stringified version of the passed `obj`
+ */
 export function toStringTemplate(typeName: string, obj: object): string {
     let ret = `${typeName}(`;
     ret += Object.values(obj).map(i => String(i)).join(", ");
@@ -250,6 +266,7 @@ export class LoopIterator<T> {
     /**
      * Return the next element from the iterator and increment.
      * @param incrementPosition Whether to increment the iterator in addition to returning the next element
+     * @returns the iterators next element
      */
     next(incrementPosition: boolean = true): T {
         const index = (this.#index + 1) % this.#list.length;
@@ -262,6 +279,7 @@ export class LoopIterator<T> {
     /**
      * Return the previous element from the iterator and decrement.
      * @param decrementPosition Whether to derecement the iterator in addition to returning the previous element
+     * @returns the iterators previous element
      */
     previous(decrementPosition: boolean = true): T {
         const index = (this.#index + this.#list.length - 1) % this.#list.length;
@@ -316,7 +334,11 @@ export function generateIDs(
     return indices.map(i => String.fromCharCode(charcodeRange[i]));
 }
 
-/** Check whether the passed object as an iterable. */
+/**
+ * Check whether the passed object as an iterable.
+ * @param obj The to-be checked object
+ * @returns Whether the passed object as an iterable.
+ */
 export function isIterable(obj: unknown): obj is Iterable<unknown> {
     return (Symbol.iterator in Object(obj));
 }
@@ -350,32 +372,56 @@ export class Version {
         Object.freeze(this);
     }
 
-    /** Check whether two versions are equal */
+    /**
+     * Check whether two versions are equal
+     * @param other The to-be compared version
+     * @returns Whether `this` and `other` are the same version
+     */
     equal(other: Version): boolean {
         return other instanceof Version ? this.valueOf() === other.valueOf() : false;
     }
 
-    /** Check whether this version is greater than the other */
+    /**
+     * Check whether this version is greater than the other
+     * @param other The to-be compared version
+     * @returns Whether the version of `this` is greater than `other`
+     */
     greater(other: Version): boolean {
         return other instanceof Version ? this.valueOf() > other.valueOf() : false;
     }
 
-    /** Check whether this version is lesser than the other */
+    /**
+     * Check whether this version is lesser than the other
+     * @param other The to-be compared version
+     * @returns Whether the version of `this` is lesser than `other`
+     */
     lesser(other: Version): boolean {
         return other instanceof Version ? this.valueOf() < other.valueOf() : false;
     }
 
-    /** Check whether this version is greater than or equal to the other */
+    /**
+     * Check whether this version is greater than or equal to the other
+     * @param other The to-be compared version
+     * @returns Whether the version of `this` is greater than or equal to `other`
+     */
     greaterOrEqual(other: Version): boolean {
         return other instanceof Version ? this.valueOf() >= other.valueOf() : false;
     }
 
-    /** Check whether this version is lesser than or equal to the other */
+    /**
+     * Check whether this version is lesser than or equal to the other
+     * @param other The to-be compared version
+     * @returns Whether the version of `this` is lesser than or equal to `other`
+     */
     lesserOrEqual(other: Version): boolean {
         return other instanceof Version ? this.valueOf() <= other.valueOf() : false;
     }
 
-    /** Construct a new instance from the passed version string */
+    /**
+     * Construct a new instance from the passed version string
+     * @param version The to-be parsed version
+     * @returns A new {@link Version} instance
+     */
     static fromVersion(version: string): Version {
         const match = MBS_VERSION_PATTERN.exec(version);
         if (match === null) {
@@ -389,7 +435,11 @@ export class Version {
         );
     }
 
-    /** Construct a new instance from the passed BC version string */
+    /**
+     * Construct a new instance from the passed BC version string
+     * @param version The to-be parsed BC version
+     * @returns A new {@link Version} instance
+     */
     static fromBCVersion(version: string): Version {
         const match = GameVersionFormat.exec(version);
         if (match === null) {
@@ -419,32 +469,57 @@ export class Version {
     }
 }
 
-/** A more readonly-friendly version of {@link Array.isArray}. */
+/**
+ * A more readonly-friendly version of {@link Array.isArray}.
+ * @param arg The to-be checked object
+ * @returns Whether the passed object is an array
+ */
 export function isArray(arg: unknown): arg is readonly unknown[] {
     return Array.isArray(arg);
 }
 
-/** A version of {@link Object.keys} more aimed at records with literal string keys. */
+/**
+ * A version of {@link Object.keys} more aimed at records with literal string keys.
+ * @param arg A record
+ * @returns A list with all keys in the passed record
+ */
 export function keys<KT extends string>(arg: Partial<Record<KT, unknown>>): KT[] {
     return <KT[]>Object.keys(arg);
 }
 
-/** A version of {@link Object.entries} more aimed at records with literal string keys. */
+/**
+ * A version of {@link Object.entries} more aimed at records with literal string keys.
+ * @param arg A record
+ * @returns A list of 2-tuples with all key/value pairs in the passed record
+ */
 export function entries<KT extends string, VT>(arg: Partial<Record<KT, VT>>): [KT, VT][] {
     return <[KT, VT][]>Object.entries(arg);
 }
 
-/** A version of {@link Object.fromEntries} more aimed at records with literal string keys. */
+/**
+ * A version of {@link Object.fromEntries} more aimed at records with literal string keys.
+ * @param arg A list of 2-tuples
+ * @returns A record constructed from the passed list
+ */
 export function fromEntries<KT extends string, VT>(arg: Iterable<readonly [KT, VT]>): Record<KT, VT> {
     return <Record<KT, VT>>Object.fromEntries(arg);
 }
 
-/** A version of {@link Array.includes} that serves as a type guard. */
+/**
+ * A version of {@link Array.includes} that serves as a type guard.
+ * @param arg An array
+ * @param value The element to search for
+ * @returns Whether the passed array includes the passed value
+ */
 export function includes<T>(arg: readonly T[], value: unknown): value is T {
     return arg.includes(<T>value);
 }
 
-/** A version of {@link Number.isInteger} that serves as a type guard. */
+/**
+ * A version of {@link Number.isInteger} that serves as a type guard.
+ * @param arg A numeric value
+ * @returns Whether the passed numeric value is an integer
+ */
 export function isInteger(arg: unknown): arg is number {
     return Number.isInteger(arg);
 }

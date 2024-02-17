@@ -11,8 +11,8 @@ export function validateBuiltinWheelIDs(): boolean {
     const option = WheelFortuneOption.find(i => i.Custom === undefined && i.ID >= non_ascii);
     if (option !== undefined) {
         logger.warn(
-            "Aborting wheel of fortune module initialization: "
-            + "Found a builtin wheel of fortune option-ID outside of the extended ASCII range",
+            "Aborting wheel of fortune hook initialization: "
+            + "Found one or more builtin wheel of fortune option-IDs outside of the extended ASCII range",
             option,
         );
         return false;
@@ -22,7 +22,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 100 satisfies number;
+export const BC_MIN_VERSION = 101 satisfies number;
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.

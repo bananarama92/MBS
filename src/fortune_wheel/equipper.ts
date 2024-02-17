@@ -278,6 +278,7 @@ function blockedByEnclose(character: Character): boolean {
  * @param itemList The items in question
  * @param stripLevel An integer denoting which clothes should be removed; see {@link StripLevel}
  * @param globalCallbacks A callback (or `null`) that will be applied to all items after they're equipped
+ * @param globalCallback
  * @param preRunCallback A callback (or `null`) executed before equipping any items from `itemList`
  * @param character The relevant player- or NPC-character
  */

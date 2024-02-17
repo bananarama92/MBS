@@ -6,6 +6,10 @@ import { toItemBundles } from "../fortune_wheel";
 
 let MBSAPIDummy: null | Character = null;
 
+/**
+ * @see {@link MBSAPIDummy}
+ * @returns A dummy character as used by the API
+ */
 function getDummyChar(): Character {
     if (MBSAPIDummy === null) {
         MBSAPIDummy = CharacterLoadSimple("MBSAPI");

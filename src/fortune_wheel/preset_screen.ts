@@ -83,7 +83,7 @@ export class WheelPresetScreen extends MBSScreen {
                 },
             },
             HeaderName: {
-                coords: [DELTA * 3, DELTA * 3, 0, 0],
+                coords: [DELTA * 3.5, DELTA * 3, 0, 0],
                 run: (x, y) => DrawText("Preset Name", x, y, "Black"),
             },
             HeaderBuiltinBC: {
@@ -129,7 +129,7 @@ export class WheelPresetScreen extends MBSScreen {
                 run: (...coords) => DrawButton(...coords, "", "White", "Icons/Trash.png", "Delete the current preset"),
             },
             Name: {
-                coords: [DELTA, 300, DELTA * 4, 64],
+                coords: [DELTA * 1.5, 300, DELTA * 4, 64],
                 load: () => {
                     const element = ElementCreateInput(`${WheelPresetScreen.name}_Name`, "text", this.activePreset.name, 20);
                     element.placeholder = `Preset ${this.index}`;
@@ -144,7 +144,7 @@ export class WheelPresetScreen extends MBSScreen {
                 run: (...coords) => ElementPositionFixed(`${WheelPresetScreen.name}_Name`, ...coords),
             },
             DropDown: {
-                coords: [DELTA, 400, DELTA * 4, 64],
+                coords: [DELTA * 1.5, 400, DELTA * 4, 64],
                 load: () => {
                     ElementCreateDropdown(
                         `${WheelPresetScreen.name}_DropDown`,
@@ -235,7 +235,7 @@ export class WheelPresetScreen extends MBSScreen {
                             DrawHoverElements.push(() => {
                                 const tooltip = [prefix, ...suffix.filter((_, i) => this.activePreset.ids.has(ids[i]))];
                                 DrawRect(x + 3, y + 3, w - 6, h - 6, "rgba(0,0,0,0.5)");
-                                drawHeaderedTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, DELTA, tooltip);
+                                drawHeaderedTooltip(x - (DELTA * 7), y - DELTA, DELTA * 7 - 12, DELTA, tooltip, { x0: DELTA * 5.5 + 12 });
                             });
                         }
                     },
