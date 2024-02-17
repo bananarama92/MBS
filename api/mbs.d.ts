@@ -63,6 +63,8 @@ declare namespace mbs {
      *
      * Note that the API provides no guarantees regarding the outputs machine readability.
      * While the output type is guaranteed by the API, the exact value is not and MBS is free to change it at any point without prior warning.
+     *
+     * As of API version 1.2 the output string is guaranteed to be JSON-safe (see {@link JSON.parse})
      * @returns The MBS debug output in stringified form
      */
     function getDebug(): string;
