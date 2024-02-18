@@ -7,6 +7,9 @@ import {
     Version,
     trimArray,
     logger,
+    isArray,
+    entries,
+    fromEntries,
 } from "../common";
 import {
     FWItemSet,
@@ -93,13 +96,16 @@ export function parseFWObjects<
     RT extends FWObject<FWObjectOption>,
 >(
     constructor: (wheelList: (null | RT)[], kwargs: T) => RT,
-    protoWheelList?: (null | T)[],
+    protoWheelList: (null | T)[],
+    errList: [msg: string, ...rest: unknown[]][],
 ): (null | RT)[] {
     // Pad/trim the item sets if necessary
     if (!Array.isArray(protoWheelList)) {
         protoWheelList = [];
+        errList.push([`Re-initializing invalid wheel of fortune item list: ${typeof protoWheelList}`]);
     } else if (protoWheelList.length > MBS_MAX_SETS) {
         trimArray(protoWheelList, MBS_MAX_SETS);
+        errList.push([`Trimming too long wheel of fortune item list: ${protoWheelList.length}/${MBS_MAX_SETS}`]);
     }
 
     const wheelList: (null | RT)[] = Object.seal(Array(MBS_MAX_SETS).fill(null));
@@ -111,23 +117,31 @@ export function parseFWObjects<
             const wheelObject = wheelList[i] = constructor(wheelList, simpleObject);
             wheelObject.register(false);
         } catch (ex) {
-            logger.warn(`Failed to load corrupted custom wheel of fortune item ${i}:`, ex);
+            errList.push([`Failed to load corrupted custom wheel of fortune item ${i}`, ex]);
         }
     });
     return wheelList;
 }
 
-function parsePresetArray(presets: readonly (null | WheelPreset)[]): (null | WheelPreset)[] {
+function parsePresetArray(
+    presets: (null | WheelPreset)[],
+    errList: [msg: string, ...rest: unknown[]][],
+): (null | WheelPreset)[] {
     // Pad/trim the item sets if necessary
     if (!Array.isArray(presets)) {
         presets = [];
+        errList.push([`Re-initializing invalid wheel of fortune preset list: ${typeof presets}`]);
     } else if (presets.length > MBS_MAX_ID_SETS) {
         trimArray(presets, MBS_MAX_ID_SETS);
+        errList.push([`Trimming too long wheel of fortune preset list: ${presets.length}/${MBS_MAX_ID_SETS}`]);
     }
 
     const ret: (null | WheelPreset)[] = Object.seal(Array(MBS_MAX_ID_SETS).fill(null));
     presets.forEach((preset, i) => {
-        if (preset === null || Array.isArray(preset) || typeof preset !== "object" || typeof preset.ids !== "string") {
+        if (preset === null) {
+            return;
+        } else if (Array.isArray(preset) || typeof preset !== "object" || typeof preset.ids !== "string") {
+            errList.push([`Failed to load corrupted custom wheel of fortune preset ${i}`]);
             return;
         }
 
@@ -170,14 +184,63 @@ export function unpackSettings(
     return (settings !== null && typeof settings === "object") ? settings : {};
 }
 
+/** Parsed the passed protosettings */
+function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
+    const err: Required<SettingsStatus.Base["err"]> = {
+        Version: [],
+        CraftingCache: [],
+        FortuneWheelItemSets: [],
+        FortuneWheelCommands: [],
+        FortuneWheelPresets: [],
+        LockedWhenRestrained: [],
+        RollWhenRestrained: [],
+    };
+
+    const scalars = {
+        CraftingCache: "",
+        LockedWhenRestrained: false,
+        RollWhenRestrained: true,
+    };
+
+    for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
+        if (s[field] === undefined) {
+            continue;
+        } else if (typeof s[field] !== typeof defaultValue) {
+            err[field] = [[`Invalid type, expected a ${typeof defaultValue}: ${typeof err[field]}`]];
+        } else {
+            (scalars as Record<string, unknown>)[field] = s[field];
+        }
+    }
+
+    const settings: MBSSettings = {
+        Version: MBS_VERSION,
+        CraftingCache: scalars.CraftingCache,
+        FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, s.FortuneWheelSets ?? s.FortuneWheelItemSets ?? [], err.FortuneWheelItemSets),
+        FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, s.FortuneWheelCommands ?? [], err.FortuneWheelCommands),
+        FortuneWheelPresets: parsePresetArray(s.FortuneWheelPresets ?? [], err.FortuneWheelPresets),
+        LockedWhenRestrained: scalars.LockedWhenRestrained,
+        RollWhenRestrained: scalars.RollWhenRestrained,
+    };
+    const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
+    return {
+        settings,
+        ok,
+        err: fromEntries(entries(err).filter(([_, v]) => v.length > 0)),
+    };
+
+}
+
 /** Initialize the MBS settings. */
-function initMBSSettings(): void {
+function initMBSSettings(
+    settings: null | MBSProtoSettings = null,
+    allowFailure: boolean = true,
+): SettingsStatus.Base {
     if (Player.OnlineSharedSettings === undefined) {
         throw new Error("\"Player.OnlineSharedSettings\" still uninitialized");
     }
 
     // Load saved settings and check whether MBS has been upgraded
-    const settings = {
+    settings ??= {
         ...unpackSettings(Player.OnlineSettings?.MBS, "OnlineSettings"),
         ...unpackSettings(Player.ExtensionSettings.MBS, "ExtensionSettings"),
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
@@ -205,30 +268,18 @@ function initMBSSettings(): void {
         ServerAccountUpdate.QueueData({ OnlineSettings: Player.OnlineSettings });
     }
 
-    // Check the crafting cache
-    if (typeof settings.CraftingCache !== "string") {
-        settings.CraftingCache = "";
+    const settingsStatus = parseProtoSettings(settings);
+    if (settingsStatus.ok || allowFailure) {
+        Player.MBSSettings = settingsStatus.settings;
     }
-
-    // Swap out the deprecated alias
-    if (settings.FortuneWheelSets !== undefined) {
-        settings.FortuneWheelItemSets = settings.FortuneWheelSets;
+    if (!settingsStatus.ok) {
+        logger.warn("Encountered and fixed one or more errors while parsing MBS settings", settingsStatus.err);
     }
-
-    Player.MBSSettings = Object.seal({
-        Version: MBS_VERSION,
-        CraftingCache: settings.CraftingCache,
-        FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, settings.FortuneWheelItemSets ?? []),
-        FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, settings.FortuneWheelCommands ?? []),
-        FortuneWheelPresets: parsePresetArray(settings.FortuneWheelPresets ?? []),
-        LockedWhenRestrained: typeof settings.LockedWhenRestrained === "boolean" ? settings.LockedWhenRestrained : false,
-        RollWhenRestrained: typeof settings.RollWhenRestrained === "boolean" ? settings.RollWhenRestrained : true,
-    });
 
     // Ensure that the player's wheel of fortune settings are initialized
-    if (Player.OnlineSharedSettings.WheelFortune == null) {
-        Player.OnlineSharedSettings.WheelFortune = WheelFortuneDefault;
-    }
+    Player.OnlineSharedSettings.WheelFortune ??= WheelFortuneDefault;
+
+    return settingsStatus;
 }
 
 /**
@@ -262,6 +313,9 @@ export function clearMBSSettings(): void {
         ExtensionSettings: Player.ExtensionSettings,
         OnlineSharedSettings: Player.OnlineSharedSettings,
     }, true);
+
+    logger.log("Settings successfully reset");
+    logSettingsSize();
 }
 
 /**
@@ -302,11 +356,8 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
     }
 }
 
-waitFor(settingsLoaded).then(() => {
-    initMBSSettings();
-    pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
-    logger.log("Initializing settings module");
-
+/** Log the players {@link ExtensionSettings} and {@link OnlineSharedSettings} size. */
+export function logSettingsSize() {
     const fields = ["ExtensionSettings", "OnlineSharedSettings"] as const;
     for (const fieldName of fields) {
         const dataB = measureDataSize(Player[fieldName]);
@@ -318,4 +369,60 @@ waitFor(settingsLoaded).then(() => {
             logger.log(`Total ${fieldName} data usage at ${nKB} / ${MAX_DATA / 1000} KB`, dataKB);
         }
     }
+}
+
+/**
+ * Stringify, compress and return the players MBS settings
+ * @returns The Base64-compressed MBS settings
+ */
+export function exportSettings() {
+    return LZString.compressToBase64(JSON.stringify(Player.MBSSettings));
+}
+
+export const SettingsStatus = Object.freeze({
+    OK: 0,
+    ERROR: 1,
+    EMPTY_SETTINGS: 2,
+    WARN: 3,
+}) satisfies Record<string, SettingsStatus>;
+
+/**
+ * Import and assign the passed compressed MBS settings.
+ * @param base64 The Base64-compressed MBS settings
+ * @returns Whether the settings were successfully parsed
+ */
+export function importSettings(base64: string): SettingsStatus.Expanded {
+    logger.log("Importing new MBS settings");
+
+    let protoSettings: null | MBSProtoSettings = null;
+    let err: unknown = null;
+    try {
+        protoSettings = JSON.parse(LZString.decompressFromBase64(base64) || "{}");
+    } catch (error) {
+        err = error;
+    }
+
+    if (err || protoSettings === null || typeof protoSettings !== "object" || isArray(protoSettings)) {
+        logger.error("Aborting, failed to parse corrupted MBS settings", err);
+        return { status: SettingsStatus.ERROR, ok: false };
+    } else if (Object.keys(protoSettings).length === 0) {
+        logger.error("Aborting, detected empty or corrupted MBS settings");
+        return { status: SettingsStatus.EMPTY_SETTINGS, ok: false };
+    }
+
+    const status = initMBSSettings(protoSettings, false);
+    if (!status.ok) {
+        return { status: SettingsStatus.WARN, ...status };
+    }
+
+    pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], true);
+    logSettingsSize();
+    return { status: SettingsStatus.OK, ...status };
+}
+
+waitFor(settingsLoaded).then(() => {
+    initMBSSettings();
+    pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
+    logger.log("Initializing settings module");
+    logSettingsSize();
 });

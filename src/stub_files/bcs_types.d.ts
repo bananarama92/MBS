@@ -241,3 +241,19 @@ interface DataSize {
     /** A safety marigin in the `[0, 1]` interval applied as a factor to `max` */
     readonly marigin: number,
 }
+
+declare namespace SettingsStatus {
+    interface Base {
+        settings: MBSSettings,
+        ok: boolean,
+        err: Partial<Record<keyof MBSSettings, [msg: string, ...rest: unknown[]][]>>,
+    }
+
+    interface _Expanded extends Base {
+        status: 0 | 3,
+    }
+
+    type Expanded = _Expanded | { ok: false, status: 1 | 2 };
+}
+
+type SettingsStatus = 0 | 1 | 2 | 3;

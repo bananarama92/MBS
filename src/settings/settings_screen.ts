@@ -1,11 +1,24 @@
-import { MBS_MOD_API, waitFor } from "../common";
+import { MBS_MOD_API, waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 import { NewItemsScreen, NEW_ASSETS_VERSION } from "../new_items_screen";
 
-import { pushMBSSettings, SettingsType, getChangeLogURL } from "./settings";
+import {
+    pushMBSSettings,
+    SettingsType,
+    getChangeLogURL,
+    importSettings,
+    exportSettings,
+    logSettingsSize,
+    SettingsStatus,
+} from "./settings";
 import { ResetScreen } from "./reset_screen";
+
+// Partially adapted from LSCG
+//
+// LSCG, Copyright 2023 Little Sera, GPLv3
+// https://github.com/littlesera/LSCG
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -54,7 +67,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                 click: () => this.exit(),
             },
             reset: {
-                coords: [1500, 620, 400, 80],
+                coords: [1500, 520, 400, 80],
                 run: (x, y, w, h) => {
                     const iconMarigin = 10;
                     DrawButton(x, y, w, h, "", "#ffc9c9", "", "Clear all MBS data");
@@ -65,6 +78,60 @@ export class MBSPreferenceScreen extends MBSScreen {
                     const subScreen = new ResetScreen(this);
                     this.children.set(subScreen.screen, subScreen);
                     subScreen.load();
+                },
+            },
+            import: {
+                coords: [1500, 620, 190, 80],
+                run: (x, y, w, h) => {
+                    MainCanvas.textAlign = "center";
+                    DrawButton(x, y, w, h, "Import", "White", "", "Import MBS settings");
+                    MainCanvas.textAlign = "left";
+                },
+                click: () => {
+                    const settingsString = prompt(
+                        "Please paste MBS settings.\nImporting settings will overwrite existing settings. Are you sure?",
+                    );
+                    if (!settingsString) {
+                        return;
+                    }
+
+                    const status = importSettings(settingsString);
+                    switch (status.status) {
+                        case SettingsStatus.OK:
+                            logger.log("Settings successfully updated");
+                            return alert("Settings successfully updated!");
+                        case SettingsStatus.ERROR:
+                            return alert("ERROR: Detected corrupted MBS settings.\nNo changes were made.");
+                        case SettingsStatus.EMPTY_SETTINGS:
+                            return alert("ERROR: Detected empty or corrupted MBS settings.\nNo changes were made.");
+                        case SettingsStatus.WARN: {
+                            const isConfirm = confirm(
+                                "WARNING: MBS successfully parsed the settings but found one or more invalid fields; "
+                                + "please check the browser console for more details."
+                                + "\nAre you sure you want to continue?",
+                            );
+                            if (isConfirm) {
+                                Player.MBSSettings = status.settings;
+                                pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], true);
+                                logSettingsSize();
+                                logger.log("Settings successfully updated");
+                                alert("Settings successfully updated!");
+                            }
+                        }
+                    }
+                },
+            },
+            export: {
+                coords: [1710, 620, 190, 80],
+                run: (x, y, w, h) => {
+                    MainCanvas.textAlign = "center";
+                    DrawButton(x, y, w, h, "Export", "White", "", "Export MBS settings");
+                    MainCanvas.textAlign = "left";
+                },
+                click: () => {
+                    const compressed = exportSettings();
+                    navigator.clipboard.writeText(compressed);
+                    alert("MBS settings copied to clipboard.");
                 },
             },
             changelog: {
@@ -142,8 +209,8 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     click(event: MouseEvent | TouchEvent) {
         return Object.values(this.elements).some((e) => {
-            if (MouseIn(...e.coords)) {
-                e.click?.(event);
+            if (e.click && MouseIn(...e.coords)) {
+                e.click(event);
                 return true;
             } else {
                 return false;

@@ -55,8 +55,9 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
         wheelList = Player.MBSSettings[fieldName];
     } else {
         const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
-        // @ts-ignore
-        wheelList = parseFWObjects(constructor, protoWheelList);
+        const errList: [msg: string, ...rest: unknown[]][] = [];
+        wheelList = parseFWObjects(constructor as any, protoWheelList, errList) as typeof wheelList;
+        errList.forEach(err => console.warn(err));
     }
     wheelList.forEach(i => {if (!i?.hidden) { i?.register(false); }});
     return wheelList;
