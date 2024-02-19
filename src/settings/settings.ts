@@ -420,7 +420,7 @@ export function importSettings(base64: string): SettingsStatus.Expanded {
     let protoSettings: null | MBSProtoSettings = null;
     let err: unknown = null;
     try {
-        protoSettings = JSON.parse(LZString.decompressFromBase64(base64) || "{}");
+        protoSettings = JSON.parse(LZString.decompressFromBase64(base64.trim()) || "{}");
     } catch (error) {
         err = error;
     }
