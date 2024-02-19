@@ -91,6 +91,26 @@ ${getChangeLogURL()}`;
     });
 }
 
+/** Show any errors encountered during settings parsing to the player via a beep. */
+function showSettingsError(err: SettingsStatus.Base["err"]): void {
+    const errFormat = fromEntries(entries(err).map(([k, v]): [string, string[]] => {
+        return [
+            k,
+            v.map(i => i.join(", ")),
+        ];
+    }));
+    const errString = JSON.stringify(errFormat, undefined, 4);
+    const message = `Encountered one or more errors while parsing MBS settings:\n\n${errString}`;
+    ServerAccountBeep({
+        MemberNumber: Player.MemberNumber,
+        MemberName: "MBS",
+        ChatRoomName: "MBS Settings Error",
+        Private: true,
+        Message: message,
+        ChatRoomSpace: "",
+    });
+}
+
 export function parseFWObjects<
     T extends FWSimpleItemSet | FWSimpleCommand,
     RT extends FWObject<FWObjectOption>,
@@ -274,6 +294,9 @@ function initMBSSettings(
     }
     if (!settingsStatus.ok) {
         logger.warn("Encountered and fixed one or more errors while parsing MBS settings", settingsStatus.err);
+        if (allowFailure) {
+            showSettingsError(settingsStatus.err);
+        }
     }
 
     // Ensure that the player's wheel of fortune settings are initialized
