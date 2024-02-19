@@ -33,11 +33,16 @@ interface WheelBundle {
     items: ItemBundle[];
 }
 
-/** Maid's Bondage Scripts: Various additions and utility scripts for BC. */
+/**
+ * Maid's Bondage Scripts API: Various additions and utility scripts for BC.
+ * @version 1.2
+ */
 declare namespace mbs {
     /**
      * The (semantic) MBS version.
      * Guaranteed to match the `/^([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/` regex.
+     *
+     * @since API version 1.0
      */
     const MBS_VERSION: `${number}.${number}.${number}${string}`;
     /**
@@ -46,6 +51,8 @@ declare namespace mbs {
      * - Changes or removals are accompanied by a `major` increment (and resetting `minor` back to 0)
      * - Additions are only accompanied by a `minor` increment
      * - Documentation changes can be implemented without incrementing `major` or `minor`
+     *
+     * @since API version 1.0
      */
     const API_VERSION: {
         /** The major API versions; increments are reserved for changes and removals */
@@ -55,6 +62,8 @@ declare namespace mbs {
     };
     /**
      * Run the MBS test suit.
+     *
+     * @since API version 1.0
      * @returns Whether the test suite succeeded or not
      */
     function runTests(): boolean;
@@ -65,35 +74,51 @@ declare namespace mbs {
      * While the output type is guaranteed by the API, the exact value is not and MBS is free to change it at any point without prior warning.
      *
      * As of API version 1.2 the output string is guaranteed to be JSON-safe (see {@link JSON.parse})
+     *
+     * @since API version 1.1
      * @returns The MBS debug output in stringified form
      */
     function getDebug(): string;
-    /** Public MBS API for retrieving wheel outfit data. */
+    /**
+     * Public MBS API for retrieving wheel outfit data.
+     *
+     * @since API version 1.0
+     */
     namespace wheelOutfits {
         /**
          * Get a record mapping all (user-specified) outfit names to the actual outfit data.
+         *
+         * @since API version 1.0
          * @returns All MBS outfit data
          */
         function getAll(): Record<string, WheelBundle>;
         /**
          * Get a single wheel outfit by its name.
+         *
+         * @since API version 1.0
          * @param name The name of the wheel outfit
          * @returns The wheel outfit or `undefined` if it cannot be found
          */
         function getByName(name: string): undefined | WheelBundle;
         /**
          * Get a single wheel outfit by its index.
+         *
+         * @since API version 1.0
          * @param index The wheel outfit or `undefined` if it cannot be found
          * @returns The MBS outfit data or `undefined`
          */
         function getByIndex(index: number): undefined | WheelBundle;
         /**
          * Return a list of all the players wheel outfit names.
+         *
+         * @since API version 1.0
          * @returns The list of wheel outfit names
          */
         function getNames(): string[];
         /**
          * Return a list of all the players wheel outfit indices.
+         *
+         * @since API version 1.0
          * @returns The list of wheel outfit indices
          */
         function getIndices(): number[];
