@@ -220,7 +220,6 @@ export class NewItemsScreen extends MBSScreen {
                     CharacterRefresh(this.preview, false, false);
                 },
                 run: (x, y) => DrawCharacter(this.preview, x, y, 1),
-                exit: () => CharacterDelete(this.preview.AccountName),
             },
             Money: {
                 coords: [1005, 25, 200, 90],
