@@ -81,14 +81,17 @@ function showChangelog(): void {
 
 See below for the updated changelog:
 ${getChangeLogURL()}`;
-    ServerAccountBeep({
-        MemberNumber: Player.MemberNumber,
-        MemberName: "MBS",
-        ChatRoomName: "MBS Changelog",
-        Private: true,
-        Message: message,
-        ChatRoomSpace: "",
-    });
+    if (typeof Player.MemberNumber === "number") {
+        ServerAccountBeep({
+            MemberNumber: Player.MemberNumber,
+            MemberName: "MBS",
+            ChatRoomName: "MBS Changelog",
+            Private: true,
+            Message: message,
+            ChatRoomSpace: "",
+            BeepType: "",
+        });
+    }
 }
 
 /** Show any errors encountered during settings parsing to the player via a beep. */
@@ -101,14 +104,17 @@ function showSettingsError(err: SettingsStatus.Base["err"]): void {
     }));
     const errString = JSON.stringify(errFormat, undefined, 4);
     const message = `Encountered one or more errors while parsing MBS settings:\n\n${errString}`;
-    ServerAccountBeep({
-        MemberNumber: Player.MemberNumber,
-        MemberName: "MBS",
-        ChatRoomName: "MBS Settings Error",
-        Private: true,
-        Message: message,
-        ChatRoomSpace: "",
-    });
+    if (typeof Player.MemberNumber === "number") {
+        ServerAccountBeep({
+            MemberNumber: Player.MemberNumber,
+            MemberName: "MBS",
+            ChatRoomName: "MBS Settings Error",
+            Private: true,
+            Message: message,
+            ChatRoomSpace: "",
+            BeepType: "",
+        });
+    }
 }
 
 export function parseFWObjects<

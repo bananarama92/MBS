@@ -18,6 +18,8 @@ export function test_builtinMBSWheel(): void {
 
     const options = flatten(Object.values(FORTUNE_WHEEL_ITEM_SETS).map(i => i.children ?? []));
     const characterNames = options.map(i => i.Description);
+    const characters = characterNames.map(i => CharacterLoadSimple(i));
+
     try {
         options.forEach(option => {
             if (!(option.Parent instanceof FWItemSet)) {
@@ -69,6 +71,11 @@ export function test_builtinMBSWheel(): void {
             }
         });
     } finally {
-        characterNames.forEach(CharacterDelete);
+        if (GameVersion === "R101") {
+            // @ts-expect-error
+            characterNames.forEach(CharacterDelete);
+        } else {
+            characters.forEach(CharacterDelete);
+        }
     }
 }

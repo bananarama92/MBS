@@ -802,7 +802,7 @@ waitFor(bcLoaded).then(() => {
         wheelFortuneRunPatches['DrawButton(1770, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
         wheelFortuneRunPatches["DrawButton(1885, 25, 90, 90"] = `DrawButton(${COORDS.exit.join(", ")}`;
     } else {
-        wheelFortuneRunPatches['DrawButton(1720, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
+        wheelFortuneRunPatches['DrawButton(1720, 60, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
     }
 
     const wheelFortuneClickPatches: Record<string, string> = {};

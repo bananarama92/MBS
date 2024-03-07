@@ -43,14 +43,13 @@ export function test_FORTUNE_WHEEL_MAX_SETS(): void {
 export function test_canChangeCosplay(): void {
     const name = "test_canChangeCosplay";
     const characterNames = range(0, 3).map(i => `${name}${i}`);
+    const characters = characterNames.map(i => {
+        const c = CharacterLoadSimple(i);
+        c.OnlineSharedSettings = <CharacterOnlineSharedSettings>c.OnlineSharedSettings ?? {};
+        return c;
+    });
 
     try {
-        const characters = characterNames.map(i => {
-            const c = CharacterLoadSimple(i);
-            c.OnlineSharedSettings = <CharacterOnlineSharedSettings>c.OnlineSharedSettings ?? {};
-            return c;
-
-        });
         characters[1].OnlineSharedSettings = <CharacterOnlineSharedSettings>{ ...(characters[1].OnlineSharedSettings ?? {}), BlockBodyCosplay: false };
         characters[2].OnlineSharedSettings = <CharacterOnlineSharedSettings>{ ...(characters[1].OnlineSharedSettings ?? {}), BlockBodyCosplay: true };
 
@@ -73,7 +72,12 @@ export function test_canChangeCosplay(): void {
             assertEqual(`${name}:${PASSES}:${i}`, outputObsered, output);
         });
     } finally {
-        characterNames.forEach(CharacterDelete);
+        if (GameVersion === "R101") {
+            // @ts-expect-error
+            characterNames.forEach(CharacterDelete);
+        } else {
+            characters.forEach(CharacterDelete);
+        }
     }
 }
 
@@ -104,9 +108,9 @@ export function test_sanitizeWheelFortuneIDs(): void {
 
 export function test_equipTimerLock(): void {
     const name = "test_equipTimerLock";
+    const character = CharacterLoadSimple(name);
 
     try {
-        const character = CharacterLoadSimple(name);
         const asset = AssetGet(character.AssetFamily, "ItemArms", "LatexArmbinder");
         if (asset == null) {
             throw new Error();
@@ -125,15 +129,20 @@ export function test_equipTimerLock(): void {
         assertEqual(`${name}:${PASSES}:0`, item.Property?.LockSet, true);
         assertTypeof(`${name}:${PASSES}:0`, item.Property?.Password, "string");
     } finally {
-        CharacterDelete(name);
+        if (GameVersion === "R101") {
+            // @ts-expect-error
+            CharacterDelete(name);
+        } else {
+            CharacterDelete(character);
+        }
     }
 }
 
 export function test_equipHighSecLock(): void {
     const name = "test_equipHighSecLock";
+    const character = CharacterLoadSimple(name);
 
     try {
-        const character = CharacterLoadSimple(name);
         const asset = AssetGet(character.AssetFamily, "ItemArms", "LatexArmbinder");
         if (asset == null) {
             throw new Error();
@@ -143,16 +152,21 @@ export function test_equipHighSecLock(): void {
         assertPasses(`${name}:${PASSES}:0`, () => equipHighSecLock(item, character));
         assertEqual(`${name}:${PASSES}:0`, item.Property?.MemberNumberListKeys, "");
     } finally {
-        CharacterDelete(name);
+        if (GameVersion === "R101") {
+            // @ts-expect-error
+            CharacterDelete(name);
+        } else {
+            CharacterDelete(character);
+        }
     }
 }
 
 export function test_equipLock(): void {
     const name = "test_equipLock";
     const characterNames = range(0, 5).map(i => `${name}-${i}`);
+    const characters = characterNames.map(CharacterLoadSimple);
 
     try {
-        const characters = characterNames.map(CharacterLoadSimple);
         characters[4].BlockItems.push({ Name: "ExclusivePadlock", Group: "ItemMisc" });
         InventoryWear(characters[2], "LatexArmbinder", "ItemArms");
         InventoryLock(characters[2], <Item>characters[2].Appearance.at(-1), "ExclusivePadlock");
@@ -209,7 +223,12 @@ export function test_equipLock(): void {
             assertEqual(`${name}:${PASSES}:0`, outputObserved, output);
         });
     } finally {
-        characterNames.forEach(CharacterDelete);
+        if (GameVersion === "R101") {
+            // @ts-expect-error
+            characterNames.forEach(CharacterDelete);
+        } else {
+            characters.forEach(CharacterDelete);
+        }
     }
 }
 
