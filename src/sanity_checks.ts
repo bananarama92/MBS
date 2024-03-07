@@ -58,6 +58,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["DialogLeaveFocusItem", ["429F9FBF", "026FC472"]],
         ["MainHallRun", ["735A1207"]],
         ["MainHallClick", ["7A6D741A"]],
+        ["ServerPlayerIsInChatRoom", ["E3771112"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["16991349", "21CCD6B4"]],
         ["WheelFortuneRun", ["E9E5F3D6", "A59DA22A"]],

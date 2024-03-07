@@ -62,7 +62,7 @@ let ITEM_COLOR_COORDS: RectTuple;
 type AssetKey = `${AssetGroupName}${string}`;
 
 /** A record mapping asset names to actual assets for all assets added in {@link NEW_ASSETS_VERSION} */
-const NEW_ASSETS: Record<AssetKey, Asset> = {};
+export const NEW_ASSETS: Record<AssetKey, Asset> = {};
 
 /** A record mapping {@link Asset.BuyGroup} names to the (adjusted) cost of each asset plus a list of all minified assets */
 const BUY_GROUPS: Record<string, undefined | { readonly money: number, readonly assets: ItemBundle[] }> = {};

@@ -2,7 +2,7 @@ import { MBS_MOD_API, waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
-import { NewItemsScreen, NEW_ASSETS_VERSION } from "../new_items_screen";
+import { NewItemsScreen, NEW_ASSETS_VERSION, NEW_ASSETS } from "../new_items_screen";
 
 import {
     pushMBSSettings,
@@ -153,9 +153,18 @@ export class MBSPreferenceScreen extends MBSScreen {
                     DrawText(`MBS: Show new R${NEW_ASSETS_VERSION} items`, x + descriptionOffset, y + h / 2, "Black");
                 },
                 click: () => {
-                    const subScreen = new NewItemsScreen(this);
-                    this.children.set(subScreen.screen, subScreen);
-                    subScreen.load();
+                    if (typeof Shop2 === "undefined") {
+                        const subScreen = new NewItemsScreen(this);
+                        this.children.set(subScreen.screen, subScreen);
+                        subScreen.load();
+                    } else {
+                        const background = ServerPlayerIsInChatRoom() ? ChatRoomData?.Background : undefined;
+                        const prevScreen: [ModuleType, string] = ServerPlayerIsInChatRoom() ? ["Online", "ChatRoom"] : ["Character", "Preference"];
+                        this.exitScreens(true);
+                        Shop2Vars.Mode = "Preview";
+                        Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
+                        Shop2.Init(background, prevScreen);
+                    }
                 },
             },
             wheelConfig: {
@@ -244,6 +253,14 @@ waitFor(bcLoaded).then(() => {
         });
         img.src = "Icons/Maid.png";
         DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+    });
+
+    MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
+        if (CurrentScreen == MBSPreferenceScreen.screen && InformationSheetPreviousScreen == "ChatRoom") {
+            return true;
+        } else {
+            return next(args);
+        }
     });
 
     MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
