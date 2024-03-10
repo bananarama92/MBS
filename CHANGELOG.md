@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.4.1
+* Fix unconditional accessing of a BC R102 variable
+
 ## v1.4.0
 * Increment the MBS API to version 1.2:
     - Guarantee that the `mbs.getDebug()` output strings are JSON-safe
