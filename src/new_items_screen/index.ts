@@ -9,8 +9,6 @@ export {
     NEW_ASSETS,
 };
 
-const shop2Vars = <typeof Shop2Vars & { readonly MBS_ShowAllVersions: boolean }>Shop2Vars;
-
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing new item screen hooks");
 
@@ -29,6 +27,8 @@ waitFor(bcLoaded).then(() => {
     });
 
     if (typeof Shop2 !== "undefined") {
+        const shop2Vars = <typeof Shop2Vars & { readonly MBS_ShowAllVersions: boolean }>Shop2Vars;
+
         Object.defineProperty(Shop2Vars, "MBS_ShowAllVersions", {
             get() {
                 return !("MBS_VersionFilter" in Shop2Vars.Filters);
