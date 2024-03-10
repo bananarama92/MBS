@@ -164,6 +164,10 @@ export class MBSPreferenceScreen extends MBSScreen {
                         Shop2Vars.Mode = "Preview";
                         Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
                         Shop2.Init(background, prevScreen);
+                        ServerBeep = {
+                            Message: "The MBS \"Show new items\" button will be removed in R103; use the Club Shop or /shop chat command instead",
+                            Timer: CommonTime() + 10000,
+                        };
                     }
                 },
             },

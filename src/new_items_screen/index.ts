@@ -118,6 +118,10 @@ waitFor(bcLoaded).then(() => {
                 Shop2Vars.Mode = "Preview";
                 Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
                 Shop2.Init(undefined, ["Room", "MainHall"]);
+                ServerBeep = {
+                    Message: "The MBS \"Show new items\" button will be removed in R103; use the Club Shop or /shop chat command instead",
+                    Timer: CommonTime() + 10000,
+                };
             }
             return;
         }
