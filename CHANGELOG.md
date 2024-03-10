@@ -1,5 +1,15 @@
 # MBS Changelog
 
+## v1.4.0
+* Increment the MBS API to version 1.2:
+    - Guarantee that the `mbs.getDebug()` output strings are JSON-safe
+    - Provide better documentation regarding when features were added to the API
+* Add the ability to import & export MBS settings
+* Send a beep to the player if errors are encountered while initializing MBS settings
+* Add support for BC R102
+* Deprecate MBS' custom entry points for the Show New Items menu, all of which will be removed in R103.
+  Once R102 is live (or its beta), you can use the Club Shop button in the main hall or the `/shop` chat command instead.
+
 ## v1.3.7
 * Minor UI adjustments in the wheel of fortune screens
 * Add the option to change an items color in the show new items menu

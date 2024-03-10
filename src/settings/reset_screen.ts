@@ -1,6 +1,11 @@
 import { MBSScreen } from "../screen_abc";
 import { clearMBSSettings } from "./settings";
 
+// Partially adapted from LSCG
+//
+// LSCG, Copyright 2023 Little Sera, GPLv3
+// https://github.com/littlesera/LSCG
+
 export class ResetScreen extends MBSScreen {
     static readonly background = "Sheet";
     static readonly screen = "MBS_ResetScreen";

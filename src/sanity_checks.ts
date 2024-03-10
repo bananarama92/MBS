@@ -51,16 +51,17 @@ type HashList = readonly [
 /** A Map with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
-        ["CharacterGetCurrent", ["45608177"]],
+        ["CharacterGetCurrent", ["45608177", "69F45A41"]],
         ["CraftingSaveServer", ["025B434F"]],
         ["CraftingClick", ["FF1A7B21"]],
         ["CraftingRun", ["5BE6E125"]],
-        ["DialogLeaveFocusItem", ["429F9FBF"]],
+        ["DialogLeaveFocusItem", ["429F9FBF", "026FC472"]],
         ["MainHallRun", ["735A1207"]],
         ["MainHallClick", ["7A6D741A"]],
+        ["ServerPlayerIsInChatRoom", ["E3771112"]],
         ["WheelFortuneLoad", ["204D57D4"]],
-        ["WheelFortuneClick", ["16991349"]],
-        ["WheelFortuneRun", ["E9E5F3D6"]],
+        ["WheelFortuneClick", ["16991349", "21CCD6B4"]],
+        ["WheelFortuneRun", ["E9E5F3D6", "A59DA22A"]],
         ["WheelFortuneMouseUp", ["1465BDFA"]],
         ["WheelFortuneMouseDown", ["306C80B6"]],
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],

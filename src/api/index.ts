@@ -15,13 +15,13 @@ export const API_VERSION = Object.freeze({
     /** The major API versions; increments are reserved for changes and removals */
     major: 1,
     /** The major API versions; increments are reserved for additions */
-    minor: 1,
+    minor: 2,
 }) satisfies typeof mbs.API_VERSION;
 
 /**
- * Return MBS debug output in human-readable, stringified form.
+ * Return MBS debug output in human-readable, JSON-safe, stringified form.
  *
- * Note that the API provides no guarantees regarding the outputs machine readability, and MBS is free to change its structure at any point without prior warning
+ * Note that the API provides no guarantees regarding the outputs machine readability (beyond being JSON-safe), and MBS is free to change its structure at any point without prior warning
  * @returns The MBS debug output in stringified form
  */
 export const getDebug: typeof mbs.getDebug = function getDebug() {
