@@ -1,0 +1,115 @@
+#MBS_FWSelectScreen {
+	display: grid;
+	user-select: none;
+	text-align: center;
+	grid-row-gap: min(2vh, 1vw);
+	grid-template-columns: 2fr 7fr 1fr;
+	grid-template-rows: 1fr 7.4fr 1.7fr;
+	grid-template-areas:
+	  ". buttonOuterGrid exit"
+	  "storage buttonOuterGrid ."
+	  "storageFooter buttonOuterGrid .";
+}
+
+#MBS_FWSelectScreen_Exit {
+	justify-self: end;
+	width: min(9vh, 4.5vw);
+	height: min(9vh, 4.5vw);
+	grid-area: exit;
+}
+
+#MBS_FWSelectScreen_Storage {
+	display: grid;
+	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800);
+	border: min(0.3vh, 0.15vw) solid black;
+	width: 35%;
+	height: 100%;
+	justify-self: center;
+	grid-area: storage;
+}
+
+#MBS_FWSelectScreen_Storage #MBS_FWSelectScreen_StorageTooltip {
+	visibility: hidden;
+	width: fit-content;
+	background-color: white;
+	color: black;
+	line-height: 1.4;
+	left: 15%;
+	padding-left: min(2vh, 1vw);
+	padding-right: min(2vh, 1vw);
+	min-height: min(9vh, 4.5vw);
+	position: absolute;
+	text-align: left;
+	border: min(0.3vh, 0.15vw) solid black;
+}
+
+#MBS_FWSelectScreen_Storage:hover #MBS_FWSelectScreen_StorageTooltip {
+	visibility: visible;
+}
+
+#MBS_FWSelectScreen_StorageInner {
+	width: 100%;
+}
+
+#MBS_FWSelectScreen_StorageFooter {
+	font-size: min(3.5vh, 1.75vw);
+	height: min(7vh, 3.5vw);
+	padding-top: min(1vh, 0.5vw);
+	grid-area: storageFooter;
+}
+
+#MBS_FWSelectScreen_ButtonOuterGrid {
+	display: grid;
+	grid-template-rows: min(9vh, 4.5vw) auto min(9vh, 4.5vw) auto;
+	font-size: min(5vh, 2.5vw);
+	height: 94%;
+	overflow-y: scroll;
+	padding-right: min(2vh, 1vw);
+	padding-left: min(2vh, 1vw);
+	grid-area: buttonOuterGrid;
+}
+
+#MBS_FWSelectScreen_ButtonInnerGrid0, #MBS_FWSelectScreen_ButtonInnerGrid1 {
+	display: grid;
+	grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
+	grid-gap: min(2vh, 1vw);
+	padding-bottom: min(2vh, 1vw);
+	padding-top: min(2vh, 1vw);
+}
+
+#MBS_FWSelectScreen_ItemSets, #MBS_FWSelectScreen_CommandSets {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: sticky;
+	background: white;
+	height: 100%;
+	top: 0%;
+}
+
+.MBS_Button {
+	width: 100%;
+	height: 100%;
+	border: min(0.3vh, 0.15vw) solid black;
+	color: black;
+	background-color: white;
+	background-size: cover;
+	background-origin: content-box;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+	padding-left: min(2vh, 1vw);
+	padding-right: min(2vh, 1vw);
+	font-size: min(3.5vh, 1.75vw);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: clip;
+}
+
+.MBS_Button:hover {
+	background-color: cyan;
+}
+
+.MBS_Button:disabled {
+	background-color: lightgray;
+}
