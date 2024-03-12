@@ -14,6 +14,7 @@ import {
     SettingsStatus,
     clearMBSSettings,
 } from "./settings";
+import { garblingJSON } from "../garbling";
 
 import styles from "./settings_screen.scss";
 
@@ -46,6 +47,8 @@ export class PreferenceScreenProxy extends ScreenProxy {
     }
 }
 
+type BoolSettings = keyof { [k in keyof MBSSettings as MBSSettings[k] extends boolean ? k : never]: MBSSettings[k] };
+
 const root = "mbs-preference";
 const ID = Object.freeze({
     root,
@@ -67,6 +70,8 @@ const ID = Object.freeze({
     rollHeader: `${root}-roll-header`,
     lockCheckbox: `${root}-lock-checkbox`,
     lockHeader: `${root}-lock-header`,
+    gagCheckbox: `${root}-gag-checkbox`,
+    gagHeader: `${root}-gag-header`,
 
     miscGrid: `${root}-misc`,
     reset: `${root}-reset`,
@@ -125,48 +130,46 @@ export class MBSPreferenceScreen extends MBSScreen {
                 </div>
 
                 <div id={ID.settingsGrid}>
-                    <div class="mbs-preference-settings-pair" id={ID.settingsPair + "0"}>
+                    <div class="mbs-preference-settings-pair">
                         <button
                             class="mbs-button"
-                            id={ID.itemsButton}
                             style={{ backgroundImage: "url('./Icons/Changelog.png')" }}
                             onClick={this.#loadShop.bind(this)}
                         />
-                        <p id={ID.itemsHeader}>{`Show new R${NEW_ASSETS_VERSION} items`}</p>
+                        {`Show new R${NEW_ASSETS_VERSION} items`}
                     </div>
 
-                    <div class="mbs-preference-settings-pair" id={ID.settingsPair + "1"}>
+                    <h2>Wheel of fortune settings</h2>
+                    <div class="mbs-preference-settings-pair">
                         <button
                             class="mbs-button"
-                            id={ID.wheelButton}
                             style={{ backgroundImage: "url('./Icons/Crafting.png')" }}
                             onClick={this.#loadWheel.bind(this)}
                         />
-                        <p id={ID.wheelHeader}>{"Configure the wheel of fortune"}</p>
+                        Configure the wheel of fortune
+                    </div>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="RollWhenRestrained" onClick={this.#boolSwitch.bind(this)}/>
+                        Allow wheel rolling while restrained
+                    </div>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)}/>
+                        Lock MBS settings while restrained
                     </div>
 
-                    <div class="mbs-preference-settings-pair" id={ID.settingsPair + "2"}>
-                        <input
-                            type="checkbox"
-                            id={ID.rollCheckbox}
-                            onClick={() => {
-                                Player.MBSSettings.RollWhenRestrained = !Player.MBSSettings.RollWhenRestrained;
-                                pushMBSSettings([SettingsType.SETTINGS]);
-                            }}
-                        />
-                        <p id={ID.rollHeader}>{"Allow wheel rolling while restrained"}</p>
+                    <h2>Garbling settings</h2>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)}/>
+                        <p>
+                            <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
+                            based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
+                        </p>
+                        <p>Incompatible-ish with FBC's garbling anti-cheat</p>
                     </div>
-
-                    <div class="mbs-preference-settings-pair" id={ID.settingsPair + "3"}>
-                        <input
-                            type="checkbox"
-                            id={ID.lockCheckbox}
-                            onClick={() => {
-                                Player.MBSSettings.LockedWhenRestrained = !Player.MBSSettings.LockedWhenRestrained;
-                                pushMBSSettings([SettingsType.SETTINGS]);
-                            }}
-                        />
-                        <p id={ID.lockHeader}>{"Lock MBS settings while restrained"}</p>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="DropTrailing" onClick={this.#boolSwitch.bind(this)}/>
+                        Whether to heaviest gags will drop up to half of all trailing characters
+                        when alternate garbling is enabled
                     </div>
                 </div>
 
@@ -251,8 +254,24 @@ export class MBSPreferenceScreen extends MBSScreen {
         ) {
             // R103
             const grid = document.getElementById(ID.settingsGrid) as HTMLDivElement;
-            const member = document.getElementById(`${ID.settingsPair}0`) as HTMLDivElement;
+            const member = grid.children[0] as HTMLDivElement;
             grid.removeChild(member);
+        }
+    }
+
+    #boolSwitch(event: MouseEvent) {
+        const field = (event.target as HTMLInputElement).dataset.field as BoolSettings;
+        if (field in Player.MBSSettings) {
+            Player.MBSSettings[field] = !Player.MBSSettings[field];
+            pushMBSSettings([SettingsType.SETTINGS]);
+            switch (field) {
+                case "AlternativeGarbling":
+                    if (Player.MBSSettings[field]) garblingJSON.init();
+                    break;
+                case "LockedWhenRestrained":
+                    this.#lockInputs();
+                    break;
+            }
         }
     }
 
@@ -349,18 +368,22 @@ export class MBSPreferenceScreen extends MBSScreen {
         this.loadChild(FWSelectScreen, wheelStruct, Player, params);
     }
 
-    load() {
-        const checkboxes = {
-            [ID.lockCheckbox]: "LockedWhenRestrained",
-            [ID.rollCheckbox]: "RollWhenRestrained",
-        } as const satisfies Record<string, keyof MBSSettings>;
-
+    #lockInputs() {
         const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
-        for (const [id, field] of Object.entries(checkboxes)) {
-            const checkbox = document.getElementById(id) as HTMLInputElement;
-            checkbox.checked = Player.MBSSettings[field];
-            checkbox.disabled = disabled;
+        const root = document.getElementById(ID.settingsGrid) as HTMLDivElement;
+        for (const elemOuter of root.children) {
+            for (const elemInner of elemOuter.children as Iterable<HTMLInputElement>) {
+                const field = elemInner.dataset?.field;
+                if (field && field in Player.MBSSettings) {
+                    elemInner.checked = Player.MBSSettings[field as BoolSettings];
+                    elemInner.disabled = disabled;
+                }
+            }
         }
+    }
+
+    load() {
+        this.#lockInputs();
         super.load();
     }
 

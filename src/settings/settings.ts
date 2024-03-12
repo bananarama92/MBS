@@ -22,6 +22,7 @@ import {
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
+import { garblingJSON } from "../garbling";
 
 import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
@@ -220,13 +221,17 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         FortuneWheelPresets: [],
         LockedWhenRestrained: [],
         RollWhenRestrained: [],
+        AlternativeGarbling: [],
+        DropTrailing: [],
     };
 
     const scalars = {
         CraftingCache: "",
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
-    };
+        AlternativeGarbling: false,
+        DropTrailing: false,
+    } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
         if (s[field] === undefined) {
@@ -246,7 +251,12 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         FortuneWheelPresets: parsePresetArray(s.FortuneWheelPresets ?? [], err.FortuneWheelPresets),
         LockedWhenRestrained: scalars.LockedWhenRestrained,
         RollWhenRestrained: scalars.RollWhenRestrained,
+        AlternativeGarbling: scalars.AlternativeGarbling,
+        DropTrailing: scalars.DropTrailing,
     };
+    if (settings.AlternativeGarbling) {
+        garblingJSON.init();
+    }
     const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
     return {
         settings,
@@ -336,6 +346,8 @@ export function clearMBSSettings(): void {
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
         FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
+        AlternativeGarbling: false,
+        DropTrailing: false,
     });
 
     ServerAccountUpdate.QueueData({

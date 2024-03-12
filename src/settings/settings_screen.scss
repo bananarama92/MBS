@@ -18,19 +18,25 @@
 	align-items: center;
 	display: grid;
 	grid-template-columns: min(9vh, 4.5vw) auto;
-	text-align: left;
+	padding-right: min(6vh, 3vw);
+	text-align: justify;
 
 	button {
 		height: min(9vh, 4.5vw);
 		width: min(9vh, 4.5vw);
+	}
+
+	&> p {
+		margin: 0;
 	}
 }
 
 #mbs-preference-settings {
 	display: grid;
 	grid-area: settings;
-	height: fit-content;
+	height: 100%;
 	overflow: hidden scroll;
+	grid-gap: min(2vh, 1vw);
 }
 
 #mbs-preference-misc {
