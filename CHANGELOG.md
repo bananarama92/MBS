@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.5.0
+* Add a new (English-centric) speech garbling algorithm based on [CordeliaMist/Dalamud-GagSpeak](https://github.com/CordeliaMist/Dalamud-GagSpeak).
+  The new garbling, disabled by default, can be enabled in the MBS preference menu.
+
 ## 1.4.4
 * Fix the broken exit button image in the MBS wheel of fortune selection menu
 * Rewrite the MBS fortune wheel item set screen using DOM elements
@@ -9,8 +13,6 @@
 * Fix the [BondageProjects/Bondage-College#4900](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4900) backport not hiding owner/lovers/family-locked items when required
 * Rewrite the MBS fortune wheel selection screen using DOM elements; add a scroll bar
 * Fix spurious MBS warnings about duplicate crafts
-
-## 1.4.2
 * Drop support for BCR101
 * Fix the FUSAM button not disappearing when accessing the SHOP via the MBS preferences menu
 * Backport one BC R103 change to R102:
