@@ -36,6 +36,7 @@ waitFor(() => bcLoaded(false)).then(() => {
 import "./window_register";
 import "./crafting";
 import "./backport";
+import "./garbling";
 
 // Workaround for checking whether mbs satisfies its declared interface
 // Xref microsoft/TypeScript#38511

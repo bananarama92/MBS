@@ -220,13 +220,15 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         FortuneWheelPresets: [],
         LockedWhenRestrained: [],
         RollWhenRestrained: [],
+        AlternativeGarbling: [],
     };
 
     const scalars = {
         CraftingCache: "",
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
-    };
+        AlternativeGarbling: false,
+    } satisfies { [k in keyof typeof err]?: unknown };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
         if (s[field] === undefined) {
@@ -246,6 +248,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         FortuneWheelPresets: parsePresetArray(s.FortuneWheelPresets ?? [], err.FortuneWheelPresets),
         LockedWhenRestrained: scalars.LockedWhenRestrained,
         RollWhenRestrained: scalars.RollWhenRestrained,
+        AlternativeGarbling: scalars.AlternativeGarbling,
     };
     const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
     return {
@@ -336,6 +339,7 @@ export function clearMBSSettings(): void {
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
         FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
+        AlternativeGarbling: false,
     });
 
     ServerAccountUpdate.QueueData({

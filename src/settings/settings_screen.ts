@@ -212,6 +212,21 @@ export class MBSPreferenceScreen extends MBSScreen {
                     }
                 },
             },
+            alternateGarbling: {
+                coords: [500, 546, 64, 64],
+                run: (x, y, w, h) => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    DrawCheckbox(x, y, w, h, "", this.character.MBSSettings.AlternativeGarbling, disabled);
+                    DrawText("Whether gags use an alternative (English-centric) speech garbling", x + descriptionOffset, y + h / 2, "Black");
+                },
+                click: () => {
+                    const disabled = (this.character.MBSSettings.LockedWhenRestrained && this.character.IsRestrained());
+                    if (!disabled) {
+                        this.character.MBSSettings.AlternativeGarbling = !this.character.MBSSettings.AlternativeGarbling;
+                        pushMBSSettings([SettingsType.SETTINGS]);
+                    }
+                },
+            },
         };
     }
 

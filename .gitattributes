@@ -1,1 +1,4 @@
 * text=auto eol=lf
+
+src/garbling/vendor/en_UK.json linguist-generated
+src/garbling/vendor/gag_data.json linguist-generated
