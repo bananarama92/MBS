@@ -156,6 +156,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     const background = ServerPlayerIsInChatRoom() ? ChatRoomData?.Background : undefined;
                     const prevScreen: [ModuleType, string] = ServerPlayerIsInChatRoom() ? ["Online", "ChatRoom"] : ["Character", "Preference"];
                     this.exitScreens(true);
+                    PreferenceExit();
                     Shop2Vars.Mode = "Preview";
                     Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
                     Shop2.Init(background, prevScreen);
