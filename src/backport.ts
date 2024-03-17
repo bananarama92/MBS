@@ -2,7 +2,9 @@
 
 import { sortBy } from "lodash-es";
 
-import { waitFor, logger, MBS_MOD_API } from "./common";
+// @ts-ignore
+import { MBS_MOD_API } from "./common";
+import { waitFor, logger } from "./common";
 import { bcLoaded } from "./common_bc";
 import { BC_MIN_VERSION } from "./sanity_checks";
 
@@ -12,38 +14,65 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
+declare const CraftingAssetsPopulate: undefined | (() => void);
+
+/**
+ * Construct a record mapping all crafting-valid asset names to a list of matching elligble assets.
+ * Elligble assets are defined as crafting-valid assets with either a matching {@link Asset.Name} or {@link Asset.CraftGroup}.
+ */
+function craftingAssetsPopulate(): Record<string, readonly Asset[]> {
+    const ret: Record<string, Asset[]> = {};
+    const craftGroups: Record<string, Asset[]> = {};
+    for (const a of Asset) {
+        if (!a.Group.IsItem() || a.IsLock || !a.Wear || !a.Enable) {
+            continue;
+        } else if (a.CraftGroup) {
+            craftGroups[a.CraftGroup] ??= [];
+            craftGroups[a.CraftGroup].push(a);
+        } else {
+            ret[a.Name] ??= [];
+            ret[a.Name].push(a);
+        }
+    }
+
+    for (const assetList of Object.values(craftGroups)) {
+        const names = new Set(assetList.map(a => a.Name));
+        for (const name of names) {
+            ret[name] ??= [];
+            ret[name].push(...assetList);
+        }
+    }
+    return ret;
+}
+
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
-        case "R100": {
-            if (MBS_MOD_API.getOriginalHash("CharacterResetFacialExpression") === "C22A83C0") {
-                backportIDs.add(4777);
-                MBS_MOD_API.patchFunction("CharacterResetFacialExpression", {
-                    "const name = /** @type {ExpressionGroupName} */ (group.Name);":
-                        "const name = group.Name === 'Eyes' ? 'Eyes1' : group.Name;",
-                });
-            }
+        case "R102": {
+            if (typeof CraftingAssetsPopulate === "undefined") {
+                backportIDs.add(4900);
+                const CRAFTING_ASSETS = Object.freeze(craftingAssetsPopulate());
 
-            if (MBS_MOD_API.getOriginalHash("ArcadeKinkyDungeonStart") === "A62E58E4") {
-                let kdPatch = false;
-                backportIDs.add(4779);
-                MBS_MOD_API.hookFunction("ArcadeKinkyDungeonStart", 0, (args, next) => {
-                    next(args);
-                    if (!kdPatch) {
-                        waitFor(() => typeof ArcadeKinkyDungeonStart === "function").then(() => {
-                            MBS_MOD_API.patchFunction("KDApplyItemLegacy", {
-                                'placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;':
-                                    'placed.Property ??= {}; placed.Property.LockedBy = inv.lock ? "MetalPadlock" : undefined;',
-                            });
-                            kdPatch = true;
-                        });
+                MBS_MOD_API.hookFunction("CraftingAppliesToItem", 10, (args) => {
+                    const [craft, asset] = args as Parameters<typeof CraftingAppliesToItem>;
+                    if (!craft || !asset) {
+                        return false;
+                    } else {
+                        const elligbleAssets = CRAFTING_ASSETS[craft.Item] ?? [];
+                        return elligbleAssets.includes(asset);
                     }
                 });
-            }
 
-            backportIDs.add(4780);
-            const data = ModularItemDataLookup["ItemMouthFuturisticHarnessBallGag"];
-            const module = data?.modules?.find(m => m.Name === "Gag");
-            module?.Options?.forEach(o => delete o.Property.OriginalSetting);
+                MBS_MOD_API.hookFunction("DialogCanUseCraftedItem", 10, (args) => {
+                    const [character, craft] = args as Parameters<typeof DialogCanUseCraftedItem>;
+                    const elligbleAssets = CRAFTING_ASSETS[craft.Item] ?? [];
+                    return elligbleAssets.some(a => {
+                        if (a.OwnerOnly && !character.IsOwnedByPlayer()) return false;
+                        if (a.LoverOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer())) return false;
+                        if (a.FamilyOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer() || character.IsFamilyOfPlayer())) return false;
+                        return true;
+                    });
+                });
+            }
             break;
         }
     }
