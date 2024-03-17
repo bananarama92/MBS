@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## 1.4.2
+* Drop support for BCR101
+* Fix the FUSAM button not disappearing when accessing the SHOP via the MBS preferences menu
+* Backport one BC R103 change to R102:
+    - [BondageProjects/Bondage-College#4900](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4900): Optimize the handling of crafted items in `DialogInventoryBuild`
+
 ## v1.4.1
 * Fix unconditional accessing of a BC R102 variable
 
