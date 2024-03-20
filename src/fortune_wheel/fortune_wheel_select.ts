@@ -59,7 +59,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
         wheelList = parseFWObjects(constructor as any, protoWheelList, errList) as typeof wheelList;
         errList.forEach(err => console.warn(err));
     }
-    wheelList.forEach(i => {if (!i?.hidden) { i?.register(false); }});
+    wheelList.forEach(i =>  i?.register(false));
     return wheelList;
 }
 

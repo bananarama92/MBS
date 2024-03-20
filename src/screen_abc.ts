@@ -223,8 +223,7 @@ export abstract class MBSObjectScreen<
                 break;
             case ExitAction.SAVE: {
                 if (this.settings.isValid(this.index) && this.hasStorageSpace()) {
-                    const hidden = this.mbsList[this.index]?.hidden ?? false;
-                    this.mbsList[this.index] = this.settings.writeSettings(hidden);
+                    this.mbsList[this.index] = this.settings.writeSettings();
                     this.mbsList[this.index]?.register();
                 }
                 break;

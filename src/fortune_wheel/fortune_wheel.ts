@@ -934,7 +934,6 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
                 false,
-                false,
             ),
             new FWItemSet(
                 "Mummification",
@@ -943,7 +942,6 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.CLOTHES,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [3]),
-                false,
                 false,
             ),
             new FWItemSet(
@@ -954,7 +952,6 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
                 false,
-                false,
             ),
             new FWItemSet(
                 "Petrification",
@@ -963,7 +960,6 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
-                false,
                 false,
                 statueCopyColors,
             ),
