@@ -114,7 +114,10 @@ waitFor(bcLoaded).then(() => {
 
         // Mirror the extra MBS-specific crafted items to the MBS settings
         MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
+            const craftingBackup = Player.Crafting;
+            Player.Crafting = craftingBackup?.slice(0, BC_SLOT_MAX_ORIGINAL);
             next(args);
+            Player.Crafting = craftingBackup;
 
             const cache = craftingSerialize(
                 Player.Crafting ? Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL) : null,
