@@ -4,7 +4,7 @@ import { sortBy } from "lodash-es";
 
 // @ts-ignore
 import { MBS_MOD_API } from "./common";
-import { waitFor, logger } from "./common";
+import { waitFor, logger, fromEntries } from "./common";
 import { bcLoaded } from "./common_bc";
 import { BC_MIN_VERSION } from "./sanity_checks";
 
@@ -51,6 +51,7 @@ waitFor(bcLoaded).then(() => {
             if (typeof CraftingAssetsPopulate === "undefined") {
                 backportIDs.add(4900);
                 const CRAFTING_ASSETS = Object.freeze(craftingAssetsPopulate());
+                const ASSET_LOCKS = fromEntries(Asset.filter(a => a.IsLock).map(a => [a.Name, a] as [AssetLockType, Asset]));
 
                 MBS_MOD_API.hookFunction("CraftingAppliesToItem", 10, (args) => {
                     const [craft, asset] = args as Parameters<typeof CraftingAppliesToItem>;
@@ -64,11 +65,20 @@ waitFor(bcLoaded).then(() => {
 
                 MBS_MOD_API.hookFunction("DialogCanUseCraftedItem", 10, (args) => {
                     const [character, craft] = args as Parameters<typeof DialogCanUseCraftedItem>;
+                    if (!character || !craft) return false;
+
                     const elligbleAssets = CRAFTING_ASSETS[craft.Item] ?? [];
                     return elligbleAssets.some(a => {
                         if (a.OwnerOnly && !character.IsOwnedByPlayer()) return false;
                         if (a.LoverOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer())) return false;
                         if (a.FamilyOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer() || character.IsFamilyOfPlayer())) return false;
+
+                        const lock: undefined | Asset = ASSET_LOCKS[craft.Lock as AssetLockType];
+                        if (lock != null) {
+                            if (lock.OwnerOnly && !DialogCanUseOwnerLockOn(character)) return false;
+                            if (lock.LoverOnly && !DialogCanUseLoverLockOn(character)) return false;
+                            if (lock.FamilyOnly && !DialogCanUseFamilyLockOn(character)) return false;
+                        }
                         return true;
                     });
                 });

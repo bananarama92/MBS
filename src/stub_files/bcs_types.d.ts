@@ -202,7 +202,6 @@ interface FWSimpleItemSet {
     equipLevel: StripLevel,
     flags: readonly Readonly<FWFlag>[],
     custom: boolean,
-    hidden: boolean,
     preRunCallback: FortuneWheelPreRunCallback | null,
     weight: number,
 }
@@ -216,7 +215,6 @@ interface FWSimplePartialItemSet extends Partial<FWSimpleItemSet>{
 /** A simplified interface representing {@link FWCommand} */
 interface FWSimpleCommand {
     name: string,
-    hidden: boolean,
     weight: number,
 }
 

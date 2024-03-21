@@ -1,6 +1,6 @@
 {
     "name": "maids-bondage-scripts",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "private": true,
     "description": "Various additions and utility scripts for BC",
     "homepage": "https://github.com/bananarama92/MBS#readme",
@@ -18,6 +18,7 @@
         "dev": "rollup -c -w",
         "lint": "eslint --max-warnings 0 .",
         "lint:fix": "eslint --fix .",
+        "css": "postcss src/**/*.css --use css-declaration-sorter --replace --no-map && tcm src eslint --fix src/**/*.css",
         "typecheck": "tsc --noEmit -p ."
     },
     "dependencies": {
@@ -35,16 +36,21 @@
         "@rollup/plugin-typescript": "^11.1.6",
         "@typescript-eslint/eslint-plugin": "^6.21.0",
         "@typescript-eslint/parser": "^6.21.0",
+        "css-declaration-sorter": "^7.1.1",
         "eslint": "^8.57.0",
         "eslint-config-standard-with-typescript": "^43.0.1",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-n": "^16.6.2",
         "eslint-plugin-promise": "^6.1.1",
+        "postcss": "^8.4.38",
+        "postcss-cli": "^11.0.0",
         "rollup": "^3.29.4",
+        "rollup-plugin-import-css": "^3.5.0",
         "rollup-plugin-progress": "^1.1.2",
         "rollup-plugin-serve": "^3.0.0",
         "simple-git": "^3.22.0",
         "tslib": "^2.6.2",
+        "typed-css-modules": "^0.9.1",
         "typescript": "^5.4.2"
     }
 }

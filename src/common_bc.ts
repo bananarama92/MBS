@@ -173,7 +173,7 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
     abstract readSettings(value: T): void;
 
     /** Construct a new wheel of fortune object. */
-    abstract writeSettings(hidden?: boolean): T;
+    abstract writeSettings(): T;
 
     /** Return a string representation of this instance. */
     toString(): string {
@@ -245,11 +245,9 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
 
     /**
      * Update this instance with settings from the provided item set.
-     * @param hidden Whether the settings should be hidden or not
      * @param preRunCallback An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
      */
     writeSettings(
-        hidden: boolean = false,
         preRunCallback: null | FortuneWheelPreRunCallback = null,
     ): FWItemSet {
         if (this.name === null || this.itemList === null) {
@@ -263,7 +261,6 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
             this.equipLevel,
             this.flags,
             true,
-            hidden,
             preRunCallback,
             this.weight,
         );
@@ -335,13 +332,12 @@ export class FWSelectedCommand extends MBSSelectedObject<FWCommand> {
 
     /**
      * Construct a new wheel of fortune command.
-     * @param hidden
      */
-    writeSettings(hidden: boolean = false): FWCommand {
+    writeSettings(): FWCommand {
         if (this.name === null) {
             throw new Error("Cannot create a Command while \"name\" is null");
         }
-        return new FWCommand(this.name, this.mbsList, hidden, this.weight);
+        return new FWCommand(this.name, this.mbsList, this.weight);
     }
 
     /** Return an object representation of this instance. */
@@ -360,8 +356,6 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
     readonly custom: boolean;
     /** The registered options corresponding to this item set (if any) */
     #children: null | readonly OptionType[] = null;
-    /** Whether the item set is meant to be hidden */
-    #hidden: boolean = true;
     /** A readonly view of the character's list of wheel objects */
     readonly mbsList: readonly (null | MBSObject<OptionType>)[];
     /** The weight of a particular option within the wheel of fortune */
@@ -369,18 +363,6 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 
     /** Get the registered options corresponding to this item set (if any) */
     get children(): null | readonly OptionType[] { return this.#children; }
-
-    /** Get or set whether the item set is meant to be hidden */
-    get hidden(): boolean { return this.#hidden; }
-    set hidden(value: boolean) {
-        if (value === true) {
-            this.unregister();
-        } else if (value === false) {
-            this.register();
-        } else {
-            throw new TypeError(`Invalid "${this.name}.hidden" type: ${typeof value}`);
-        }
-    }
 
     /** Get the index of this instance within the player's fortune wheel sets and -1 if it's absent. */
     get index(): number {
@@ -391,13 +373,11 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
         name: string,
         custom: boolean,
         wheelList: readonly (null | MBSObject<OptionType>)[],
-        hidden: boolean,
         weight: number,
     ) {
         this.name = name;
         this.custom = custom;
         this.mbsList = wheelList;
-        this.#hidden = hidden;
         this.weight = weight;
     }
 
@@ -429,7 +409,6 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
      * register {@link WheelFortuneOption} and (optionally) {@link WheelFortuneDefault}.
      */
     register(): void {
-        this.#hidden = false;
         this.#children = this.toOptions();
     }
 
@@ -437,7 +416,6 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
      * Unregister this instance from {@link WheelFortuneOption} and {@link WheelFortuneDefault}.
      */
     unregister(): void {
-        this.#hidden = true;
         this.#children = null;
     }
 
@@ -532,7 +510,6 @@ type FWItemSetKwargTypes = {
     equipLevel?: StripLevel,
     flags?: readonly Readonly<FWFlag>[],
     custom?: boolean,
-    hidden?: boolean,
     preRunCallback?: null | FortuneWheelPreRunCallback,
     weight?: number,
 };
@@ -585,7 +562,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         equipLevel?: StripLevel,
         flags?: readonly Readonly<FWFlag>[],
         custom?: boolean,
-        hidden?: boolean,
         preRunCallback?: null | FortuneWheelPreRunCallback,
         weight?: number,
     ) {
@@ -597,11 +573,10 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             equipLevel,
             flags,
             custom,
-            hidden,
             preRunCallback,
             weight,
         });
-        super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.hidden, kwargs.weight);
+        super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.weight);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
@@ -678,10 +653,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.custom = true;
         }
 
-        if (typeof kwargs.hidden !== "boolean") {
-            kwargs.hidden = true;
-        }
-
         if (kwargs.preRunCallback !== null && typeof kwargs.preRunCallback !== "function") {
             kwargs.preRunCallback = null;
         }
@@ -707,7 +678,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.equipLevel,
             kwargs.flags,
             kwargs.custom,
-            kwargs.hidden,
             kwargs.preRunCallback,
             kwargs.weight,
         ];
@@ -823,7 +793,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             equipLevel: this.equipLevel,
             flags: this.flags,
             custom: this.custom,
-            hidden: this.hidden,
             preRunCallback: this.preRunCallback,
             weight: this.weight,
         };
@@ -837,7 +806,6 @@ type FWCommandArgTypes = ConstructorParameters<typeof FWCommand>;
 type FWCommandKwargTypes = {
     name: string,
     mbsList: readonly (null | FWCommand)[],
-    hidden?: boolean,
     weight?: number
 };
 
@@ -852,11 +820,10 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     constructor(
         name: string,
         mbsList: readonly (null | FWCommand)[],
-        hidden?: boolean,
         weight?: number,
     ) {
-        const kwargs = FWCommand.validate({ name, mbsList, hidden, weight });
-        super(kwargs.name, true, kwargs.mbsList, kwargs.hidden, kwargs.weight);
+        const kwargs = FWCommand.validate({ name, mbsList, weight });
+        super(kwargs.name, true, kwargs.mbsList, kwargs.weight);
     }
 
     /** Validation function for the classes' constructor */
@@ -867,10 +834,6 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
 
         if (!Array.isArray(kwargs.mbsList)) {
             throw new TypeError(`Invalid "mbsList" type: ${typeof kwargs.mbsList}`);
-        }
-
-        if (typeof kwargs.hidden !== "boolean") {
-            kwargs.hidden = true;
         }
 
         if (!Number.isInteger(kwargs.weight)) {
@@ -890,7 +853,6 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
         const args: FWCommandArgTypes = [
             kwargs.name,
             mbsList,
-            kwargs.hidden,
             kwargs.weight,
         ];
         return new FWCommand(...args);
@@ -929,7 +891,6 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     toJSON(): FWSimpleCommand {
         return {
             name: this.name,
-            hidden: this.hidden,
             weight: this.weight,
         };
     }

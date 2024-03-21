@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## 1.4.3
+* Remove the the fortune wheel option hiding checkbox
+* Fix the [BondageProjects/Bondage-College#4900](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4900) backport not hiding owner/lovers/family-locked items when required
+* Rewrite the MBS fortune wheel selection screen using DOM elements; add a scroll bar
+* Fix spurious MBS warnings about duplicate crafts
+
 ## 1.4.2
 * Drop support for BCR101
 * Fix the FUSAM button not disappearing when accessing the SHOP via the MBS preferences menu

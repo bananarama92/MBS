@@ -38,6 +38,7 @@ export abstract class MBSScreen {
     /** Called when screen is loaded */
     load(): void {
         const prevScreen = CurrentScreen;
+        CurrentScreenFunctions?.Unload?.();
         if (ControllerIsActive()) {
             ControllerClearAreas();
         }
@@ -47,7 +48,7 @@ export abstract class MBSScreen {
         CurrentDarkFactor = 1.0;
         CommonGetFont.clearCache();
         CommonGetFontName.clearCache();
-
+        CurrentScreenFunctions?.Resize?.(true);
         if (prevScreen == "ChatSearch" || prevScreen == "ChatCreate") {
             ChatRoomStimulationMessage("Walk");
         }
@@ -223,8 +224,7 @@ export abstract class MBSObjectScreen<
                 break;
             case ExitAction.SAVE: {
                 if (this.settings.isValid(this.index) && this.hasStorageSpace()) {
-                    const hidden = this.mbsList[this.index]?.hidden ?? false;
-                    this.mbsList[this.index] = this.settings.writeSettings(hidden);
+                    this.mbsList[this.index] = this.settings.writeSettings();
                     this.mbsList[this.index]?.register();
                 }
                 break;
