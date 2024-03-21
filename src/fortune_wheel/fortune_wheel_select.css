@@ -1,46 +1,74 @@
+.MBS_Button {
+	background-color: white;
+	background-origin: content-box;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	border: min(0.3vh, 0.15vw) solid black;
+	color: black;
+	font-size: min(3.5vh, 1.75vw);
+	height: 100%;
+	overflow: clip;
+	padding-left: min(2vh, 1vw);
+	padding-right: min(2vh, 1vw);
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.MBS_Button:hover {
+	background-color: cyan;
+}
+
+.MBS_Button:disabled {
+	background-color: lightgray;
+}
+
 #MBS_FWSelectScreen {
 	display: grid;
-	user-select: none;
 	text-align: center;
+	user-select: none;
 	grid-row-gap: min(2vh, 1vw);
-	grid-template-columns: 2fr 7fr 1fr;
-	grid-template-rows: 1fr 7.4fr 1.7fr;
 	grid-template-areas:
 	  ". buttonOuterGrid exit"
 	  "storage buttonOuterGrid ."
 	  "storageFooter buttonOuterGrid .";
+	grid-template-columns: 2fr 7fr 1fr;
+	grid-template-rows: 1fr 7.4fr 1.7fr;
 }
 
 #MBS_FWSelectScreen_Exit {
+	grid-area: exit;
+	height: min(9vh, 4.5vw);
 	justify-self: end;
 	width: min(9vh, 4.5vw);
-	height: min(9vh, 4.5vw);
-	grid-area: exit;
 }
 
 #MBS_FWSelectScreen_Storage {
-	display: grid;
 	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800);
 	border: min(0.3vh, 0.15vw) solid black;
-	width: 35%;
+	display: grid;
+	grid-area: storage;
 	height: 100%;
 	justify-self: center;
-	grid-area: storage;
+	width: 35%;
 }
 
 #MBS_FWSelectScreen_Storage #MBS_FWSelectScreen_StorageTooltip {
-	visibility: hidden;
-	width: fit-content;
 	background-color: white;
+	border: min(0.3vh, 0.15vw) solid black;
 	color: black;
-	line-height: 1.4;
+	font-size: min(3.5vh, 1.75vw);
 	left: 15%;
+	line-height: 1.4;
+	min-height: min(9vh, 4.5vw);
 	padding-left: min(2vh, 1vw);
 	padding-right: min(2vh, 1vw);
-	min-height: min(9vh, 4.5vw);
 	position: absolute;
 	text-align: left;
-	border: min(0.3vh, 0.15vw) solid black;
+	visibility: hidden;
+	width: fit-content;
 }
 
 #MBS_FWSelectScreen_Storage:hover #MBS_FWSelectScreen_StorageTooltip {
@@ -53,20 +81,20 @@
 
 #MBS_FWSelectScreen_StorageFooter {
 	font-size: min(3.5vh, 1.75vw);
+	grid-area: storageFooter;
 	height: min(7vh, 3.5vw);
 	padding-top: min(1vh, 0.5vw);
-	grid-area: storageFooter;
 }
 
 #MBS_FWSelectScreen_ButtonOuterGrid {
 	display: grid;
-	grid-template-rows: min(9vh, 4.5vw) auto min(9vh, 4.5vw) auto;
 	font-size: min(5vh, 2.5vw);
+	grid-area: buttonOuterGrid;
+	grid-template-rows: min(9vh, 4.5vw) auto min(9vh, 4.5vw) auto;
 	height: 94%;
 	overflow-y: scroll;
-	padding-right: min(2vh, 1vw);
 	padding-left: min(2vh, 1vw);
-	grid-area: buttonOuterGrid;
+	padding-right: min(2vh, 1vw);
 }
 
 #MBS_FWSelectScreen_ButtonInnerGrid0, #MBS_FWSelectScreen_ButtonInnerGrid1 {
@@ -78,38 +106,11 @@
 }
 
 #MBS_FWSelectScreen_ItemSets, #MBS_FWSelectScreen_CommandSets {
-	display: flex;
 	align-items: center;
+	background: white;
+	display: flex;
+	height: 100%;
 	justify-content: center;
 	position: sticky;
-	background: white;
-	height: 100%;
 	top: 0%;
-}
-
-.MBS_Button {
-	width: 100%;
-	height: 100%;
-	border: min(0.3vh, 0.15vw) solid black;
-	color: black;
-	background-color: white;
-	background-size: cover;
-	background-origin: content-box;
-	background-repeat: no-repeat;
-	background-position: center;
-	text-align: center;
-	padding-left: min(2vh, 1vw);
-	padding-right: min(2vh, 1vw);
-	font-size: min(3.5vh, 1.75vw);
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: clip;
-}
-
-.MBS_Button:hover {
-	background-color: cyan;
-}
-
-.MBS_Button:disabled {
-	background-color: lightgray;
 }

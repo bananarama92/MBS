@@ -15,6 +15,7 @@ import {
 
 import { FWCommandScreen } from "./fortune_wheel_command";
 import { FWItemSetScreen } from "./fortune_wheel_item_set";
+import styles from "./fortune_wheel_select.css";
 
 export interface WheelStruct {
     readonly FortuneWheelItemSets: (null | FWItemSet)[],
@@ -81,6 +82,7 @@ export class FWSelectScreen extends MBSScreen {
         const elem = ElementCreateDiv(ID.root);
         elem.style.display = "none";
         elem.innerHTML = `
+            <style id="${ID.styles}">${styles}</style>
             <div id="${ID.buttonOuterGrid}">
                 <div id=${ID.itemSets}>Lorem Ipsum</div>
                     <div id="${ID.buttonInnerGrid}0">
@@ -97,7 +99,6 @@ export class FWSelectScreen extends MBSScreen {
                 <span id="${ID.storage}Tooltip">Lorem Ipsum</span>
             </div>
             <div id="${ID.storageFooter}">Lorem Ipsum</div>
-
         `.replaceAll("\t", "");
         this.#updateElements(true);
     }
@@ -203,6 +204,7 @@ export class FWSelectScreen extends MBSScreen {
 
 const ID = Object.freeze({
     root: FWSelectScreen.screen,
+    styles: `${FWSelectScreen.screen}_Styles`,
 
     exit: `${FWSelectScreen.screen}_Exit`,
     storage: `${FWSelectScreen.screen}_Storage`,
