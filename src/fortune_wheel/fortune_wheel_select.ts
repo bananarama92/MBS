@@ -93,7 +93,7 @@ export class FWSelectScreen extends MBSScreen {
                     ${this.wheelStruct.FortuneWheelCommands.map((_, i) => buttonTemplate.replaceAll("{i}", (MBS_MAX_SETS + i).toString())).join("\n")}
                 </div>
             </div>
-            <button class="MBS_Button" id="${ID.exit}" title="Exit" style="background-image:url('../Icons/Exit.png');"></button>
+            <button class="MBS_Button" id="${ID.exit}" title="Exit" style="background-image:url('./Icons/Exit.png');"></button>
             <div id="${ID.storage}">
                 <div id="${ID.storage}Inner"></div>
                 <span id="${ID.storage}Tooltip">Lorem Ipsum</span>
