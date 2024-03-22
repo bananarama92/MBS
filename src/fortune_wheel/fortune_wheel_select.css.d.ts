@@ -1,5 +1,4 @@
 declare const styles: {
-  readonly "MBS_Button": string;
   readonly "MBS_FWSelectScreen": string;
   readonly "MBS_FWSelectScreen_ButtonInnerGrid0": string;
   readonly "MBS_FWSelectScreen_ButtonInnerGrid1": string;

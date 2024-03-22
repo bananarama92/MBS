@@ -8,6 +8,8 @@ import { unpackSettings as _unpackSettings } from "./settings";
 import { wheelOutfits, getDebug, API_VERSION } from "./api";
 import { runTests } from "./testing";
 
+import styles from "./index.css";
+
 const _getFunctionHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
 
@@ -23,8 +25,15 @@ export {
 };
 
 logger.log(`Initializing MBS version ${MBS_VERSION}`);
-waitFor(() => bcLoaded(false)).then(() => validateBCVersion(GameVersion));
-waitFor(bcLoaded).then(validateHookHashes);
+waitFor(() => bcLoaded(false)).then(() => {
+    validateBCVersion(GameVersion);
+    validateHookHashes();
+
+    const styleElement = document.createElement("style");
+    styleElement.id = "MBS_CSS";
+    styleElement.appendChild(document.createTextNode(styles.toString()));
+    document.head.appendChild(styleElement);
+});
 
 import "./window_register";
 import "./crafting";
