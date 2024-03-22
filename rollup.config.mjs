@@ -47,7 +47,7 @@ function incrementVersion(pkgVersion, gitVersion) {
 
 /** @type {import("rollup").RollupOptions} */
 const config = {
-    input: "src/index.ts",
+    input: "src/index.tsx",
     output: {
         name: "mbs",
         file: "dist/mbs.js",

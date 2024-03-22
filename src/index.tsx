@@ -1,5 +1,7 @@
 /** Various additions and utility scripts for BC */
 
+import "tsx-dom";
+
 import { waitFor, MBS_MOD_API, logger } from "./common";
 import { validateBCVersion, validateHookHashes } from "./sanity_checks";
 import { bcLoaded } from "./common_bc";
@@ -28,11 +30,7 @@ logger.log(`Initializing MBS version ${MBS_VERSION}`);
 waitFor(() => bcLoaded(false)).then(() => {
     validateBCVersion(GameVersion);
     validateHookHashes();
-
-    const styleElement = document.createElement("style");
-    styleElement.id = "MBS_CSS";
-    styleElement.appendChild(document.createTextNode(styles.toString()));
-    document.head.appendChild(styleElement);
+    document.head.appendChild(<style id="MBS_CSS">{styles.toString()}</style>);
 });
 
 import "./window_register";

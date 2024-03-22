@@ -1,6 +1,6 @@
 /** Selection screen for custom wheel of fortune options */
 
-import { sumBy, clamp } from "lodash-es";
+import { sumBy, clamp, range } from "lodash-es";
 
 import { logger } from "../common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "../common_bc";
@@ -55,6 +55,28 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
     return wheelList;
 }
 
+function createButton(screen: FWSelectScreen, i: number) {
+    return (
+        <button
+            class="MBS_Button"
+            id={ID.button + i.toString()}
+            style={{ height: "min(7vh, 3.5vw)" }}
+            onClick={() => {
+                let subScreen: FWItemSetScreen | FWCommandScreen;
+                if (i < MBS_MAX_SETS) {
+                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character);
+                } else {
+                    subScreen = new FWCommandScreen(screen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
+                }
+                screen.children.set(subScreen.screen, subScreen);
+                subScreen.load();
+            }}
+        >
+            Lorem Ipsum
+        </button>
+    );
+}
+
 export class FWSelectScreen extends MBSScreen {
     static readonly screen = "MBS_FWSelectScreen";
     readonly screen = FWSelectScreen.screen;
@@ -62,7 +84,6 @@ export class FWSelectScreen extends MBSScreen {
     readonly wheelStruct: WheelStruct;
     readonly character: Character;
     readonly dataSize: DataSize;
-
     get wheelList(): readonly (null | FWItemSet | FWCommand)[] {
         return [
             ...this.wheelStruct.FortuneWheelItemSets,
@@ -75,32 +96,33 @@ export class FWSelectScreen extends MBSScreen {
         this.wheelStruct = wheelStruct;
         this.character = character;
         this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
-        const buttonTemplate = `
-            <button class="MBS_Button" id="${ID.button}{i}" style="height: min(7vh, 3.5vw);">Lorem Ipsum</button>
-        `;
+        const isPlayer = this.character.IsPlayer();
 
-        const elem = ElementCreateDiv(ID.root);
-        elem.style.display = "none";
-        elem.innerHTML = `
-            <style id="${ID.styles}">${styles}</style>
-            <div id="${ID.buttonOuterGrid}">
-                <div id=${ID.itemSets}>Lorem Ipsum</div>
-                    <div id="${ID.buttonInnerGrid}0">
-                        ${this.wheelStruct.FortuneWheelItemSets.map((_, i) => buttonTemplate.replaceAll("{i}", i.toString())).join("\n")}
+        document.body.appendChild(
+            <div id={ID.root} class="HideOnPopup">
+                <style id={ID.styles}>{styles.toString()}</style>
+                <div id={ID.buttonOuterGrid}>
+                    <div id={ID.itemSets}>
+                        {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
                     </div>
-                <div id=${ID.commandSets}>Lorem Ipsum</div>
-                <div id="${ID.buttonInnerGrid}1">
-                    ${this.wheelStruct.FortuneWheelCommands.map((_, i) => buttonTemplate.replaceAll("{i}", (MBS_MAX_SETS + i).toString())).join("\n")}
+                    <div id={ID.buttonInnerGrid0}>
+                        {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
+                    </div>
+                    <div id={ID.commandSets}>
+                        {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
+                    </div>
+                    <div id={ID.buttonInnerGrid1}>
+                        {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
+                    </div>
                 </div>
-            </div>
-            <button class="MBS_Button" id="${ID.exit}" title="Exit" style="background-image:url('./Icons/Exit.png');"></button>
-            <div id="${ID.storage}">
-                <div id="${ID.storage}Inner"></div>
-                <span id="${ID.storage}Tooltip">Lorem Ipsum</span>
-            </div>
-            <div id="${ID.storageFooter}">Lorem Ipsum</div>
-        `.replaceAll("\t", "");
-        this.#updateElements(true);
+                <button class="MBS_Button" id={ID.exit} title="Exit" onClick={this.exit.bind(this)} style={{ backgroundImage: "url('./Icons/Exit.png')" }}></button>
+                <div id={ID.storage}>
+                    <div id={ID.storageInner}></div>
+                    <span id={ID.storageTooltip}>Lorem Ipsum</span>
+                </div>
+                <div id={ID.storageFooter}>Lorem Ipsum</div>
+            </div>,
+        );
     }
 
     resize() {
@@ -112,30 +134,17 @@ export class FWSelectScreen extends MBSScreen {
         }
     }
 
-    #updateElements(load=false) {
+    #updateElements() {
         const isPlayer = this.character.IsPlayer();
         for (const [i, wheelSet] of this.wheelList.entries()) {
-            const button = document.getElementById(`${ID.button}${i}`) as HTMLInputElement;
-            button.innerText = `${i % MBS_MAX_SETS}: ${wheelSet?.name ?? "Empty"}`;
+            const button = document.getElementById(`${ID.button}${i}`) as HTMLButtonElement;
+            button.innerText = `${(i % MBS_MAX_SETS).toString().padStart(2)}: ${wheelSet?.name ?? "<Empty>"}`;
             button.disabled = wheelSet === null && !isPlayer;
-
-            if (load) {
-                button.addEventListener("click", () => {
-                    let subScreen: FWItemSetScreen | FWCommandScreen;
-                    if (i < MBS_MAX_SETS) {
-                        subScreen = new FWItemSetScreen(this, this.wheelStruct.FortuneWheelItemSets, i, this.character);
-                    } else {
-                        subScreen = new FWCommandScreen(this, this.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, this.character);
-                    }
-                    this.children.set(subScreen.screen, subScreen);
-                    subScreen.load();
-                });
-            }
         }
 
-        const storageOuter = document.getElementById(`${ID.storage}`) as HTMLElement;
-        const storageInner = document.getElementById(`${ID.storage}Inner`) as HTMLElement;
-        const storageTooltip = document.getElementById(`${ID.storage}Tooltip`) as HTMLElement;
+        const storageOuter = document.getElementById(ID.storage) as HTMLElement;
+        const storageInner = document.getElementById(ID.storageInner) as HTMLElement;
+        const storageTooltip = document.getElementById(ID.storageTooltip) as HTMLElement;
         const storageFooter = document.getElementById(ID.storageFooter) as HTMLElement;
         if (isPlayer) {
             const nKBTotal = clamp(byteToKB(this.dataSize.value), 0, 9999);
@@ -164,16 +173,6 @@ export class FWSelectScreen extends MBSScreen {
             storageInner.style.height = "100%";
             storageInner.style.backgroundColor = "gray";
             storageTooltip.style.display = "none";
-        }
-
-        if (load) {
-            const itemSetHeader = document.getElementById(ID.itemSets) as HTMLElement;
-            itemSetHeader.innerText = isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`;
-            const commandHeader = document.getElementById(ID.commandSets) as HTMLElement;
-            commandHeader.innerText = isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`;
-
-            const exitButton = document.getElementById(ID.exit) as HTMLElement;
-            exitButton.addEventListener("click", () => this.exit());
         }
     }
 
@@ -208,10 +207,13 @@ const ID = Object.freeze({
 
     exit: `${FWSelectScreen.screen}_Exit`,
     storage: `${FWSelectScreen.screen}_Storage`,
+    storageInner: `${FWSelectScreen.screen}_StorageInner`,
+    storageTooltip: `${FWSelectScreen.screen}_StorageTooltip`,
     storageFooter: `${FWSelectScreen.screen}_StorageFooter`,
-    buttonOuterGrid: `${FWSelectScreen.screen}_ButtonOuterGrid`,
 
-    buttonInnerGrid: `${FWSelectScreen.screen}_ButtonInnerGrid`,
+    buttonOuterGrid: `${FWSelectScreen.screen}_ButtonOuterGrid`,
+    buttonInnerGrid0: `${FWSelectScreen.screen}_ButtonInnerGrid0`,
+    buttonInnerGrid1: `${FWSelectScreen.screen}_ButtonInnerGrid1`,
     button: `${FWSelectScreen.screen}_Button`,
     itemSets: `${FWSelectScreen.screen}_ItemSets`,
     commandSets: `${FWSelectScreen.screen}_CommandSets`,
