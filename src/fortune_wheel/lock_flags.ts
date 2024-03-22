@@ -20,13 +20,13 @@ const LEGACY_FLAGS = Object.freeze([
  * - The list consists of <= 16 elements
  */
 export const DEFAULT_FLAGS: readonly Readonly<FWFlag>[] = Object.freeze([
-    Object.freeze({ type: "ExclusivePadlock", enabled: true }),
-    Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 5, enabled: true }),
-    Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 15, enabled: true }),
-    Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 60, enabled: true }),
-    Object.freeze({ type: "TimerPasswordPadlock", time: 60 * 240, enabled: false }),
-    Object.freeze({ type: "HighSecurityPadlock", enabled: false }),
-    Object.freeze({ type: null, enabled: false }),
+    Object.freeze({ type: "ExclusivePadlock", description: "Exclusive", enabled: true }),
+    Object.freeze({ type: "TimerPasswordPadlock", description: "Timer", time: 60 * 5, enabled: true }),
+    Object.freeze({ type: "TimerPasswordPadlock", description: "Timer", time: 60 * 15, enabled: true }),
+    Object.freeze({ type: "TimerPasswordPadlock", description: "Timer", time: 60 * 60, enabled: true }),
+    Object.freeze({ type: "TimerPasswordPadlock", description: "Timer", time: 60 * 240, enabled: false }),
+    Object.freeze({ type: "HighSecurityPadlock", description: "High security", enabled: false }),
+    Object.freeze({ type: null, description: "No lock", enabled: false }),
 ]);
 
 /**

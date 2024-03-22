@@ -40,6 +40,8 @@ interface FWCommandOption extends FWObjectOption {
 interface FWFlagBase<Type extends null | AssetLockType> {
     /** The lock type associated with the flag */
     readonly type: Type,
+    /** A human-readable description of the lock type */
+    readonly description: string;
     /** Whether the user has enabled the flag or not */
     enabled: boolean,
 }

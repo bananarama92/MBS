@@ -527,11 +527,11 @@ function validateFlags(flags: readonly Readonly<FWFlag>[]): FWFlag[] {
                 if (!(Number.isInteger(flag.time) && flag.time >= 1 && flag.time <= (24 * 60 * 60))) {
                     return { ...ref_flag };
                 }
-                return { type: flag.type, time: flag.time, enabled };
+                return { type: flag.type, description: flag.description, time: flag.time, enabled };
             case "ExclusivePadlock":
             case "HighSecurityPadlock":
             case null:
-                return { type: flag.type, enabled };
+                return { type: flag.type, description: flag.description, enabled };
             default:
                 return { ...ref_flag };
         }
