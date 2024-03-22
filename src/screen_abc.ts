@@ -151,8 +151,6 @@ export abstract class MBSObjectScreen<
     readonly character: Character;
     /** The screen's (fixed-size) list of fortune wheel objects */
     readonly mbsList: (null | T)[];
-    /** A list with interfaces for representing clickable buttons */
-    abstract readonly clickList: readonly ClickAction[];
     /** The maximum and actually used size of {@link Character.OnlineSharedSettings} in KB */
     readonly dataSize: DataSize;
     /** The current index within {@link MBSObjectScreen.mbsList} */
@@ -195,26 +193,12 @@ export abstract class MBSObjectScreen<
         super.load();
     }
 
-    /** Handle clicks within the customization screen. */
-    click(): void {
-        const isPlayer = this.character.IsPlayer();
-        for (const { coords, next, requiresPlayer } of this.clickList) {
-            const canClick = isPlayer ? true : !requiresPlayer;
-            if (MouseIn(...coords) && canClick) {
-                next();
-            }
-        }
-    }
-
-    abstract unload(): void;
-
     /**
      * Exit the customization screen.
      * @param fullExit Whether to return to the initial wheel of fortune screen.
      * @param action Whether to do nothing, save the custom item settings or delete to them.
      */
     exit(fullExit: boolean = true, action: ExitAction = ExitAction.NONE): void {
-        this.unload();
         if (!this.character.IsPlayer()) {
             return this.exitScreens(fullExit);
         }

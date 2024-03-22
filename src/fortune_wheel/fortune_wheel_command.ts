@@ -71,6 +71,16 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
         }
     }
 
+    click(): void {
+        const isPlayer = this.character.IsPlayer();
+        for (const { coords, next, requiresPlayer } of this.clickList) {
+            const canClick = isPlayer ? true : !requiresPlayer;
+            if (MouseIn(...coords) && canClick) {
+                next();
+            }
+        }
+    }
+
     run(): void {
         const isPlayer = this.character.IsPlayer();
         let header = "Customize wheel of fortune command";
@@ -105,8 +115,9 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
         ElementPosition("MBSweight", 490, 630, 80);
     }
 
-    unload(): void {
+    exit(fullExit?: boolean, action?: ExitAction): void {
         ElementRemove("MBSname");
         ElementRemove("MBSweight");
+        super.exit(fullExit, action);
     }
 }

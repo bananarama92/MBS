@@ -1,0 +1,172 @@
+#MBS_FWItemSetScreen {
+	display: none;
+	text-align: center;
+	user-select: none;
+	grid-gap: min(2vh, 1vw);
+	grid-template-areas:
+		"delete header accept cancel exit"
+		"midDiv midDiv midDiv midDiv midDiv"
+		"botDiv botDiv botDiv botDiv botDiv";
+	grid-template-columns: min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+	grid-template-rows: 1fr 3.5fr 5,5fr;
+}
+
+#MBS_FWItemSetScreen_Delete {
+	grid-area: delete;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#MBS_FWItemSetScreen_Header {
+	align-self: center;
+	font-size: min(5vh, 2.5vw);
+	grid-area: header;
+	margin-left: min(20vh, 10vw);
+}
+
+#MBS_FWItemSetScreen_Accept {
+	grid-area: accept;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#MBS_FWItemSetScreen_Cancel {
+	grid-area: cancel;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#MBS_FWItemSetScreen_Exit {
+	grid-area: exit;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#MBS_FWItemSetScreen_MidDiv {
+	display: grid;
+	grid-area: midDiv;
+	grid-template-areas:
+		"name ."
+		"outfitCode outfitCodeButton";
+	grid-template-columns: 6.8fr 3.2fr;
+	margin-left: 35%;
+	grid-gap: min(2vh, 1vw);
+	margin-bottom: 2.5%;
+	margin-top: 2.5%;
+}
+
+#MBS_FWItemSetScreen_Description {
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: name;
+	height: min(7vh, 3.5vw);
+}
+
+#MBS_FWItemSetScreen_Description:invalid {
+	background-color: #fbb;
+	box-shadow: 0 0 3px 2px #c22;
+}
+
+#MBS_FWItemSetScreen_OutfitCode {
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: outfitCode;
+	height: min(7vh, 3.5vw);
+}
+
+#MBS_FWItemSetScreen_OutfitCode:invalid {
+	background-color: #fbb;
+	box-shadow: 0 0 3px 2px #c22;
+}
+
+#MBS_FWItemSetScreen_OutfitCodeButton {
+	grid-area: outfitCodeButton;
+	height: min(7vh, 3.5vw);
+	width: min(27vh, 13.5vw);
+}
+
+#MBS_FWItemSetScreen_BotDiv {
+	display: grid;
+	grid-area: botDiv;
+	margin-left: 35%;
+	grid-gap: min(2vh, 1vw);
+	align-items: center;
+	font-size: min(3.5vh, 1.75vw);
+	grid-template-areas:
+		"headerStrip headerLock"
+		"configStrip gridLock"
+		"headerEquip gridLock"
+		"configEquip gridLock"
+		"headerWeight gridLock"
+		"configWeight gridLock";
+	grid-template-columns: 3.5fr 6.5fr;
+	grid-template-rows: auto min(7vh, 3.5vw) auto min(7vh, 3.5vw) auto min(7vh, 3.5vw);
+	text-align: left;
+}
+
+#MBS_FWItemSetScreen_HeaderStrip {
+	grid-area: headerStrip;
+}
+
+#MBS_FWItemSetScreen_ConfigStrip {
+	align-self: start;
+	grid-area: configStrip;
+}
+
+#MBS_FWItemSetScreen_HeaderEquip {
+	grid-area: headerEquip;
+}
+
+#MBS_FWItemSetScreen_ConfigEquip {
+	align-self: start;
+	grid-area: configEquip;
+}
+
+#MBS_FWItemSetScreen_HeaderWeight {
+	grid-area: headerWeight;
+}
+
+#MBS_FWItemSetScreen_ConfigWeight {
+	align-self: start;
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: configWeight;
+	width: min(7vh, 3.5vw);
+}
+
+#MBS_FWItemSetScreen_ConfigWeight:invalid {
+	background-color: #fbb;
+	box-shadow: 0 0 3px 2px #c22;
+}
+
+#MBS_FWItemSetScreen_HeaderLock {
+	grid-area: headerLock;
+}
+
+#MBS_FWItemSetScreen_GridLock {
+	align-self: start;
+	display: grid;
+	grid-area: gridLock;
+	grid-template-columns: 5fr 5fr;
+	overflow-y: scroll;
+	grid-gap: min(2vh, 1vw);
+}
+
+.MBS_FWItemSetScreen_ContainerLock {
+	align-items: center;
+	display: grid;
+	font-size: min(3.5vh, 1.75vw);
+	word-wrap: break-word;
+	grid-template-columns: 1.5fr 8.5fr;
+	grid-gap: min(2vh, 1vw);
+}
+
+.MBS_Timer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: min(3.5vh, 1.75vw);
+	height: min(5vh, 2.5vw);
+	text-align: center;
+	width: min(21vh, 10.5vw);
+}
+
+.MBS_Timer:invalid {
+	background-color: #fbb;
+	box-shadow: 0 0 3px 2px #c22;
+}
