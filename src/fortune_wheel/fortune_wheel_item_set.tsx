@@ -8,7 +8,7 @@ import { MBSScreen, MBSObjectScreen, ExitAction } from "../screen_abc";
 
 import { toItemBundles } from "./item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "./equipper";
-import styles from "./fortune_wheel_item_set.css";
+import styles from "./fortune_wheel_item_set.scss";
 
 /** A mapping that maps {@link StripLevel} values to a description. */
 export const STRIP_MAPPING = Object.freeze({
@@ -58,7 +58,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
 
                 <div id={ID.header}>Customize wheel of fortune item set</div>
                 <button
-                    class="MBS_Button"
+                    class="mbs-button"
                     id={ID.delete}
                     title="Delete"
                     style={{ backgroundImage: "url('./Icons/Trash.png')" }}
@@ -66,7 +66,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     disabled={disabled}
                 ></button>
                 <button
-                    class="MBS_Button"
+                    class="mbs-button"
                     id={ID.accept}
                     title="Accept"
                     style={{ backgroundImage: "url('./Icons/Accept.png')" }}
@@ -74,14 +74,14 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     disabled={true}
                 ></button>
                 <button
-                    class="MBS_Button"
+                    class="mbs-button"
                     id={ID.cancel}
                     title="Cancel"
                     style={{ backgroundImage: "url('./Icons/Cancel.png')" }}
                     onClick={() => this.exit(false, ExitAction.NONE)}
                 ></button>
                 <button
-                    class="MBS_Button"
+                    class="mbs-button"
                     id={ID.exit}
                     title="Exit"
                     style={{ backgroundImage: "url('./Icons/Exit.png')" }}
@@ -115,7 +115,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         onFocus={(e) => (e.target as HTMLInputElement).select()}
                     />
                     <button
-                        class="MBS_Button"
+                        class="mbs-button"
                         title="Parse the outfit code"
                         disabled={true}
                         id={ID.outfitCodeButton}
@@ -136,11 +136,11 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     <div id={ID.headerEquip}>Clothing equip level:</div>
                     <div id={ID.headerWeight}>Wheel option weight:</div>
                     <div id={ID.headerLock}>Supported lock types:</div>
-                    <div id={ID.configStrip}></div>
-                    <div id={ID.configEquip}></div>
+                    <div id={ID.inputStrip}></div>
+                    <div id={ID.inputEquip}></div>
                     <input
                         type="number"
-                        id={ID.configWeight}
+                        id={ID.inputWeight}
                         min={1}
                         max={9}
                         value={1}
@@ -168,7 +168,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                                 case "TimerPasswordPadlock":
                                     companion = <input
                                         type="time"
-                                        class="MBS_Timer"
+                                        class="mbs-timer"
                                         id={ID.timerElement + i.toString()}
                                         disabled={disabled}
                                         min="00:01:00"
@@ -265,7 +265,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             );
 
             ElementValue(ID.name, itemSet.name);
-            ElementValue(ID.configWeight, itemSet.weight.toString());
+            ElementValue(ID.inputWeight, itemSet.weight.toString());
             ElementValue(ID.outfitCode, this.settings.outfitCache);
 
             for (const [i, flag] of this.settings.flags.entries()) {
@@ -316,31 +316,32 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     }
 }
 
+const root = "mbs-fwitemset";
 const ID = Object.freeze({
-    root: FWItemSetScreen.screen,
-    styles: `${FWItemSetScreen.screen}_Styles`,
+    root: root,
+    styles: `${root}-style`,
 
-    delete: `${FWItemSetScreen.screen}_Delete`,
-    header: `${FWItemSetScreen.screen}_Header`,
-    accept: `${FWItemSetScreen.screen}_Accept`,
-    cancel: `${FWItemSetScreen.screen}_Cancel`,
-    exit: `${FWItemSetScreen.screen}_Exit`,
-    midDiv: `${FWItemSetScreen.screen}_MidDiv`,
-    botDiv: `${FWItemSetScreen.screen}_BotDiv`,
+    delete: `${root}-delete`,
+    header: `${root}-header`,
+    accept: `${root}-accept`,
+    cancel: `${root}-cancel`,
+    exit: `${root}-exit`,
+    midDiv: `${root}-mid-grid`,
+    botDiv: `${root}-bot-grid`,
 
-    name: `${FWItemSetScreen.screen}_Description`,
-    outfitCode: `${FWItemSetScreen.screen}_OutfitCode`,
-    outfitCodeButton: `${FWItemSetScreen.screen}_OutfitCodeButton`,
+    name: `${root}-name`,
+    outfitCode: `${root}-outfit-input`,
+    outfitCodeButton: `${root}-outfit-button`,
 
-    headerStrip: `${FWItemSetScreen.screen}_HeaderStrip`,
-    headerEquip: `${FWItemSetScreen.screen}_HeaderEquip`,
-    headerWeight: `${FWItemSetScreen.screen}_HeaderWeight`,
-    headerLock: `${FWItemSetScreen.screen}_HeaderLock`,
-    configStrip: `${FWItemSetScreen.screen}_ConfigStrip`,
-    configEquip: `${FWItemSetScreen.screen}_ConfigEquip`,
-    configWeight: `${FWItemSetScreen.screen}_ConfigWeight`,
-    gridLock: `${FWItemSetScreen.screen}_GridLock`,
-    containerLock: `${FWItemSetScreen.screen}_ContainerLock`,
-    checkboxLock: `${FWItemSetScreen.screen}_CheckboxLock`,
-    timerElement: `${FWItemSetScreen.screen}_timerElement`,
+    headerStrip: `${root}-strip-header`,
+    inputStrip: `${root}-strip-input`,
+    headerEquip: `${root}-equip-header`,
+    inputEquip: `${root}-equip-input`,
+    headerWeight: `${root}-weight-header`,
+    inputWeight: `${root}-weight-input`,
+    headerLock: `${root}-lock-header`,
+    gridLock: `${root}-lock-grid`,
+    containerLock: `${root}-lock-container`,
+    checkboxLock: `${root}-lock-checkbox`,
+    timerElement: `${root}-lock-timer`,
 });

@@ -10,7 +10,7 @@ import { unpackSettings as _unpackSettings } from "./settings";
 import { wheelOutfits, getDebug, API_VERSION } from "./api";
 import { runTests } from "./testing";
 
-import styles from "./index.css";
+import styles from "./index.scss";
 
 const _getFunctionHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
@@ -30,7 +30,7 @@ logger.log(`Initializing MBS version ${MBS_VERSION}`);
 waitFor(() => bcLoaded(false)).then(() => {
     validateBCVersion(GameVersion);
     validateHookHashes();
-    document.head.appendChild(<style id="MBS_CSS">{styles.toString()}</style>);
+    document.body.appendChild(<style id="mbs-style">{styles.toString()}</style>)
 });
 
 import "./window_register";

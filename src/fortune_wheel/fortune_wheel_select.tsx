@@ -15,7 +15,7 @@ import {
 
 import { FWCommandScreen } from "./fortune_wheel_command";
 import { FWItemSetScreen } from "./fortune_wheel_item_set";
-import styles from "./fortune_wheel_select.css";
+import styles from "./fortune_wheel_select.scss";
 
 export interface WheelStruct {
     readonly FortuneWheelItemSets: (null | FWItemSet)[],
@@ -58,7 +58,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
 function createButton(screen: FWSelectScreen, i: number) {
     return (
         <button
-            class="MBS_Button"
+            class="mbs-button"
             id={ID.button + i.toString()}
             style={{ height: "min(7vh, 3.5vw)" }}
             onClick={() => {
@@ -115,7 +115,7 @@ export class FWSelectScreen extends MBSScreen {
                         {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
                 </div>
-                <button class="MBS_Button" id={ID.exit} title="Exit" onClick={this.exit.bind(this)} style={{ backgroundImage: "url('./Icons/Exit.png')" }}></button>
+                <button class="mbs-button" id={ID.exit} title="Exit" onClick={this.exit.bind(this)} style={{ backgroundImage: "url('./Icons/Exit.png')" }}></button>
                 <div id={ID.storage}>
                     <div id={ID.storageInner}></div>
                     <span id={ID.storageTooltip}>Lorem Ipsum</span>
@@ -201,20 +201,21 @@ export class FWSelectScreen extends MBSScreen {
     }
 }
 
+const root = "mbs-fwselect";
 const ID = Object.freeze({
-    root: FWSelectScreen.screen,
-    styles: `${FWSelectScreen.screen}_Styles`,
+    root,
+    styles: `${root}-style`,
 
-    exit: `${FWSelectScreen.screen}_Exit`,
-    storage: `${FWSelectScreen.screen}_Storage`,
-    storageInner: `${FWSelectScreen.screen}_StorageInner`,
-    storageTooltip: `${FWSelectScreen.screen}_StorageTooltip`,
-    storageFooter: `${FWSelectScreen.screen}_StorageFooter`,
+    exit: `${root}-exit`,
+    storage: `${root}-storage`,
+    storageInner: `${root}-storage-cover`,
+    storageTooltip: `${root}-storage-tooltip`,
+    storageFooter: `${root}-storage-footer`,
 
-    buttonOuterGrid: `${FWSelectScreen.screen}_ButtonOuterGrid`,
-    buttonInnerGrid0: `${FWSelectScreen.screen}_ButtonInnerGrid0`,
-    buttonInnerGrid1: `${FWSelectScreen.screen}_ButtonInnerGrid1`,
-    button: `${FWSelectScreen.screen}_Button`,
-    itemSets: `${FWSelectScreen.screen}_ItemSets`,
-    commandSets: `${FWSelectScreen.screen}_CommandSets`,
+    buttonOuterGrid: `${root}-button-grid-outer`,
+    buttonInnerGrid0: `${root}-button-grid-inner0`,
+    buttonInnerGrid1: `${root}-button-grid-inner1`,
+    button: `${root}-button`,
+    itemSets: `${root}-header0`,
+    commandSets: `${root}-header1`,
 });

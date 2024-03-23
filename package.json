@@ -14,19 +14,21 @@
     "license": "GPL-3.0",
     "author": "bananarama92 <bananarama921@outlook.com>",
     "scripts": {
-        "build": "rollup -c",
+        "build": "typed-scss-modules src --exportType=default --nameFormat=none && rollup -c",
         "dev": "rollup -c -w",
-        "lint": "eslint --max-warnings 0 .",
-        "lint:fix": "eslint --fix .",
-        "css": "postcss src/**/*.css --use css-declaration-sorter --replace --no-map && tcm src eslint --fix src/**/*.css",
-        "typecheck": "tsc --noEmit -p ."
+        "lint": "eslint --max-warnings 0 . && npx stylelint **/*.scss",
+        "lint:fix": "typed-scss-modules src --exportType=default --nameFormat=none && eslint --fix . && npx stylelint **/*.scss --fix",
+        "css": "postcss **/*.scss --syntax=postcss-scss --use=css-declaration-sorter --replace --no-map && typed-scss-modules src --exportType=default --nameFormat=none",
+        "typecheck": "tsc --noEmit -p .",
+        "postinstall": "typed-scss-modules src --exportType=default --nameFormat=none"
     },
     "dependencies": {
         "@types/lodash-es": "^4.17.12",
         "bc-data": "102.0.0",
         "bc-stubs": "102.0.0",
         "bondage-club-mod-sdk": "^1.1.0",
-        "lodash-es": "^4.17.21"
+        "lodash-es": "^4.17.21",
+        "typed-scss-modules": "^8.0.0"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^25.0.7",
@@ -46,13 +48,16 @@
         "postcss": "^8.4.38",
         "postcss-cli": "^11.0.0",
         "rollup": "^3.29.4",
-        "rollup-plugin-import-css": "^3.5.0",
         "rollup-plugin-progress": "^1.1.2",
+        "rollup-plugin-scss": "^4.0.0",
         "rollup-plugin-serve": "^3.0.0",
+        "sass": "^1.72.0",
         "simple-git": "^3.22.0",
+        "stylelint": "^16.2.1",
+        "stylelint-config-standard-scss": "^13.0.0",
+        "stylelint-scss": "^6.2.1",
         "tslib": "^2.6.2",
         "tsx-dom": "^2.0.0",
-        "typed-css-modules": "^0.9.1",
         "typescript": "^5.4.2"
     }
 }

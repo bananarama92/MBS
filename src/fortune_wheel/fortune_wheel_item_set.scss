@@ -1,146 +1,142 @@
-#MBS_FWItemSetScreen {
+#mbs-fwitemset {
 	display: none;
 	text-align: center;
 	user-select: none;
 	grid-gap: min(2vh, 1vw);
-	grid-template-areas:
-		"delete header accept cancel exit"
-		"midDiv midDiv midDiv midDiv midDiv"
-		"botDiv botDiv botDiv botDiv botDiv";
-	grid-template-columns: min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
-	grid-template-rows: 1fr 3.5fr 5,5fr;
+	grid-template:
+		"delete header accept cancel exit" 1fr
+		"midDiv midDiv midDiv midDiv midDiv" 3.5fr
+		"botDiv botDiv botDiv botDiv botDiv" 5.5fr
+		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
-#MBS_FWItemSetScreen_Delete {
+#mbs-fwitemset-delete {
 	grid-area: delete;
 	height: min(9vh, 4.5vw);
 	width: min(9vh, 4.5vw);
 }
 
-#MBS_FWItemSetScreen_Header {
+#mbs-fwitemset-header {
 	align-self: center;
 	font-size: min(5vh, 2.5vw);
 	grid-area: header;
 	margin-left: min(20vh, 10vw);
 }
 
-#MBS_FWItemSetScreen_Accept {
+#mbs-fwitemset-accept {
 	grid-area: accept;
 	height: min(9vh, 4.5vw);
 	width: min(9vh, 4.5vw);
 }
 
-#MBS_FWItemSetScreen_Cancel {
+#mbs-fwitemset-cancel {
 	grid-area: cancel;
 	height: min(9vh, 4.5vw);
 	width: min(9vh, 4.5vw);
 }
 
-#MBS_FWItemSetScreen_Exit {
+#mbs-fwitemset-exit {
 	grid-area: exit;
 	height: min(9vh, 4.5vw);
 	width: min(9vh, 4.5vw);
 }
 
-#MBS_FWItemSetScreen_MidDiv {
+#mbs-fwitemset-mid-grid {
 	display: grid;
 	grid-area: midDiv;
-	grid-template-areas:
-		"name ."
-		"outfitCode outfitCodeButton";
-	grid-template-columns: 6.8fr 3.2fr;
+	grid-template:
+		"name ." 6.8fr
+		"outfitCode outfitCodeButton" 3.2fr
+		/ auto auto;
 	margin-left: 35%;
 	grid-gap: min(2vh, 1vw);
 	margin-bottom: 2.5%;
 	margin-top: 2.5%;
 }
 
-#MBS_FWItemSetScreen_Description {
+#mbs-fwitemset-name {
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: name;
 	height: min(7vh, 3.5vw);
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
 }
 
-#MBS_FWItemSetScreen_Description:invalid {
-	background-color: #fbb;
-	box-shadow: 0 0 3px 2px #c22;
-}
-
-#MBS_FWItemSetScreen_OutfitCode {
+#mbs-fwitemset-outfit-input {
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: outfitCode;
 	height: min(7vh, 3.5vw);
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
 }
 
-#MBS_FWItemSetScreen_OutfitCode:invalid {
-	background-color: #fbb;
-	box-shadow: 0 0 3px 2px #c22;
-}
 
-#MBS_FWItemSetScreen_OutfitCodeButton {
+#mbs-fwitemset-outfit-button {
 	grid-area: outfitCodeButton;
 	height: min(7vh, 3.5vw);
 	width: min(27vh, 13.5vw);
 }
 
-#MBS_FWItemSetScreen_BotDiv {
+#mbs-fwitemset-bot-grid {
 	display: grid;
 	grid-area: botDiv;
 	margin-left: 35%;
 	grid-gap: min(2vh, 1vw);
 	align-items: center;
 	font-size: min(3.5vh, 1.75vw);
-	grid-template-areas:
-		"headerStrip headerLock"
-		"configStrip gridLock"
-		"headerEquip gridLock"
-		"configEquip gridLock"
-		"headerWeight gridLock"
-		"configWeight gridLock";
-	grid-template-columns: 3.5fr 6.5fr;
-	grid-template-rows: auto min(7vh, 3.5vw) auto min(7vh, 3.5vw) auto min(7vh, 3.5vw);
+	grid-template:
+		"headerStrip headerLock" auto
+		"configStrip gridLock" min(7vh, 3.5vw)
+		"headerEquip gridLock" auto
+		"configEquip gridLock" min(7vh, 3.5vw)
+		"headerWeight gridLock" auto
+		"configWeight gridLock" min(7vh, 3.5vw)
+		/ 3.5fr 6.5fr;
 	text-align: left;
 }
 
-#MBS_FWItemSetScreen_HeaderStrip {
+#mbs-fwitemset-strip-header {
 	grid-area: headerStrip;
 }
 
-#MBS_FWItemSetScreen_ConfigStrip {
+#mbs-fwitemset-strip-input {
 	align-self: start;
 	grid-area: configStrip;
 }
 
-#MBS_FWItemSetScreen_HeaderEquip {
+#mbs-fwitemset-equip-header {
 	grid-area: headerEquip;
 }
 
-#MBS_FWItemSetScreen_ConfigEquip {
+#mbs-fwitemset-equip-input {
 	align-self: start;
 	grid-area: configEquip;
 }
 
-#MBS_FWItemSetScreen_HeaderWeight {
+#mbs-fwitemset-weight-header {
 	grid-area: headerWeight;
 }
 
-#MBS_FWItemSetScreen_ConfigWeight {
+#mbs-fwitemset-weight-input {
 	align-self: start;
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: configWeight;
 	width: min(7vh, 3.5vw);
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
 }
 
-#MBS_FWItemSetScreen_ConfigWeight:invalid {
-	background-color: #fbb;
-	box-shadow: 0 0 3px 2px #c22;
-}
-
-#MBS_FWItemSetScreen_HeaderLock {
+#mbs-fwitemset-lock-header {
 	grid-area: headerLock;
 }
 
-#MBS_FWItemSetScreen_GridLock {
+#mbs-fwitemset-lock-grid {
 	align-self: start;
 	display: grid;
 	grid-area: gridLock;
@@ -149,7 +145,7 @@
 	grid-gap: min(2vh, 1vw);
 }
 
-.MBS_FWItemSetScreen_ContainerLock {
+.mbs-fwitemset-lock-container {
 	align-items: center;
 	display: grid;
 	font-size: min(3.5vh, 1.75vw);
@@ -158,15 +154,14 @@
 	grid-gap: min(2vh, 1vw);
 }
 
-.MBS_Timer {
+.mbs-timer {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: min(3.5vh, 1.75vw);
 	height: min(5vh, 2.5vw);
 	text-align: center;
 	width: min(21vh, 10.5vw);
-}
-
-.MBS_Timer:invalid {
-	background-color: #fbb;
-	box-shadow: 0 0 3px 2px #c22;
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
 }

@@ -8,7 +8,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
 import simpleGit from "simple-git";
 import json from "@rollup/plugin-json";
-import css from "rollup-plugin-import-css";
+import scss from "rollup-plugin-scss";
 
 import packageJson from "./package.json" assert { type: "json" };
 
@@ -86,7 +86,7 @@ const config = {
         typescript({ tsconfig: "./tsconfig.json", inlineSources: true }),
         commonjs(),
         json(),
-        css(),
+        scss({ output: false }),
     ],
     onwarn(warning, warn) {
         switch (warning.code) {
