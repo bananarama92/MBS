@@ -22,7 +22,7 @@ export const StripLevel = Object.freeze({
     COSPLAY: 3,
     /** All clothes, underwear, cosplay items and body (if not blocked) */
     ALL: 4,
-});
+}) satisfies Record<string, StripLevel>;
 
 /** A dummy character without any blocked or limited items. */
 let MBSDummy: Character;

@@ -4,10 +4,9 @@
 	user-select: none;
 	grid-gap: min(2vh, 1vw);
 	grid-template:
-		"delete header accept cancel exit" 1fr
-		"midDiv midDiv midDiv midDiv midDiv" 3.5fr
-		"botDiv botDiv botDiv botDiv botDiv" 5.5fr
-		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"delete header accept cancel exit" min(9vh, 4.5vw)
+		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
+		"botDiv botDiv botDiv botDiv botDiv" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwitemset-delete {
@@ -44,20 +43,21 @@
 #mbs-fwitemset-mid-grid {
 	display: grid;
 	grid-area: midDiv;
-	grid-template:
-		"name ." 6.8fr
-		"outfitCode outfitCodeButton" 3.2fr
-		/ auto auto;
+	grid-template-areas:
+		"name ."
+		"outfitCode outfitCodeButton";
+	grid-template-columns: min(78vh, 39vw) min(10vh, 5vw);
 	margin-left: 35%;
-	grid-gap: min(2vh, 1vw);
+	grid-gap: min(2vh, 1vw) min(6vh, 3vw);
 	margin-bottom: 2.5%;
 	margin-top: 2.5%;
 }
 
-#mbs-fwitemset-name {
+#mbs-fwitemset-outfit-name {
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: name;
 	height: min(7vh, 3.5vw);
+
 	&:invalid {
 		background-color: #fbb;
 		box-shadow: 0 0 3px 2px #c22;
@@ -68,15 +68,18 @@
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: outfitCode;
 	height: min(7vh, 3.5vw);
+
 	&:invalid {
 		background-color: #fbb;
 		box-shadow: 0 0 3px 2px #c22;
 	}
 }
 
+#mbs-fwitemset-outfit-div {
+	grid-area: outfitCodeButton;
+}
 
 #mbs-fwitemset-outfit-button {
-	grid-area: outfitCodeButton;
 	height: min(7vh, 3.5vw);
 	width: min(27vh, 13.5vw);
 }
@@ -85,17 +88,17 @@
 	display: grid;
 	grid-area: botDiv;
 	margin-left: 35%;
-	grid-gap: min(2vh, 1vw);
-	align-items: center;
+	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
+	align-items: end;
 	font-size: min(3.5vh, 1.75vw);
+	overflow: hidden;
 	grid-template:
 		"headerStrip headerLock" auto
 		"configStrip gridLock" min(7vh, 3.5vw)
-		"headerEquip gridLock" auto
+		"headerEquip gridLock" min(7vh, 3.5vw)
 		"configEquip gridLock" min(7vh, 3.5vw)
-		"headerWeight gridLock" auto
-		"configWeight gridLock" min(7vh, 3.5vw)
-		/ 3.5fr 6.5fr;
+		"headerWeight gridLock" min(7vh, 3.5vw)
+		"configWeight gridLock" min(7vh, 3.5vw) / min(40vh, 20vw) auto;
 	text-align: left;
 }
 
@@ -126,6 +129,7 @@
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: configWeight;
 	width: min(7vh, 3.5vw);
+
 	&:invalid {
 		background-color: #fbb;
 		box-shadow: 0 0 3px 2px #c22;
@@ -160,8 +164,46 @@
 	height: min(5vh, 2.5vw);
 	text-align: center;
 	width: min(21vh, 10.5vw);
+
 	&:invalid {
 		background-color: #fbb;
 		box-shadow: 0 0 3px 2px #c22;
 	}
+}
+
+#mbs-fwitemset-strip-dropdown-button, #mbs-fwitemset-equip-dropdown-button {
+	min-height: min(7vh, 3.5vw);
+	max-height: min(14vh, 7vw);
+	overflow: wrap;
+	text-overflow: unset;
+}
+
+.mbs-fwitemset-lock-checkbox {
+	height: min(7vh, 3.5vw) !important;
+	width: min(7vh, 3.5vw) !important;
+	border: min(0.3vh, 0.15vw) solid black !important;
+}
+
+.mbs-dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: white;
+	z-index: 1;
+	overflow-y: scroll;
+	border: min(0.3vh, 0.15vw) solid black;
+
+	&div:hover {
+		background-color: cyan;
+	}
+}
+
+.mbs-dropdown:hover .mbs-dropdown-content {
+	display: grid;
+}
+
+#mbs-fwitemset-strip-dropdown-option1:not(:hover),
+#mbs-fwitemset-strip-dropdown-option3:not(:hover),
+#mbs-fwitemset-equip-dropdown-option1:not(:hover),
+#mbs-fwitemset-equip-dropdown-option3:not(:hover) {
+	background-color: #dfdfdf;
 }

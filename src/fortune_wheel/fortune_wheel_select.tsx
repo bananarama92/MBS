@@ -101,6 +101,7 @@ export class FWSelectScreen extends MBSScreen {
         document.body.appendChild(
             <div id={ID.root} class="HideOnPopup">
                 <style id={ID.styles}>{styles.toString()}</style>
+
                 <div id={ID.buttonOuterGrid}>
                     <div id={ID.itemSets}>
                         {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
@@ -115,7 +116,17 @@ export class FWSelectScreen extends MBSScreen {
                         {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
                 </div>
-                <button class="mbs-button" id={ID.exit} title="Exit" onClick={this.exit.bind(this)} style={{ backgroundImage: "url('./Icons/Exit.png')" }}></button>
+
+                <div id={ID.exit} class="mbs-dropdown-button">
+                    <button
+                        class="mbs-button"
+                        id={ID.exitButton}
+                        onClick={this.exit.bind(this)}
+                        style={{ backgroundImage: "url('./Icons/Exit.png')" }}
+                    />
+                    <span class="mbs-tooltip" id={ID.exitTooltip}>Exit</span>
+                </div>
+
                 <div id={ID.storage}>
                     <div id={ID.storageInner}></div>
                     <span id={ID.storageTooltip}>Lorem Ipsum</span>
@@ -207,6 +218,8 @@ const ID = Object.freeze({
     styles: `${root}-style`,
 
     exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
     storage: `${root}-storage`,
     storageInner: `${root}-storage-cover`,
     storageTooltip: `${root}-storage-tooltip`,

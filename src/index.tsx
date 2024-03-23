@@ -30,7 +30,7 @@ logger.log(`Initializing MBS version ${MBS_VERSION}`);
 waitFor(() => bcLoaded(false)).then(() => {
     validateBCVersion(GameVersion);
     validateHookHashes();
-    document.body.appendChild(<style id="mbs-style">{styles.toString()}</style>)
+    document.body.appendChild(<style id="mbs-style">{styles.toString()}</style>);
 });
 
 import "./window_register";

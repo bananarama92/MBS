@@ -154,7 +154,7 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
      * @param selectedIndex The index of the currently opened {@link FWItemSet} (if any)
      */
     isValid(selectedIndex: null | number = null): this is ThisType<this> & { name: string } {
-        if (this.name === null) {
+        if (!this.name) {
             return false;
         }
         return this.mbsList.every((value, i) => {

@@ -4,7 +4,7 @@
 	user-select: none;
 	grid-row-gap: min(2vh, 1vw);
 	grid-template:
-		". buttonOuterGrid exit" 1fr
+		". buttonOuterGrid exit" min(9vh, 4.5vw)
 		"storage buttonOuterGrid ." 7.4fr
 		"storageFooter buttonOuterGrid ." 1.7fr
 		/ 2fr 7fr 1fr;
@@ -25,22 +25,22 @@
 	height: 100%;
 	justify-self: center;
 	width: 35%;
-}
 
-#mbs-fwselect-storage #mbs-fwselect-storage-tooltip {
-	background-color: white;
-	border: min(0.3vh, 0.15vw) solid black;
-	color: black;
-	font-size: min(3.5vh, 1.75vw);
-	left: 15%;
-	line-height: 1.4;
-	min-height: min(9vh, 4.5vw);
-	padding-left: min(2vh, 1vw);
-	padding-right: min(2vh, 1vw);
-	position: absolute;
-	text-align: left;
-	visibility: hidden;
-	width: fit-content;
+	#mbs-fwselect-storage-tooltip {
+		background-color: white;
+		border: min(0.3vh, 0.15vw) solid black;
+		color: black;
+		font-size: min(3.5vh, 1.75vw);
+		left: 15%;
+		line-height: 1.4;
+		min-height: min(9vh, 4.5vw);
+		padding-left: min(2vh, 1vw);
+		padding-right: min(2vh, 1vw);
+		position: absolute;
+		text-align: left;
+		visibility: hidden;
+		width: fit-content;
+	}
 
 	&:hover #mbs-fwselect-storage-tooltip {
 		visibility: visible;
