@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.4.4
+* Fix the broken exit button image in the MBS wheel of fortune selection menu
+* Rewrite the MBS fortune wheel item set screen using DOM elements
+
 ## 1.4.3
 * Remove the the fortune wheel option hiding checkbox
 * Fix the [BondageProjects/Bondage-College#4900](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4900) backport not hiding owner/lovers/family-locked items when required
