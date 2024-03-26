@@ -1,0 +1,209 @@
+#mbs-fwitemset {
+	display: none;
+	text-align: center;
+	user-select: none;
+	grid-gap: min(2vh, 1vw);
+	grid-template:
+		"delete header accept cancel exit" min(9vh, 4.5vw)
+		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
+		"botDiv botDiv botDiv botDiv botDiv" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+}
+
+#mbs-fwitemset-delete {
+	grid-area: delete;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#mbs-fwitemset-header {
+	align-self: center;
+	font-size: min(5vh, 2.5vw);
+	grid-area: header;
+	margin-left: min(20vh, 10vw);
+}
+
+#mbs-fwitemset-accept {
+	grid-area: accept;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#mbs-fwitemset-cancel {
+	grid-area: cancel;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#mbs-fwitemset-exit {
+	grid-area: exit;
+	height: min(9vh, 4.5vw);
+	width: min(9vh, 4.5vw);
+}
+
+#mbs-fwitemset-mid-grid {
+	display: grid;
+	grid-area: midDiv;
+	grid-template-areas:
+		"name ."
+		"outfitCode outfitCodeButton";
+	grid-template-columns: min(78vh, 39vw) min(10vh, 5vw);
+	margin-left: 35%;
+	grid-gap: min(2vh, 1vw) min(6vh, 3vw);
+	margin-bottom: 2.5%;
+	margin-top: 2.5%;
+}
+
+#mbs-fwitemset-outfit-name {
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: name;
+	height: min(7vh, 3.5vw);
+
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
+}
+
+#mbs-fwitemset-outfit-input {
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: outfitCode;
+	height: min(7vh, 3.5vw);
+
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
+}
+
+#mbs-fwitemset-outfit-div {
+	grid-area: outfitCodeButton;
+}
+
+#mbs-fwitemset-outfit-button {
+	height: min(7vh, 3.5vw);
+	width: min(27vh, 13.5vw);
+}
+
+#mbs-fwitemset-bot-grid {
+	display: grid;
+	grid-area: botDiv;
+	margin-left: 35%;
+	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
+	align-items: end;
+	font-size: min(3.5vh, 1.75vw);
+	overflow: hidden;
+	grid-template:
+		"headerStrip headerLock" auto
+		"configStrip gridLock" min(7vh, 3.5vw)
+		"headerEquip gridLock" min(7vh, 3.5vw)
+		"configEquip gridLock" min(7vh, 3.5vw)
+		"headerWeight gridLock" min(7vh, 3.5vw)
+		"configWeight gridLock" min(7vh, 3.5vw) / min(40vh, 20vw) auto;
+	text-align: left;
+}
+
+#mbs-fwitemset-strip-header {
+	grid-area: headerStrip;
+}
+
+#mbs-fwitemset-strip-input {
+	align-self: start;
+	grid-area: configStrip;
+}
+
+#mbs-fwitemset-equip-header {
+	grid-area: headerEquip;
+}
+
+#mbs-fwitemset-equip-input {
+	align-self: start;
+	grid-area: configEquip;
+}
+
+#mbs-fwitemset-weight-header {
+	grid-area: headerWeight;
+}
+
+#mbs-fwitemset-weight-input {
+	align-self: start;
+	font-size: min(3.5vh, 1.75vw);
+	grid-area: configWeight;
+	width: min(7vh, 3.5vw);
+
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
+}
+
+#mbs-fwitemset-lock-header {
+	grid-area: headerLock;
+}
+
+#mbs-fwitemset-lock-grid {
+	align-self: start;
+	display: grid;
+	grid-area: gridLock;
+	grid-template-columns: 5fr 5fr;
+	overflow-y: scroll;
+	grid-gap: min(2vh, 1vw);
+}
+
+.mbs-fwitemset-lock-container {
+	align-items: center;
+	display: grid;
+	font-size: min(3.5vh, 1.75vw);
+	word-wrap: break-word;
+	grid-template-columns: 1.5fr 8.5fr;
+	grid-gap: min(2vh, 1vw);
+}
+
+.mbs-timer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: min(3.5vh, 1.75vw);
+	height: min(5vh, 2.5vw);
+	text-align: center;
+	width: min(21vh, 10.5vw);
+
+	&:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
+}
+
+#mbs-fwitemset-strip-dropdown-button, #mbs-fwitemset-equip-dropdown-button {
+	min-height: min(7vh, 3.5vw);
+	max-height: min(14vh, 7vw);
+	overflow: wrap;
+	text-overflow: unset;
+}
+
+.mbs-fwitemset-lock-checkbox {
+	height: min(7vh, 3.5vw) !important;
+	width: min(7vh, 3.5vw) !important;
+	border: min(0.3vh, 0.15vw) solid black !important;
+}
+
+.mbs-dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: white;
+	z-index: 1;
+	overflow-y: scroll;
+	border: min(0.3vh, 0.15vw) solid black;
+
+	&div:hover {
+		background-color: cyan;
+	}
+}
+
+.mbs-dropdown:hover .mbs-dropdown-content {
+	display: grid;
+}
+
+#mbs-fwitemset-strip-dropdown-option1:not(:hover),
+#mbs-fwitemset-strip-dropdown-option3:not(:hover),
+#mbs-fwitemset-equip-dropdown-option1:not(:hover),
+#mbs-fwitemset-equip-dropdown-option3:not(:hover) {
+	background-color: #dfdfdf;
+}

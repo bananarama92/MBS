@@ -1,2 +1,2 @@
 [codespell]
-skip = ./src/stub_files/bc,./node_modules,./dist
+skip = ./src/stub_files/bc,./node_modules,./dist,**/*.scss.d.ts
