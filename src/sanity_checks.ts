@@ -39,16 +39,9 @@ export function validateBCVersion(version: string): void {
 }
 
 /** A list-type with hashes for the current release stable and, optionally, the next (beta) version(s). */
-type HashList = readonly [
-    Rxx: string,
-    RyyBeta1?: null | string,
-    RyyBeta2?: null | string,
-    RyyBeta3?: null | string,
-    RyyBeta4?: null | string,
-    Ryy?: null | string,
-];
+type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 
-/** A Map with supported function hashes for each MBS-hooked function */
+/** A record with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [string, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
@@ -64,7 +57,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneMouseDown", ["306C80B6"]],
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
     ];
-    return Object.freeze(new Map(hashes.map(item => {
+    return Object.freeze(Object.fromEntries(hashes.map(item => {
         const [key, value] = item;
         const valueSet = new Set(<string[]>value.filter(i => i != null));
         return [key, Object.freeze(valueSet)];
@@ -74,7 +67,7 @@ const HOOK_FUNC_HASHES = (() => {
 /** Helper function for generating a new set of {@link HOOK_FUNC_HASHES} values after a release. */
 export function generateNewHookFuncHashes(): void {
     let ret = "";
-    for (const [funcName, _] of HOOK_FUNC_HASHES) {
+    for (const [funcName, _] of Object.entries(HOOK_FUNC_HASHES)) {
         const funcHash = MBS_MOD_API.getOriginalHash(funcName);
         ret += `["${funcName}", ["${funcHash}"]],\n`;
     }
@@ -84,7 +77,7 @@ export function generateNewHookFuncHashes(): void {
 /** Check whether all MBS-hooked functions have a supported hash. */
 export function validateHookHashes(): void {
     const unkownHashes: Record<string, string> = {};
-    for (const [funcName, refHashes] of HOOK_FUNC_HASHES) {
+    for (const [funcName, refHashes] of Object.entries(HOOK_FUNC_HASHES)) {
         const funcHash = MBS_MOD_API.getOriginalHash(funcName);
         if (!refHashes.has(funcHash)) {
             unkownHashes[funcName] = funcHash;
