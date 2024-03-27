@@ -51,7 +51,6 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
     return (
         <div
             id={fields.inputID}
-            disabled={disabled}
             class="mbs-dropdown"
             onWheel={(e) => {
                 const elem = document.getElementById(fields.buttonID) as HTMLButtonElement;
@@ -75,7 +74,7 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
             <div class="mbs-dropdown-content" id={fields.dropdownID}> {
                 Object.values(STRIP_MAPPING).slice(0, 4).map((value, i) => {
                     return <button
-                        class="mbs-button"
+                        class="mbs-button mbs-dropdown-button"
                         disabled={disabled}
                         data-level={i}
                         id={fields.optionID + i.toString()}
@@ -151,7 +150,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <div id={ID.header}>Customize wheel of fortune item set</div>
-                <div id={ID.delete} class="mbs-dropdown-button">
+                <div id={ID.delete} class="mbs-button-div">
                     <button
                         class="mbs-button"
                         id={ID.deleteButton}
@@ -159,9 +158,11 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         onClick={() => this.exit(false, ExitAction.DELETE)}
                         disabled={disabled}
                     />
-                    <div class="mbs-tooltip" id={ID.deleteTooltip}>Delete item set</div>
+                    <div class="mbs-button-tooltip" id={ID.deleteTooltip} style={{ justifySelf: "left" }}>
+                        Delete item set
+                    </div>
                 </div>
-                <div id={ID.accept} class="mbs-dropdown-button">
+                <div id={ID.accept} class="mbs-button-div">
                     <button
                         class="mbs-button"
                         id={ID.acceptButton}
@@ -169,25 +170,31 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         onClick={() => this.exit(false, ExitAction.SAVE)}
                         disabled={true}
                     />
-                    <div class="mbs-tooltip" id={ID.acceptTooltip}>Save item set:\nMissing outfit</div>
+                    <div class="mbs-button-tooltip" id={ID.acceptTooltip} style={{ justifySelf: "right" }}>
+                        Save item set:\nMissing outfit
+                    </div>
                 </div>
-                <div id={ID.cancel} class="mbs-dropdown-button">
+                <div id={ID.cancel} class="mbs-button-div">
                     <button
                         class="mbs-button"
                         id={ID.cancelButton}
                         style={{ backgroundImage: "url('./Icons/Cancel.png')" }}
                         onClick={() => this.exit(false, ExitAction.NONE)}
                     />
-                    <div class="mbs-tooltip" id={ID.cancelTooltip}>Cancel</div>
+                    <div class="mbs-button-tooltip" id={ID.cancelTooltip} style={{ justifySelf: "right" }}>
+                        Cancel
+                    </div>
                 </div>
-                <div id={ID.exit} class="mbs-dropdown-button">
+                <div id={ID.exit} class="mbs-button-div">
                     <button
                         class="mbs-button"
                         id={ID.exitButton}
                         style={{ backgroundImage: "url('./Icons/Exit.png')" }}
                         onClick={() => this.exit(true, ExitAction.NONE)}
                     />
-                    <div class="mbs-tooltip" id={ID.exitTooltip}>Exit</div>
+                    <div class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
+                        Exit
+                    </div>
                 </div>
 
                 <div id={ID.midDiv}>
@@ -214,14 +221,14 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         }}
                         onFocus={(e) => (e.target as HTMLInputElement).select()}
                     />
-                    <div id={ID.outfitDiv} class="mbs-dropdown-button">
+                    <div id={ID.outfitDiv} class="mbs-button-div">
                         <button
                             class="mbs-button"
                             disabled={true}
                             id={ID.outfitButton}
                             onClick={() => this.#updateButton(ID.acceptButton, true)}
                         >Parse</button>
-                        <div class="mbs-tooltip" id={ID.outfitTooltip}>Parse the outfit code</div>
+                        <div class="mbs-button-tooltip" id={ID.outfitTooltip}>Parse the outfit code</div>
                     </div>
                 </div>
 

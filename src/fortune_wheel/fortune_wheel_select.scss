@@ -19,7 +19,7 @@
 
 #mbs-fwselect-storage {
 	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800);
-	border: min(0.3vh, 0.15vw) solid black;
+	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	display: grid;
 	grid-area: storage;
 	height: 100%;
@@ -27,9 +27,9 @@
 	width: 35%;
 
 	#mbs-fwselect-storage-tooltip {
-		background-color: white;
-		border: min(0.3vh, 0.15vw) solid black;
-		color: black;
+		background-color: var(--mbs-background-color);
+		border: inherit;
+		color: var(--mbs-text-color);
 		font-size: min(3.5vh, 1.75vw);
 		left: 15%;
 		line-height: 1.4;
@@ -79,7 +79,7 @@
 
 #mbs-fwselect-header0, #mbs-fwselect-header1 {
 	align-items: center;
-	background: white;
+	background: var(--mbs-background-color);
 	display: flex;
 	height: 100%;
 	justify-content: center;

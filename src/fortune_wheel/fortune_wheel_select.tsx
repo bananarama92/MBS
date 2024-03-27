@@ -117,14 +117,16 @@ export class FWSelectScreen extends MBSScreen {
                     </div>
                 </div>
 
-                <div id={ID.exit} class="mbs-dropdown-button">
+                <div id={ID.exit} class="mbs-button-div">
                     <button
                         class="mbs-button"
                         id={ID.exitButton}
                         onClick={this.exit.bind(this)}
                         style={{ backgroundImage: "url('./Icons/Exit.png')" }}
                     />
-                    <span class="mbs-tooltip" id={ID.exitTooltip}>Exit</span>
+                    <span class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
+                        Exit
+                    </span>
                 </div>
 
                 <div id={ID.storage}>
