@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "ES2021",
-        "lib": ["ESNext", "dom"],
+        "lib": ["ESNext", "dom", "DOM.Iterable"],
         "types": [],
         "module": "ESNext",
         "moduleResolution": "Node",
