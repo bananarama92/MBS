@@ -11,6 +11,7 @@
 // @downloadURL  https://github.com/bananarama92/MBS/raw/main/dev_loader.user.js
 // @run-at       document-end
 // @grant        none
+// @license      GPL-3.0
 // ==/UserScript==
 
 setTimeout(
