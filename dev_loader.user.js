@@ -9,6 +9,7 @@
 // @homepage     https://github.com/bananarama92/MBS.git#readme
 // @source       https://github.com/bananarama92/MBS.git
 // @downloadURL  https://github.com/bananarama92/MBS/raw/main/dev_loader.user.js
+// @updateURL    https://github.com/bananarama92/MBS/raw/main/dev_loader.user.js
 // @run-at       document-end
 // @grant        none
 // @license      GPL-3.0
