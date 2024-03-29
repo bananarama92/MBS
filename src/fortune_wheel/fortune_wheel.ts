@@ -782,6 +782,8 @@ class FWScreenProxy extends ScreenProxy {
 
 export let fortuneWheelState: FWScreenProxy;
 
+declare const WheelFortuneDrawWheel: undefined | typeof WheelFortuneDraw;
+
 waitFor(bcLoaded).then(() => {
     const COORDS = {
         exit: [1830, 60, 90, 90],
@@ -913,7 +915,9 @@ waitFor(bcLoaded).then(() => {
         }
     });
 
-    MBS_MOD_API.hookFunction("WheelFortuneDraw", 11, (args, next) => {
+    // R103 compat
+    const drawFunc = typeof WheelFortuneDrawWheel !== "undefined" ? "WheelFortuneDrawWheel" : "WheelFortuneDraw";
+    MBS_MOD_API.hookFunction(drawFunc, 11, (args, next) => {
         args[0] = fortuneWheelState.weightedIDs;
         return next(args);
     });

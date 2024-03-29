@@ -1,11 +1,24 @@
+:root {
+	--mbs-background-color: white;
+	--mbs-hover-color: cyan;
+	--mbs-tooltip-color: lightyellow;
+	--mbs-border-color: black;
+	--mbs-text-color: black;
+}
+
+input:invalid {
+	background-color: #fbb;
+	box-shadow: 0 0 3px 2px #c22;
+}
+
 .mbs-button {
-	background-color: white;
+	background-color: var(--mbs-background-color);
 	background-origin: content-box;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-	border: min(0.3vh, 0.15vw) solid black;
-	color: black;
+	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	color: var(--mbs-text-color);
 	font-size: min(3.5vh, 1.75vw);
 	height: 100%;
 	overflow: clip;
@@ -17,19 +30,20 @@
 	width: 100%;
 
 	&:hover {
-		background-color: cyan;
+		background-color: var(--mbs-hover-color);
 	}
 
 	&:disabled {
-		background-color: lightgray;
+		filter: brightness(60%);
+		background-color: var(--mbs-background-color);
 	}
 }
 
-.mbs-tooltip {
+.mbs-button-tooltip {
 	box-shadow: min(0.4vh, 0.2vw) min(0.4vh, 0.2vw) min(2vh, 1vw) 0 rgb(0 0 0 / 50%);
-	background-color: lightyellow;
-	border: min(0.3vh, 0.15vw) solid black;
-	color: black;
+	background-color: var(--mbs-tooltip-color);
+	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	color: var(--mbs-text-color);
 	font-size: min(3.5vh, 1.75vw);
 	line-height: 1.4;
 	padding: min(1vh, 0.5vw) min(2vh, 1vw) min(1vh, 0.5vw) min(2vh, 1vw);
@@ -42,8 +56,23 @@
 	z-index: 1;
 }
 
-.mbs-dropdown-button:hover .mbs-tooltip {
-	visibility: visible;
+.mbs-button-div {
+	display: grid;
+	grid-template-rows: min(9vh, 4.5vw) auto;
+	grid-template-columns: min(9vh, 4.5vw);
+
+	.mbs-button-tooltip {
+		justify-self: center;
+	}
+
+	.mbs-button {
+		width: inherit;
+		height: inherit;
+
+		&:hover + .mbs-button-tooltip {
+			visibility: visible;
+		}
+	}
 }
 
 .mbs-timer {
@@ -52,9 +81,27 @@
 	height: min(6vh, 3vw);
 	text-align: center;
 	width: min(21vh, 10.5vw);
+}
 
-	&:invalid {
-		background-color: #fbb;
-		box-shadow: 0 0 3px 2px #c22;
+.mbs-dropdown-button {
+	border: unset !important;
+	padding-top: min(1vh, 0.5vw);
+	padding-bottom: min(1vh, 0.5vw);
+
+	&:nth-child(even) {
+		filter: brightness(85%);
 	}
+}
+
+.mbs-dropdown-content {
+	visibility: hidden;
+	position: absolute;
+	background-color: var(--mbs-background-color);
+	z-index: 1;
+	overflow-y: scroll;
+	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+}
+
+.mbs-dropdown:hover .mbs-dropdown-content {
+	visibility: visible;
 }

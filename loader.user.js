@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MBS - Maid's Bondage Scripts
 // @namespace    MBS
-// @version      1.4.4
+// @version      1.4.5
 // @description  Loader of Bananarama92's "Maid's Bondage Scripts" mod
 // @author       Bananarama92
 // @include      /^https:\/\/(www\.)?bondageprojects\.elementfx\.com\/R\d+\/(BondageClub|\d+)(\/((index|\d+)\.html)?)?$/
@@ -9,8 +9,10 @@
 // @homepage     https://github.com/bananarama92/MBS.git#readme
 // @source       https://github.com/bananarama92/MBS.git
 // @downloadURL  https://github.com/bananarama92/MBS/raw/main/loader.user.js
+// @updateURL    https://github.com/bananarama92/MBS/raw/main/loader.user.js
 // @run-at       document-end
 // @grant        none
+// @license      GPL-3.0
 // ==/UserScript==
 
 setTimeout(

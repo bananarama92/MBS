@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.4.5
+* Remove MBS's dedicated "show new item screen" buttons when in R103
+* Rewrite the MBS fortune wheel preset screen using DOM elements
+
 ## 1.4.4
 * Fix the broken exit button image in the MBS wheel of fortune selection menu
 * Rewrite the MBS fortune wheel item set screen using DOM elements

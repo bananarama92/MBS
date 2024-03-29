@@ -213,6 +213,14 @@ export class MBSPreferenceScreen extends MBSScreen {
                 },
             },
         };
+
+        if (
+            MBS_MOD_API.getOriginalHash("MainHallRun") !== "735A1207"
+            || MBS_MOD_API.getOriginalHash("MainHallClick") !== "7A6D741A"
+        ) {
+            // R103
+            delete this.elements.newAssets;
+        }
     }
 
     click(event: MouseEvent | TouchEvent) {

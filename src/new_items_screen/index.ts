@@ -36,17 +36,37 @@ waitFor(bcLoaded).then(() => {
         }
     }
 
-    MBS_MOD_API.patchFunction("MainHallRun", {
-        'DrawText(TextGet("OnlinePlayers") + " " + CurrentOnlinePlayers.toString(), 1740, 950, "White", "Black");':
-            'DrawText(TextGet("OnlinePlayers") + " " + CurrentOnlinePlayers.toString(), 1630, 950, "White", "Black");',
-    });
+    if (
+        MBS_MOD_API.getOriginalHash("MainHallRun") === "735A1207"
+        && MBS_MOD_API.getOriginalHash("MainHallClick") === "7A6D741A"
+    ) { // R102
+        MBS_MOD_API.patchFunction("MainHallRun", {
+            'DrawText(TextGet("OnlinePlayers") + " " + CurrentOnlinePlayers.toString(), 1740, 950, "White", "Black");':
+                'DrawText(TextGet("OnlinePlayers") + " " + CurrentOnlinePlayers.toString(), 1630, 950, "White", "Black");',
+        });
 
-    MBS_MOD_API.hookFunction("MainHallRun", 0, (args, next) => {
-        next(args);
-        if (MainHallStartEventTimer == null && MainHallNextEventTimer == null) {
-            DrawButton(1665, 900, 90, 90, "", "White", "Icons/Changelog.png", `MBS: Show new R${NEW_ASSETS_VERSION} items`);
-        }
-    });
+        MBS_MOD_API.hookFunction("MainHallRun", 0, (args, next) => {
+            next(args);
+            if (MainHallStartEventTimer == null && MainHallNextEventTimer == null) {
+                DrawButton(1665, 900, 90, 90, "", "White", "Icons/Changelog.png", `MBS: Show new R${NEW_ASSETS_VERSION} items`);
+            }
+        });
+
+
+        MBS_MOD_API.hookFunction("MainHallClick", 0, (args, next) => {
+            if (MainHallStartEventTimer == null && MainHallNextEventTimer == null && MouseIn(1665, 900, 90, 90)) {
+                Shop2Vars.Mode = "Preview";
+                Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
+                Shop2.Init(undefined, ["Room", "MainHall"]);
+                ServerBeep = {
+                    Message: "The MBS \"Show new items\" button will be removed in R103; use the Club Shop or /shop chat command instead",
+                    Timer: CommonTime() + 10000,
+                };
+                return;
+            }
+            next(args);
+        });
+    }
 
     const shop2Vars = <typeof Shop2Vars & { readonly MBS_ShowAllVersions: boolean }>Shop2Vars;
 
@@ -115,20 +135,6 @@ waitFor(bcLoaded).then(() => {
                     return a1.Group.Description.localeCompare(a2.Group.Description) || a1.Description.localeCompare(a2.Description);
                 }),
             );
-        }
-        next(args);
-    });
-
-    MBS_MOD_API.hookFunction("MainHallClick", 0, (args, next) => {
-        if (MainHallStartEventTimer == null && MainHallNextEventTimer == null && MouseIn(1665, 900, 90, 90)) {
-            Shop2Vars.Mode = "Preview";
-            Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
-            Shop2.Init(undefined, ["Room", "MainHall"]);
-            ServerBeep = {
-                Message: "The MBS \"Show new items\" button will be removed in R103; use the Club Shop or /shop chat command instead",
-                Timer: CommonTime() + 10000,
-            };
-            return;
         }
         next(args);
     });

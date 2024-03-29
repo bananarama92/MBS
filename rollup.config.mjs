@@ -9,10 +9,28 @@ import terser from "@rollup/plugin-terser";
 import simpleGit from "simple-git";
 import json from "@rollup/plugin-json";
 import scss from "rollup-plugin-scss";
+import license from "rollup-plugin-license";
 
 import packageJson from "./package.json" assert { type: "json" };
 
 /* global process */
+
+const LICENSE = `
+MBS: Maid's Bondage Scripts
+
+Copyright (C) 2023-2024 Bananarama92
+
+This program is free software: you can redistribute it and/or modify it under the terms of
+the GNU General Public License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.
+If not, see https://www.gnu.org/licenses/.
+`.trim();
 
 /**
  * Increment the package version if it is lower than or equal to the latest git tag.
@@ -87,6 +105,7 @@ const config = {
         commonjs(),
         json(),
         scss({ output: false }),
+        license({ banner: { content: LICENSE, commentStyle: "ignored" } }),
     ],
     onwarn(warning, warn) {
         switch (warning.code) {
