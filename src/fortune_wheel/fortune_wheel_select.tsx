@@ -99,19 +99,19 @@ export class FWSelectScreen extends MBSScreen {
         const isPlayer = this.character.IsPlayer();
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup" screen-generated={this.screen}>
+            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <div id={ID.buttonOuterGrid}>
-                    <div id={ID.itemSets}>
+                    <h1 id={ID.itemSets}>
                         {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
-                    </div>
+                    </h1>
                     <div id={ID.buttonInnerGrid0}>
                         {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
-                    <div id={ID.commandSets}>
+                    <h1 id={ID.commandSets}>
                         {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
-                    </div>
+                    </h1>
                     <div id={ID.buttonInnerGrid1}>
                         {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>

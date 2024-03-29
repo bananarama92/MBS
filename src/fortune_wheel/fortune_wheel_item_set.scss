@@ -1,8 +1,4 @@
 #mbs-fwitemset {
-	display: none;
-	text-align: center;
-	user-select: none;
-	grid-gap: min(2vh, 1vw);
 	grid-template:
 		"delete header accept cancel exit" min(9vh, 4.5vw)
 		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
@@ -14,8 +10,6 @@
 }
 
 #mbs-fwitemset-header {
-	align-self: center;
-	font-size: min(5vh, 2.5vw);
 	grid-area: header;
 	margin-left: min(20vh, 10vw);
 }
@@ -146,10 +140,4 @@
 
 #mbs-fwitemset-strip-dropdown-content, #mbs-fwitemset-equip-dropdown-content {
 	width: min(80vh, 40vw);
-}
-
-.mbs-fwitemset-lock-checkbox {
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color) !important;
-	height: min(7vh, 3.5vw) !important;
-	width: min(7vh, 3.5vw) !important;
 }

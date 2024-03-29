@@ -157,10 +157,10 @@ export class WheelPresetScreen extends MBSScreen {
         };
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup" screen-generated={this.screen}>
+            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
-                <div id={ID.header}>Wheel of Fortune Presets</div>
+                <h1 id={ID.header}>Wheel of Fortune Presets</h1>
                 <div id={ID.delete} class="mbs-button-div">
                     <button
                         class="mbs-button"

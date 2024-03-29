@@ -102,10 +102,10 @@
 }
 
 .mbs-screen {
-	display: grid;
+	display: none;
 	text-align: center;
 	user-select: none;
-	grid-row-gap: min(2vh, 1vw);
+	grid-gap: min(2vh, 1vw);
 
 	h1 {
 		align-self: center;

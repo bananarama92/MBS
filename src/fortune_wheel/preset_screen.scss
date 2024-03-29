@@ -1,8 +1,4 @@
 #mbs-fwpreset {
-	display: none;
-	text-align: center;
-	user-select: none;
-	grid-gap: min(2vh, 1vw);
 	grid-template:
 		"delete header accept save exit" min(9vh, 4.5vw)
 		"mid mid mid mid mid" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
@@ -13,8 +9,6 @@
 }
 
 #mbs-fwpreset-header {
-	align-self: center;
-	font-size: min(5vh, 2.5vw);
 	grid-area: header;
 	margin-left: min(20vh, 10vw);
 }
@@ -35,7 +29,6 @@
 	display: grid;
 	grid-area: mid;
 	text-align: center;
-	user-select: none;
 	grid-gap: min(2vh, 1vw);
 	font-size: min(3.5vh, 1.75vw);
 	grid-template:
