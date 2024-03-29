@@ -1,7 +1,8 @@
 #mbs-fwpreset {
 	grid-template:
 		"delete header accept save exit" min(9vh, 4.5vw)
-		"mid mid mid mid mid" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"mid mid mid mid mid" auto
+		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwpreset-delete {
@@ -33,7 +34,7 @@
 	font-size: min(3.5vh, 1.75vw);
 	grid-template:
 		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9vh, 4.5vw)
-		"name builtin-bc builtin-mbs custom-mbs" auto / min(40vh, 15vw) min(40vh, 20vw) min(30vh, 15vw) min(70vh, 35vw);
+		"name builtin-bc builtin-mbs custom-mbs" auto / min(40vh, 20vw) min(40vh, 20vw) min(30vh, 15vw) min(70vh, 35vw);
 	justify-items: center;
 	justify-self: center;
 }

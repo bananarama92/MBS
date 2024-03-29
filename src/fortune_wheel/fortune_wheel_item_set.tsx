@@ -139,9 +139,15 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     readonly settings: FWSelectedItemSet;
     readonly preview: Character;
 
-    constructor(parent: null | MBSScreen, wheelList: (null | FWItemSet)[], index: number, character: Character) {
+    constructor(
+        parent: null | MBSScreen,
+        wheelList: (null | FWItemSet)[],
+        index: number,
+        character: Character,
+        shape: RectTuple = [80, 60, 1840, 880],
+    ) {
         const disabled = !character.IsPlayer();
-        super(parent, wheelList, index, character);
+        super(parent, wheelList, index, character, shape);
         this.settings = new FWSelectedItemSet(wheelList);
         this.preview = CharacterLoadSimple("MBSFortuneWheelPreview");
 
@@ -451,7 +457,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     resize() {
         const elem = document.getElementById(ID.root) as HTMLElement;
         const fontSize = MainCanvas.canvas.clientWidth <= MainCanvas.canvas.clientHeight * 2 ? MainCanvas.canvas.clientWidth / 50 : MainCanvas.canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, 80, 60, 1840, 880);
+        ElementPositionFix(ID.root, fontSize, ...this.shape);
         elem.style.display = "grid";
     }
 

@@ -1,9 +1,8 @@
 #mbs-fwselect {
 	grid-template:
 		". buttonOuterGrid exit" min(9vh, 4.5vw)
-		"storage buttonOuterGrid ." 7.4fr
-		"storageFooter buttonOuterGrid ." 1.7fr
-		/ 2fr 7fr 1fr;
+		"storage buttonOuterGrid ." auto
+		"storageFooter buttonOuterGrid ." min(14vh, 7vw) / min(30vh, 15vw) auto min(20vh, 10vw);
 }
 
 #mbs-fwselect-exit {

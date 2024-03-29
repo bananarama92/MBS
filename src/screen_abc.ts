@@ -14,10 +14,13 @@ export abstract class MBSScreen {
     readonly parent: null | MBSScreen;
     /** A map of all child screens */
     readonly children: Map<string, MBSScreen>;
+    /** The dimensions of the screen */
+    readonly shape: RectTuple;
 
-    constructor(parent: null | MBSScreen) {
+    constructor(parent: null | MBSScreen, shape: RectTuple) {
         this.parent = parent;
         this.children = new Map();
+        this.shape = shape;
     }
 
     /**
@@ -115,7 +118,7 @@ export class ScreenProxy extends MBSScreen {
         background: string,
         screenFunctions: Readonly<ScreenFunctions>,
     ) {
-        super(parent);
+        super(parent, [0, 0, 0, 0]);
         this.module = module;
         this.background = background;
         this.screenFunctions = Object.freeze({ ...screenFunctions });
@@ -173,8 +176,8 @@ export abstract class MBSObjectScreen<
         }
     }
 
-    constructor(parent: null | MBSScreen, wheelList: (null | T)[], index: number, character: Character) {
-        super(parent);
+    constructor(parent: null | MBSScreen, wheelList: (null | T)[], index: number, character: Character, shape: RectTuple) {
+        super(parent, shape);
         this.character = character;
         this.mbsList = wheelList;
         this.index = index;

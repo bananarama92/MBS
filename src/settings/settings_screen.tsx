@@ -40,8 +40,8 @@ export class MBSPreferenceScreen extends MBSScreen {
     static readonly screen = "MBS_PreferenceScreen";
     readonly screen = MBSPreferenceScreen.screen;
 
-    constructor(parent: null | MBSScreen) {
-        super(parent);
+    constructor(parent: null | MBSScreen, shape: RectTuple = [525, 75, 1380, 850]) {
+        super(parent, shape);
 
         document.body.appendChild(
             <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
@@ -227,7 +227,7 @@ export class MBSPreferenceScreen extends MBSScreen {
             FortuneWheelItemSets: loadFortuneWheelObjects(Player, "FortuneWheelItemSets", "item sets"),
             FortuneWheelCommands: loadFortuneWheelObjects(Player, "FortuneWheelCommands", "commands"),
         };
-        const subScreen = new FWSelectScreen(this, wheelStruct, Player);
+        const subScreen = new FWSelectScreen(this, wheelStruct, Player, [95, 75, 1810, 850]);
         this.children.set(subScreen.screen, subScreen);
         subScreen.load();
     }
@@ -251,7 +251,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         const elem = document.getElementById(ID.root) as HTMLDivElement;
         const canvas = MainCanvas.canvas;
         const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, 525, 75, 1380, 850);
+        ElementPositionFix(ID.root, fontSize, ...this.shape);
         elem.style.display = "grid";
     }
 

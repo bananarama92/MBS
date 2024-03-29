@@ -2,7 +2,8 @@
 	grid-template:
 		"delete header accept cancel exit" min(9vh, 4.5vw)
 		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
-		"botDiv botDiv botDiv botDiv botDiv" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"botDiv botDiv botDiv botDiv botDiv" auto
+		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwitemset-delete {

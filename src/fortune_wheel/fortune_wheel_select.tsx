@@ -64,7 +64,7 @@ function createButton(screen: FWSelectScreen, i: number) {
             onClick={() => {
                 let subScreen: FWItemSetScreen | FWCommandScreen;
                 if (i < MBS_MAX_SETS) {
-                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character);
+                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, screen.shape);
                 } else {
                     subScreen = new FWCommandScreen(screen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
                 }
@@ -91,8 +91,13 @@ export class FWSelectScreen extends MBSScreen {
         ];
     }
 
-    constructor(parent: MBSScreen | null, wheelStruct: WheelStruct, character: Character) {
-        super(parent);
+    constructor(
+        parent: MBSScreen | null,
+        wheelStruct: WheelStruct,
+        character: Character,
+        shape: RectTuple = [80, 60, 1840, 880],
+    ) {
+        super(parent, shape);
         this.wheelStruct = wheelStruct;
         this.character = character;
         this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
@@ -142,7 +147,7 @@ export class FWSelectScreen extends MBSScreen {
         const elem = document.getElementById(ID.root);
         if (elem) {
             const fontSize = MainCanvas.canvas.clientWidth <= MainCanvas.canvas.clientHeight * 2 ? MainCanvas.canvas.clientWidth / 50 : MainCanvas.canvas.clientHeight / 25;
-            ElementPositionFix(ID.root, fontSize, 80, 60, 1840, 880);
+            ElementPositionFix(ID.root, fontSize, ...this.shape);
             elem.style.display = "grid";
         }
     }

@@ -18,7 +18,7 @@ export class ResetScreen extends MBSScreen {
     }
 
     constructor(parent: null | MBSScreen) {
-        super(parent);
+        super(parent, [0, 0, 0, 0]);
         this.#timerStart = CurrentTime;
         this.buttons = [
             {
