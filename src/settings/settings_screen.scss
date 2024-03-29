@@ -74,3 +74,42 @@
 	grid-area: changelog;
 	grid-template-columns: min(40vh, 20vw);
 }
+
+#mbs-preference-reset-screen {
+	align-items: center;
+	background-color: rgb(0 0 0 / 70%);
+	z-index: 2;
+}
+
+#mbs-preference-reset-background {
+	background: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png") var(--mbs-background-color);
+	background-blend-mode: multiply;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	box-sizing: border-box;
+	height: 80%;
+	left: 10%;
+	mask-image: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png");
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-size: contain;
+	padding: min(6vh, 3vw);
+	padding-top: min(3vh, 1.5vw);
+	position: relative;
+	top: 10%;
+	width: 80%;
+	word-break: break-word;
+}
+
+#mbs-preference-reset-grid {
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-items: center;
+	padding-top: min(10vh, 5vw);
+
+	.mbs-button {
+		height: min(9vh, 4.5vw);
+		width: min(27vh, 13.5vw);
+	}
+}

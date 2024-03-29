@@ -38,7 +38,7 @@ jobs:
       - run: npm run lint
       - run: |
           mkdir ./dist/"${{ matrix.branch }}"
-          mv ./package-lock.json ./dist/mbs.js ./dist/mbs.js.map ./dist/"${{ matrix.branch }}"/
+          mv ./package-lock.json ./dist/mbs.js ./dist/mbs.js.map ./static/** ./dist/"${{ matrix.branch }}"/
       - uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ matrix.branch }}
@@ -58,18 +58,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: actions/checkout@v4
         name: Download previous release artifacts
         with:
           repository: bananarama92/MBS-Artifacts
           path: MBS-Artifacts
           token: ${{ secrets.MBS_ARTIFACTS_TOKEN }}
+
       - uses: actions/download-artifact@v4
         with:
           path: MBS-Artifacts/artifacts
+
       - run: |
           mv MBS-Artifacts/artifacts/artifact-main/main MBS-Artifacts/artifacts/main
           mv MBS-Artifacts/artifacts/artifact-devel/devel MBS-Artifacts/artifacts/devel
+
       - name: Push new release artifacts to the MBS release archive
         if: github.event_name == 'release'
         run: |
@@ -77,31 +81,36 @@ jobs:
 
           cd MBS-Artifacts
           mkdir artifacts/${{ github.event.release.tag_name }}
-          cp artifacts/main/package-lock.json artifacts/main/mbs.js artifacts/main/mbs.js.map artifacts/${{ github.event.release.tag_name }}/
+          cp artifacts/main/** artifacts/${{ github.event.release.tag_name }}/
 
           git add artifacts/${{ github.event.release.tag_name }}/*
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "MAINT: Add MBS ${{ github.event.release.tag_name }} release artifacts" -m "Last commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           git push
+
       - name: Define the latest MBS release
         run: |
           TAG=$(git describe --abbrev=0 --tags)
           echo "New tag: $TAG"
           rm -rf MBS-Artifacts/artifacts/main
           cp -r MBS-Artifacts/artifacts/"$TAG" MBS-Artifacts/artifacts/main
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './MBS-Artifacts/artifacts'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
       - name: Attach release artifacts to GitHub release
         if: github.event_name == 'release'
         uses: AButler/upload-release-assets@v3.0
         with:
-          files: 'MBS-Artifacts/artifacts/${{ github.ref_name }}/*'
+          files: 'MBS-Artifacts/artifacts/${{ github.ref_name }}/*.{js,js.map,json}'
           repo-token: ${{ secrets.GITHUB_TOKEN }}

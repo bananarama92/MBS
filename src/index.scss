@@ -106,15 +106,11 @@
 	text-align: center;
 	user-select: none;
 	grid-gap: min(2vh, 1vw);
+	font-size: min(3.5vh, 1.75vw);
 
 	h1 {
 		align-self: center;
 		font-size: min(5vh, 2.5vw);
-	}
-
-	h2 {
-		align-self: center;
-		font-size: min(3.5vh, 1.75vw);
 	}
 
 	p {

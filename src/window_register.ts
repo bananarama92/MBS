@@ -3,7 +3,7 @@
 import { waitFor } from "./common";
 import { bcLoaded } from "./common_bc";
 import { FWItemSetScreen, FWCommandScreen, FWSelectScreen, WheelPresetScreen } from "./fortune_wheel";
-import { MBSPreferenceScreen, ResetScreen } from "./settings";
+import { MBSPreferenceScreen } from "./settings";
 
 waitFor(bcLoaded).then(() => {
     const backgrounds = {
@@ -11,7 +11,6 @@ waitFor(bcLoaded).then(() => {
         [`${FWCommandScreen.screen}Background`]: FWCommandScreen.background,
         [`${FWSelectScreen.screen}Background`]: FWSelectScreen.background,
         [`${MBSPreferenceScreen.screen}Background`]: MBSPreferenceScreen.background,
-        [`${ResetScreen.screen}Background`]: ResetScreen.background,
         [`${WheelPresetScreen.screen}Background`]: WheelPresetScreen.background,
     } as const;
     const w = <typeof globalThis & typeof backgrounds>globalThis;

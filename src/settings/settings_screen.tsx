@@ -12,8 +12,8 @@ import {
     exportSettings,
     logSettingsSize,
     SettingsStatus,
+    clearMBSSettings,
 } from "./settings";
-import { ResetScreen } from "./reset_screen";
 
 import styles from "./settings_screen.scss";
 
@@ -156,6 +156,31 @@ export class MBSPreferenceScreen extends MBSScreen {
                 </div>
             </div>,
         );
+
+        document.body.appendChild(
+            <div id={ID.resetScreen} class="HideOnPopup mbs-screen" screen-generated={MBSPreferenceScreen.screen}>
+                <div id={ID.resetBackground}>
+                    <h1>MBS data reset</h1>
+                    <p><strong>- Warning -</strong></p>
+                    <p>If you confirm, <i>all</i> MBS data (including settings, overrides, and current states) will be permanently reset!</p>
+                    <p>You will be able to continue using MBS, but all of your configuration will be reset to default!</p>
+                    <p><strong>This action cannot be undone!</strong></p>
+                    <div id={ID.resetGrid}>
+                        <button
+                            class="mbs-button"
+                            onClick={this.#resetConfirm.bind(this)}
+                            disabled={true}
+                            id={ID.resetAccept}
+                        >Confirm (10)</button>
+                        <button
+                            class="mbs-button"
+                            onClick={this.exit.bind(this)}
+                            id={ID.resetCancel}
+                        >Cancel</button>
+                    </div>
+                </div>
+            </div>,
+        );
     }
 
     #settingsImport() {
@@ -202,9 +227,27 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     #settingsReset() {
-        const subScreen = new ResetScreen(this);
-        this.children.set(subScreen.screen, subScreen);
-        subScreen.load();
+        const screen = document.getElementById(ID.resetScreen) as HTMLDivElement;
+        const button = document.getElementById(ID.resetAccept) as HTMLButtonElement;
+        screen.style.display = "block";
+        button.disabled = true;
+        this.#startTimer(button);
+    }
+
+    async #startTimer(button: HTMLButtonElement) {
+        let i = 9;
+        while (i >= 0) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            button.innerText = `Confirm (${i})`;
+            i--;
+        }
+        button.innerText = "Confirm";
+        button.disabled = false;
+    }
+
+    #resetConfirm() {
+        clearMBSSettings();
+        this.exit();
     }
 
     #loadShop() {
@@ -248,11 +291,16 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     resize() {
-        const elem = document.getElementById(ID.root) as HTMLDivElement;
+        const root = document.getElementById(ID.root) as HTMLDivElement;
+        const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
+        const resetDisplay = resetScreen.style.display;
+
         const canvas = MainCanvas.canvas;
         const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
         ElementPositionFix(ID.root, fontSize, ...this.shape);
-        elem.style.display = "grid";
+        ElementPositionFix(ID.resetScreen, fontSize, 0, 0, 2000, 1000);
+        root.style.display = "grid";
+        resetScreen.style.display = resetDisplay;
     }
 
     click() {}
@@ -262,15 +310,23 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     unload() {
-        const elem = document.getElementById(ID.root) as HTMLDivElement;
-        if (elem) {
-            elem.style.display = "none";
+        for (const id of [ID.root, ID.resetScreen]) {
+            const elem = document.getElementById(id);
+            if (elem) {
+                elem.style.display = "none";
+            }
         }
     }
 
     exit() {
-        ElementRemove(ID.root);
-        this.exitScreens(false);
+        const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
+        if (resetScreen.style.display !== "none") {
+            resetScreen.style.display = "none";
+        } else {
+            ElementRemove(ID.root);
+            ElementRemove(ID.resetScreen);
+            this.exitScreens(false);
+        }
     }
 }
 
@@ -338,6 +394,12 @@ const ID = Object.freeze({
     reset: `${root}-reset`,
     resetButton: `${root}-reset-button`,
     resetTooltip: `${root}-reset-tooltip`,
+    resetScreen: `${root}-reset-screen`,
+    resetBackground: `${root}-reset-background`,
+    resetGrid: `${root}-reset-grid`,
+    resetAccept: `${root}-reset-accept`,
+    resetCancel: `${root}-reset-cancel`,
+
     import: `${root}-import`,
     importButton: `${root}-import-button`,
     importTooltip: `${root}-import-tooltip`,
