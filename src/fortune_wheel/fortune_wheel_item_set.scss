@@ -58,9 +58,9 @@
 }
 
 #mbs-fwitemset-outfit-div {
-	grid-template-rows: min(7vh, 3.5vw) auto;
-  	grid-template-columns: min(27vh, 13.5vw);
 	grid-area: outfitCodeButton;
+  	grid-template-columns: min(27vh, 13.5vw);
+	grid-template-rows: min(7vh, 3.5vw) auto;
 }
 
 #mbs-fwitemset-bot-grid {
@@ -70,7 +70,6 @@
 	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
 	align-items: end;
 	font-size: min(3.5vh, 1.75vw);
-	overflow: hidden;
 	grid-template:
 		"headerStrip headerLock" auto
 		"configStrip gridLock" min(7vh, 3.5vw)
@@ -78,6 +77,7 @@
 		"configEquip gridLock" min(7vh, 3.5vw)
 		"headerWeight gridLock" min(7vh, 3.5vw)
 		"configWeight gridLock" min(7vh, 3.5vw) / min(40vh, 20vw) auto;
+	overflow: hidden;
 	text-align: left;
 }
 
@@ -149,7 +149,7 @@
 }
 
 .mbs-fwitemset-lock-checkbox {
+	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color) !important;
 	height: min(7vh, 3.5vw) !important;
 	width: min(7vh, 3.5vw) !important;
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color) !important;
 }

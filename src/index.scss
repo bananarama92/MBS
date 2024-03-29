@@ -29,15 +29,16 @@
 	}
 
 	&:disabled {
-		filter: brightness(60%);
 		background-color: var(--mbs-background-color);
+		filter: brightness(60%);
 	}
 }
 
 .mbs-button-tooltip {
-	box-shadow: min(0.4vh, 0.2vw) min(0.4vh, 0.2vw) min(2vh, 1vw) 0 rgb(0 0 0 / 50%);
 	background-color: var(--mbs-tooltip-color);
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	bottom: -10%;
+	box-shadow: min(0.4vh, 0.2vw) min(0.4vh, 0.2vw) min(2vh, 1vw) 0 rgb(0 0 0 / 50%);
 	color: var(--mbs-text-color);
 	font-size: min(3.5vh, 1.75vw);
 	line-height: 1.4;
@@ -46,23 +47,22 @@
 	text-align: center;
 	visibility: hidden;
 	white-space: nowrap;
-	bottom: -10%;
 	width: fit-content;
 	z-index: 1;
 }
 
 .mbs-button-div {
 	display: grid;
-	grid-template-rows: min(9vh, 4.5vw) auto;
 	grid-template-columns: min(9vh, 4.5vw);
+	grid-template-rows: min(9vh, 4.5vw) auto;
 
 	.mbs-button-tooltip {
 		justify-self: center;
 	}
 
 	.mbs-button {
-		width: inherit;
 		height: inherit;
+		width: inherit;
 
 		&:hover + .mbs-button-tooltip {
 			visibility: visible;
@@ -80,8 +80,8 @@
 
 .mbs-dropdown-button {
 	border: unset !important;
-	padding-top: min(1vh, 0.5vw);
 	padding-bottom: min(1vh, 0.5vw);
+	padding-top: min(1vh, 0.5vw);
 
 	&:nth-child(even) {
 		filter: brightness(85%);
@@ -89,12 +89,12 @@
 }
 
 .mbs-dropdown-content {
-	visibility: hidden;
-	position: absolute;
 	background-color: var(--mbs-background-color);
-	z-index: 1;
-	overflow-y: scroll;
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	overflow-y: scroll;
+	position: absolute;
+	visibility: hidden;
+	z-index: 1;
 }
 
 .mbs-dropdown:hover .mbs-dropdown-content {
@@ -108,18 +108,18 @@
 	grid-row-gap: min(2vh, 1vw);
 
 	h1 {
-		font-size: min(5vh, 2.5vw);
 		align-self: center;
+		font-size: min(5vh, 2.5vw);
 	}
 
 	h2 {
-		font-size: min(3.5vh, 1.75vw);
 		align-self: center;
+		font-size: min(3.5vh, 1.75vw);
 	}
 
 	p {
-		font-size: min(3.5vh, 1.75vw);
 		align-self: center;
+		font-size: min(3.5vh, 1.75vw);
 	}
 
 	input:invalid {
@@ -128,8 +128,8 @@
 	}
 
 	input[type="checkbox"] {
+		border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 		height: min(7vh, 3.5vw);
 		width: min(7vh, 3.5vw);
-		border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	}
 }

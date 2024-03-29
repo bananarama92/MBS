@@ -17,8 +17,8 @@
 	grid-column-gap: min(3vh, 1.5vw);
 	align-items: center;
 	display: grid;
-	text-align: left;
 	grid-template-columns: min(9vh, 4.5vw) auto;
+	text-align: left;
 
 	button {
 		height: min(9vh, 4.5vw);
@@ -27,15 +27,15 @@
 }
 
 #mbs-preference-settings {
-	grid-area: settings;
 	display: grid;
-	overflow: hidden scroll;
+	grid-area: settings;
 	height: fit-content;
+	overflow: hidden scroll;
 }
 
 #mbs-preference-misc {
-	display: grid;
 	align-self: self-end;
+	display: grid;
 	grid-gap: min(2vh, 1vw);
 	grid-area: misc;
 	grid-template:
@@ -45,9 +45,9 @@
 		/ auto auto;
 
 	button {
+		background-origin: padding-box;
 		background-position: left;
 		background-size: min(7vh, 3.5vw) min(7vh, 3.5vw);
-		background-origin: padding-box;
 	}
 }
 

@@ -17,7 +17,7 @@
         "build": "typed-scss-modules src --exportType=default --nameFormat=none && rollup -c",
         "dev": "rollup -c -w",
         "lint": "eslint --max-warnings 0 . && npx stylelint **/*.scss",
-        "lint:fix": "typed-scss-modules src --exportType=default --nameFormat=none && eslint --fix . && npx stylelint **/*.scss --fix",
+        "lint:fix": "typed-scss-modules src --exportType=default --nameFormat=none && eslint --fix . && npx stylelint **/*.scss --fix && postcss **/*.scss --syntax=postcss-scss --use=css-declaration-sorter --replace --no-map",
         "css": "postcss **/*.scss --syntax=postcss-scss --use=css-declaration-sorter --replace --no-map && typed-scss-modules src --exportType=default --nameFormat=none",
         "typecheck": "tsc --noEmit -p .",
         "postinstall": "typed-scss-modules src --exportType=default --nameFormat=none"
