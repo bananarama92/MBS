@@ -1,0 +1,76 @@
+#mbs-preference {
+	grid-template:
+		"header header exit" min(9vh, 4.5vw)
+		"settings misc misc" auto
+		/ auto min(29vh, 14.5vw) min(9vh, 4.5vw);
+}
+
+#mbs-preference-header {
+	grid-area: header;
+}
+
+#mbs-preference-exit {
+	grid-area: exit;
+}
+
+.mbs-preference-settings-pair {
+	grid-column-gap: min(3vh, 1.5vw);
+	align-items: center;
+	display: grid;
+	text-align: left;
+	grid-template-columns: min(9vh, 4.5vw) auto;
+
+	button {
+		height: min(9vh, 4.5vw);
+		width: min(9vh, 4.5vw);
+	}
+}
+
+#mbs-preference-settings {
+	grid-area: settings;
+	display: grid;
+	overflow: hidden scroll;
+	height: fit-content;
+}
+
+#mbs-preference-misc {
+	display: grid;
+	align-self: self-end;
+	grid-gap: min(2vh, 1vw);
+	grid-area: misc;
+	grid-template:
+		"reset reset" min(9vh, 4.5vw)
+		"import export" min(9vh, 4.5vw)
+		"changelog changelog" min(9vh, 4.5vw)
+		/ auto auto;
+
+	button {
+		background-position: left;
+		background-size: min(7vh, 3.5vw) min(7vh, 3.5vw);
+		background-origin: padding-box;
+	}
+}
+
+#mbs-preference-reset {
+	grid-area: reset;
+	grid-template-columns: min(40vh, 20vw);
+
+	button:not(:hover) {
+		background-color: pink;
+	}
+}
+
+#mbs-preference-import {
+	grid-area: import;
+	grid-template-columns: min(19vh, 9.5vw);
+}
+
+#mbs-preference-export {
+	grid-area: export;
+	grid-template-columns: min(19vh, 9.5vw);
+}
+
+#mbs-preference-changelog {
+	grid-area: changelog;
+	grid-template-columns: min(40vh, 20vw);
+}

@@ -6,11 +6,6 @@
 	--mbs-text-color: black;
 }
 
-input:invalid {
-	background-color: #fbb;
-	box-shadow: 0 0 3px 2px #c22;
-}
-
 .mbs-button {
 	background-color: var(--mbs-background-color);
 	background-origin: content-box;
@@ -104,4 +99,37 @@ input:invalid {
 
 .mbs-dropdown:hover .mbs-dropdown-content {
 	visibility: visible;
+}
+
+.mbs-screen {
+	display: grid;
+	text-align: center;
+	user-select: none;
+	grid-row-gap: min(2vh, 1vw);
+
+	h1 {
+		font-size: min(5vh, 2.5vw);
+		align-self: center;
+	}
+
+	h2 {
+		font-size: min(3.5vh, 1.75vw);
+		align-self: center;
+	}
+
+	p {
+		font-size: min(3.5vh, 1.75vw);
+		align-self: center;
+	}
+
+	input:invalid {
+		background-color: #fbb;
+		box-shadow: 0 0 3px 2px #c22;
+	}
+
+	input[type="checkbox"] {
+		height: min(7vh, 3.5vw);
+		width: min(7vh, 3.5vw);
+		border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	}
 }
