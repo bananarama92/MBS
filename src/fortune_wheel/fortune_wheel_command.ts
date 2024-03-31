@@ -21,7 +21,7 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     readonly clickList: readonly ClickAction[];
 
     constructor(parent: null | MBSScreen, wheelList: (null | FWCommand)[], index: number, character: Character) {
-        super(parent, wheelList, index, character);
+        super(parent, wheelList, index, character, [0, 0, 0, 0]);
         this.settings = new FWSelectedCommand(wheelList);
         this.clickList = Object.freeze([
             {

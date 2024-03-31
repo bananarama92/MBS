@@ -1,12 +1,9 @@
 #mbs-fwitemset {
-	display: none;
-	text-align: center;
-	user-select: none;
-	grid-gap: min(2vh, 1vw);
 	grid-template:
 		"delete header accept cancel exit" min(9vh, 4.5vw)
 		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
-		"botDiv botDiv botDiv botDiv botDiv" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"botDiv botDiv botDiv botDiv botDiv" auto
+		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwitemset-delete {
@@ -14,8 +11,6 @@
 }
 
 #mbs-fwitemset-header {
-	align-self: center;
-	font-size: min(5vh, 2.5vw);
 	grid-area: header;
 	margin-left: min(20vh, 10vw);
 }
@@ -58,9 +53,9 @@
 }
 
 #mbs-fwitemset-outfit-div {
-	grid-template-rows: min(7vh, 3.5vw) auto;
-  	grid-template-columns: min(27vh, 13.5vw);
 	grid-area: outfitCodeButton;
+  	grid-template-columns: min(27vh, 13.5vw);
+	grid-template-rows: min(7vh, 3.5vw) auto;
 }
 
 #mbs-fwitemset-bot-grid {
@@ -70,7 +65,6 @@
 	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
 	align-items: end;
 	font-size: min(3.5vh, 1.75vw);
-	overflow: hidden;
 	grid-template:
 		"headerStrip headerLock" auto
 		"configStrip gridLock" min(7vh, 3.5vw)
@@ -78,6 +72,7 @@
 		"configEquip gridLock" min(7vh, 3.5vw)
 		"headerWeight gridLock" min(7vh, 3.5vw)
 		"configWeight gridLock" min(7vh, 3.5vw) / min(40vh, 20vw) auto;
+	overflow: hidden;
 	text-align: left;
 }
 
@@ -146,10 +141,4 @@
 
 #mbs-fwitemset-strip-dropdown-content, #mbs-fwitemset-equip-dropdown-content {
 	width: min(80vh, 40vw);
-}
-
-.mbs-fwitemset-lock-checkbox {
-	height: min(7vh, 3.5vw) !important;
-	width: min(7vh, 3.5vw) !important;
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color) !important;
 }

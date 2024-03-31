@@ -64,7 +64,7 @@ function createButton(screen: FWSelectScreen, i: number) {
             onClick={() => {
                 let subScreen: FWItemSetScreen | FWCommandScreen;
                 if (i < MBS_MAX_SETS) {
-                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character);
+                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, screen.shape);
                 } else {
                     subScreen = new FWCommandScreen(screen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
                 }
@@ -91,27 +91,32 @@ export class FWSelectScreen extends MBSScreen {
         ];
     }
 
-    constructor(parent: MBSScreen | null, wheelStruct: WheelStruct, character: Character) {
-        super(parent);
+    constructor(
+        parent: MBSScreen | null,
+        wheelStruct: WheelStruct,
+        character: Character,
+        shape: RectTuple = [80, 60, 1840, 880],
+    ) {
+        super(parent, shape);
         this.wheelStruct = wheelStruct;
         this.character = character;
         this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
         const isPlayer = this.character.IsPlayer();
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup">
+            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <div id={ID.buttonOuterGrid}>
-                    <div id={ID.itemSets}>
+                    <h1 id={ID.itemSets}>
                         {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
-                    </div>
+                    </h1>
                     <div id={ID.buttonInnerGrid0}>
                         {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
-                    <div id={ID.commandSets}>
+                    <h1 id={ID.commandSets}>
                         {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
-                    </div>
+                    </h1>
                     <div id={ID.buttonInnerGrid1}>
                         {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
@@ -142,7 +147,7 @@ export class FWSelectScreen extends MBSScreen {
         const elem = document.getElementById(ID.root);
         if (elem) {
             const fontSize = MainCanvas.canvas.clientWidth <= MainCanvas.canvas.clientHeight * 2 ? MainCanvas.canvas.clientWidth / 50 : MainCanvas.canvas.clientHeight / 25;
-            ElementPositionFix(ID.root, fontSize, 80, 60, 1840, 880);
+            ElementPositionFix(ID.root, fontSize, ...this.shape);
             elem.style.display = "grid";
         }
     }

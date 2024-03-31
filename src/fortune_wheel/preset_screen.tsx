@@ -145,9 +145,10 @@ export class WheelPresetScreen extends MBSScreen {
     constructor(
         parent: null | MBSScreen,
         presets: (null | WheelPreset)[],
+        shape: RectTuple = [80, 60, 1840, 880],
     ) {
         initOptions();
-        super(parent);
+        super(parent, shape);
         this.presets = presets;
         this.queueServer = new Set();
         this.idMapping = {
@@ -157,10 +158,10 @@ export class WheelPresetScreen extends MBSScreen {
         };
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup">
+            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
-                <div id={ID.header}>Wheel of Fortune Presets</div>
+                <h1 id={ID.header}>Wheel of Fortune Presets</h1>
                 <div id={ID.delete} class="mbs-button-div">
                     <button
                         class="mbs-button"
@@ -478,7 +479,7 @@ export class WheelPresetScreen extends MBSScreen {
         const elem = document.getElementById(ID.root) as HTMLDivElement;
         const canvas = MainCanvas.canvas;
         const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, 80, 60, 1840, 880);
+        ElementPositionFix(ID.root, fontSize, ...this.shape);
         elem.style.display = "grid";
     }
 

@@ -1,13 +1,8 @@
 #mbs-fwselect {
-	display: none;
-	text-align: center;
-	user-select: none;
-	grid-row-gap: min(2vh, 1vw);
 	grid-template:
 		". buttonOuterGrid exit" min(9vh, 4.5vw)
-		"storage buttonOuterGrid ." 7.4fr
-		"storageFooter buttonOuterGrid ." 1.7fr
-		/ 2fr 7fr 1fr;
+		"storage buttonOuterGrid ." auto
+		"storageFooter buttonOuterGrid ." min(14vh, 7vw) / min(30vh, 15vw) auto min(20vh, 10vw);
 }
 
 #mbs-fwselect-exit {
@@ -60,7 +55,6 @@
 
 #mbs-fwselect-button-grid-outer {
 	display: grid;
-	font-size: min(5vh, 2.5vw);
 	grid-area: buttonOuterGrid;
 	grid-template-rows: min(9vh, 4.5vw) auto min(9vh, 4.5vw) auto;
 	height: 94%;

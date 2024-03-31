@@ -1,0 +1,115 @@
+#mbs-preference {
+	grid-template:
+		"header header exit" min(9vh, 4.5vw)
+		"settings misc misc" auto
+		/ auto min(29vh, 14.5vw) min(9vh, 4.5vw);
+}
+
+#mbs-preference-header {
+	grid-area: header;
+}
+
+#mbs-preference-exit {
+	grid-area: exit;
+}
+
+.mbs-preference-settings-pair {
+	grid-column-gap: min(3vh, 1.5vw);
+	align-items: center;
+	display: grid;
+	grid-template-columns: min(9vh, 4.5vw) auto;
+	text-align: left;
+
+	button {
+		height: min(9vh, 4.5vw);
+		width: min(9vh, 4.5vw);
+	}
+}
+
+#mbs-preference-settings {
+	display: grid;
+	grid-area: settings;
+	height: fit-content;
+	overflow: hidden scroll;
+}
+
+#mbs-preference-misc {
+	align-self: self-end;
+	display: grid;
+	grid-gap: min(2vh, 1vw);
+	grid-area: misc;
+	grid-template:
+		"reset reset" min(9vh, 4.5vw)
+		"import export" min(9vh, 4.5vw)
+		"changelog changelog" min(9vh, 4.5vw)
+		/ auto auto;
+
+	button {
+		background-origin: padding-box;
+		background-position: left;
+		background-size: min(7vh, 3.5vw) min(7vh, 3.5vw);
+	}
+}
+
+#mbs-preference-reset {
+	grid-area: reset;
+	grid-template-columns: min(40vh, 20vw);
+
+	button:not(:hover) {
+		background-color: pink;
+	}
+}
+
+#mbs-preference-import {
+	grid-area: import;
+	grid-template-columns: min(19vh, 9.5vw);
+}
+
+#mbs-preference-export {
+	grid-area: export;
+	grid-template-columns: min(19vh, 9.5vw);
+}
+
+#mbs-preference-changelog {
+	grid-area: changelog;
+	grid-template-columns: min(40vh, 20vw);
+}
+
+#mbs-preference-reset-screen {
+	align-items: center;
+	background-color: rgb(0 0 0 / 70%);
+	z-index: 2;
+}
+
+#mbs-preference-reset-background {
+	background: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png") var(--mbs-background-color);
+	background-blend-mode: multiply;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	box-sizing: border-box;
+	height: 80%;
+	left: 10%;
+	mask-image: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png");
+	mask-position: center;
+	mask-repeat: no-repeat;
+	mask-size: contain;
+	padding: min(6vh, 3vw);
+	padding-top: min(3vh, 1.5vw);
+	position: relative;
+	top: 10%;
+	width: 80%;
+	word-break: break-word;
+}
+
+#mbs-preference-reset-grid {
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-items: center;
+	padding-top: min(10vh, 5vw);
+
+	.mbs-button {
+		height: min(9vh, 4.5vw);
+		width: min(27vh, 13.5vw);
+	}
+}

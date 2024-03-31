@@ -1,11 +1,8 @@
 #mbs-fwpreset {
-	display: none;
-	text-align: center;
-	user-select: none;
-	grid-gap: min(2vh, 1vw);
 	grid-template:
 		"delete header accept save exit" min(9vh, 4.5vw)
-		"mid mid mid mid mid" auto / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"mid mid mid mid mid" auto
+		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwpreset-delete {
@@ -13,8 +10,6 @@
 }
 
 #mbs-fwpreset-header {
-	align-self: center;
-	font-size: min(5vh, 2.5vw);
 	grid-area: header;
 	margin-left: min(20vh, 10vw);
 }
@@ -33,43 +28,42 @@
 
 #mbs-fwpreset-mid-div {
 	display: grid;
-	text-align: center;
-	user-select: none;
 	grid-area: mid;
+	text-align: center;
 	grid-gap: min(2vh, 1vw);
-	justify-items: center;
-	justify-self: center;
 	font-size: min(3.5vh, 1.75vw);
 	grid-template:
 		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9vh, 4.5vw)
-		"name builtin-bc builtin-mbs custom-mbs" auto / min(40vh, 15vw) min(40vh, 20vw) min(30vh, 15vw) min(70vh, 35vw);
+		"name builtin-bc builtin-mbs custom-mbs" auto / min(40vh, 20vw) min(40vh, 20vw) min(30vh, 15vw) min(70vh, 35vw);
+	justify-items: center;
+	justify-self: center;
 }
 
 #mbs-fwpreset-name-header {
-	grid-area: name-header;
 	align-self: center;
+	grid-area: name-header;
 }
 
 #mbs-fwpreset-builtin-bc-header {
-	grid-area: builtin-bc-header;
 	align-self: center;
+	grid-area: builtin-bc-header;
 }
 
 #mbs-fwpreset-builtin-mbs-header {
-	grid-area: builtin-mbs-header;
 	align-self: center;
+	grid-area: builtin-mbs-header;
 }
 
 #mbs-fwpreset-custom-mbs-header {
-	grid-area: custom-mbs-header;
 	align-self: center;
+	grid-area: custom-mbs-header;
 }
 
 .mbs-fwpreset-grid {
 	display: grid;
 	grid-gap: min(1.2vh, 0.6vw);
-	grid-template-rows: repeat(8, min(7vh, 3.5vw));
 	grid-auto-flow: column;
+	grid-template-rows: repeat(8, min(7vh, 3.5vw));
 }
 
 #mbs-fwpreset-name-div {
@@ -78,38 +72,38 @@
 
 #mbs-fwpreset-name-input {
 	font-size: min(3.5vh, 1.75vw);
-	width: min(35vh, 17.5vw);
 	height: min(7vh, 3.5vw);
+	width: min(35vh, 17.5vw);
 }
 
 #mbs-fwpreset-name-dropdown-div {
-	width: min(36vh, 18vw);
 	height: min(7vh, 3.5vw);
 	position: relative;
 	top: 5%;
+	width: min(36vh, 18vw);
 }
 
 #mbs-fwpreset-builtin-bc-div {
-	grid-template-columns: repeat(4, min(7vh, 3.5vw));
 	grid-area: builtin-bc;
+	grid-template-columns: repeat(4, min(7vh, 3.5vw));
 }
 
 #mbs-fwpreset-builtin-mbs-div {
-	grid-template-columns: min(7vh, 3.5vw);
 	grid-area: builtin-mbs;
+	grid-template-columns: min(7vh, 3.5vw);
 }
 
 #mbs-fwpreset-custom-mbs-div {
-	grid-template-columns: repeat(8, min(7vh, 3.5vw));
 	grid-area: custom-mbs;
+	grid-template-columns: repeat(8, min(7vh, 3.5vw));
 }
 
 .mbs-fwpreset-color {
 	height: 90%;
-	width: 90%;
-	position: relative;
 	left: 5%;
+	position: relative;
 	top: 5%;
+	width: 90%;
 
 	&[data-color="red"] {
 		background-color: red;
@@ -131,11 +125,11 @@
 .mbs-fwpreset {
 	background-color: var(--mbs-background-color);
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	display: grid;
+	grid-template-columns: min(7vh, 3.5vw);
+	grid-template-rows: min(7vh, 3.5vw) auto;
 	height: min(7vh, 3.5vw);
 	width: min(7vh, 3.5vw);
-	display: grid;
-	grid-template-rows: min(7vh, 3.5vw) auto;
-	grid-template-columns: min(7vh, 3.5vw);
 
 	h6 {
 		font-size: min(3.5vh, 1.75vw);
