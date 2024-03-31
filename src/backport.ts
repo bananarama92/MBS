@@ -53,27 +53,20 @@ waitFor(bcLoaded).then(() => {
                 const CRAFTING_ASSETS = Object.freeze(craftingAssetsPopulate());
                 const ASSET_LOCKS = fromEntries(Asset.filter(a => a.IsLock).map(a => [a.Name, a] as [AssetLockType, Asset]));
 
-                MBS_MOD_API.hookFunction("CraftingAppliesToItem", 10, (args) => {
-                    const [craft, asset] = args as Parameters<typeof CraftingAppliesToItem>;
-                    if (!craft || !asset) {
-                        return false;
-                    } else {
-                        const elligbleAssets = CRAFTING_ASSETS[craft.Item] ?? [];
-                        return elligbleAssets.includes(asset);
-                    }
+                // @ts-expect-error Type 'boolean' is not assignable to type 'false | Asset'
+                MBS_MOD_API.hookFunction("CraftingAppliesToItem", 10, ([craft, asset]) => {
+                    const elligbleAssets = CRAFTING_ASSETS[craft?.Item] ?? [];
+                    return elligbleAssets.includes(asset);
                 });
 
-                MBS_MOD_API.hookFunction("DialogCanUseCraftedItem", 10, (args) => {
-                    const [character, craft] = args as Parameters<typeof DialogCanUseCraftedItem>;
-                    if (!character || !craft) return false;
-
-                    const elligbleAssets = CRAFTING_ASSETS[craft.Item] ?? [];
+                MBS_MOD_API.hookFunction("DialogCanUseCraftedItem", 10, ([character, craft]) => {
+                    const elligbleAssets = CRAFTING_ASSETS[craft?.Item] ?? [];
                     return elligbleAssets.some(a => {
                         if (a.OwnerOnly && !character.IsOwnedByPlayer()) return false;
                         if (a.LoverOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer())) return false;
                         if (a.FamilyOnly && !(character.IsOwnedByPlayer() || character.IsLoverOfPlayer() || character.IsFamilyOfPlayer())) return false;
 
-                        const lock: undefined | Asset = ASSET_LOCKS[craft.Lock as AssetLockType];
+                        const lock: undefined | Asset = ASSET_LOCKS[craft?.Lock as AssetLockType];
                         if (lock != null) {
                             if (lock.OwnerOnly && !DialogCanUseOwnerLockOn(character)) return false;
                             if (lock.LoverOnly && !DialogCanUseLoverLockOn(character)) return false;

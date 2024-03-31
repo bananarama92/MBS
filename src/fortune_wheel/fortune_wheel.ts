@@ -917,9 +917,8 @@ waitFor(bcLoaded).then(() => {
 
     // R103 compat
     const drawFunc = typeof WheelFortuneDrawWheel !== "undefined" ? "WheelFortuneDrawWheel" : "WheelFortuneDraw";
-    MBS_MOD_API.hookFunction(drawFunc, 11, (args, next) => {
-        args[0] = fortuneWheelState.weightedIDs;
-        return next(args);
+    MBS_MOD_API.hookFunction(drawFunc, 11, ([_, ...args], next) => {
+        return next([fortuneWheelState.weightedIDs, ...args]);
     });
 
     fortuneWheelState = new FWScreenProxy();
