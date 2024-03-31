@@ -81,7 +81,7 @@ jobs:
 
           cd MBS-Artifacts
           mkdir artifacts/${{ github.event.release.tag_name }}
-          cp artifacts/main/** artifacts/${{ github.event.release.tag_name }}/
+          cp -r artifacts/main/** artifacts/${{ github.event.release.tag_name }}/
 
           git add artifacts/${{ github.event.release.tag_name }}/*
           git config --local user.name "github-actions[bot]"
