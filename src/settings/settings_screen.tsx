@@ -330,7 +330,7 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     exit() {
         const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (resetScreen.style.display !== "none") {
+        if (resetScreen.style.display === "block") {
             resetScreen.style.display = "none";
         } else {
             ElementRemove(ID.root);
