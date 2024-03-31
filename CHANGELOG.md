@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.4.6
+* Use DOM elements for the MBS preference screens
+* Bump the BC mod SDK to 1.2.0
+
 ## 1.4.5
 * Remove MBS's dedicated "show new item screen" buttons when in R103
 * Rewrite the MBS fortune wheel preset screen using DOM elements
