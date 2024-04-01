@@ -13,6 +13,9 @@
     },
     "license": "GPL-3.0",
     "author": "bananarama92 <bananarama921@outlook.com>",
+    "browserslist": [
+        "since 2021 and > 0.5% and not dead"
+    ],
     "scripts": {
         "build": "typed-scss-modules src --exportType=default --nameFormat=none && rollup -c",
         "dev": "rollup -c -w",
