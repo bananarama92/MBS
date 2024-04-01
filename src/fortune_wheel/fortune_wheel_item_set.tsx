@@ -256,6 +256,10 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         }}
                         onWheel={(e) => {
                             const target = e.target as HTMLInputElement;
+                            if (target.disabled) {
+                                return;
+                            }
+
                             if (e.deltaY < 0) {
                                 target.stepUp(1);
                             } else if (e.deltaY > 0) {
