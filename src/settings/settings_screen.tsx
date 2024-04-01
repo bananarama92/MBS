@@ -291,7 +291,7 @@ export class MBSPreferenceScreen extends MBSScreen {
             [ID.rollCheckbox]: "RollWhenRestrained",
         } as const satisfies Record<string, keyof MBSSettings>;
 
-        const disabled = Player.IsRestrained() && !Player.MBSSettings.RollWhenRestrained;
+        const disabled = Player.IsRestrained() && !Player.MBSSettings.LockedWhenRestrained;
         for (const [id, field] of Object.entries(checkboxes)) {
             const checkbox = document.getElementById(id) as HTMLInputElement;
             checkbox.checked = Player.MBSSettings[field];
@@ -330,7 +330,7 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     exit() {
         const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (resetScreen.style.display !== "none") {
+        if (resetScreen.style.display === "block") {
             resetScreen.style.display = "none";
         } else {
             ElementRemove(ID.root);
