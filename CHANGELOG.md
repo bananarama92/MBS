@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.4.7
+* Fix the MBS settings menu sometimes requiring two clicks to exit
+* Fix the MBS settings menu locking being incorrectly locked when restrained
+
 ## 1.4.6
 * Use DOM elements for the MBS preference screens
 * Bump the BC mod SDK to 1.2.0
