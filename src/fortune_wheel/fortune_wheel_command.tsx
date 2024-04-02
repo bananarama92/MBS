@@ -8,20 +8,56 @@ import {
 } from "../common_bc";
 import {
     MBSScreen,
+    ScreenParams,
     MBSObjectScreen,
     ExitAction,
 } from "../screen_abc";
 
 import styles from "./fortune_wheel_command.scss";
 
+const root = "mbs-fwcommand";
+const ID = Object.freeze({
+    root: root,
+    styles: `${root}-style`,
+
+    delete: `${root}-delete`,
+    deleteButton: `${root}-delete-button`,
+    deleteTooltip: `${root}-delete-tooltip`,
+    accept: `${root}-accept`,
+    acceptButton: `${root}-accept-button`,
+    acceptTooltip: `${root}-accept-tooltip`,
+    cancel: `${root}-cancel`,
+    cancelButton: `${root}-cancel-button`,
+    cancelTooltip: `${root}-cancel-tooltip`,
+    exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
+
+    header: `${root}-header`,
+    commandInput: `${root}-command-input`,
+    weightHeader: `${root}-weight-header`,
+    weightInput: `${root}-weight-input`,
+});
+
 export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
     static readonly screen = "MBS_FWCommandScreen";
-    readonly screen = FWCommandScreen.screen;
     static readonly background = "Sheet";
     readonly settings: FWSelectedCommand;
+    static readonly screenParamsDefault = {
+        [root]: Object.freeze({
+            shape: [80, 60, 1840, 880] as RectTuple,
+            visibility: "visible",
+        }),
+    };
 
-    constructor(parent: null | MBSScreen, wheelList: (null | FWCommand)[], index: number, character: Character) {
-        super(parent, wheelList, index, character, [80, 60, 1840, 880]);
+    constructor(
+        parent: null | MBSScreen,
+        wheelList: (null | FWCommand)[],
+        index: number,
+        character: Character,
+        screenParams: null | ScreenParams.Partial = null,
+    ) {
+        super(parent, wheelList, index, character, FWCommandScreen.screenParamsDefault, screenParams);
         this.settings = new FWSelectedCommand(wheelList);
 
         const disabled = !character.IsPlayer();
@@ -142,52 +178,4 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
             this.settings.reset();
         }
     }
-
-    resize() {
-        const elem = document.getElementById(ID.root) as HTMLElement;
-        const canvas = MainCanvas.canvas;
-        const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, ...this.shape);
-        elem.style.display = "grid";
-    }
-
-    click() {}
-
-    run() {}
-
-    unload() {
-        const elem = document.getElementById(ID.root) as HTMLElement;
-        if (elem) {
-            elem.style.display = "none";
-        }
-    }
-
-    exit(fullExit?: boolean, action?: ExitAction): void {
-        ElementRemove(ID.root);
-        super.exit(fullExit, action);
-    }
 }
-
-const root = "mbs-fwcommand";
-const ID = Object.freeze({
-    root: root,
-    styles: `${root}-style`,
-
-    delete: `${root}-delete`,
-    deleteButton: `${root}-delete-button`,
-    deleteTooltip: `${root}-delete-tooltip`,
-    accept: `${root}-accept`,
-    acceptButton: `${root}-accept-button`,
-    acceptTooltip: `${root}-accept-tooltip`,
-    cancel: `${root}-cancel`,
-    cancelButton: `${root}-cancel-button`,
-    cancelTooltip: `${root}-cancel-tooltip`,
-    exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
-
-    header: `${root}-header`,
-    commandInput: `${root}-command-input`,
-    weightHeader: `${root}-weight-header`,
-    weightInput: `${root}-weight-input`,
-});

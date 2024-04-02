@@ -3,8 +3,7 @@
 		"delete header accept cancel exit" min(9vh, 4.5vw)
 		"commandInput commandInput commandInput commandInput commandInput" min(9vh, 4.5vw)
 		"weightHeader weightHeader weightHeader weightHeader weightHeader" min(7vh, 3.5vw)
-        "weightInput weightInput weightInput weightInput weightInput" min(7vh, 3.5vw)
-		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+        "weightInput weightInput weightInput weightInput weightInput" min(7vh, 3.5vw) / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
 
 #mbs-fwcommand-delete {
@@ -29,24 +28,22 @@
 }
 
 #mbs-fwcommand-command-input {
-	grid-area: commandInput;
 	font-size: var(--mbs-font-small);
+	grid-area: commandInput;
 	height: min(7vh, 3.5vw);
+	place-self: self-end center;
 	width: 50%;
-	justify-self: center;
-	align-self: self-end;
 }
 
 #mbs-fwcommand-weight-header {
 	align-self: self-end;
-	grid-area: weightHeader;
 	font-size: var(--mbs-font-small);
+	grid-area: weightHeader;
 }
 
 #mbs-fwcommand-weight-input {
-	grid-area: weightInput;
-    align-self: start;
 	font-size: var(--mbs-font-small);
+	grid-area: weightInput;
+    place-self: start center;
 	width: min(7vh, 3.5vw);
-	justify-self: center;
 }

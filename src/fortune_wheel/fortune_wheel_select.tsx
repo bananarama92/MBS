@@ -4,7 +4,7 @@ import { sumBy, clamp, range } from "lodash-es";
 
 import { logger } from "../common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "../common_bc";
-import { MBSScreen } from "../screen_abc";
+import { MBSScreen, ScreenParams } from "../screen_abc";
 import {
     parseFWObjects,
     unpackSettings,
@@ -62,26 +62,52 @@ function createButton(screen: FWSelectScreen, i: number) {
             id={ID.button + i.toString()}
             style={{ height: "min(7vh, 3.5vw)" }}
             onClick={() => {
-                let subScreen: FWItemSetScreen | FWCommandScreen;
                 if (i < MBS_MAX_SETS) {
-                    subScreen = new FWItemSetScreen(screen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, screen.shape);
+                    const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
+                    return screen.loadChild(FWItemSetScreen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, params);
                 } else {
-                    subScreen = new FWCommandScreen(screen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
+                    return screen.loadChild(FWCommandScreen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
                 }
-                screen.children.set(subScreen.screen, subScreen);
-                subScreen.load();
             }}
         />
     );
 }
 
+const root = "mbs-fwselect";
+const ID = Object.freeze({
+    root,
+    styles: `${root}-style`,
+
+    exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
+    storage: `${root}-storage`,
+    storageInner: `${root}-storage-cover`,
+    storageTooltip: `${root}-storage-tooltip`,
+    storageFooter: `${root}-storage-footer`,
+
+    buttonOuterGrid: `${root}-button-grid-outer`,
+    buttonInnerGrid0: `${root}-button-grid-inner0`,
+    buttonInnerGrid1: `${root}-button-grid-inner1`,
+    button: `${root}-button`,
+    itemSets: `${root}-header0`,
+    commandSets: `${root}-header1`,
+});
+
 export class FWSelectScreen extends MBSScreen {
+    static readonly ids = ID;
     static readonly screen = "MBS_FWSelectScreen";
-    readonly screen = FWSelectScreen.screen;
     static readonly background = "Sheet";
     readonly wheelStruct: WheelStruct;
     readonly character: Character;
     readonly dataSize: DataSize;
+    static readonly screenParamsDefault = {
+        [root]: Object.freeze({
+            shape: [80, 60, 1840, 880] as RectTuple,
+            visibility: "visible",
+        }),
+    };
+
     get wheelList(): readonly (null | FWItemSet | FWCommand)[] {
         return [
             ...this.wheelStruct.FortuneWheelItemSets,
@@ -93,9 +119,9 @@ export class FWSelectScreen extends MBSScreen {
         parent: MBSScreen | null,
         wheelStruct: WheelStruct,
         character: Character,
-        shape: RectTuple = [80, 60, 1840, 880],
+        screenParams: null | ScreenParams.Partial = null,
     ) {
-        super(parent, shape);
+        super(parent, FWSelectScreen.screenParamsDefault, screenParams);
         this.wheelStruct = wheelStruct;
         this.character = character;
         this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
@@ -142,15 +168,6 @@ export class FWSelectScreen extends MBSScreen {
                 <div id={ID.storageFooter}/>
             </div>,
         );
-    }
-
-    resize() {
-        const elem = document.getElementById(ID.root);
-        if (elem) {
-            const fontSize = MainCanvas.canvas.clientWidth <= MainCanvas.canvas.clientHeight * 2 ? MainCanvas.canvas.clientWidth / 50 : MainCanvas.canvas.clientHeight / 25;
-            ElementPositionFix(ID.root, fontSize, ...this.shape);
-            elem.style.display = "grid";
-        }
     }
 
     #updateElements() {
@@ -209,40 +226,8 @@ export class FWSelectScreen extends MBSScreen {
         super.load();
     }
 
-    run() {}
-
-    click() {}
-
-    unload() {
-        const elem = document.getElementById(ID.root);
-        if (elem) {
-            elem.style.display = "none";
-        }
-    }
-
-    exit(): void {
-        ElementRemove(ID.root);
+    exit() {
+        super.exit();
         this.exitScreens(false);
     }
 }
-
-const root = "mbs-fwselect";
-const ID = Object.freeze({
-    root,
-    styles: `${root}-style`,
-
-    exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
-    storage: `${root}-storage`,
-    storageInner: `${root}-storage-cover`,
-    storageTooltip: `${root}-storage-tooltip`,
-    storageFooter: `${root}-storage-footer`,
-
-    buttonOuterGrid: `${root}-button-grid-outer`,
-    buttonInnerGrid0: `${root}-button-grid-inner0`,
-    buttonInnerGrid1: `${root}-button-grid-inner1`,
-    button: `${root}-button`,
-    itemSets: `${root}-header0`,
-    commandSets: `${root}-header1`,
-});

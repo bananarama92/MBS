@@ -2,7 +2,7 @@ import { cloneDeep, range, clamp } from "lodash-es";
 
 import { validateInt, waitFor } from "../common";
 import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, bcLoaded, FWCommand } from "../common_bc";
-import { MBSScreen } from "../screen_abc";
+import { MBSScreen, ScreenParams } from "../screen_abc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
 import { getFlagDescription } from "./lock_flags";
@@ -112,10 +112,69 @@ function initOptions() {
     }));
 }
 
+const root = "mbs-fwpreset";
+const ID = Object.freeze({
+    root: root,
+    styles: `${root}-style`,
+
+    delete: `${root}-delete`,
+    deleteButton: `${root}-delete-button`,
+    deleteTooltip: `${root}-delete-tooltip`,
+    accept: `${root}-accept`,
+    acceptButton: `${root}-accept-button`,
+    acceptTooltip: `${root}-accept-tooltip`,
+    save: `${root}-save`,
+    saveButton: `${root}-save-button`,
+    saveTooltip: `${root}-save-tooltip`,
+    exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
+    header: `${root}-header`,
+
+    midDiv: `${root}-mid-div`,
+
+    nameDiv: `${root}-name-div`,
+    nameHeader: `${root}-name-header`,
+    nameInput: `${root}-name-input`,
+    nameDropdown: `${root}-name-dropdown`,
+    nameDropdownDiv: `${root}-name-dropdown-div`,
+    nameDropdownContent: `${root}-name-dropdown-content`,
+
+    builtinBC: `${root}-builtin-bc`,
+    builtinBCColor: `${root}-builtin-bc-color`,
+    builtinBCTooltip: `${root}-builtin-bc-tooltip`,
+    builtinBCTooltipHeader: `${root}-builtin-bc-tooltip-header`,
+    builtinBCTooltipList: `${root}-builtin-bc-tooltip-list`,
+    builtinBCDiv: `${root}-builtin-bc-div`,
+    builtinBCHeader: `${root}-builtin-bc-header`,
+
+    builtinMBS: `${root}-builtin-mbs`,
+    builtinMBSColor: `${root}-builtin-mbs-color`,
+    builtinMBSTooltip: `${root}-builtin-mbs-button-tooltip`,
+    builtinMBSTooltipHeader: `${root}-builtin-mbs-button-tooltip-header`,
+    builtinMBSTooltipList: `${root}-builtin-mbs-button-tooltip-list`,
+    builtinMBSDiv: `${root}-builtin-mbs-div`,
+    builtinMBSHeader: `${root}-builtin-mbs-header`,
+
+    customMBS: `${root}-custom-mbs`,
+    customMBSColor: `${root}-custom-mbs-color`,
+    customMBSTooltip: `${root}-custom-mbs-button-tooltip`,
+    customMBSTooltipHeader: `${root}-custom-mbs-button-tooltip-header`,
+    customMBSTooltipList: `${root}-custom-mbs-button-tooltip-list`,
+    customMBSDiv: `${root}-custom-mbs-div`,
+    customMBSHeader: `${root}-custom-mbs-header`,
+});
+
 export class WheelPresetScreen extends MBSScreen {
     static readonly background = "Sheet";
     static readonly screen = `MBS_${WheelPresetScreen.name}`;
-    readonly screen = WheelPresetScreen.screen;
+    static readonly ids = ID;
+    static readonly screenParamsDefault = {
+        [root]: Object.freeze({
+            shape: [80, 60, 1840, 880] as RectTuple,
+            visibility: "visible",
+        }),
+    };
 
     /** The characters current list of presets. Will be updated inplace. */
     readonly presets: (null | WheelPreset)[];
@@ -145,10 +204,10 @@ export class WheelPresetScreen extends MBSScreen {
     constructor(
         parent: null | MBSScreen,
         presets: (null | WheelPreset)[],
-        shape: RectTuple = [80, 60, 1840, 880],
+        params: null | ScreenParams.Partial = null,
     ) {
         initOptions();
-        super(parent, shape);
+        super(parent, WheelPresetScreen.screenParamsDefault, params);
         this.presets = presets;
         this.queueServer = new Set();
         this.idMapping = {
@@ -241,9 +300,9 @@ export class WheelPresetScreen extends MBSScreen {
                         </div>
                     </div>
 
-                    <div id={ID.builtinBCDiv} class="mbs-fwpreset-grid">{this.#getPresetElements(OptionType.builtinBC)}</div>
-                    <div id={ID.builtinMBSDiv} class="mbs-fwpreset-grid">{this.#getPresetElements(OptionType.builtinMBS)}</div>
-                    <div id={ID.customMBSDiv} class="mbs-fwpreset-grid">{this.#getPresetElements(OptionType.customMBS)}</div>
+                    <div id={ID.builtinBCDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.builtinBC)}</div>
+                    <div id={ID.builtinMBSDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.builtinMBS)}</div>
+                    <div id={ID.customMBSDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.customMBS)}</div>
                 </div>
             </div>,
         );
@@ -282,7 +341,7 @@ export class WheelPresetScreen extends MBSScreen {
         }
     }
 
-    #getPresetElement(
+    #loadPresetElement(
         index: number,
         prefix: undefined | string,
         justify: "left" | "right" | "center",
@@ -305,7 +364,7 @@ export class WheelPresetScreen extends MBSScreen {
         ) as HTMLDivElement;
     }
 
-    #getPresetElements(type: OptionType): HTMLDivElement[] {
+    #loadPresetElements(type: OptionType): HTMLDivElement[] {
         let objects: readonly unknown[];
         let justify: "left" | "right" | "center";
         let getPrefix: undefined | ((item: unknown, i: number) => string) = undefined;
@@ -331,7 +390,7 @@ export class WheelPresetScreen extends MBSScreen {
                 throw new Error(`Unknown type: ${type}`);
         }
 
-        return objects.map((obj, i) => this.#getPresetElement(i, getPrefix?.(obj, i), justify, ids));
+        return objects.map((obj, i) => this.#loadPresetElement(i, getPrefix?.(obj, i), justify, ids));
     }
 
     #getPresetIDs(type: OptionType): { root: string, color: string, tooltip: string, tooltipHeader: string, tooltipList: string } {
@@ -475,84 +534,11 @@ export class WheelPresetScreen extends MBSScreen {
         this.#loadPreset();
     }
 
-    resize() {
-        const elem = document.getElementById(ID.root) as HTMLDivElement;
-        const canvas = MainCanvas.canvas;
-        const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, ...this.shape);
-        elem.style.display = "grid";
-    }
-
-    run() {}
-
-    click() {}
-
-    unload() {
-        const elem = document.getElementById(ID.root) as HTMLDivElement;
-        if (elem) {
-            elem.style.display = "none";
-        }
-    }
-
     exit(fullExit=true) {
+        super.exit();
         if (this.queueServer.size) {
             pushMBSSettings(Array.from(this.queueServer), true);
         }
-
-        ElementRemove(ID.root);
         this.exitScreens(fullExit);
     }
 }
-
-const root = "mbs-fwpreset";
-const ID = Object.freeze({
-    root: root,
-    styles: `${root}-style`,
-
-    delete: `${root}-delete`,
-    deleteButton: `${root}-delete-button`,
-    deleteTooltip: `${root}-delete-tooltip`,
-    accept: `${root}-accept`,
-    acceptButton: `${root}-accept-button`,
-    acceptTooltip: `${root}-accept-tooltip`,
-    save: `${root}-save`,
-    saveButton: `${root}-save-button`,
-    saveTooltip: `${root}-save-tooltip`,
-    exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
-    header: `${root}-header`,
-
-    midDiv: `${root}-mid-div`,
-
-    nameDiv: `${root}-name-div`,
-    nameHeader: `${root}-name-header`,
-    nameInput: `${root}-name-input`,
-    nameDropdown: `${root}-name-dropdown`,
-    nameDropdownDiv: `${root}-name-dropdown-div`,
-    nameDropdownContent: `${root}-name-dropdown-content`,
-
-    builtinBC: `${root}-builtin-bc`,
-    builtinBCColor: `${root}-builtin-bc-color`,
-    builtinBCTooltip: `${root}-builtin-bc-tooltip`,
-    builtinBCTooltipHeader: `${root}-builtin-bc-tooltip-header`,
-    builtinBCTooltipList: `${root}-builtin-bc-tooltip-list`,
-    builtinBCDiv: `${root}-builtin-bc-div`,
-    builtinBCHeader: `${root}-builtin-bc-header`,
-
-    builtinMBS: `${root}-builtin-mbs`,
-    builtinMBSColor: `${root}-builtin-mbs-color`,
-    builtinMBSTooltip: `${root}-builtin-mbs-button-tooltip`,
-    builtinMBSTooltipHeader: `${root}-builtin-mbs-button-tooltip-header`,
-    builtinMBSTooltipList: `${root}-builtin-mbs-button-tooltip-list`,
-    builtinMBSDiv: `${root}-builtin-mbs-div`,
-    builtinMBSHeader: `${root}-builtin-mbs-header`,
-
-    customMBS: `${root}-custom-mbs`,
-    customMBSColor: `${root}-custom-mbs-color`,
-    customMBSTooltip: `${root}-custom-mbs-button-tooltip`,
-    customMBSTooltipHeader: `${root}-custom-mbs-button-tooltip-header`,
-    customMBSTooltipList: `${root}-custom-mbs-button-tooltip-list`,
-    customMBSDiv: `${root}-custom-mbs-div`,
-    customMBSHeader: `${root}-custom-mbs-header`,
-});

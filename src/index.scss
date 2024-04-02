@@ -104,9 +104,11 @@
 }
 
 .mbs-screen {
-	display: none;
+	display: grid;
+	position: fixed;
 	text-align: center;
 	user-select: none;
+	visibility: hidden;
 	grid-gap: min(2vh, 1vw);
 
 	h1 {

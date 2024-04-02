@@ -739,7 +739,6 @@ export let FORTUNE_WHEEL_DEFAULT_BASE: string;
 
 class FWScreenProxy extends ScreenProxy {
     static readonly screen = "WheelFortune";
-    readonly screen = FWScreenProxy.screen;
     character: Character;
     FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[];
     FortuneWheelCommands: (null | import("../common_bc").FWCommand)[];
@@ -895,13 +894,9 @@ waitFor(bcLoaded).then(() => {
                 FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
                 FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
             };
-            const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
-            fortuneWheelState.children.set(subScreen.screen, subScreen);
-            subScreen.load();
+            fortuneWheelState.loadChild(FWSelectScreen, struct, fortuneWheelState.character);
         } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
-            const subScreen = new WheelPresetScreen(fortuneWheelState, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
-            fortuneWheelState.children.set(subScreen.screen, subScreen);
-            subScreen.load();
+            fortuneWheelState.loadChild(WheelPresetScreen, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
         }
         return next(args);
     });

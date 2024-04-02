@@ -30,20 +30,18 @@
 #mbs-fwitemset-mid-grid {
 	display: grid;
 	grid-area: midDiv;
-	grid-template-areas:
-		"name ."
-		"outfitCode outfitCodeButton";
-	grid-template-columns: min(78vh, 39vw) auto;
-	grid-template-rows: min(10vh, 5vw) min(7vh, 3.5vw);
+	grid-template:
+		"name ." min(10vh, 5vw)
+		"outfitCode outfitCodeButton" min(7vh, 3.5vw) / min(78vh, 39vw) auto;
 	margin-left: 35%;
 	grid-gap: min(2vh, 1vw) min(6vh, 3vw);
 }
 
 #mbs-fwitemset-outfit-name {
+	align-self: end;
 	font-size: var(--mbs-font-small);
 	grid-area: name;
 	height: min(7vh, 3.5vw);
-	align-self: end;
 }
 
 #mbs-fwitemset-outfit-input {
