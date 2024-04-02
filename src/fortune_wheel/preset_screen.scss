@@ -117,8 +117,13 @@
 		filter: brightness(60%);
 	}
 
+	+ .mbs-button-tooltip {
+		z-index: 2;
+	}
+
 	&:focus + .mbs-button-tooltip {
 		visibility: visible;
+		z-index: 1;
 	}
 }
 
