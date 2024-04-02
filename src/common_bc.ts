@@ -904,69 +904,6 @@ export function getFWIDs(...fwObjectLists: (readonly (null | FWObject<any>)[])[]
     return new Set(idList);
 }
 
-/**
- * Construct and return text-based HTML input element
- * @param name The name of the input element (which will be prefixed with `"MBS"`)
- * @param record The record for storing the event listener output
- * @param placeholder The placeholder of the input element
- * @param coords The X and Y coordinates, width and height of the input element
- * @param value The initial value to be assigned to the input element
- * @param maxLength The maximum string length
- */
-export function getTextInputElement<T extends string>(
-    name: T,
-    record: Record<T, string | null>,
-    placeholder: string,
-    coords: readonly [X: number, Y: number, W: number, H?: number],
-    value: string = "",
-    maxLength?: number,
-): HTMLInputElement {
-    let element = ElementCreateInput(`MBS${name}`, "text", value, maxLength);
-    if (element) {
-        element.setAttribute("placeholder", placeholder);
-        element.addEventListener("input", CommonLimitFunction((e) => {
-            // @ts-ignore
-            const text: null | string = e.target?.value || null;
-            if (maxLength == null) {
-                maxLength = Infinity;
-            }
-            if (text === null || text.length <= maxLength) {
-                record[name] = text;
-            }
-        }));
-    } else {
-        element = <HTMLInputElement>document.getElementById(`MBS${name}`);
-    }
-    ElementPosition(`MBS${name}`, ...coords);
-    return element;
-}
-
-export function getNumberInputElement<T extends string>(
-    name: T,
-    record: Record<T, number>,
-    coords: readonly [X: number, Y: number, W: number, H?: number],
-    value: number,
-    minValue: number = -Infinity,
-    maxValue: number = Infinity,
-): HTMLInputElement {
-    let element = ElementCreateInput(`MBS${name}`, "number", value.toString());
-    if (element) {
-        element.setAttribute("max", maxValue.toString());
-        element.setAttribute("min", minValue.toString());
-        element.addEventListener("input", CommonLimitFunction((e) => {
-            // @ts-ignore
-            const value = Number.parseInt(e.target?.value, 10);
-            if (!Number.isNaN(value) && value >= minValue && value <= maxValue) {
-                record[name] = value;
-            }
-        }));
-    } else {
-        element = <HTMLInputElement>document.getElementById(`MBS${name}`);
-    }
-    ElementPosition(`MBS${name}`, ...coords);
-    return element;
-}
-
 export function createWeightedWheelIDs(ids: string): string {
     const idBaseList = Array.from(ids).flatMap(id => {
         const option = WheelFortuneOption.find(o => o.ID === id);
@@ -981,37 +918,4 @@ export function createWeightedWheelIDs(ids: string): string {
         idList.push(...sortBy(idBaseList, Math.random));
     }
     return idList.join("");
-}
-
-export function drawHeaderedTooltip(
-    x: number,
-    y: number,
-    w: number,
-    deltaH: number,
-    tooltip: readonly string[],
-    marigin: null | Readonly<Partial<{ x0: number, y0: number, x1: number, y1: number }>> = null,
-) {
-    const mariginParsed = { x0: marigin?.x0 ?? 0, y0: marigin?.y0 ?? 0, x1: marigin?.x1 ?? 2000, y1: marigin?.y1 ?? 1000 } as const;
-    MainCanvas.save();
-    try {
-        const [header, ...rest] = tooltip;
-        const h = deltaH + rest.length * 48 + (rest.length > 0 ? 16 : 0);
-        x = clamp(x, mariginParsed.x0, mariginParsed.x1 - w);
-        y = clamp(y, mariginParsed.y0, mariginParsed.y1 - h);
-
-        DrawRect(x, y, w, h, "White");
-        DrawEmptyRect(x, y, w, h, "Black", 2);
-        MainCanvas.beginPath();
-        MainCanvas.moveTo(x, y + deltaH);
-        MainCanvas.lineTo(x + w, y + deltaH);
-        MainCanvas.stroke();
-
-        MainCanvas.textBaseline = "middle";
-        DrawTextFit(header, x + (w / 2), y + deltaH / 2, w - 32, "black");
-        MainCanvas.textAlign = "left";
-        MainCanvas.font = '30px "Arial", sans-serif';
-        rest.forEach((str, i) => DrawText(str, x + 16, y + deltaH + 8 + 24 + i * 48, "black"));
-    } finally {
-        MainCanvas.restore();
-    }
 }
