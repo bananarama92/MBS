@@ -71,9 +71,7 @@ function createButton(screen: FWSelectScreen, i: number) {
                 screen.children.set(subScreen.screen, subScreen);
                 subScreen.load();
             }}
-        >
-            Lorem Ipsum
-        </button>
+        />
     );
 }
 
@@ -108,13 +106,13 @@ export class FWSelectScreen extends MBSScreen {
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <div id={ID.buttonOuterGrid}>
-                    <h1 id={ID.itemSets}>
+                    <h1 id={ID.itemSets} z-index={1}>
                         {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
                     </h1>
                     <div id={ID.buttonInnerGrid0}>
                         {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
-                    <h1 id={ID.commandSets}>
+                    <h1 id={ID.commandSets} z-index={1}>
                         {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
                     </h1>
                     <div id={ID.buttonInnerGrid1}>
@@ -135,10 +133,13 @@ export class FWSelectScreen extends MBSScreen {
                 </div>
 
                 <div id={ID.storage}>
-                    <div id={ID.storageInner}></div>
-                    <span id={ID.storageTooltip}>Lorem Ipsum</span>
+                    <div id={ID.storageInner}/>
+                    <div id={ID.storageTooltip} class="mbs-button-tooltip">
+                        <h6 id={ID.storageTooltip + "-header"}>OnlineSharedSettings Data Usage</h6>
+                        <ul id={ID.storageTooltip + "-list"} />
+                    </div>
                 </div>
-                <div id={ID.storageFooter}>Lorem Ipsum</div>
+                <div id={ID.storageFooter}/>
             </div>,
         );
     }
@@ -162,7 +163,7 @@ export class FWSelectScreen extends MBSScreen {
 
         const storageOuter = document.getElementById(ID.storage) as HTMLElement;
         const storageInner = document.getElementById(ID.storageInner) as HTMLElement;
-        const storageTooltip = document.getElementById(ID.storageTooltip) as HTMLElement;
+
         const storageFooter = document.getElementById(ID.storageFooter) as HTMLElement;
         if (isPlayer) {
             const nKBTotal = clamp(byteToKB(this.dataSize.value), 0, 9999);
@@ -185,8 +186,14 @@ export class FWSelectScreen extends MBSScreen {
                 entries = entries.slice(0, 10);
                 entries.push("...");
             }
-            storageTooltip.innerHTML = `<strong>OnlineSharedSettings Data Usage</strong><br />${entries.join("<br />")}`;
+
+            const storageTooltip = document.getElementById(ID.storageTooltip + "-list") as HTMLElement;
+            storageTooltip.innerHTML = "";
+            for (const nKB of entries) {
+                storageTooltip.appendChild(<li>{nKB}</li>);
+            }
         } else {
+            const storageTooltip = document.getElementById(ID.storageTooltip) as HTMLElement;
             storageFooter.innerText = `- / ${MAX_DATA / 1000} KB`;
             storageInner.style.height = "100%";
             storageInner.style.backgroundColor = "gray";

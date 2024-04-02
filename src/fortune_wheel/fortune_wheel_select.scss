@@ -21,20 +21,22 @@
 	justify-self: center;
 	width: 35%;
 
-	#mbs-fwselect-storage-tooltip {
-		background-color: var(--mbs-background-color);
-		border: inherit;
-		color: var(--mbs-text-color);
+	h6 {
 		font-size: min(3.5vh, 1.75vw);
-		left: 15%;
-		line-height: 1.4;
-		min-height: min(9vh, 4.5vw);
-		padding-left: min(2vh, 1vw);
-		padding-right: min(2vh, 1vw);
-		position: absolute;
+		margin: 0;
+	}
+
+	ul {
+		font-size: min(3vh, 1.5vw);
+		margin: 0;
 		text-align: left;
+	}
+
+	#mbs-fwselect-storage-tooltip {
+		position: absolute;
 		visibility: hidden;
-		width: fit-content;
+		bottom: unset;
+		left: 15%;
 	}
 
 	&:hover #mbs-fwselect-storage-tooltip {
