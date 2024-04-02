@@ -140,7 +140,7 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
 
     constructor(mbsList: readonly (null | T)[], weight?: number) {
         this.mbsList = mbsList;
-        this.weight = Number.isInteger(weight) ? CommonClamp(<number>weight, 1, 9) : 1;
+        this.weight = Number.isInteger(weight) ? clamp(<number>weight, 1, 9) : 1;
     }
 
     /** Reset all currently select options to their default. */
@@ -660,7 +660,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         if (!Number.isInteger(kwargs.weight)) {
             kwargs.weight = 1;
         } else {
-            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+            kwargs.weight = clamp(<number>kwargs.weight, 1, 9);
         }
         return <Required<FWItemSetKwargTypes>>kwargs;
     }
@@ -839,7 +839,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
         if (!Number.isInteger(kwargs.weight)) {
             kwargs.weight = 1;
         } else {
-            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+            kwargs.weight = clamp(<number>kwargs.weight, 1, 9);
         }
         return <Required<FWCommandKwargTypes>>kwargs;
     }
