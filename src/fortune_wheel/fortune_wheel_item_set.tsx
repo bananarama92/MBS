@@ -452,6 +452,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             this.#updateButton(ID.outfitButton);
         } else {
             this.settings.reset();
+            this.#updateButton(ID.acceptButton);
+            this.#updateButton(ID.outfitButton);
         }
 
         // Load and dress the character character

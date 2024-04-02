@@ -161,7 +161,7 @@ export class WheelPresetScreen extends MBSScreen {
             <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
-                <h1 id={ID.header}>Wheel of Fortune Presets</h1>
+                <h1 id={ID.header}>Wheel of Fortune preset {this.index}</h1>
                 <div id={ID.delete} class="mbs-button-div">
                     <button
                         class="mbs-button"
@@ -385,14 +385,14 @@ export class WheelPresetScreen extends MBSScreen {
             equipButtonm.disabled = true;
             deleteTooltip.innerText = "Delete the current preset:\nunsaved preset";
             equipTooltip.innerText = "Equip the current preset:\nunsaved preset";
-            header.innerText = "Wheel of Fortune Presets (unsaved)";
+            header.innerText = `Wheel of Fortune preset ${this.index} (unsaved)`;
         } else {
             inputField.value = state.name;
             deleteButton.disabled = false;
             equipButtonm.disabled = false;
             deleteTooltip.innerText = "Delete the current preset";
             equipTooltip.innerText = "Equip the current preset";
-            header.innerText = "Wheel of Fortune Presets";
+            header.innerText = `Wheel of Fortune preset ${this.index}`;
         }
     }
 

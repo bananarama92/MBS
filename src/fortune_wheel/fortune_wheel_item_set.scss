@@ -1,7 +1,7 @@
 #mbs-fwitemset {
 	grid-template:
 		"delete header accept cancel exit" min(9vh, 4.5vw)
-		"midDiv midDiv midDiv midDiv midDiv" min(18vh, 9vw)
+		"midDiv midDiv midDiv midDiv midDiv" max-content
 		"botDiv botDiv botDiv botDiv botDiv" auto
 		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
@@ -33,17 +33,17 @@
 	grid-template-areas:
 		"name ."
 		"outfitCode outfitCodeButton";
-	grid-template-columns: min(78vh, 39vw) min(10vh, 5vw);
+	grid-template-columns: min(78vh, 39vw) auto;
+	grid-template-rows: min(10vh, 5vw) min(7vh, 3.5vw);
 	margin-left: 35%;
 	grid-gap: min(2vh, 1vw) min(6vh, 3vw);
-	margin-bottom: 2.5%;
-	margin-top: 2.5%;
 }
 
 #mbs-fwitemset-outfit-name {
 	font-size: min(3.5vh, 1.75vw);
 	grid-area: name;
 	height: min(7vh, 3.5vw);
+	align-self: end;
 }
 
 #mbs-fwitemset-outfit-input {
@@ -66,7 +66,7 @@
 	align-items: end;
 	font-size: min(3.5vh, 1.75vw);
 	grid-template:
-		"headerStrip headerLock" auto
+		"headerStrip headerLock" min(7vh, 3.5vw)
 		"configStrip gridLock" min(7vh, 3.5vw)
 		"headerEquip gridLock" min(7vh, 3.5vw)
 		"configEquip gridLock" min(7vh, 3.5vw)
