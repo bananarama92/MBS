@@ -1,12 +1,11 @@
 /** Miscellaneous common BC-related functions and classes */
 
-import { sortBy, omit, clamp } from "lodash-es";
+import { sortBy, omit, clamp, sample } from "lodash-es";
 
 import {
     toStringTemplate,
     LoopIterator,
     generateIDs,
-    randomElement,
     BCX_MOD_API,
     includes,
     isArray,
@@ -399,10 +398,9 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+    abstract toOptions(): OptionType[];
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption} and
@@ -432,10 +430,9 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObject<OptionType> {
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+    abstract toOptions(): OptionType[];
 
     /** Find the insertion position within `WheelFortuneOption`. */
     #registerFindStart(): number {
@@ -747,11 +744,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
-     * @param colors
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
+    toOptions(): FWItemSetOption[] {
         const flags = this.flags.filter(flag => flag.enabled);
         const IDs = this.getIDs();
         return flags.map((flag, i) => {
@@ -772,7 +767,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             }
             return {
                 ID: IDs[i],
-                Color: randomElement(colors),
+                Color: sample(FORTUNE_WHEEL_COLORS) as FortuneWheelColor,
                 Script: this.scriptFactory((...args) => applyFlag(flag, ...args)),
                 Description,
                 Default,
@@ -861,14 +856,13 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
      * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
-     * @param colors
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWCommandOption[] {
+    toOptions(): FWCommandOption[] {
         const [ID] = this.getIDs();
         return [{
             ID: ID,
-            Color: randomElement(colors),
+            Color: sample(FORTUNE_WHEEL_COLORS) as FortuneWheelColor,
             Description: this.name,
             Default: true,
             Custom: this.custom,

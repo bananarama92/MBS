@@ -4,7 +4,6 @@ import {
     validateInt,
     padArray,
     trimArray,
-    randomElement,
     getRandomPassword,
     LoopIterator,
     generateIDs,
@@ -19,7 +18,6 @@ import {
     PassStruct,
     assert,
     assertEqual,
-    assertIncludes,
     assertRaises,
     assertPasses,
     assertTypeof,
@@ -117,33 +115,6 @@ export function test_trimArray(): void {
     passList.forEach(({ args, output }, i) => {
         const outputObserved = assertPasses(`${name}:${PASSES}:${i}`, () => trimArray(...args));
         assertEqual(`${name}:${PASSES}:${i}`, outputObserved, output);
-    });
-}
-
-export function test_randomElement(): void {
-    const name = "test_randomElement";
-
-    const raiseList: RaiseStruct<[list: any]>[] = [
-        {
-            args: [undefined],
-            excMessage: "Invalid \"list\" type: undefined",
-        },
-        {
-            args: [[]],
-            excMessage: "Passed \"list\" must contain at least 1 item",
-        },
-    ];
-    raiseList.forEach(({ args, excMessage }, i) => {
-        assertRaises(`${name}:${RAISES}:${i}`, () => randomElement(...args), excMessage);
-    });
-
-    const { args }: PassStruct<[list: string[]], undefined> = {
-        args: [["a", "b", "c"]],
-        output: undefined,
-    };
-    range(0, 100).forEach(i => {
-        const outputObserved = assertPasses(`${name}:${PASSES}:${i}`, () => randomElement(...args));
-        assertIncludes(`${name}:${PASSES}:${i}`, args[0], outputObserved);
     });
 }
 

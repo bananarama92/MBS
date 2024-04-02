@@ -1,10 +1,9 @@
 /** Main module for managing all fortune wheel-related additions */
 
-import { clone } from "lodash-es";
+import { clone, sample } from "lodash-es";
 
 import {
     MBS_MOD_API,
-    randomElement,
     waitFor,
     padArray,
     isArray,
@@ -347,7 +346,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -367,7 +366,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -398,7 +397,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -427,7 +426,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length < 2) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType.slice(1));
+                    const typeRecord = sample(allowType.slice(1)) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -448,7 +447,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
