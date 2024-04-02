@@ -17,6 +17,17 @@ import {
 
 import styles from "./settings_screen.scss";
 
+function preferenceLoadHook() {
+    if (TextScreenCache != null) {
+        TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
+    }
+
+    const img = new Image();
+    img.addEventListener("error", () => DrawGetImageOnError(img, false));
+    img.src = "Icons/Maid.png";
+    DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+}
+
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
     readonly screen = PreferenceScreenProxy.screen;
@@ -345,14 +356,7 @@ let preferenceState: PreferenceScreenProxy;
 waitFor(bcLoaded).then(() => {
     MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
         next(args);
-        if (TextScreenCache != null) {
-            TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
-        }
-
-        const img = new Image();
-        img.addEventListener("error", () => DrawGetImageOnError(img, false));
-        img.src = "Icons/Maid.png";
-        DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+        preferenceLoadHook();
     });
 
     MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
@@ -376,6 +380,9 @@ waitFor(bcLoaded).then(() => {
 
     (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
     preferenceState = new PreferenceScreenProxy();
+    if (CurrentScreen === "Preference") {
+        preferenceLoadHook();
+    }
 });
 
 const root = "mbs-preference";

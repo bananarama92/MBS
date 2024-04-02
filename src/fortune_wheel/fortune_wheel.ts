@@ -779,6 +779,17 @@ class FWScreenProxy extends ScreenProxy {
     }
 }
 
+function wheelFortuneLoadHook() {
+    fortuneWheelState.initialize();
+    if (TextScreenCache != null) {
+        for (const { Description, Custom, ID } of WheelFortuneOption) {
+            if (Description !== undefined) {
+                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
+            }
+        }
+    }
+}
+
 export let fortuneWheelState: FWScreenProxy;
 
 declare const WheelFortuneDrawWheel: undefined | typeof WheelFortuneDraw;
@@ -816,14 +827,7 @@ waitFor(bcLoaded).then(() => {
     MBS_MOD_API.patchFunction("WheelFortuneClick", wheelFortuneClickPatches);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
-        fortuneWheelState.initialize();
-        if (TextScreenCache != null) {
-            for (const { Description, Custom, ID } of WheelFortuneOption) {
-                if (Description !== undefined) {
-                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-                }
-            }
-        }
+        wheelFortuneLoadHook();
         return next(args);
     });
 
@@ -971,4 +975,8 @@ waitFor(bcLoaded).then(() => {
         FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
         pushMBSSettings([SettingsType.SHARED]);
     });
+
+    if (CurrentScreen === "WheelFortune") {
+        wheelFortuneLoadHook();
+    }
 });
