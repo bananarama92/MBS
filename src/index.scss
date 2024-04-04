@@ -4,6 +4,8 @@
 	--mbs-tooltip-color: lightyellow;
 	--mbs-border-color: black;
 	--mbs-text-color: black;
+	--mbs-font-small: min(3.5vh, 1.75vw);
+	--mbs-font-large: min(5vh, 2.5vw);
 }
 
 .mbs-button {
@@ -14,7 +16,7 @@
 	background-size: cover;
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	color: var(--mbs-text-color);
-	font-size: min(3.5vh, 1.75vw);
+	font-size: var(--mbs-font-small);
 	height: 100%;
 	overflow: clip;
 	padding-left: min(2vh, 1vw);
@@ -40,7 +42,7 @@
 	bottom: -10%;
 	box-shadow: min(0.4vh, 0.2vw) min(0.4vh, 0.2vw) min(2vh, 1vw) 0 rgb(0 0 0 / 50%);
 	color: var(--mbs-text-color);
-	font-size: min(3.5vh, 1.75vw);
+	font-size: var(--mbs-font-small);
 	line-height: 1.4;
 	padding: min(1vh, 0.5vw) min(2vh, 1vw) min(1vh, 0.5vw) min(2vh, 1vw);
 	position: relative;
@@ -71,8 +73,8 @@
 }
 
 .mbs-timer {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: min(3.5vh, 1.75vw);
+	font-family: inherit;
+	font-size: var(--mbs-font-small);
 	height: min(6vh, 3vw);
 	text-align: center;
 	width: min(21vh, 10.5vw);
@@ -106,16 +108,15 @@
 	text-align: center;
 	user-select: none;
 	grid-gap: min(2vh, 1vw);
-	font-size: min(3.5vh, 1.75vw);
 
 	h1 {
 		align-self: center;
-		font-size: min(5vh, 2.5vw);
+		font-size: var(--mbs-font-large);;
 	}
 
 	p {
 		align-self: center;
-		font-size: min(3.5vh, 1.75vw);
+		font-size: var(--mbs-font-small);;
 	}
 
 	input:invalid {

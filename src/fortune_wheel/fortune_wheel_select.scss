@@ -22,12 +22,12 @@
 	width: 35%;
 
 	h6 {
-		font-size: min(3.5vh, 1.75vw);
+		font-size: var(--mbs-font-small);
 		margin: 0;
 	}
 
 	ul {
-		font-size: min(3vh, 1.5vw);
+		font-size: var(--mbs-font-small);
 		margin: 0;
 		text-align: left;
 	}
@@ -49,7 +49,7 @@
 }
 
 #mbs-fwselect-storage-footer {
-	font-size: min(3.5vh, 1.75vw);
+	font-size: var(--mbs-font-small);
 	grid-area: storageFooter;
 	height: min(7vh, 3.5vw);
 	padding-top: min(1vh, 0.5vw);
