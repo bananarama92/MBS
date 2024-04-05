@@ -197,17 +197,22 @@ export class FWSelectScreen extends MBSScreen {
             let entries = Object.entries(this.dataSize.valueRecord).map(([k, v]) => {
                 const kSanitized = k.replaceAll(sanitizePattern, "");
                 const nKB = Number.isNaN(v) ? "Unknown" : `${byteToKB(v)} KB`;
-                return `${kSanitized} ${nKB}`;
+                return [kSanitized, nKB] as const;
             });
             if (entries.length >= 11) {
                 entries = entries.slice(0, 10);
-                entries.push("...");
+                entries.push(["...", ""]);
             }
 
             const storageTooltip = document.getElementById(ID.storageTooltip + "-list") as HTMLElement;
             storageTooltip.innerHTML = "";
-            for (const nKB of entries) {
-                storageTooltip.appendChild(<li>{nKB}</li>);
+            for (const [field, nKB] of entries) {
+                storageTooltip.appendChild(
+                    <li>
+                        <span style={{ float: "left" }}>{field}</span>
+                        <span style={{ float: "right" }}>{nKB}</span>
+                    </li>,
+                );
             }
         } else {
             const storageTooltip = document.getElementById(ID.storageTooltip) as HTMLElement;
