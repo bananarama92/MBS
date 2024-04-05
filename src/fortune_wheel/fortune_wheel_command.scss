@@ -28,7 +28,6 @@
 }
 
 #mbs-fwcommand-command-input {
-	font-size: var(--mbs-font-small);
 	grid-area: commandInput;
 	height: min(7vh, 3.5vw);
 	place-self: self-end center;
@@ -37,12 +36,10 @@
 
 #mbs-fwcommand-weight-header {
 	align-self: self-end;
-	font-size: var(--mbs-font-small);
 	grid-area: weightHeader;
 }
 
 #mbs-fwcommand-weight-input {
-	font-size: var(--mbs-font-small);
 	grid-area: weightInput;
     place-self: start center;
 	width: min(7vh, 3.5vw);

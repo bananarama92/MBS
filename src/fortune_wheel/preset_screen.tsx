@@ -269,10 +269,10 @@ export class WheelPresetScreen extends MBSScreen {
                 </div>
 
                 <div id={ID.midDiv}>
-                    <div id={ID.nameHeader}>Preset Name</div>
-                    <div id={ID.builtinBCHeader}>Builtin BC Options</div>
-                    <div id={ID.builtinMBSHeader}>Builtin MBS Options</div>
-                    <div id={ID.customMBSHeader}>Custom MBS Options</div>
+                    <p id={ID.nameHeader}>Preset Name</p>
+                    <p id={ID.builtinBCHeader}>Builtin BC Options</p>
+                    <p id={ID.builtinMBSHeader}>Builtin MBS Options</p>
+                    <p id={ID.customMBSHeader}>Custom MBS Options</p>
 
                     <div id={ID.nameDiv}>
                         <input
@@ -357,7 +357,7 @@ export class WheelPresetScreen extends MBSScreen {
                     onClick={(event) => (event.target as HTMLButtonElement).focus()}
                 />
                 <div id={ids.tooltip + i} class="mbs-button-tooltip" style={{ justifySelf: justify }}>
-                    <h6 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />
+                    <h2 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />
                     <ul id={ids.tooltipList + i} />
                 </div>
             </div>

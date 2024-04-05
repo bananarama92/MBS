@@ -161,7 +161,7 @@ export class FWSelectScreen extends MBSScreen {
                 <div id={ID.storage}>
                     <div id={ID.storageInner}/>
                     <div id={ID.storageTooltip} class="mbs-button-tooltip">
-                        <h6 id={ID.storageTooltip + "-header"}>OnlineSharedSettings Data Usage</h6>
+                        <h2 id={ID.storageTooltip + "-header"}>OnlineSharedSettings Data Usage</h2>
                         <ul id={ID.storageTooltip + "-list"} />
                     </div>
                 </div>
@@ -187,8 +187,8 @@ export class FWSelectScreen extends MBSScreen {
             const percentage = 100 * nKBTotal / (MAX_DATA / 1000);
             storageFooter.innerText = `${nKBTotal} / ${MAX_DATA / 1000} KB`;
             storageInner.style.height = `${100 - percentage}%`;
-            storageInner.style.backgroundColor = "white";
-            storageInner.style.borderBottom = "min(0.3vh, 0.15vw) solid black";
+            storageInner.style.backgroundColor = "var(--mbs-background-color)";
+            storageInner.style.borderBottom = "min(0.3vh, 0.15vw) solid var(--mbs-border-color)";
             if (percentage >= 90) {
                 storageOuter.style.boxShadow = "0 0 min(2vh, 1vw) red";
             }
@@ -210,7 +210,7 @@ export class FWSelectScreen extends MBSScreen {
                 storageTooltip.appendChild(
                     <li>
                         <span style={{ float: "left" }}>{field}</span>
-                        <span style={{ float: "right" }}>{nKB}</span>
+                        <span style={{ float: "right", paddingLeft: "min(7vh, 3.5vw)" }}>{nKB}</span>
                     </li>,
                 );
             }

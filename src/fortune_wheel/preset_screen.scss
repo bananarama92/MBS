@@ -38,29 +38,24 @@
 	justify-self: center;
 	width: 100%;
 
-	> div {
-		font-size: min(3.5vh, 1.75vw);
+	> p {
 		text-wrap: nowrap;
 	}
 }
 
 #mbs-fwpreset-name-header {
-	align-self: center;
 	grid-area: name-header;
 }
 
 #mbs-fwpreset-builtin-bc-header {
-	align-self: center;
 	grid-area: builtin-bc-header;
 }
 
 #mbs-fwpreset-builtin-mbs-header {
-	align-self: center;
 	grid-area: builtin-mbs-header;
 }
 
 #mbs-fwpreset-custom-mbs-header {
-	align-self: center;
 	grid-area: custom-mbs-header;
 }
 
@@ -77,7 +72,6 @@
 }
 
 #mbs-fwpreset-name-input {
-	font-size: min(3.5vh, 1.75vw);
 	height: min(7vh, 3.5vw);
 	width: min(35vh, 17.5vw);
 }
@@ -106,6 +100,7 @@
 }
 
 .mbs-fwpreset-color {
+	border: unset !important;
 	height: 84%;
 	left: 4%;
 	position: relative;
@@ -135,19 +130,16 @@
 }
 
 .mbs-fwpreset {
-	background-color: var(--mbs-background-color);
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	display: grid;
 	grid-template-columns: min(7vh, 3.5vw);
 	grid-template-rows: min(7vh, 3.5vw) auto;
 
-	h6 {
-		font-size: min(3.5vh, 1.75vw);
+	h2 {
 		margin: 0;
 	}
 
 	ul {
-		font-size: min(3vh, 1.5vw);
 		margin: 0;
 		text-align: left;
 	}

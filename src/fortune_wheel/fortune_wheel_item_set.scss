@@ -39,13 +39,11 @@
 
 #mbs-fwitemset-outfit-name {
 	align-self: end;
-	font-size: var(--mbs-font-small);
 	grid-area: name;
 	height: min(7vh, 3.5vw);
 }
 
 #mbs-fwitemset-outfit-input {
-	font-size: var(--mbs-font-small);
 	grid-area: outfitCode;
 	height: min(7vh, 3.5vw);
 }
@@ -62,7 +60,6 @@
 	margin-left: 35%;
 	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
 	align-items: end;
-	font-size: var(--mbs-font-small);
 	grid-template:
 		"headerStrip headerLock" min(7vh, 3.5vw)
 		"configStrip gridLock" min(7vh, 3.5vw)
@@ -98,7 +95,6 @@
 
 #mbs-fwitemset-weight-input {
 	align-self: start;
-	font-size: var(--mbs-font-small);
 	grid-area: configWeight;
 	width: min(7vh, 3.5vw);
 }
@@ -119,15 +115,12 @@
 .mbs-fwitemset-lock-container {
 	align-items: center;
 	display: grid;
-	font-size: var(--mbs-font-small);
 	word-wrap: break-word;
 	grid-template-columns: 1.5fr 8.5fr;
 	grid-gap: min(2vh, 1vw);
 }
 
 .mbs-timer {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: var(--mbs-font-small);
 	height: min(5vh, 2.5vw);
 	text-align: center;
 	width: min(21vh, 10.5vw);

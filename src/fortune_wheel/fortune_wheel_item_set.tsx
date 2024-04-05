@@ -78,7 +78,6 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
                         disabled={disabled}
                         data-level={i}
                         id={fields.optionID + i.toString()}
-                        style={{ border: "unset", paddingTop: "min(1vh, 0.5vw)", paddingBottom: "min(1vh, 0.5vw)" }}
                         onClick={(e) => {
                             const target = e.target as HTMLButtonElement;
                             settings[fields.level] = clamp(

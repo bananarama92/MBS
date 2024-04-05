@@ -13,7 +13,7 @@
 }
 
 #mbs-fwselect-storage {
-	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800);
+	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800) !important;
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	display: grid;
 	grid-area: storage;
@@ -21,13 +21,11 @@
 	justify-self: center;
 	width: 35%;
 
-	h6 {
-		font-size: var(--mbs-font-small);
+	h2 {
 		margin: 0;
 	}
 
 	ul {
-		font-size: var(--mbs-font-small);
 		margin: 0;
 		text-align: left;
 	}
@@ -49,7 +47,6 @@
 }
 
 #mbs-fwselect-storage-footer {
-	font-size: var(--mbs-font-small);
 	grid-area: storageFooter;
 	height: min(7vh, 3.5vw);
 	padding-top: min(1vh, 0.5vw);
@@ -74,8 +71,7 @@
 }
 
 #mbs-fwselect-header0, #mbs-fwselect-header1 {
-	align-items: center;
-	background: var(--mbs-background-color);
+	background-color: var(--mbs-background-color);
 	display: flex;
 	height: 100%;
 	justify-content: center;

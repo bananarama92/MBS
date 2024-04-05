@@ -89,6 +89,7 @@
 	background-size: contain;
 	box-sizing: border-box;
 	height: 80%;
+	justify-self: center;
 	mask-image: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png");
 	mask-position: center;
 	mask-repeat: no-repeat;
@@ -98,7 +99,6 @@
 	position: relative;
 	width: 80%;
 	word-break: break-word;
-	justify-self: center;
 }
 
 #mbs-preference-reset-grid {
