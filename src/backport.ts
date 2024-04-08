@@ -53,7 +53,6 @@ waitFor(bcLoaded).then(() => {
                 const CRAFTING_ASSETS = Object.freeze(craftingAssetsPopulate());
                 const ASSET_LOCKS = fromEntries(Asset.filter(a => a.IsLock).map(a => [a.Name, a] as [AssetLockType, Asset]));
 
-                // @ts-expect-error Type 'boolean' is not assignable to type 'false | Asset'
                 MBS_MOD_API.hookFunction("CraftingAppliesToItem", 10, ([craft, asset]) => {
                     const elligbleAssets = CRAFTING_ASSETS[craft?.Item] ?? [];
                     return elligbleAssets.includes(asset);
