@@ -72,12 +72,7 @@ export function test_canChangeCosplay(): void {
             assertEqual(`${name}:${PASSES}:${i}`, outputObsered, output);
         });
     } finally {
-        if (GameVersion === "R101") {
-            // @ts-expect-error
-            characterNames.forEach(CharacterDelete);
-        } else {
-            characters.forEach(CharacterDelete);
-        }
+        characters.forEach(c => CharacterDelete(c));
     }
 }
 
@@ -129,12 +124,7 @@ export function test_equipTimerLock(): void {
         assertEqual(`${name}:${PASSES}:0`, item.Property?.LockSet, true);
         assertTypeof(`${name}:${PASSES}:0`, item.Property?.Password, "string");
     } finally {
-        if (GameVersion === "R101") {
-            // @ts-expect-error
-            CharacterDelete(name);
-        } else {
-            CharacterDelete(character);
-        }
+        CharacterDelete(character);
     }
 }
 
@@ -152,12 +142,7 @@ export function test_equipHighSecLock(): void {
         assertPasses(`${name}:${PASSES}:0`, () => equipHighSecLock(item, character));
         assertEqual(`${name}:${PASSES}:0`, item.Property?.MemberNumberListKeys, "");
     } finally {
-        if (GameVersion === "R101") {
-            // @ts-expect-error
-            CharacterDelete(name);
-        } else {
-            CharacterDelete(character);
-        }
+        CharacterDelete(character);
     }
 }
 
@@ -223,12 +208,7 @@ export function test_equipLock(): void {
             assertEqual(`${name}:${PASSES}:0`, outputObserved, output);
         });
     } finally {
-        if (GameVersion === "R101") {
-            // @ts-expect-error
-            characterNames.forEach(CharacterDelete);
-        } else {
-            characters.forEach(CharacterDelete);
-        }
+        characters.forEach(c => CharacterDelete(c));
     }
 }
 
