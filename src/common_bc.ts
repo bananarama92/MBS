@@ -1,12 +1,11 @@
 /** Miscellaneous common BC-related functions and classes */
 
-import { sortBy, omit, clamp } from "lodash-es";
+import { sortBy, omit, clamp, sample } from "lodash-es";
 
 import {
     toStringTemplate,
     LoopIterator,
     generateIDs,
-    randomElement,
     BCX_MOD_API,
     includes,
     isArray,
@@ -140,7 +139,7 @@ export abstract class MBSSelectedObject<T extends { name?: string }> {
 
     constructor(mbsList: readonly (null | T)[], weight?: number) {
         this.mbsList = mbsList;
-        this.weight = Number.isInteger(weight) ? CommonClamp(<number>weight, 1, 9) : 1;
+        this.weight = Number.isInteger(weight) ? clamp(<number>weight, 1, 9) : 1;
     }
 
     /** Reset all currently select options to their default. */
@@ -399,10 +398,9 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+    abstract toOptions(): OptionType[];
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption} and
@@ -432,10 +430,9 @@ export abstract class MBSObject<OptionType extends Record<string, any>> {
 export abstract class FWObject<OptionType extends FWObjectOption> extends MBSObject<OptionType> {
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
      * @returns A list of wheel of fortune options
      */
-    abstract toOptions(colors?: readonly FortuneWheelColor[]): OptionType[];
+    abstract toOptions(): OptionType[];
 
     /** Find the insertion position within `WheelFortuneOption`. */
     #registerFindStart(): number {
@@ -660,7 +657,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         if (!Number.isInteger(kwargs.weight)) {
             kwargs.weight = 1;
         } else {
-            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+            kwargs.weight = clamp(<number>kwargs.weight, 1, 9);
         }
         return <Required<FWItemSetKwargTypes>>kwargs;
     }
@@ -747,11 +744,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
-     * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
-     * @param colors
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWItemSetOption[] {
+    toOptions(): FWItemSetOption[] {
         const flags = this.flags.filter(flag => flag.enabled);
         const IDs = this.getIDs();
         return flags.map((flag, i) => {
@@ -772,7 +767,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             }
             return {
                 ID: IDs[i],
-                Color: randomElement(colors),
+                Color: sample(FORTUNE_WHEEL_COLORS) as FortuneWheelColor,
                 Script: this.scriptFactory((...args) => applyFlag(flag, ...args)),
                 Description,
                 Default,
@@ -839,7 +834,7 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
         if (!Number.isInteger(kwargs.weight)) {
             kwargs.weight = 1;
         } else {
-            kwargs.weight = CommonClamp(<number>kwargs.weight, 1, 9);
+            kwargs.weight = clamp(<number>kwargs.weight, 1, 9);
         }
         return <Required<FWCommandKwargTypes>>kwargs;
     }
@@ -861,14 +856,13 @@ export class FWCommand extends FWObject<FWCommandOption> implements FWSimpleComm
     /**
      * Convert this instance into a list of {@link FWItemSetOption}.
      * @param idExclude Characters that should not be contained within any of the {@link FWItemSetOption.ID} values
-     * @param colors
      * @returns A list of wheel of fortune options
      */
-    toOptions(colors: readonly FortuneWheelColor[] = FORTUNE_WHEEL_COLORS): FWCommandOption[] {
+    toOptions(): FWCommandOption[] {
         const [ID] = this.getIDs();
         return [{
             ID: ID,
-            Color: randomElement(colors),
+            Color: sample(FORTUNE_WHEEL_COLORS) as FortuneWheelColor,
             Description: this.name,
             Default: true,
             Custom: this.custom,
@@ -910,69 +904,6 @@ export function getFWIDs(...fwObjectLists: (readonly (null | FWObject<any>)[])[]
     return new Set(idList);
 }
 
-/**
- * Construct and return text-based HTML input element
- * @param name The name of the input element (which will be prefixed with `"MBS"`)
- * @param record The record for storing the event listener output
- * @param placeholder The placeholder of the input element
- * @param coords The X and Y coordinates, width and height of the input element
- * @param value The initial value to be assigned to the input element
- * @param maxLength The maximum string length
- */
-export function getTextInputElement<T extends string>(
-    name: T,
-    record: Record<T, string | null>,
-    placeholder: string,
-    coords: readonly [X: number, Y: number, W: number, H?: number],
-    value: string = "",
-    maxLength?: number,
-): HTMLInputElement {
-    let element = ElementCreateInput(`MBS${name}`, "text", value, maxLength);
-    if (element) {
-        element.setAttribute("placeholder", placeholder);
-        element.addEventListener("input", CommonLimitFunction((e) => {
-            // @ts-ignore
-            const text: null | string = e.target?.value || null;
-            if (maxLength == null) {
-                maxLength = Infinity;
-            }
-            if (text === null || text.length <= maxLength) {
-                record[name] = text;
-            }
-        }));
-    } else {
-        element = <HTMLInputElement>document.getElementById(`MBS${name}`);
-    }
-    ElementPosition(`MBS${name}`, ...coords);
-    return element;
-}
-
-export function getNumberInputElement<T extends string>(
-    name: T,
-    record: Record<T, number>,
-    coords: readonly [X: number, Y: number, W: number, H?: number],
-    value: number,
-    minValue: number = -Infinity,
-    maxValue: number = Infinity,
-): HTMLInputElement {
-    let element = ElementCreateInput(`MBS${name}`, "number", value.toString());
-    if (element) {
-        element.setAttribute("max", maxValue.toString());
-        element.setAttribute("min", minValue.toString());
-        element.addEventListener("input", CommonLimitFunction((e) => {
-            // @ts-ignore
-            const value = Number.parseInt(e.target?.value, 10);
-            if (!Number.isNaN(value) && value >= minValue && value <= maxValue) {
-                record[name] = value;
-            }
-        }));
-    } else {
-        element = <HTMLInputElement>document.getElementById(`MBS${name}`);
-    }
-    ElementPosition(`MBS${name}`, ...coords);
-    return element;
-}
-
 export function createWeightedWheelIDs(ids: string): string {
     const idBaseList = Array.from(ids).flatMap(id => {
         const option = WheelFortuneOption.find(o => o.ID === id);
@@ -987,37 +918,4 @@ export function createWeightedWheelIDs(ids: string): string {
         idList.push(...sortBy(idBaseList, Math.random));
     }
     return idList.join("");
-}
-
-export function drawHeaderedTooltip(
-    x: number,
-    y: number,
-    w: number,
-    deltaH: number,
-    tooltip: readonly string[],
-    marigin: null | Readonly<Partial<{ x0: number, y0: number, x1: number, y1: number }>> = null,
-) {
-    const mariginParsed = { x0: marigin?.x0 ?? 0, y0: marigin?.y0 ?? 0, x1: marigin?.x1 ?? 2000, y1: marigin?.y1 ?? 1000 } as const;
-    MainCanvas.save();
-    try {
-        const [header, ...rest] = tooltip;
-        const h = deltaH + rest.length * 48 + (rest.length > 0 ? 16 : 0);
-        x = clamp(x, mariginParsed.x0, mariginParsed.x1 - w);
-        y = clamp(y, mariginParsed.y0, mariginParsed.y1 - h);
-
-        DrawRect(x, y, w, h, "White");
-        DrawEmptyRect(x, y, w, h, "Black", 2);
-        MainCanvas.beginPath();
-        MainCanvas.moveTo(x, y + deltaH);
-        MainCanvas.lineTo(x + w, y + deltaH);
-        MainCanvas.stroke();
-
-        MainCanvas.textBaseline = "middle";
-        DrawTextFit(header, x + (w / 2), y + deltaH / 2, w - 32, "black");
-        MainCanvas.textAlign = "left";
-        MainCanvas.font = '30px "Arial", sans-serif';
-        rest.forEach((str, i) => DrawText(str, x + 16, y + deltaH + 8 + 24 + i * 48, "black"));
-    } finally {
-        MainCanvas.restore();
-    }
 }

@@ -1,10 +1,9 @@
 /** Main module for managing all fortune wheel-related additions */
 
-import { clone } from "lodash-es";
+import { clone, sample } from "lodash-es";
 
 import {
     MBS_MOD_API,
-    randomElement,
     waitFor,
     padArray,
     isArray,
@@ -347,7 +346,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -367,7 +366,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -398,7 +397,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -427,7 +426,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length < 2) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType.slice(1));
+                    const typeRecord = sample(allowType.slice(1)) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -448,7 +447,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     if (allowType.length === 0) {
                         return;
                     }
-                    const typeRecord = randomElement(allowType);
+                    const typeRecord = sample(allowType) ?? {};
                     itemSetType(item, character, typeRecord);
                 },
             },
@@ -740,7 +739,6 @@ export let FORTUNE_WHEEL_DEFAULT_BASE: string;
 
 class FWScreenProxy extends ScreenProxy {
     static readonly screen = "WheelFortune";
-    readonly screen = FWScreenProxy.screen;
     character: Character;
     FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[];
     FortuneWheelCommands: (null | import("../common_bc").FWCommand)[];
@@ -777,6 +775,17 @@ class FWScreenProxy extends ScreenProxy {
         this.FortuneWheelItemSets = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelItemSets", "item sets");
         this.FortuneWheelCommands = loadFortuneWheelObjects(WheelFortuneCharacter, "FortuneWheelCommands", "commands");
         this.weightedIDs = createWeightedWheelIDs(this.character.OnlineSharedSettings?.WheelFortune ?? WheelFortuneDefault);
+    }
+}
+
+function wheelFortuneLoadHook() {
+    fortuneWheelState.initialize();
+    if (TextScreenCache != null) {
+        for (const { Description, Custom, ID } of WheelFortuneOption) {
+            if (Description !== undefined) {
+                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
+            }
+        }
     }
 }
 
@@ -817,14 +826,7 @@ waitFor(bcLoaded).then(() => {
     MBS_MOD_API.patchFunction("WheelFortuneClick", wheelFortuneClickPatches);
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
-        fortuneWheelState.initialize();
-        if (TextScreenCache != null) {
-            for (const { Description, Custom, ID } of WheelFortuneOption) {
-                if (Description !== undefined) {
-                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-                }
-            }
-        }
+        wheelFortuneLoadHook();
         return next(args);
     });
 
@@ -892,13 +894,9 @@ waitFor(bcLoaded).then(() => {
                 FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
                 FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
             };
-            const subScreen = new FWSelectScreen(fortuneWheelState, struct, fortuneWheelState.character);
-            fortuneWheelState.children.set(subScreen.screen, subScreen);
-            subScreen.load();
+            fortuneWheelState.loadChild(FWSelectScreen, struct, fortuneWheelState.character);
         } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
-            const subScreen = new WheelPresetScreen(fortuneWheelState, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
-            fortuneWheelState.children.set(subScreen.screen, subScreen);
-            subScreen.load();
+            fortuneWheelState.loadChild(WheelPresetScreen, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
         }
         return next(args);
     });
@@ -972,4 +970,8 @@ waitFor(bcLoaded).then(() => {
         FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
         pushMBSSettings([SettingsType.SHARED]);
     });
+
+    if (CurrentScreen === "WheelFortune") {
+        wheelFortuneLoadHook();
+    }
 });

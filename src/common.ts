@@ -1,6 +1,6 @@
 /** Miscellaneous common functions and classes */
 
-import { range, random } from "lodash-es";
+import { range, sample } from "lodash-es";
 import bcModSdk from "bondage-club-mod-sdk";
 
 /** An array with all alpha-numerical characters. */
@@ -147,27 +147,13 @@ export function trimArray<T>(list: T[], n: number): T[] {
 }
 
 /**
- * Return a random element from the passed list.
- * @param list The list in question
- * @returns The random element from the passed list
- */
-export function randomElement<T>(list: readonly T[]): T {
-    if (!isArray(list)) {
-        throw new TypeError(`Invalid "list" type: ${typeof list}`);
-    } else if (list.length === 0) {
-        throw new Error('Passed "list" must contain at least 1 item');
-    }
-    return list[random(0, list.length - 1, false)];
-}
-
-/**
  * Generate a password consisting of `n` random latin characters.
  * @param n The length of the password; must be in the [0, 8] interval
  * @returns the newly generated password
  */
 export function getRandomPassword(n: number): string {
     validateInt(n, "n", 0, 8);
-    return range(0, n).map(_ => randomElement(ALPHABET)).join("");
+    return range(0, n).map(_ => sample(ALPHABET)).join("");
 }
 
 /**

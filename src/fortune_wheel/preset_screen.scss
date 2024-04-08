@@ -31,31 +31,31 @@
 	grid-area: mid;
 	text-align: center;
 	grid-gap: min(2vh, 1vw);
-	font-size: min(3.5vh, 1.75vw);
 	grid-template:
 		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9vh, 4.5vw)
-		"name builtin-bc builtin-mbs custom-mbs" auto / min(40vh, 20vw) min(40vh, 20vw) min(30vh, 15vw) min(70vh, 35vw);
+		"name builtin-bc builtin-mbs custom-mbs" auto / auto min-content min-content min-content;
 	justify-items: center;
 	justify-self: center;
+	width: 100%;
+
+	> p {
+		text-wrap: nowrap;
+	}
 }
 
 #mbs-fwpreset-name-header {
-	align-self: center;
 	grid-area: name-header;
 }
 
 #mbs-fwpreset-builtin-bc-header {
-	align-self: center;
 	grid-area: builtin-bc-header;
 }
 
 #mbs-fwpreset-builtin-mbs-header {
-	align-self: center;
 	grid-area: builtin-mbs-header;
 }
 
 #mbs-fwpreset-custom-mbs-header {
-	align-self: center;
 	grid-area: custom-mbs-header;
 }
 
@@ -64,6 +64,7 @@
 	grid-gap: min(1.2vh, 0.6vw);
 	grid-auto-flow: column;
 	grid-template-rows: repeat(8, min(7vh, 3.5vw));
+	width: fit-content;
 }
 
 #mbs-fwpreset-name-div {
@@ -71,7 +72,6 @@
 }
 
 #mbs-fwpreset-name-input {
-	font-size: min(3.5vh, 1.75vw);
 	height: min(7vh, 3.5vw);
 	width: min(35vh, 17.5vw);
 }
@@ -79,6 +79,7 @@
 #mbs-fwpreset-name-dropdown-div {
 	height: min(7vh, 3.5vw);
 	position: relative;
+	text-wrap: auto;
 	top: 5%;
 	width: min(36vh, 18vw);
 }
@@ -99,11 +100,12 @@
 }
 
 .mbs-fwpreset-color {
-	height: 90%;
-	left: 5%;
+	border: unset !important;
+	height: 84%;
+	left: 4%;
 	position: relative;
-	top: 5%;
-	width: 90%;
+	top: 4%;
+	width: 84%;
 
 	&[data-color="red"] {
 		background-color: red;
@@ -117,27 +119,27 @@
 		filter: brightness(60%);
 	}
 
+	+ .mbs-button-tooltip {
+		z-index: 2;
+	}
+
 	&:focus + .mbs-button-tooltip {
 		visibility: visible;
+		z-index: 1;
 	}
 }
 
 .mbs-fwpreset {
-	background-color: var(--mbs-background-color);
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	display: grid;
 	grid-template-columns: min(7vh, 3.5vw);
 	grid-template-rows: min(7vh, 3.5vw) auto;
-	height: min(7vh, 3.5vw);
-	width: min(7vh, 3.5vw);
 
-	h6 {
-		font-size: min(3.5vh, 1.75vw);
+	h2 {
 		margin: 0;
 	}
 
 	ul {
-		font-size: min(3vh, 1.5vw);
 		margin: 0;
 		text-align: left;
 	}

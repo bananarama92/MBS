@@ -32,7 +32,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     const oldCrafts = new Set(character.Crafting.map(i => JSON.stringify(i)));
 
     let refresh = false;
-    for (const [i, item] of CommonEnumerate(data)) {
+    for (const [i, item] of data.entries()) {
         if (item == null) {
             continue;
         }

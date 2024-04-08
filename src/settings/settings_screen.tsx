@@ -1,6 +1,6 @@
 import { MBS_MOD_API, waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
-import { MBSScreen, ScreenProxy } from "../screen_abc";
+import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 import { NEW_ASSETS_VERSION, NEW_ASSETS } from "../new_items_screen";
 
@@ -17,9 +17,19 @@ import {
 
 import styles from "./settings_screen.scss";
 
+function preferenceLoadHook() {
+    if (TextScreenCache != null) {
+        TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
+    }
+
+    const img = new Image();
+    img.addEventListener("error", () => DrawGetImageOnError(img, false));
+    img.src = "Icons/Maid.png";
+    DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+}
+
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
-    readonly screen = PreferenceScreenProxy.screen;
 
     constructor() {
         super(
@@ -36,12 +46,65 @@ export class PreferenceScreenProxy extends ScreenProxy {
     }
 }
 
+const root = "mbs-preference";
+const ID = Object.freeze({
+    root,
+    styles: `${root}-style`,
+
+    header: `${root}-header`,
+    exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
+
+    settingsGrid: `${root}-settings`,
+    settingsPair: `${root}-settings-pair`,
+    itemsButton: `${root}-items-button`,
+    itemsHeader: `${root}-items-header`,
+    wheelButton: `${root}-wheel-button`,
+    wheelHeader: `${root}-wheel-header`,
+
+    rollCheckbox: `${root}-roll-checkbox`,
+    rollHeader: `${root}-roll-header`,
+    lockCheckbox: `${root}-lock-checkbox`,
+    lockHeader: `${root}-lock-header`,
+
+    miscGrid: `${root}-misc`,
+    reset: `${root}-reset`,
+    resetButton: `${root}-reset-button`,
+    resetTooltip: `${root}-reset-tooltip`,
+    resetScreen: `${root}-reset-screen`,
+    resetBackground: `${root}-reset-background`,
+    resetGrid: `${root}-reset-grid`,
+    resetAccept: `${root}-reset-accept`,
+    resetCancel: `${root}-reset-cancel`,
+
+    import: `${root}-import`,
+    importButton: `${root}-import-button`,
+    importTooltip: `${root}-import-tooltip`,
+    export: `${root}-export`,
+    exportButton: `${root}-export-button`,
+    exportTooltip: `${root}-export-tooltip`,
+    changelog: `${root}-changelog`,
+    changelogButton: `${root}-changelog-button`,
+    changelogTooltip: `${root}-changelog-tooltip`,
+});
+
 export class MBSPreferenceScreen extends MBSScreen {
     static readonly screen = "MBS_PreferenceScreen";
-    readonly screen = MBSPreferenceScreen.screen;
+    static readonly ids = ID;
+    static readonly screenParamsDefault = {
+        [root]: Object.freeze({
+            shape: [525, 75, 1380, 850] as RectTuple,
+            visibility: "visible",
+        }),
+        [ID.resetScreen]: Object.freeze({
+            shape: [0, 0, 2000, 1000] as RectTuple,
+            visibility: "hidden",
+        }),
+    };
 
-    constructor(parent: null | MBSScreen, shape: RectTuple = [525, 75, 1380, 850]) {
-        super(parent, shape);
+    constructor(parent: null | MBSScreen, params: null | ScreenParams.Partial = null) {
+        super(parent, MBSPreferenceScreen.screenParamsDefault, params);
 
         document.body.appendChild(
             <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
@@ -239,7 +302,7 @@ export class MBSPreferenceScreen extends MBSScreen {
     #settingsReset() {
         const screen = document.getElementById(ID.resetScreen) as HTMLDivElement;
         const button = document.getElementById(ID.resetAccept) as HTMLButtonElement;
-        screen.style.display = "block";
+        screen.style.visibility = "visible";
         button.disabled = true;
         this.#startTimer(button);
     }
@@ -280,9 +343,10 @@ export class MBSPreferenceScreen extends MBSScreen {
             FortuneWheelItemSets: loadFortuneWheelObjects(Player, "FortuneWheelItemSets", "item sets"),
             FortuneWheelCommands: loadFortuneWheelObjects(Player, "FortuneWheelCommands", "commands"),
         };
-        const subScreen = new FWSelectScreen(this, wheelStruct, Player, [95, 75, 1810, 850]);
-        this.children.set(subScreen.screen, subScreen);
-        subScreen.load();
+
+        const [x, y, w, h] = this.screenParams[this.ids.root].shape;
+        const params = { [FWSelectScreen.ids.root]: { shape: [95, y, w + (x - 95), h] as RectTuple } };
+        this.loadChild(FWSelectScreen, wheelStruct, Player, params);
     }
 
     load() {
@@ -291,7 +355,7 @@ export class MBSPreferenceScreen extends MBSScreen {
             [ID.rollCheckbox]: "RollWhenRestrained",
         } as const satisfies Record<string, keyof MBSSettings>;
 
-        const disabled = Player.IsRestrained() && !Player.MBSSettings.LockedWhenRestrained;
+        const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
         for (const [id, field] of Object.entries(checkboxes)) {
             const checkbox = document.getElementById(id) as HTMLInputElement;
             checkbox.checked = Player.MBSSettings[field];
@@ -300,41 +364,16 @@ export class MBSPreferenceScreen extends MBSScreen {
         super.load();
     }
 
-    resize() {
-        const root = document.getElementById(ID.root) as HTMLDivElement;
-        const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        const resetDisplay = resetScreen.style.display;
-
-        const canvas = MainCanvas.canvas;
-        const fontSize = canvas.clientWidth <= canvas.clientHeight * 2 ? canvas.clientWidth / 50 : canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, ...this.shape);
-        ElementPositionFix(ID.resetScreen, fontSize, 0, 0, 2000, 1000);
-        root.style.display = "grid";
-        resetScreen.style.display = resetDisplay;
-    }
-
-    click() {}
-
     run() {
         DrawCharacter(Player, 50, 50, 0.9);
     }
 
-    unload() {
-        for (const id of [ID.root, ID.resetScreen]) {
-            const elem = document.getElementById(id);
-            if (elem) {
-                elem.style.display = "none";
-            }
-        }
-    }
-
     exit() {
         const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (resetScreen.style.display === "block") {
-            resetScreen.style.display = "none";
+        if (resetScreen.style.visibility === "visible") {
+            resetScreen.style.visibility = "hidden";
         } else {
-            ElementRemove(ID.root);
-            ElementRemove(ID.resetScreen);
+            super.exit();
             this.exitScreens(false);
         }
     }
@@ -345,14 +384,7 @@ let preferenceState: PreferenceScreenProxy;
 waitFor(bcLoaded).then(() => {
     MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
         next(args);
-        if (TextScreenCache != null) {
-            TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
-        }
-
-        const img = new Image();
-        img.addEventListener("error", () => DrawGetImageOnError(img, false));
-        img.src = "Icons/Maid.png";
-        DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
+        preferenceLoadHook();
     });
 
     MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
@@ -368,55 +400,13 @@ waitFor(bcLoaded).then(() => {
         next(args);
         if (!previousScreen && PreferenceSubscreen as string === MBSPreferenceScreen.screen) {
             PreferenceExit();
-            const subScreen = new MBSPreferenceScreen(preferenceState);
-            preferenceState.children.set(subScreen.screen, subScreen);
-            return subScreen.load();
+            preferenceState.loadChild(MBSPreferenceScreen);
         }
     });
 
     (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
     preferenceState = new PreferenceScreenProxy();
-});
-
-const root = "mbs-preference";
-const ID = Object.freeze({
-    root,
-    styles: `${root}-style`,
-
-    header: `${root}-header`,
-    exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
-
-    settingsGrid: `${root}-settings`,
-    settingsPair: `${root}-settings-pair`,
-    itemsButton: `${root}-items-button`,
-    itemsHeader: `${root}-items-header`,
-    wheelButton: `${root}-wheel-button`,
-    wheelHeader: `${root}-wheel-header`,
-
-    rollCheckbox: `${root}-roll-checkbox`,
-    rollHeader: `${root}-roll-header`,
-    lockCheckbox: `${root}-lock-checkbox`,
-    lockHeader: `${root}-lock-header`,
-
-    miscGrid: `${root}-misc`,
-    reset: `${root}-reset`,
-    resetButton: `${root}-reset-button`,
-    resetTooltip: `${root}-reset-tooltip`,
-    resetScreen: `${root}-reset-screen`,
-    resetBackground: `${root}-reset-background`,
-    resetGrid: `${root}-reset-grid`,
-    resetAccept: `${root}-reset-accept`,
-    resetCancel: `${root}-reset-cancel`,
-
-    import: `${root}-import`,
-    importButton: `${root}-import-button`,
-    importTooltip: `${root}-import-tooltip`,
-    export: `${root}-export`,
-    exportButton: `${root}-export-button`,
-    exportTooltip: `${root}-export-tooltip`,
-    changelog: `${root}-changelog`,
-    changelogButton: `${root}-changelog-button`,
-    changelogTooltip: `${root}-changelog-tooltip`,
+    if (CurrentScreen === "Preference") {
+        preferenceLoadHook();
+    }
 });

@@ -13,7 +13,7 @@
 }
 
 #mbs-fwselect-storage {
-	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800);
+	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800) !important;
 	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
 	display: grid;
 	grid-area: storage;
@@ -21,20 +21,20 @@
 	justify-self: center;
 	width: 35%;
 
-	#mbs-fwselect-storage-tooltip {
-		background-color: var(--mbs-background-color);
-		border: inherit;
-		color: var(--mbs-text-color);
-		font-size: min(3.5vh, 1.75vw);
-		left: 15%;
-		line-height: 1.4;
-		min-height: min(9vh, 4.5vw);
-		padding-left: min(2vh, 1vw);
-		padding-right: min(2vh, 1vw);
-		position: absolute;
+	h2 {
+		margin: 0;
+	}
+
+	ul {
+		margin: 0;
 		text-align: left;
+	}
+
+	#mbs-fwselect-storage-tooltip {
+		bottom: unset;
+		left: 15%;
+		position: absolute;
 		visibility: hidden;
-		width: fit-content;
 	}
 
 	&:hover #mbs-fwselect-storage-tooltip {
@@ -47,7 +47,6 @@
 }
 
 #mbs-fwselect-storage-footer {
-	font-size: min(3.5vh, 1.75vw);
 	grid-area: storageFooter;
 	height: min(7vh, 3.5vw);
 	padding-top: min(1vh, 0.5vw);
@@ -72,8 +71,7 @@
 }
 
 #mbs-fwselect-header0, #mbs-fwselect-header1 {
-	align-items: center;
-	background: var(--mbs-background-color);
+	background-color: var(--mbs-background-color);
 	display: flex;
 	height: 100%;
 	justify-content: center;

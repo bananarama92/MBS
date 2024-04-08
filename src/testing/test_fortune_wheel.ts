@@ -71,11 +71,6 @@ export function test_builtinMBSWheel(): void {
             }
         });
     } finally {
-        if (GameVersion === "R101") {
-            // @ts-expect-error
-            characterNames.forEach(CharacterDelete);
-        } else {
-            characters.forEach(CharacterDelete);
-        }
+        characters.forEach(c => CharacterDelete(c));
     }
 }

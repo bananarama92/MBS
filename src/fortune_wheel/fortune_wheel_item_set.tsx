@@ -3,7 +3,7 @@
 import { clamp } from "lodash-es";
 
 import { FWSelectedItemSet, FWItemSet } from "../common_bc";
-import { MBSScreen, MBSObjectScreen, ExitAction } from "../screen_abc";
+import { MBSScreen, MBSObjectScreen, ExitAction, ScreenParams } from "../screen_abc";
 import { byteToKB } from "../settings";
 
 import { toItemBundles } from "./item_bundle";
@@ -78,7 +78,6 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
                         disabled={disabled}
                         data-level={i}
                         id={fields.optionID + i.toString()}
-                        style={{ border: "unset", paddingTop: "min(1vh, 0.5vw)", paddingBottom: "min(1vh, 0.5vw)" }}
                         onClick={(e) => {
                             const target = e.target as HTMLButtonElement;
                             settings[fields.level] = clamp(
@@ -132,22 +131,78 @@ function createTimerInput(flag: FWFlagTimerPasswordPadlock , index: number, disa
     );
 }
 
+
+const root = "mbs-fwitemset";
+const ID = Object.freeze({
+    root: root,
+    styles: `${root}-style`,
+
+    delete: `${root}-delete`,
+    deleteButton: `${root}-delete-button`,
+    deleteTooltip: `${root}-delete-tooltip`,
+    accept: `${root}-accept`,
+    acceptButton: `${root}-accept-button`,
+    acceptTooltip: `${root}-accept-tooltip`,
+    cancel: `${root}-cancel`,
+    cancelButton: `${root}-cancel-button`,
+    cancelTooltip: `${root}-cancel-tooltip`,
+    exit: `${root}-exit`,
+    exitButton: `${root}-exit-button`,
+    exitTooltip: `${root}-exit-tooltip`,
+    header: `${root}-header`,
+    midDiv: `${root}-mid-grid`,
+    botDiv: `${root}-bot-grid`,
+
+    outfitName: `${root}-outfit-name`,
+    outfitInput: `${root}-outfit-input`,
+    outfitDiv: `${root}-outfit-div`,
+    outfitButton: `${root}-outfit-button`,
+    outfitTooltip: `${root}-outfit-tooltip`,
+
+    stripHeader: `${root}-strip-header`,
+    stripInput: `${root}-strip-dropdown`,
+    stripButton: `${root}-strip-dropdown-button`,
+    stripDropdown: `${root}-strip-dropdown-content`,
+    stripOption: `${root}-strip-dropdown-option`,
+
+    equipHeader: `${root}-equip-header`,
+    equipInput: `${root}-equip-dropdown`,
+    equipButton: `${root}-equip-dropdown-button`,
+    equipDropdown: `${root}-equip-dropdown-content`,
+    equipOption: `${root}-equip-dropdown-option`,
+
+    weightHeader: `${root}-weight-header`,
+    weightInput: `${root}-weight-input`,
+
+    lockHeader: `${root}-lock-header`,
+    lockGrid: `${root}-lock-grid`,
+    lockContainer: `${root}-lock-container`,
+    lockCheckbox: `${root}-lock-checkbox`,
+    lockTimer: `${root}-lock-timer`,
+});
+
 export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
+    static readonly ids = ID;
     static readonly screen = "MBS_FWItemSetScreen";
-    readonly screen = FWItemSetScreen.screen;
     static readonly background = "Sheet";
     readonly settings: FWSelectedItemSet;
     readonly preview: Character;
+    static readonly screenParamsDefault = {
+        [root]: Object.freeze({
+            shape: [80, 60, 1840, 880] as RectTuple,
+            visibility: "visible",
+        }),
+    };
 
     constructor(
         parent: null | MBSScreen,
         wheelList: (null | FWItemSet)[],
         index: number,
         character: Character,
-        shape: RectTuple = [80, 60, 1840, 880],
+        screenParams: null | ScreenParams.Partial = null,
     ) {
         const disabled = !character.IsPlayer();
-        super(parent, wheelList, index, character, shape);
+        super(parent, wheelList, index, character, FWItemSetScreen.screenParamsDefault, screenParams);
         this.settings = new FWSelectedItemSet(wheelList);
         this.preview = CharacterLoadSimple("MBSFortuneWheelPreview");
 
@@ -256,6 +311,10 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         }}
                         onWheel={(e) => {
                             const target = e.target as HTMLInputElement;
+                            if (target.disabled) {
+                                return;
+                            }
+
                             if (e.deltaY < 0) {
                                 target.stepUp(1);
                             } else if (e.deltaY > 0) {
@@ -448,84 +507,20 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             this.#updateButton(ID.outfitButton);
         } else {
             this.settings.reset();
+            this.#updateButton(ID.acceptButton);
+            this.#updateButton(ID.outfitButton);
         }
 
         // Load and dress the character character
         this.#reloadPreviewAppearance();
     }
 
-    resize() {
-        const elem = document.getElementById(ID.root) as HTMLElement;
-        const fontSize = MainCanvas.canvas.clientWidth <= MainCanvas.canvas.clientHeight * 2 ? MainCanvas.canvas.clientWidth / 50 : MainCanvas.canvas.clientHeight / 25;
-        ElementPositionFix(ID.root, fontSize, ...this.shape);
-        elem.style.display = "grid";
-    }
-
     run() {
         DrawCharacter(this.preview, 300, 175, 0.78, false);
     }
 
-    click() {}
-
-    unload() {
-        const elem = document.getElementById(ID.root) as HTMLElement;
-        if (elem) {
-            elem.style.display = "none";
-        }
-    }
-
     exit(fullExit?: boolean, action?: ExitAction): void {
         CharacterDelete(this.preview);
-        ElementRemove(ID.root);
         super.exit(fullExit, action);
     }
 }
-
-const root = "mbs-fwitemset";
-const ID = Object.freeze({
-    root: root,
-    styles: `${root}-style`,
-
-    delete: `${root}-delete`,
-    deleteButton: `${root}-delete-button`,
-    deleteTooltip: `${root}-delete-tooltip`,
-    accept: `${root}-accept`,
-    acceptButton: `${root}-accept-button`,
-    acceptTooltip: `${root}-accept-tooltip`,
-    cancel: `${root}-cancel`,
-    cancelButton: `${root}-cancel-button`,
-    cancelTooltip: `${root}-cancel-tooltip`,
-    exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
-    header: `${root}-header`,
-    midDiv: `${root}-mid-grid`,
-    botDiv: `${root}-bot-grid`,
-
-    outfitName: `${root}-outfit-name`,
-    outfitInput: `${root}-outfit-input`,
-    outfitDiv: `${root}-outfit-div`,
-    outfitButton: `${root}-outfit-button`,
-    outfitTooltip: `${root}-outfit-tooltip`,
-
-    stripHeader: `${root}-strip-header`,
-    stripInput: `${root}-strip-dropdown`,
-    stripButton: `${root}-strip-dropdown-button`,
-    stripDropdown: `${root}-strip-dropdown-content`,
-    stripOption: `${root}-strip-dropdown-option`,
-
-    equipHeader: `${root}-equip-header`,
-    equipInput: `${root}-equip-dropdown`,
-    equipButton: `${root}-equip-dropdown-button`,
-    equipDropdown: `${root}-equip-dropdown-content`,
-    equipOption: `${root}-equip-dropdown-option`,
-
-    weightHeader: `${root}-weight-header`,
-    weightInput: `${root}-weight-input`,
-
-    lockHeader: `${root}-lock-header`,
-    lockGrid: `${root}-lock-grid`,
-    lockContainer: `${root}-lock-container`,
-    lockCheckbox: `${root}-lock-checkbox`,
-    lockTimer: `${root}-lock-timer`,
-});

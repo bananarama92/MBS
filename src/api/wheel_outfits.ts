@@ -29,7 +29,7 @@ export const getAll: typeof mbs.wheelOutfits.getAll = function getAll() {
 
     const itemSets = Player.MBSSettings.FortuneWheelItemSets;
     const itemRecord: Record<string, WheelBundle> = {};
-    for (const [i, set] of CommonEnumerate(itemSets)) {
+    for (const [i, set] of itemSets.entries()) {
         if (set === null) {
             continue;
         }

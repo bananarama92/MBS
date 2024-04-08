@@ -1,0 +1,46 @@
+#mbs-fwcommand {
+	grid-template:
+		"delete header accept cancel exit" min(9vh, 4.5vw)
+		"commandInput commandInput commandInput commandInput commandInput" min(9vh, 4.5vw)
+		"weightHeader weightHeader weightHeader weightHeader weightHeader" min(7vh, 3.5vw)
+        "weightInput weightInput weightInput weightInput weightInput" min(7vh, 3.5vw) / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+}
+
+#mbs-fwcommand-delete {
+	grid-area: delete;
+}
+
+#mbs-fwcommand-header {
+	grid-area: header;
+	margin-left: min(20vh, 10vw);
+}
+
+#mbs-fwcommand-accept {
+	grid-area: accept;
+}
+
+#mbs-fwcommand-cancel {
+	grid-area: cancel;
+}
+
+#mbs-fwcommand-exit {
+	grid-area: exit;
+}
+
+#mbs-fwcommand-command-input {
+	grid-area: commandInput;
+	height: min(7vh, 3.5vw);
+	place-self: self-end center;
+	width: 50%;
+}
+
+#mbs-fwcommand-weight-header {
+	align-self: self-end;
+	grid-area: weightHeader;
+}
+
+#mbs-fwcommand-weight-input {
+	grid-area: weightInput;
+    place-self: start center;
+	width: min(7vh, 3.5vw);
+}

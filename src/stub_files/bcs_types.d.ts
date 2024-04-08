@@ -257,3 +257,10 @@ declare namespace SettingsStatus {
 }
 
 type SettingsStatus = 0 | 1 | 2 | 3;
+
+declare module "*.scss" {
+    export type Styles = Record<string, string>;
+    const styles: Styles;
+    export default styles;
+    export type ClassNames = keyof Styles;
+}

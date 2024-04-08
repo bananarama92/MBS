@@ -2,7 +2,7 @@
 
 import { cloneDeep, clone } from "lodash-es";
 
-import { isArray, entries, isInteger, logger } from "../common";
+import { isArray, entries, isInteger, logger, keys } from "../common";
 
 import { getBaselineProperty } from "./type_setting";
 
@@ -117,7 +117,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
             if (option.OptionType === "VariableHeightOption") {
                 validPropKeys.add("OverrideHeight");
             }
-            for (const key of CommonKeys(option.ParentData.baselineProperty ?? {})) {
+            for (const key of keys(option.ParentData.baselineProperty ?? {})) {
                 if (!CraftingPropertyExclude.has(key)) {
                     validPropKeys.add(key);
                 }
