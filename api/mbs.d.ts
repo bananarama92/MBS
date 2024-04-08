@@ -34,8 +34,47 @@ interface WheelBundle {
 }
 
 /**
+ * An interface with all available MBS style options.
+ *
+ * Note that the option's exact default values are *not* guaranteed by the API, and
+ * may by changed at any point in the future without an increment of the API version.
+ */
+interface CSSStyles {
+    /**
+     * The background color used for _most_ `div` elements (if they have a background).
+     * @default "white"
+     */
+    backgroundColor: string;
+    /**
+     * The background color used for `button` elements.
+     * @default "white"
+     */
+    buttonColor: string;
+    /**
+     * The background color used when hovering over `button` elements.
+     * @default "cyan"
+     */
+    buttonHoverColor: string;
+    /**
+     * The background color used for tooltips.
+     * @default "lightyellow"
+     */
+    tooltipColor: string;
+    /**
+     * The color used for borders.
+     * @default "black"
+     */
+    borderColor: string;
+    /**
+     * The color used for borders.
+     * @default "black"
+     */
+    textColor: string;
+}
+
+/**
  * Maid's Bondage Scripts API: Various additions and utility scripts for BC.
- * @version 1.2
+ * @version 1.3
  */
 declare namespace mbs {
     /**
@@ -45,6 +84,7 @@ declare namespace mbs {
      * @since API version 1.0
      */
     const MBS_VERSION: `${number}.${number}.${number}${string}`;
+
     /**
      * The version of the MBS API.
      *
@@ -60,6 +100,7 @@ declare namespace mbs {
         /** The major API versions; increments are reserved for additions */
         readonly minor: number,
     };
+
     /**
      * Run the MBS test suit.
      *
@@ -67,6 +108,7 @@ declare namespace mbs {
      * @returns Whether the test suite succeeded or not
      */
     function runTests(): boolean;
+
     /**
      * Return MBS debug output in human-readable, stringified form.
      *
@@ -79,6 +121,7 @@ declare namespace mbs {
      * @returns The MBS debug output in stringified form
      */
     function getDebug(): string;
+
     /**
      * Public MBS API for retrieving wheel outfit data.
      *
@@ -92,6 +135,7 @@ declare namespace mbs {
          * @returns All MBS outfit data
          */
         function getAll(): Record<string, WheelBundle>;
+
         /**
          * Get a single wheel outfit by its name.
          *
@@ -100,6 +144,7 @@ declare namespace mbs {
          * @returns The wheel outfit or `undefined` if it cannot be found
          */
         function getByName(name: string): undefined | WheelBundle;
+
         /**
          * Get a single wheel outfit by its index.
          *
@@ -108,6 +153,7 @@ declare namespace mbs {
          * @returns The MBS outfit data or `undefined`
          */
         function getByIndex(index: number): undefined | WheelBundle;
+
         /**
          * Return a list of all the players wheel outfit names.
          *
@@ -115,6 +161,7 @@ declare namespace mbs {
          * @returns The list of wheel outfit names
          */
         function getNames(): string[];
+
         /**
          * Return a list of all the players wheel outfit indices.
          *
@@ -122,5 +169,35 @@ declare namespace mbs {
          * @returns The list of wheel outfit indices
          */
         function getIndices(): number[];
+    }
+
+    /**
+     * Public API for modifying MBS's style sheets.
+     *
+     * @since API version 1.3
+     */
+    namespace css {
+        /**
+         * Set the passed MBS style options.
+         *
+         * @since API version 1.3
+         * @param style A record with one or more of the to-be assigned style options
+         */
+        function setStyle(style: Readonly<Partial<CSSStyles>>): void;
+
+        /**
+         * Get the currently assigned MBS style options.
+         *
+         * @since API version 1.3
+         * @returns A record with the currently assigned style options
+         */
+        function getStyle(): CSSStyles;
+
+        /**
+         * The default MBS style options.
+         *
+         * @since API version 1.3
+         */
+        const DEFAULT_STYLE: Readonly<CSSStyles>;
     }
 }

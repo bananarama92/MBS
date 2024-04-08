@@ -2,8 +2,9 @@ import { logger, waitFor } from "../common";
 import { settingsMBSLoaded, bcLoaded } from "../common_bc";
 
 import * as wheelOutfits from "./wheel_outfits";
+import * as css from "./css";
 
-export { wheelOutfits };
+export { wheelOutfits, css };
 
 /**
  * The version of the MBS API.
@@ -14,8 +15,8 @@ export { wheelOutfits };
 export const API_VERSION = Object.freeze({
     /** The major API versions; increments are reserved for changes and removals */
     major: 1,
-    /** The major API versions; increments are reserved for additions */
-    minor: 2,
+    /** The minor API versions; increments are reserved for additions */
+    minor: 3,
 }) satisfies typeof mbs.API_VERSION;
 
 /**
