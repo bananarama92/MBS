@@ -3,6 +3,10 @@
 import { range, sample } from "lodash-es";
 import bcModSdk from "bondage-club-mod-sdk";
 
+import { isArray, includes, keys, entries, fromEntries, logger, waitFor, isInteger } from "./lpgl/common";
+
+export { isArray, includes, keys, entries, fromEntries, logger, waitFor, isInteger };
+
 /** An array with all alpha-numerical characters. */
 const ALPHABET = Object.freeze([
     "A", "B", "C", "D",
@@ -16,71 +20,6 @@ const ALPHABET = Object.freeze([
 
 /** Regular expression for the MBS version */
 const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
-
-type LogLevel = "debug" | "log" | "warn" | "error";
-
-interface LogEntry {
-    readonly date: Date,
-    readonly level: LogLevel,
-    readonly args: readonly unknown[],
-}
-
-/**
- * The MBS logging class.
- * Combines the {@link console} logging methods with an {@link Array} for storing the output.
- */
-class MBSLog extends Array<LogEntry> {
-    #log(level: LogLevel, args: readonly unknown[]) {
-        const date = new Date(Date.now());
-        console[level]("MBS:", ...args);
-        this.push({ date, level, args });
-    }
-
-    /**
-     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/debug)
-     * @param args Parameters to be passed to {@link console.debug}
-     */
-    debug(...args: unknown[]) {
-        this.#log("debug", args);
-    }
-
-    /**
-     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/log)
-     * @param args Parameters to be passed to {@link console.log}
-     */
-    log(...args: unknown[]) {
-        this.#log("log", args);
-    }
-
-    /**
-     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/warn)
-     * @param args Parameters to be passed to {@link console.warn}
-     */
-    warn(...args: unknown[]) {
-        this.#log("warn", args);
-    }
-
-    /**
-     * [MDN Reference](https://developer.mozilla.org/docs/Web/API/console/error)
-     * @param args Parameters to be passed to {@link console.error}
-     */
-    error(...args: unknown[]) {
-        this.#log("error", args);
-    }
-
-    toJSON() {
-        return this.map(arg => {
-            return {
-                date: arg.date.toUTCString(),
-                level: arg.level,
-                args: arg.args.map(i => (i instanceof Map || i instanceof Set) ? Array.from(i) : i),
-            };
-        });
-    }
-}
-
-/** The MBS logger */
-export const logger = new MBSLog();
 
 /**
  * Check whether an integer falls within the specified range and raise otherwise.
@@ -154,19 +93,6 @@ export function trimArray<T>(list: T[], n: number): T[] {
 export function getRandomPassword(n: number): string {
     validateInt(n, "n", 0, 8);
     return range(0, n).map(_ => sample(ALPHABET)).join("");
-}
-
-/**
- * Wait for the passed predicate to evaluate to `true`.
- * @param predicate A predicate
- * @param timeout The timeout in milliseconds for when the predicate fails
- * @returns Whether the predicate has returned `true`
- */
-export async function waitFor(predicate: () => boolean, timeout: number = 100): Promise<boolean> {
-    while (!predicate()) {
-        await new Promise(resolve => setTimeout(resolve, timeout));
-    }
-    return true;
 }
 
 /** The MBS {@link ModSDKGlobalAPI} instance. */
@@ -453,59 +379,4 @@ export class Version {
             beta: this.beta,
         };
     }
-}
-
-/**
- * A more readonly-friendly version of {@link Array.isArray}.
- * @param arg The to-be checked object
- * @returns Whether the passed object is an array
- */
-export function isArray(arg: unknown): arg is readonly unknown[] {
-    return Array.isArray(arg);
-}
-
-/**
- * A version of {@link Object.keys} more aimed at records with literal string keys.
- * @param arg A record
- * @returns A list with all keys in the passed record
- */
-export function keys<KT extends string>(arg: Partial<Record<KT, unknown>>): KT[] {
-    return <KT[]>Object.keys(arg);
-}
-
-/**
- * A version of {@link Object.entries} more aimed at records with literal string keys.
- * @param arg A record
- * @returns A list of 2-tuples with all key/value pairs in the passed record
- */
-export function entries<KT extends string, VT>(arg: Partial<Record<KT, VT>>): [KT, VT][] {
-    return <[KT, VT][]>Object.entries(arg);
-}
-
-/**
- * A version of {@link Object.fromEntries} more aimed at records with literal string keys.
- * @param arg A list of 2-tuples
- * @returns A record constructed from the passed list
- */
-export function fromEntries<KT extends string, VT>(arg: Iterable<readonly [KT, VT]>): Record<KT, VT> {
-    return <Record<KT, VT>>Object.fromEntries(arg);
-}
-
-/**
- * A version of {@link Array.includes} that serves as a type guard.
- * @param arg An array
- * @param value The element to search for
- * @returns Whether the passed array includes the passed value
- */
-export function includes<T>(arg: readonly T[], value: unknown): value is T {
-    return arg.includes(<T>value);
-}
-
-/**
- * A version of {@link Number.isInteger} that serves as a type guard.
- * @param arg A numeric value
- * @returns Whether the passed numeric value is an integer
- */
-export function isInteger(arg: unknown): arg is number {
-    return Number.isInteger(arg);
 }

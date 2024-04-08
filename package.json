@@ -11,7 +11,7 @@
         "type": "git",
         "url": "git+ssh://git@github.com/bananarama92/MBS.git"
     },
-    "license": "GPL-3.0",
+    "license": "SEE LICENSE",
     "author": "bananarama92 <bananarama921@outlook.com>",
     "browserslist": [
         "since 2021 and > 0.5% and not dead"

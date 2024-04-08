@@ -16,7 +16,7 @@ export const API_VERSION = Object.freeze({
     /** The major API versions; increments are reserved for changes and removals */
     major: 1,
     /** The minor API versions; increments are reserved for additions */
-    minor: 3,
+    minor: 4,
 }) satisfies typeof mbs.API_VERSION;
 
 /**
