@@ -1,5 +1,14 @@
 # MBS Changelog
 
+## 1.5.0
+* Use DOM elements for all remaining MBS screens, wrapping up the DOM-ification
+* Remove a few redundant functions and replace the with lodash equivalents
+* Reduce the tooltip overlap in the wheel preset screen and improve the tooltip standardization
+* Further centralize the CSS styling
+* Add safeguards for loading MBS while the preference- or wheel screen is open
+* Increment the MBS API to version 1.3:
+    - Add the new `mbs.css` namespace, which contains functions modifying MBS's style sheets.
+
 ## 1.4.7
 * Fix the MBS settings menu sometimes requiring two clicks to exit
 * Fix the MBS settings menu locking being incorrectly locked when restrained
