@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## 1.6.1
+* Fix the garbling JSON data failing to load
+
 ## 1.6.0
 * Experimental: Add an alternative form of more phonetically-acurate garbling based on Cordelia Mist's [Dalamud-GagSpeak](https://github.com/CordeliaMist/Dalamud-GagSpeak).
   Note that the alternative garbling is disabled by default.

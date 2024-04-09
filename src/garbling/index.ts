@@ -2,9 +2,6 @@ import { MBS_MOD_API, waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
 
 import { convertToGagSpeak, GarbleOptions } from "./gag_speak";
-import { json as garblingJSON } from "./json";
-
-export { garblingJSON };
 
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing garbling module");
