@@ -160,11 +160,13 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <h2>Garbling settings</h2>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" data-field="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)}/>
-                        <p>
-                            <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
-                            based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
-                        </p>
-                        <p>Incompatible-ish with FBC's garbling anti-cheat as of the moment</p>
+                        <div>
+                            <p>
+                                <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
+                                based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
+                            </p>
+                            <p>Incompatible-ish with FBC's garbling anti-cheat as of the moment</p>
+                        </div>
                     </div>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" data-field="DropTrailing" onClick={this.#boolSwitch.bind(this)}/>

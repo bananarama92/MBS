@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## 1.6.0
+* Experimental: Add an alternative form of more phonetically-acurate garbling based on Cordelia Mist's [Dalamud-GagSpeak](https://github.com/CordeliaMist/Dalamud-GagSpeak).
+  Note that the alternative garbling is disabled by default.
+* Add support for BC R103Beta1
+
 ## 1.5.0
 * Use DOM elements for all remaining MBS screens, wrapping up the DOM-ification
 * Remove a few redundant functions and replace the with lodash equivalents
