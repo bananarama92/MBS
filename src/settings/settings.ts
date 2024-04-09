@@ -22,7 +22,6 @@ import {
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
-import { garblingJSON } from "../garbling";
 
 import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
@@ -254,9 +253,6 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: scalars.AlternativeGarbling,
         DropTrailing: scalars.DropTrailing,
     };
-    if (settings.AlternativeGarbling) {
-        garblingJSON.init();
-    }
     const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
     return {
         settings,
