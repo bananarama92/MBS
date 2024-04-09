@@ -115,6 +115,15 @@
 		font-size: var(--mbs-font-large);
 	}
 
+	h2 {
+		margin: min(1vh, 0.5vw);
+	}
+
+	ul {
+		margin: 0;
+		text-align: left;
+	}
+
 	p, h2, ul {
 		font-size: var(--mbs-font-small);
 	}

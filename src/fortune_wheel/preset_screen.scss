@@ -135,15 +135,6 @@
 	grid-template-columns: min(7vh, 3.5vw);
 	grid-template-rows: min(7vh, 3.5vw) auto;
 
-	h2 {
-		margin: 0;
-	}
-
-	ul {
-		margin: 0;
-		text-align: left;
-	}
-
 	&:hover .mbs-fwpreset-color {
 		filter: brightness(60%);
 	}

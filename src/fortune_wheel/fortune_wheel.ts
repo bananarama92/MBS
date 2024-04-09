@@ -791,8 +791,6 @@ function wheelFortuneLoadHook() {
 
 export let fortuneWheelState: FWScreenProxy;
 
-declare const WheelFortuneDrawWheel: undefined | typeof WheelFortuneDraw;
-
 waitFor(bcLoaded).then(() => {
     const COORDS = {
         exit: [1830, 60, 90, 90],

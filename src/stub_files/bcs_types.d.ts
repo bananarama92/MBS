@@ -142,6 +142,10 @@ interface MBSProtoSettings {
      * Note that this does not affect the customization of wheel outfits themselves, which are always modifiable.
      */
     LockedWhenRestrained?: boolean;
+    /** Whether to use an alternate garbling algorithm based on {@link https://github.com/CordeliaMist/Dalamud-GagSpeak} */
+    AlternativeGarbling?: boolean;
+    /** Whether to drop trailing characters for the heaviest gags */
+    DropTrailing?: boolean;
 }
 
 /** The MBS settings */
@@ -163,6 +167,10 @@ interface MBSSettings {
      * Note that this does not affect the customization of wheel outfits themselves, which are always modifiable.
      */
     LockedWhenRestrained: boolean;
+    /** Whether to use an alternate garbling algorithm based on {@link https://github.com/CordeliaMist/Dalamud-GagSpeak} */
+    AlternativeGarbling: boolean;
+    /** Whether to drop trailing characters for the heaviest gags */
+    DropTrailing: boolean;
 }
 
 /** An interface for representing clickable buttons */
