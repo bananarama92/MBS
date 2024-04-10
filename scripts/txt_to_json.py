@@ -8,7 +8,7 @@ import json
 
 
 def main(path_inp: str | os.Pathlike[str], path_out: str | os.Pathlike[str]) -> None:
-    dct: dict[str, str] = {}
+    dct: dict[str, list[str]] = {}
     with open(path_inp, "r", encoding="utf8") as f_inp:
         for line in f_inp:
             word, _, phonWord = line.partition("\t")

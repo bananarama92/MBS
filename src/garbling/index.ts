@@ -8,11 +8,12 @@ waitFor(bcLoaded).then(() => {
 
     MBS_MOD_API.hookFunction("SpeechGarble", 0, ([character, words, noDeaf, ...args], next) => {
         const gagLevel = SpeechGetTotalGagLevel(character, noDeaf);
-        if (gagLevel === 0 || !character || !words || !Player.MBSSettings.AlternativeGarbling) {
+        if (!gagLevel || !character || !words || !Player.MBSSettings.AlternativeGarbling) {
             return next([character, words, noDeaf, ...args]);
         } else {
             const options: GarbleOptions.Base = {
                 dropChars: Player.MBSSettings.DropTrailing ? {} : undefined,
+                perSyllable: Player.MBSSettings.GarblePerSyllable,
                 character,
             };
             let ret = convertToGagSpeak(words, gagLevel, options);
@@ -30,6 +31,7 @@ waitFor(bcLoaded).then(() => {
         } else {
             const options: GarbleOptions.Base = {
                 dropChars: Player.MBSSettings.DropTrailing ? {} : undefined,
+                perSyllable: Player.MBSSettings.GarblePerSyllable,
                 fallback: next,
                 ignoreOOC,
             };

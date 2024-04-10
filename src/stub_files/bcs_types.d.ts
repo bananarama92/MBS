@@ -146,10 +146,12 @@ interface MBSProtoSettings {
     AlternativeGarbling?: boolean;
     /** Whether to drop trailing characters for the heaviest gags */
     DropTrailing?: boolean;
+    /** Whether to interpolate between gag levels using different garbling tables */
+    GarblePerSyllable?: boolean;
 }
 
 /** The MBS settings */
-interface MBSSettings {
+interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, "FortuneWheelSets">, unknown> {
     /** The MBS version */
     readonly Version: typeof mbs.MBS_VERSION,
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
@@ -171,6 +173,8 @@ interface MBSSettings {
     AlternativeGarbling: boolean;
     /** Whether to drop trailing characters for the heaviest gags */
     DropTrailing: boolean;
+    /** Whether to interpolate between gag levels using different garbling tables */
+    GarblePerSyllable: boolean;
 }
 
 /** An interface for representing clickable buttons */

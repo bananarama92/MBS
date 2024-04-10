@@ -222,6 +222,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: [],
         AlternativeGarbling: [],
         DropTrailing: [],
+        GarblePerSyllable: [],
     };
 
     const scalars = {
@@ -230,6 +231,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: true,
         AlternativeGarbling: false,
         DropTrailing: false,
+        GarblePerSyllable: false,
     } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
@@ -252,6 +254,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: scalars.RollWhenRestrained,
         AlternativeGarbling: scalars.AlternativeGarbling,
         DropTrailing: scalars.DropTrailing,
+        GarblePerSyllable: scalars.GarblePerSyllable,
     };
     const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
     return {
@@ -344,6 +347,7 @@ export function clearMBSSettings(): void {
         FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
         AlternativeGarbling: false,
         DropTrailing: false,
+        GarblePerSyllable: false,
     });
 
     ServerAccountUpdate.QueueData({

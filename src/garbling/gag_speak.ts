@@ -1,4 +1,4 @@
-import { range } from "lodash-es";
+import { range, zip } from "lodash-es";
 
 import { MBS_MOD_API } from "../common";
 
@@ -30,6 +30,7 @@ export namespace GarbleOptions {
         readonly character?: Character,
         readonly fallback?: Fallback,
         readonly ignoreOOC?: boolean,
+        readonly perSyllable?: boolean,
     }
 
     export interface Parsed extends Record<keyof Base, unknown> {
@@ -37,14 +38,19 @@ export namespace GarbleOptions {
         readonly character: null | Character,
         readonly fallback: Fallback,
         readonly ignoreOOC: boolean,
+        readonly perSyllable: boolean,
     }
 }
 
-export const GAG_LEVEL = Object.freeze({
-    light: 3,
-    medium: 6,
-    heavy: 9,
-    max: 20,
+type GagLevel = typeof GagLevel[keyof typeof GagLevel];
+export const GagLevel = Object.freeze({
+    LIGHT: 3,
+    MEDIUM: 6,
+    HEAVY: 9,
+    KILO_HEAVY: 12,
+    MEGA_HEAVY: 15,
+    GIGA_HEAVY: 18,
+    MAX: 21,
 });
 
 const PHONEMES_SYMBOLS_EN_US = Object.freeze(new Set([
@@ -58,26 +64,27 @@ const LETTER_REGEX = /\p{L}/u;
 /**
  * Convert a single English word to a list of its respective International Phonetic Alphabet (IPA) characters
  * @param word The to-be converted word
- * @returns The words IPA characters or `undefined` if the word is unknown
+ * @returns The words IPA characters per syllable or `undefined` if the word is unknown
  */
-function wordToIPA(word: string): undefined | string[] {
+function wordToIPA(word: string): undefined | string[][] {
     const wordLower = word.toLowerCase();
     const phoneticSyllables = PHONETIC_DICT[wordLower];
     if (phoneticSyllables === undefined) {
         return undefined;
     }
 
-    const phonetics: string[] = [];
-    for (const syllable of phoneticSyllables) {
+    const phonetics: string[][] = range(0, phoneticSyllables.length).map(_ => []);
+    for (const items of zip(phoneticSyllables, phonetics)) {
+        const [syllable, phoneticsList] = items as [string, string[]];
         let i = 0;
         while (i < syllable.length) {
             const char1 = syllable[i];
             const char12 = syllable.slice(i, i + 2);
             if (PHONEMES_SYMBOLS_EN_US.has(char12)) {
-                phonetics.push(char12);
+                phoneticsList.push(char12);
                 i += 2;
             } else {
-                phonetics.push(char1);
+                phoneticsList.push(char1);
                 i += 1;
             }
         }
@@ -103,8 +110,8 @@ function parseOptions(options: null | GarbleOptions.Base, gagLevel: number): Gar
     if (options?.dropChars != null) {
         const dropCharsOptions: GarbleOptions.DropChars = {
             level: gagLevel,
-            levelMin: options.dropChars.levelMin ?? GAG_LEVEL.heavy,
-            levelMax: options.dropChars.levelMax ?? GAG_LEVEL.max,
+            levelMin: options.dropChars.levelMin ?? GagLevel.HEAVY,
+            levelMax: options.dropChars.levelMax ?? GagLevel.MAX,
             maxFrac: options.dropChars.maxFrac ?? 0.5,
         };
         dropChars = (word) => dropTrailingChars(word, dropCharsOptions);
@@ -115,15 +122,34 @@ function parseOptions(options: null | GarbleOptions.Base, gagLevel: number): Gar
         character: options?.character ?? null,
         fallback: options?.fallback ?? ((args) => MBS_MOD_API.callOriginal("SpeechGarbleByGagLevel", args)),
         ignoreOOC: options?.ignoreOOC ?? false,
+        perSyllable: options?.perSyllable ?? false,
     };
 }
 
-function getGagData(character: null | Character, gagLevel: number): GagData {
+function getGagData(
+    character: null | Character,
+    gagLevel: number,
+    syllableOptions: null | { readonly syllable: number, readonly syllableMax: number } = null,
+): GagData {
     if (character && character.HasEffect("OpenMouth") && !character.HasEffect("BlockMouth")) {
         return GAG_DATA["Ring Gag"];
-    } else if (gagLevel <= GAG_LEVEL.light) {
+    }
+
+    syllableOptions: if (syllableOptions !== null) {
+        const gagLevelRound = Math.floor(gagLevel / 3);
+        if (gagLevelRound === 0) {
+            break syllableOptions;
+        }
+
+        const frac = (gagLevel / 3) - gagLevelRound;
+        if (frac > (syllableOptions.syllable / syllableOptions.syllableMax)) {
+            gagLevel = (1 + gagLevelRound) * 3;
+        }
+    }
+
+    if (gagLevel <= GagLevel.LIGHT) {
         return GAG_DATA["Cleave Gag"];
-    } else if (gagLevel <= GAG_LEVEL.medium) {
+    } else if (gagLevel <= GagLevel.MEDIUM) {
         return GAG_DATA["Ball Gag"];
     } else {
         return GAG_DATA["Dildo Gag"];
@@ -135,8 +161,7 @@ export function convertToGagSpeak(
     gagLevel: number,
     options: null | GarbleOptions.Base = null,
 ): string {
-    const { dropChars, fallback, character, ignoreOOC } = parseOptions(options, gagLevel);
-    const gagData = getGagData(character, gagLevel);
+    const { dropChars, fallback, character, ignoreOOC, perSyllable } = parseOptions(options, gagLevel);
 
     const oocIndices = new Set(SpeechGetOOCRanges(sentence).flatMap(({ start, length }) => {
         return range(start, start + length + 1);
@@ -165,9 +190,13 @@ export function convertToGagSpeak(
             garbledSentence += word;
         } else {
             // Try the phonetics-based garbling and fall back to BC's default if no match is found for the word
-            const phonetics = wordToIPA(word);
-            if (phonetics) {
-                const garbledWord = dropChars(phonetics.map(j => gagData[j]?.SOUND ?? "").join(""));
+            const phonWord = wordToIPA(word);
+            if (phonWord) {
+                const garbledWord = dropChars(phonWord.flatMap((phonSyllable, j) => {
+                    const syllableOptions = perSyllable ? { syllable: j + 1, syllableMax: phonWord.length } : null;
+                    const gagData = getGagData(character, gagLevel, syllableOptions);
+                    return phonSyllable.map(phonChar => gagData[phonChar]?.SOUND ?? "");
+                }).join(""));
                 if (caps.every(Boolean)) {
                     garbledSentence += garbledWord.toUpperCase();
                 } else if (caps[0] && garbledWord.length > 0) {

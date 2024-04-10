@@ -164,13 +164,21 @@ export class MBSPreferenceScreen extends MBSScreen {
                                 <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
                                 based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
                             </p>
-                            <p>Incompatible-ish with FBC's garbling anti-cheat as of the moment</p>
+                            <p>
+                                Incompatible-ish with <a href="https://sidiousious.gitlab.io/bce/" target="_blank">FBC</a>'s
+                                garbling anti-cheat as of the moment
+                            </p>
                         </div>
                     </div>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" data-field="DropTrailing" onClick={this.#boolSwitch.bind(this)}/>
                         Whether to heaviest gags will drop up to half of all trailing characters
                         when alternate garbling is enabled
+                    </div>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="GarblePerSyllable" onClick={this.#boolSwitch.bind(this)}/>
+                        Interpolate between the three alternative garbling levels, allowing for a more gradual increase
+                        in garbling strength (on a syllable by syllable basis) as the gag level increases
                     </div>
                 </div>
 
