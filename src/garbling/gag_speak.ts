@@ -3,9 +3,9 @@ import { range } from "lodash-es";
 import { MBS_MOD_API } from "../common";
 
 import _GAG_DATA from "./vendor/gag_data.json" assert { type: "JSON" };
-import _PHONETIC_DICT from "./vendor/en_UK.json" assert { type: "JSON" };
+import _PHONETIC_DICT from "./vendor/en_US.json" assert { type: "JSON" };
 
-type PhoneticDict = Readonly<Record<string, undefined | string>>;
+type PhoneticDict = Readonly<Record<string, undefined | readonly string[]>>;
 type GagData = Readonly<Record<string, { readonly MUFFLE: number, readonly SOUND: string }>>;
 
 const GAG_DATA: { readonly [k in keyof typeof _GAG_DATA]: GagData } = Object.freeze(_GAG_DATA);
@@ -47,10 +47,10 @@ export const GAG_LEVEL = Object.freeze({
     max: 20,
 });
 
-const PHONEMES_SYMBOLS_EN_UK = Object.freeze(new Set([
-    "b", "aʊ", "t", "k", "ə", "z", "ɔ", "ɹ", "s", "j", "u", "m", "f", "ɪ", "oʊ", "ʊ", "ɡ", "ɛ", "n",
-    "eɪ", "d", "ɫ", "w", "i", "p", "ɑ", "ɝ", "θ", "v", "h", "æ", "ŋ", "ʃ", "ʒ", "aɪ", "dʒ", "tʃ", "ð",
-    "ɔɪ", "ɪə",
+const PHONEMES_SYMBOLS_EN_US = Object.freeze(new Set([
+    "aɪ", "aʊ", "b", "d", "dʒ", "eɪ", "f", "h", "i", "j", "k", "m", "n", "oʊ", "p", "s", "t",
+    "tʃ", "u", "v", "w", "z", "æ", "ð", "ŋ", "ɑ", "ɔ", "ɔɪ", "ə", "ɛ", "ɝ", "ɡ", "ɪ", "ɪə", "ɫ",
+    "ɹ", "ʃ", "ʊ", "ʒ", "θ",
 ]));
 
 const LETTER_REGEX = /\p{L}/u;
@@ -62,23 +62,24 @@ const LETTER_REGEX = /\p{L}/u;
  */
 function wordToIPA(word: string): undefined | string[] {
     const wordLower = word.toLowerCase();
-    const wordPhonetic = PHONETIC_DICT[wordLower];
-    if (wordPhonetic === undefined) {
+    const phoneticSyllables = PHONETIC_DICT[wordLower];
+    if (phoneticSyllables === undefined) {
         return undefined;
     }
 
     const phonetics: string[] = [];
-    const wordPhoneticSan = wordPhonetic.split(",")[0].replace(/[/ˌˈː\s]/g, "");
-    let i = 0;
-    while (i < wordPhoneticSan.length) {
-        const char1 = wordPhoneticSan[i];
-        const char12 = wordPhoneticSan.slice(i, i + 2);
-        if (PHONEMES_SYMBOLS_EN_UK.has(char12)) {
-            phonetics.push(char12);
-            i += 2;
-        } else {
-            phonetics.push(char1);
-            i += 1;
+    for (const syllable of phoneticSyllables) {
+        let i = 0;
+        while (i < syllable.length) {
+            const char1 = syllable[i];
+            const char12 = syllable.slice(i, i + 2);
+            if (PHONEMES_SYMBOLS_EN_US.has(char12)) {
+                phonetics.push(char12);
+                i += 2;
+            } else {
+                phonetics.push(char1);
+                i += 1;
+            }
         }
     }
     return phonetics;
