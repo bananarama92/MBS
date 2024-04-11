@@ -14,7 +14,7 @@ A repo with a number of Bondage Club-related additions, including:
 ## Installation
 There are a number of (mutually exclusive!) options to install MBS these days:
 * Recommended: Install the [FUSAM](https://sidiousious.gitlab.io/bc-addon-loader/) BC Addon Manager and use that to enable MBS
-* Install the Tampermonkey addon for your browser of choice and click on the MBS [loader.user.js](https://github.com/bananarama92/MBS/raw/main/src/loader.user.js) file
+* Install the Tampermonkey addon for your browser of choice and click on the MBS [loader.user.js](https://github.com/bananarama92/MBS/raw/main/loader.user.js) file
 * Assigning (and activating) the following link to a bookmark or directly using it in the address bar:
 
 ```js
