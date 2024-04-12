@@ -22,7 +22,7 @@ export function validateBuiltinWheelIDs(): boolean {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 102 satisfies number;
+export const BC_MIN_VERSION = 103 satisfies number;
 
 /**
  * Check whether the passed BC version is supported and raise otherwise.
@@ -43,22 +43,20 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 
 /** A record with supported function hashes for each MBS-hooked function */
 const HOOK_FUNC_HASHES = (() => {
-    const hashes: [string, HashList][] = [
+    const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["FF1A7B21", "5A1B4ACC"]],
-        ["CraftingRun", ["5BE6E125", "4018E748"]],
-        ["MainHallRun", ["735A1207", "D587AD40"]],
-        ["MainHallClick", ["7A6D741A"]],
-        ["ServerPlayerIsInChatRoom", ["E3771112"]],
+        ["CraftingClick", ["5A1B4ACC"]],
+        ["CraftingRun", ["4018E748"]],
         ["SpeechGarble", ["9D669F73"]],
-        ["SpeechGarbleByGagLevel", ["3D604B82", "F7555009"]],
+        ["SpeechGarbleByGagLevel", ["F7555009"]],
         ["PreferenceLoad", ["8BAC28C8"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["21CCD6B4"]],
-        ["WheelFortuneRun", ["A59DA22A", "150059B6"]],
+        ["WheelFortuneRun", ["150059B6"]],
         ["WheelFortuneMouseUp", ["1465BDFA"]],
         ["WheelFortuneMouseDown", ["306C80B6"]],
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
+        ["WheelFortuneDrawWheel", ["A8BF62A5"]],
     ];
     return Object.freeze(Object.fromEntries(hashes.map(item => {
         const [key, value] = item;

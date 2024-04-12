@@ -2,7 +2,6 @@ import { MBS_MOD_API, waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
-import { NEW_ASSETS_VERSION, NEW_ASSETS } from "../new_items_screen";
 
 import {
     pushMBSSettings,
@@ -130,15 +129,6 @@ export class MBSPreferenceScreen extends MBSScreen {
                 </div>
 
                 <div id={ID.settingsGrid}>
-                    <div class="mbs-preference-settings-pair">
-                        <button
-                            class="mbs-button"
-                            style={{ backgroundImage: "url('./Icons/Changelog.png')" }}
-                            onClick={this.#loadShop.bind(this)}
-                        />
-                        {`Show new R${NEW_ASSETS_VERSION} items`}
-                    </div>
-
                     <h2>Wheel of fortune settings</h2>
                     <div class="mbs-preference-settings-pair">
                         <button
@@ -257,16 +247,6 @@ export class MBSPreferenceScreen extends MBSScreen {
                 </div>
             </div>,
         );
-
-        if (
-            MBS_MOD_API.getOriginalHash("MainHallRun") !== "735A1207"
-            || MBS_MOD_API.getOriginalHash("MainHallClick") !== "7A6D741A"
-        ) {
-            // R103
-            const grid = document.getElementById(ID.settingsGrid) as HTMLDivElement;
-            const member = grid.children[0] as HTMLDivElement;
-            grid.removeChild(member);
-        }
     }
 
     #boolSwitch(event: MouseEvent) {
@@ -352,21 +332,6 @@ export class MBSPreferenceScreen extends MBSScreen {
         this.exit();
     }
 
-    #loadShop() {
-        const background = ServerPlayerIsInChatRoom() ? ChatRoomData?.Background : undefined;
-        const prevScreen: [ModuleType, string] = ServerPlayerIsInChatRoom() ? ["Online", "ChatRoom"] : ["Character", "Preference"];
-        this.exit();
-        PreferenceExit();
-
-        Shop2Vars.Mode = "Preview";
-        Shop2Vars.Filters.MBS_VersionFilter = (item) => NEW_ASSETS[`${item.Asset.Group.Name}${item.Asset.Name}`] ? ["Buy", "Sell", "Preview"] : [];
-        Shop2.Init(background, prevScreen);
-        ServerBeep = {
-            Message: "The MBS \"Show new items\" button will be removed in R103; use the Club Shop or /shop chat command instead",
-            Timer: CommonTime() + 10000,
-        };
-    }
-
     #loadWheel() {
         const wheelStruct = {
             FortuneWheelItemSets: loadFortuneWheelObjects(Player, "FortuneWheelItemSets", "item sets"),
@@ -397,7 +362,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         super.load();
     }
 
-    run() {
+    draw() {
         DrawCharacter(Player, 50, 50, 0.9);
     }
 
@@ -420,20 +385,10 @@ waitFor(bcLoaded).then(() => {
         preferenceLoadHook();
     });
 
-    if (typeof ServerPlayerChatRoom !== "undefined") {
-        ServerPlayerChatRoom.register({
-            screen: MBSPreferenceScreen.screen,
-            callback: () => InformationSheetPreviousScreen === "ChatRoom",
-        });
-    } else {
-        MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
-            if (CurrentScreen == MBSPreferenceScreen.screen && InformationSheetPreviousScreen == "ChatRoom") {
-                return true;
-            } else {
-                return next(args);
-            }
-        });
-    }
+    ServerPlayerChatRoom.register({
+        screen: MBSPreferenceScreen.screen,
+        callback: () => InformationSheetPreviousScreen === "ChatRoom",
+    });
 
     MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
         const previousScreen = PreferenceSubscreen;

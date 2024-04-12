@@ -129,6 +129,7 @@ export abstract class MBSScreen {
     }
 
     run?(time: number): void;
+    draw?(): void;
     click?(event: MouseEvent | TouchEvent): void;
 
     /**
@@ -168,6 +169,7 @@ export abstract class MBSScreen {
     getFunctions(): ScreenFunctions {
         return {
             Run: this.run?.bind(this) ?? CommonNoop,
+            Draw: this.draw?.bind(this),
             Click: this.click?.bind(this) ?? CommonNoop,
             Load: this.load.bind(this),
             Unload: this.unload?.bind(this),
@@ -196,6 +198,7 @@ export class ScreenProxy extends MBSScreen {
     }
 
     run(time: number) { return this.screenFunctions.Run(time); }
+    draw() { return this.screenFunctions.Draw?.(); }
     click(event: MouseEvent | TouchEvent) { return this.screenFunctions.Click(event); }
     load() { return this.screenFunctions.Load?.(); }
     unload() { return this.screenFunctions.Unload?.(); }
