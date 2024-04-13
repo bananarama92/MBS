@@ -420,13 +420,20 @@ waitFor(bcLoaded).then(() => {
         preferenceLoadHook();
     });
 
-    MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
-        if (CurrentScreen == MBSPreferenceScreen.screen && InformationSheetPreviousScreen == "ChatRoom") {
-            return true;
-        } else {
-            return next(args);
-        }
-    });
+    if (typeof ServerPlayerChatRoom !== "undefined") {
+        ServerPlayerChatRoom.register({
+            screen: MBSPreferenceScreen.screen,
+            callback: () => InformationSheetPreviousScreen === "ChatRoom",
+        });
+    } else {
+        MBS_MOD_API.hookFunction("ServerPlayerIsInChatRoom", 0, (args, next) => {
+            if (CurrentScreen == MBSPreferenceScreen.screen && InformationSheetPreviousScreen == "ChatRoom") {
+                return true;
+            } else {
+                return next(args);
+            }
+        });
+    }
 
     MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
         const previousScreen = PreferenceSubscreen;
