@@ -789,6 +789,16 @@ function wheelFortuneLoadHook() {
     }
 }
 
+function wheelFortuneCustomizeLoadHook() {
+    if (TextScreenCache != null) {
+        for (const { Description, Custom, ID } of WheelFortuneOption) {
+            if (Description !== undefined) {
+                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
+            }
+        }
+    }
+}
+
 export let fortuneWheelState: FWScreenProxy;
 
 waitFor(bcLoaded).then(() => {
@@ -829,13 +839,7 @@ waitFor(bcLoaded).then(() => {
     });
 
     MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
-        if (TextScreenCache != null) {
-            for (const { Description, Custom, ID } of WheelFortuneOption) {
-                if (Description !== undefined) {
-                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-                }
-            }
-        }
+        wheelFortuneCustomizeLoadHook();
         return next(args);
     });
 
@@ -969,7 +973,10 @@ waitFor(bcLoaded).then(() => {
         pushMBSSettings([SettingsType.SHARED]);
     });
 
-    if (CurrentScreen === "WheelFortune") {
-        wheelFortuneLoadHook();
+    switch (CurrentScreen) {
+        case "WheelFortune":
+            return wheelFortuneLoadHook();
+        case "WheelFortuneCustomize":
+            return wheelFortuneCustomizeLoadHook();
     }
 });

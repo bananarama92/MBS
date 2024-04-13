@@ -439,7 +439,9 @@ waitFor(bcLoaded).then(() => {
 
     (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
     preferenceState = new PreferenceScreenProxy();
-    if (CurrentScreen === "Preference") {
-        preferenceLoadHook();
+
+    switch (CurrentScreen) {
+        case "Preference":
+            return preferenceLoadHook();
     }
 });
