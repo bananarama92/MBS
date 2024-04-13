@@ -14,6 +14,7 @@ import {
     SettingsStatus,
     clearMBSSettings,
 } from "./settings";
+import { garblingJSON } from "../garbling";
 
 import styles from "./settings_screen.scss";
 
@@ -274,6 +275,9 @@ export class MBSPreferenceScreen extends MBSScreen {
             Player.MBSSettings[field] = !Player.MBSSettings[field];
             pushMBSSettings([SettingsType.SETTINGS]);
             switch (field) {
+                case "AlternativeGarbling":
+                    if (Player.MBSSettings[field]) garblingJSON.init();
+                    break;
                 case "LockedWhenRestrained":
                     this.#lockInputs();
                     break;

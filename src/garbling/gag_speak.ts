@@ -1,15 +1,7 @@
 import { range, zip } from "lodash-es";
 
 import { MBS_MOD_API } from "../common";
-
-import _GAG_DATA from "./vendor/gag_data.json" assert { type: "JSON" };
-import _PHONETIC_DICT from "./vendor/en_US.json" assert { type: "JSON" };
-
-type PhoneticDict = Readonly<Record<string, undefined | readonly string[]>>;
-type GagData = Readonly<Record<string, { readonly MUFFLE: number, readonly SOUND: string }>>;
-
-const GAG_DATA: { readonly [k in keyof typeof _GAG_DATA]: GagData } = Object.freeze(_GAG_DATA);
-const PHONETIC_DICT: PhoneticDict = Object.freeze(_PHONETIC_DICT);
+import { json, GagData } from "./json";
 
 export namespace GarbleOptions {
     export interface DropChars {
@@ -68,7 +60,7 @@ const LETTER_REGEX = /\p{L}/u;
  */
 function wordToIPA(word: string): undefined | string[][] {
     const wordLower = word.toLowerCase();
-    const phoneticSyllables = PHONETIC_DICT[wordLower];
+    const phoneticSyllables = json.phoneticDict[wordLower];
     if (phoneticSyllables === undefined) {
         return undefined;
     }
@@ -132,7 +124,7 @@ function getGagData(
     syllableOptions: null | { readonly syllable: number, readonly syllableMax: number } = null,
 ): GagData {
     if (character && character.HasEffect("OpenMouth") && !character.HasEffect("BlockMouth")) {
-        return GAG_DATA["Ring Gag"];
+        return json.gagData["Ring Gag"] ?? {};
     }
 
     syllableOptions: if (syllableOptions !== null) {
@@ -148,11 +140,11 @@ function getGagData(
     }
 
     if (gagLevel <= GagLevel.LIGHT) {
-        return GAG_DATA["Cleave Gag"];
+        return json.gagData["Cleave Gag"] ?? {};
     } else if (gagLevel <= GagLevel.MEDIUM) {
-        return GAG_DATA["Ball Gag"];
+        return json.gagData["Ball Gag"] ?? {};
     } else {
-        return GAG_DATA["Dildo Gag"];
+        return json.gagData["Dildo Gag"] ?? {};
     }
 }
 
