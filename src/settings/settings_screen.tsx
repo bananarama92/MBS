@@ -111,7 +111,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         super(parent, MBSPreferenceScreen.screenParamsDefault, params);
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
+            <div id={ID.root} class="mbs-screen">
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <h1 id={ID.header}>{`Maid's Bondage Scripts ${MBS_VERSION}`}</h1>
@@ -233,7 +233,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         );
 
         document.body.appendChild(
-            <div id={ID.resetScreen} class="HideOnPopup mbs-screen" screen-generated={MBSPreferenceScreen.screen}>
+            <div id={ID.resetScreen} class="mbs-screen" screen-generated={MBSPreferenceScreen.screen}>
                 <div id={ID.resetBackground}>
                     <h1>MBS data reset</h1>
                     <p><strong>- Warning -</strong></p>
