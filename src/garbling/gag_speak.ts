@@ -148,6 +148,28 @@ function getGagData(
     }
 }
 
+/** Cut a sentence into OOC and non-OOC chunks */
+function sentenceCutOOC(sentence: string, ignoreOOC: boolean = false): { words: string, ooc: boolean }[] {
+    const oocIter = SpeechGetOOCRanges(sentence).values();
+    let oocNext = oocIter.next();
+    if (oocNext.done || ignoreOOC) {
+        return [{ words: sentence, ooc: false }];
+    }
+
+    const ret: { words: string, ooc: boolean}[] = [];
+    let start = 0;
+    while (!oocNext.done) {
+        const oocStart = oocNext.value.start;
+        const oocStop = oocStart + oocNext.value.length;
+        ret.push({ words: sentence.slice(start, oocStart), ooc: false });
+        ret.push({ words: sentence.slice(oocStart, oocStop), ooc: true });
+        oocNext = oocIter.next();
+        start = oocStop;
+    }
+    ret.push({ words: sentence.slice(start), ooc: false });
+    return ret;
+}
+
 export function convertToGagSpeak(
     sentence: string,
     gagLevel: number,
@@ -155,32 +177,29 @@ export function convertToGagSpeak(
 ): string {
     const { dropChars, fallback, character, ignoreOOC, perSyllable } = parseOptions(options, gagLevel);
 
-    const oocIndices = new Set(SpeechGetOOCRanges(sentence).flatMap(({ start, length }) => {
-        return range(start, start + length + 1);
-    }));
-
     let garbledSentence = "";
-    let word = "";
-    let caps: boolean[] = [];
-    let inOOC = false;
-    const iMax = sentence.length - 1;
-    for (const [i, char] of Array.from(sentence).entries()) {
-        if (LETTER_REGEX.test(char) && i < iMax) {
-            word += char;
-            inOOC ||= oocIndices.has(i);
-            caps.push(char.toUpperCase() === char);
+    const sentenceFragments = sentenceCutOOC(sentence, ignoreOOC);
+    for (const sentenceFrag of sentenceFragments) {
+        // Got an OOC fragment here; no need to garble anything
+        if (sentenceFrag.ooc) {
+            garbledSentence += sentenceFrag.words;
             continue;
         }
 
-        if (!word) {
-            garbledSentence += fallback([gagLevel, char]);
-            continue;
-        }
+        let word = "";
+        let caps: boolean[] = [];
+        const iMax = sentenceFrag.words.length - 1;
+        for (const [i, char] of Array.from(sentenceFrag.words).entries()) {
+            // Keep constructing  as long as unicode letter characters are coming through
+            const charIsLetter = LETTER_REGEX.test(char);
+            if (charIsLetter) {
+                word += char;
+                caps.push(char.toUpperCase() === char);
+                if (i < iMax) {
+                    continue;
+                }
+            }
 
-        if (inOOC && !ignoreOOC) {
-            // No Need for garbling while in OOC
-            garbledSentence += word;
-        } else {
             // Try the phonetics-based garbling and fall back to BC's default if no match is found for the word
             const phonWord = wordToIPA(word);
             if (phonWord) {
@@ -189,6 +208,7 @@ export function convertToGagSpeak(
                     const gagData = getGagData(character, gagLevel, syllableOptions);
                     return phonSyllable.map(phonChar => gagData[phonChar]?.SOUND ?? "");
                 }).join(""));
+
                 if (caps.every(Boolean)) {
                     garbledSentence += garbledWord.toUpperCase();
                 } else if (caps[0] && garbledWord.length > 0) {
@@ -197,14 +217,16 @@ export function convertToGagSpeak(
                     garbledSentence += garbledWord;
                 }
             } else {
+                garbledSentence += fallback([gagLevel, word]);
+            }
+
+            word = "";
+            caps = [];
+            if (!charIsLetter) {
+                // Avoid double garbling `char` if it's a letter
                 garbledSentence += fallback([gagLevel, char]);
             }
         }
-
-        inOOC = false;
-        word = "";
-        caps = [];
-        garbledSentence += char;
     }
     return garbledSentence;
 }
