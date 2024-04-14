@@ -9,9 +9,16 @@ export { garblingJSON };
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing garbling module");
 
+    // Only use this hook for ring gags
     MBS_MOD_API.hookFunction("SpeechGarble", 0, ([character, words, noDeaf, ...args], next) => {
         const gagLevel = SpeechGetTotalGagLevel(character, noDeaf);
-        if (!gagLevel || !character || !words || !Player.MBSSettings.AlternativeGarbling) {
+        if (
+            !gagLevel
+            || !character
+            || !words
+            || !Player.MBSSettings.AlternativeGarbling
+            || !(character.HasEffect("OpenMouth") && !character.HasEffect("BlockMouth"))
+        ) {
             return next([character, words, noDeaf, ...args]);
         } else {
             const options: GarbleOptions.Base = {
