@@ -207,7 +207,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         this.preview = CharacterLoadSimple("MBSFortuneWheelPreview");
 
         document.body.appendChild(
-            <div id={ID.root} class="HideOnPopup mbs-screen" screen-generated={this.screen}>
+            <div id={ID.root} class="mbs-screen">
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <h1 id={ID.header}>{`Customize wheel of fortune item set ${this.index}`}</h1>

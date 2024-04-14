@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## 1.6.2
+* Update for BC R103Beta2
+* Add a safeguard for loading MBS while the `WheelFortuneCustomize` screen is open
+* Remote-fetch the alternative garbling JSON data rather than directly vendoring it (again...)
+* Fix various OOC-related issues related to alternative garbling
+* Add the option to vary the (alternative) garbling strength per syllable
+* Switch from the en_UK phonetic data to the larger en_US dataset
+
 ## 1.6.1
 * Fix the garbling JSON data failing to load
 

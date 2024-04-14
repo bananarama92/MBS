@@ -52,6 +52,7 @@ const HOOK_FUNC_HASHES = (() => {
         ["ServerPlayerIsInChatRoom", ["E3771112"]],
         ["SpeechGarble", ["9D669F73"]],
         ["SpeechGarbleByGagLevel", ["3D604B82", "F7555009"]],
+        ["PreferenceLoad", ["8BAC28C8"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["21CCD6B4"]],
         ["WheelFortuneRun", ["A59DA22A", "150059B6"]],

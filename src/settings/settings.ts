@@ -22,6 +22,7 @@ import {
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
+import { garblingJSON } from "../garbling";
 
 import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
@@ -222,6 +223,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: [],
         AlternativeGarbling: [],
         DropTrailing: [],
+        GarblePerSyllable: [],
     };
 
     const scalars = {
@@ -230,6 +232,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: true,
         AlternativeGarbling: false,
         DropTrailing: false,
+        GarblePerSyllable: false,
     } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
@@ -252,7 +255,11 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         RollWhenRestrained: scalars.RollWhenRestrained,
         AlternativeGarbling: scalars.AlternativeGarbling,
         DropTrailing: scalars.DropTrailing,
+        GarblePerSyllable: scalars.GarblePerSyllable,
     };
+    if (settings.AlternativeGarbling) {
+        garblingJSON.init();
+    }
     const ok = sumBy(Object.values(err).map(lst => lst.length)) === 0;
     return {
         settings,
@@ -344,6 +351,7 @@ export function clearMBSSettings(): void {
         FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
         AlternativeGarbling: false,
         DropTrailing: false,
+        GarblePerSyllable: false,
     });
 
     ServerAccountUpdate.QueueData({

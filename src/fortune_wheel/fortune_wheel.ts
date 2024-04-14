@@ -789,6 +789,16 @@ function wheelFortuneLoadHook() {
     }
 }
 
+function wheelFortuneCustomizeLoadHook() {
+    if (TextScreenCache != null) {
+        for (const { Description, Custom, ID } of WheelFortuneOption) {
+            if (Description !== undefined) {
+                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
+            }
+        }
+    }
+}
+
 export let fortuneWheelState: FWScreenProxy;
 
 waitFor(bcLoaded).then(() => {
@@ -804,24 +814,10 @@ waitFor(bcLoaded).then(() => {
         return;
     }
 
-    const wheelFortuneRunPatches: Record<string, string> = {
+    MBS_MOD_API.patchFunction("WheelFortuneRun", {
         'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");': ";",
-    };
-    if (MBS_MOD_API.getOriginalHash("WheelFortuneRun") === "E9E5F3D6") {
-        wheelFortuneRunPatches['DrawButton(1770, 25, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
-        wheelFortuneRunPatches["DrawButton(1885, 25, 90, 90"] = `DrawButton(${COORDS.exit.join(", ")}`;
-    } else {
-        wheelFortuneRunPatches['DrawButton(1720, 60, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));'] = ";";
-    }
-
-    const wheelFortuneClickPatches: Record<string, string> = {};
-    if (MBS_MOD_API.getOriginalHash("WheelFortuneClick") === "16991349") {
-        wheelFortuneClickPatches["MouseIn(1885, 25, 90, 90)"] = `MouseIn(${COORDS.exit.join(", ")})`;
-        wheelFortuneClickPatches["MouseIn(1770, 25, 90, 90)"] = `MouseIn(${COORDS.roll.join(", ")})`;
-    }
-
-    MBS_MOD_API.patchFunction("WheelFortuneRun", wheelFortuneRunPatches);
-    MBS_MOD_API.patchFunction("WheelFortuneClick", wheelFortuneClickPatches);
+        'DrawButton(1720, 60, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));': ";",
+    });
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         wheelFortuneLoadHook();
@@ -829,13 +825,7 @@ waitFor(bcLoaded).then(() => {
     });
 
     MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
-        if (TextScreenCache != null) {
-            for (const { Description, Custom, ID } of WheelFortuneOption) {
-                if (Description !== undefined) {
-                    TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-                }
-            }
-        }
+        wheelFortuneCustomizeLoadHook();
         return next(args);
     });
 
@@ -969,7 +959,10 @@ waitFor(bcLoaded).then(() => {
         pushMBSSettings([SettingsType.SHARED]);
     });
 
-    if (CurrentScreen === "WheelFortune") {
-        wheelFortuneLoadHook();
+    switch (CurrentScreen) {
+        case "WheelFortune":
+            return wheelFortuneLoadHook();
+        case "WheelFortuneCustomize":
+            return wheelFortuneCustomizeLoadHook();
     }
 });

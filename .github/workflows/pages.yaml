@@ -93,8 +93,9 @@ jobs:
         run: |
           TAG=$(git describe --abbrev=0 --tags)
           echo "New tag: $TAG"
-          rm -rf MBS-Artifacts/artifacts/main
-          cp -r MBS-Artifacts/artifacts/"$TAG" MBS-Artifacts/artifacts/main
+          mkdir artifacts
+          cp -r MBS-Artifacts/artifacts/"$TAG" artifacts/main
+          cp -r MBS-Artifacts/artifacts/devel artifacts/devel
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -102,7 +103,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './MBS-Artifacts/artifacts'
+          path: './artifacts'
 
       - name: Deploy to GitHub Pages
         id: deployment
