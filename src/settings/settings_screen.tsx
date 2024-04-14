@@ -123,9 +123,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         onClick={this.exit.bind(this)}
                         style={{ backgroundImage: "url('./Icons/Exit.png')" }}
                     />
-                    <span class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
-                        Exit
-                    </span>
+                    <span class="mbs-button-tooltip" style={{ justifySelf: "right" }}>Exit</span>
                 </div>
 
                 <div id={ID.settingsGrid}>
@@ -150,7 +148,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <h2>Garbling settings</h2>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" data-field="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)}/>
-                        <div>
+                        <span>
                             <p>
                                 <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
                                 based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
@@ -159,7 +157,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                                 Incompatible-ish with <a href="https://sidiousious.gitlab.io/bce/" target="_blank">FBC</a>'s
                                 garbling anti-cheat as of the moment
                             </p>
-                        </div>
+                        </span>
                     </div>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" data-field="DropTrailing" onClick={this.#boolSwitch.bind(this)}/>
@@ -180,30 +178,26 @@ export class MBSPreferenceScreen extends MBSScreen {
                             id={ID.resetButton}
                             style={{ backgroundImage: "url('./Icons/ServiceBell.png')" }}
                             onClick={this.#settingsReset.bind(this)}
-                        >
-                            Reset MBS
-                        </button>
-                        <span class="mbs-button-tooltip" id={ID.resetTooltip}>
-                            Clear all MBS data
-                        </span>
+                        >Reset MBS</button>
+                        <span class="mbs-button-tooltip">Clear all MBS data</span>
                     </div>
 
                     <div id={ID.import} class="mbs-button-div">
-                        <button class="mbs-button" id={ID.importButton} onClick={this.#settingsImport.bind(this)}>
-                            Import
-                        </button>
-                        <span class="mbs-button-tooltip" id={ID.importTooltip}>
-                            Import MBS settings
-                        </span>
+                        <button
+                            class="mbs-button"
+                            id={ID.importButton}
+                            onClick={this.#settingsImport.bind(this)}
+                        >Import</button>
+                        <span class="mbs-button-tooltip">Import MBS settings</span>
                     </div>
 
                     <div id={ID.export} class="mbs-button-div">
-                        <button class="mbs-button" id={ID.exportButton} onClick={this.#settingsExport.bind(this)}>
-                            Export
-                        </button>
-                        <span class="mbs-button-tooltip" id={ID.exportTooltip}>
-                            Export MBS settings
-                        </span>
+                        <button
+                            class="mbs-button"
+                            id={ID.exportButton}
+                            onClick={this.#settingsExport.bind(this)}
+                        >Export</button>
+                        <span class="mbs-button-tooltip"> Export MBS settings</span>
                     </div>
 
                     <div id={ID.changelog} class="mbs-button-div">
@@ -212,12 +206,8 @@ export class MBSPreferenceScreen extends MBSScreen {
                             id={ID.changelogButton}
                             style={{ backgroundImage: "url('./Icons/Changelog.png')" }}
                             onClick={() => open(getChangeLogURL(), "_blank")}
-                        >
-                            Latest Changes
-                        </button>
-                        <span class="mbs-button-tooltip" id={ID.changelogTooltip}>
-                            Open the MBS changelog
-                        </span>
+                        >Latest Changes</button>
+                        <span class="mbs-button-tooltip">Open the MBS changelog</span>
                     </div>
                 </div>
             </div>,
