@@ -126,7 +126,7 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
                     onInput={(e) => {
                         this.settings.name = (e.target as HTMLInputElement).value;
                         const button = document.getElementById(ID.acceptButton) as HTMLButtonElement;
-                        button.disabled = this.settings.name.length > 0;
+                        button.disabled = this.settings.name.length === 0;
                     }}
                     onFocus={(e) => (e.target as HTMLInputElement).select()}
                 />
