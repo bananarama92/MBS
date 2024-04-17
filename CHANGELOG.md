@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.7.0
+* Increment the MBS API to version 1.4:
+    - Relicense the `mbs.css` API under terms of LPGL-v3
+
 ## 1.6.3
 * Drop support for BC R102
 * Fix the save-condition being broken for the fortune wheel commands screen
