@@ -515,7 +515,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         this.#reloadPreviewAppearance();
     }
 
-    run() {
+    draw() {
         DrawCharacter(this.preview, 300, 175, 0.78, false);
     }
 

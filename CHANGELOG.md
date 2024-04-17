@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.6.3
+* Drop support for BC R102
+* Fix the save-condition being broken for the fortune wheel commands screen
+
 ## 1.6.2
 * Update for BC R103Beta2
 * Add a safeguard for loading MBS while the `WheelFortuneCustomize` screen is open

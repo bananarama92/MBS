@@ -901,9 +901,7 @@ waitFor(bcLoaded).then(() => {
         }
     });
 
-    // R103 compat
-    const drawFunc = typeof WheelFortuneDrawWheel !== "undefined" ? "WheelFortuneDrawWheel" : "WheelFortuneDraw";
-    MBS_MOD_API.hookFunction(drawFunc, 11, ([_, ...args], next) => {
+    MBS_MOD_API.hookFunction("WheelFortuneDrawWheel", 11, ([_, ...args], next) => {
         return next([fortuneWheelState.weightedIDs, ...args]);
     });
 
