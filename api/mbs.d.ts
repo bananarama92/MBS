@@ -174,7 +174,10 @@ declare namespace mbs {
     /**
      * Public API for modifying MBS's style sheets.
      *
+     *
+     * Licensed under LGPL-v3 as of API version 1.4
      * @since API version 1.3
+     * @license LPGL-v3
      */
     namespace css {
         /**

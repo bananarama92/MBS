@@ -30,6 +30,9 @@ See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program.
 If not, see https://www.gnu.org/licenses/.
+
+An exception is made for the "mbs.css" API, which is licensed under the terms of GNU LGPL
+version 3 (see https://www.gnu.org/licenses/lgpl-3.0.en.html).
 `.trim();
 
 /**

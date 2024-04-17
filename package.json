@@ -1,6 +1,6 @@
 {
     "name": "maids-bondage-scripts",
-    "version": "1.6.3",
+    "version": "1.7.0",
     "private": true,
     "description": "Various additions and utility scripts for BC",
     "homepage": "https://github.com/bananarama92/MBS#readme",
@@ -11,7 +11,7 @@
         "type": "git",
         "url": "git+ssh://git@github.com/bananarama92/MBS.git"
     },
-    "license": "GPL-3.0",
+    "license": "SEE LICENSE",
     "author": "bananarama92 <bananarama921@outlook.com>",
     "browserslist": [
         "since 2021 and > 0.5% and not dead"
