@@ -1,7 +1,7 @@
 #mbs-fwcommand {
 	grid-template:
 		"delete header accept cancel exit" min(9vh, 4.5vw)
-		"commandInput commandInput commandInput commandInput commandInput" min(9vh, 4.5vw)
+		"commandInput commandInput commandInput commandInput commandInput" min(7vh, 3.5vw)
 		"weightHeader weightHeader weightHeader weightHeader weightHeader" min(7vh, 3.5vw)
         "weightInput weightInput weightInput weightInput weightInput" min(7vh, 3.5vw) / min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
 }
@@ -41,6 +41,7 @@
 
 #mbs-fwcommand-weight-input {
 	grid-area: weightInput;
+	height: 100%;
     place-self: start center;
-	width: min(7vh, 3.5vw);
+	width: calc(min(7vh, 3.5vw) + 16px);
 }

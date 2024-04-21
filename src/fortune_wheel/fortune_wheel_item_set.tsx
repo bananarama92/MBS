@@ -258,115 +258,111 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     </div>
                 </div>
 
-                <div id={ID.midDiv}>
-                    <input
-                        type="text"
-                        id={ID.outfitName}
-                        placeholder="Name"
-                        disabled={disabled}
-                        maxLength={70}
-                        onInput={(e) => {
-                            this.settings.name = (e.target as HTMLInputElement).value;
-                            this.#updateButton(ID.acceptButton);
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                    <input
-                        type="text"
-                        id={ID.outfitInput}
-                        placeholder="Outfit code"
-                        disabled={disabled}
-                        onInput={(e) => {
-                            this.settings.outfitCache = (e.target as HTMLInputElement).value;
-                            this.#updateButton(ID.outfitButton);
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                    <div id={ID.outfitDiv} class="mbs-button-div">
-                        <button
-                            class="mbs-button"
-                            disabled={true}
-                            id={ID.outfitButton}
-                            onClick={() => this.#updateButton(ID.acceptButton, true)}
-                        >Parse</button>
-                        <div class="mbs-button-tooltip" id={ID.outfitTooltip}>Parse the outfit code</div>
-                    </div>
+                <input
+                    type="text"
+                    id={ID.outfitName}
+                    placeholder="Name"
+                    disabled={disabled}
+                    maxLength={70}
+                    onInput={(e) => {
+                        this.settings.name = (e.target as HTMLInputElement).value;
+                        this.#updateButton(ID.acceptButton);
+                    }}
+                    onFocus={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <input
+                    type="text"
+                    id={ID.outfitInput}
+                    placeholder="Outfit code"
+                    disabled={disabled}
+                    onInput={(e) => {
+                        this.settings.outfitCache = (e.target as HTMLInputElement).value;
+                        this.#updateButton(ID.outfitButton);
+                    }}
+                    onFocus={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <div id={ID.outfitDiv} class="mbs-button-div">
+                    <button
+                        class="mbs-button"
+                        disabled={true}
+                        id={ID.outfitButton}
+                        onClick={() => this.#updateButton(ID.acceptButton, true)}
+                    >Parse</button>
+                    <div class="mbs-button-tooltip" id={ID.outfitTooltip}>Parse the outfit code</div>
                 </div>
 
-                <div id={ID.botDiv}>
-                    <div id={ID.stripHeader}>Clothing strip level:</div>
-                    <div id={ID.equipHeader}>Clothing equip level:</div>
-                    <div id={ID.weightHeader}>Wheel option weight:</div>
-                    <div id={ID.lockHeader}>Enabled lock types:</div>
-                    <input
-                        type="number"
-                        id={ID.weightInput}
-                        min={1}
-                        max={9}
-                        value={1}
-                        disabled={disabled}
-                        onInput={(e) => {
-                            const target = e.target as HTMLInputElement;
-                            this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
-                        }}
-                        onWheel={(e) => {
-                            const target = e.target as HTMLInputElement;
-                            if (target.disabled) {
-                                return;
-                            }
+                <span id={ID.stripHeader}>Clothing strip level:</span>
+                <span id={ID.equipHeader}>Clothing equip level:</span>
+                <span id={ID.weightHeader}>Wheel option weight:</span>
+                <span id={ID.lockHeader}>Enabled lock types:</span>
+                <input
+                    type="number"
+                    id={ID.weightInput}
+                    min={1}
+                    max={9}
+                    value={1}
+                    disabled={disabled}
+                    onInput={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
+                    }}
+                    onWheel={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        if (target.disabled) {
+                            return;
+                        }
 
-                            if (e.deltaY < 0) {
-                                target.stepUp(1);
-                            } else if (e.deltaY > 0) {
-                                target.stepDown(1);
-                            } else {
-                                return;
-                            }
-                            this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
+                        if (e.deltaY < 0) {
+                            target.stepUp(1);
+                        } else if (e.deltaY > 0) {
+                            target.stepDown(1);
+                        } else {
+                            return;
+                        }
+                        this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
+                    }}
+                    onFocus={(e) => (e.target as HTMLInputElement).select()}
+                />
 
-                    {createDropdown(
-                        { inputID: ID.stripInput, buttonID: ID.stripButton, optionID: ID.stripOption, dropdownID: ID.stripDropdown, level: "stripLevel" },
-                        this.settings,
-                        disabled,
-                    )}
-                    {createDropdown(
-                        { inputID: ID.equipInput, buttonID: ID.equipButton, optionID: ID.equipOption, dropdownID: ID.equipDropdown, level: "equipLevel" },
-                        this.settings,
-                        disabled,
-                    )}
+                {createDropdown(
+                    { inputID: ID.stripInput, buttonID: ID.stripButton, optionID: ID.stripOption, dropdownID: ID.stripDropdown, level: "stripLevel" },
+                    this.settings,
+                    disabled,
+                )}
+                {createDropdown(
+                    { inputID: ID.equipInput, buttonID: ID.equipButton, optionID: ID.equipOption, dropdownID: ID.equipDropdown, level: "equipLevel" },
+                    this.settings,
+                    disabled,
+                )}
 
-                    <div id={ID.lockGrid}> {
-                        this.settings.flags.map((flag, i) => {
-                            let companion: string | HTMLInputElement;
-                            switch (flag.type) {
-                                case "TimerPasswordPadlock":
-                                    companion = createTimerInput(flag, i, disabled);
-                                    break;
-                                default:
-                                    companion = flag.description;
-                            }
-                            return (
-                                <div class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
-                                    <input
-                                        type="checkbox"
-                                        class={ID.lockCheckbox}
-                                        id={ID.lockCheckbox + i.toString()}
-                                        disabled={disabled}
-                                        checked={flag.enabled}
-                                        onClick={() => {
-                                            flag.enabled = !flag.enabled;
-                                            this.#updateButton(ID.acceptButton);
-                                        }}
-                                    />
-                                    {companion}
-                                </div>
-                            );
-                        })
-                    } </div>
-                </div>
+                <div id={ID.lockGrid}> {
+                    this.settings.flags.map((flag, i) => {
+                        let companion: string | HTMLInputElement;
+                        switch (flag.type) {
+                            case "TimerPasswordPadlock":
+                                companion = createTimerInput(flag, i, disabled);
+                                break;
+                            default:
+                                companion = flag.description;
+                        }
+                        return (
+                            <div class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
+                                <input
+                                    type="checkbox"
+                                    class={ID.lockCheckbox}
+                                    id={ID.lockCheckbox + i.toString()}
+                                    disabled={disabled}
+                                    checked={flag.enabled}
+                                    onClick={() => {
+                                        flag.enabled = !flag.enabled;
+                                        this.#updateButton(ID.acceptButton);
+                                    }}
+                                />
+                                {companion}
+                            </div>
+                        );
+                    })
+                } </div>
             </div>,
         );
     }
@@ -516,7 +512,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     }
 
     draw() {
-        DrawCharacter(this.preview, 300, 175, 0.78, false);
+        DrawCharacter(this.preview, 200, 175, 0.78, false);
     }
 
     exit(fullExit?: boolean, action?: ExitAction): void {
