@@ -124,7 +124,7 @@
 		text-align: left;
 	}
 
-	p, h2, ul {
+	p, h2, ul, span {
 		font-size: var(--mbs-font-small);
 	}
 
@@ -141,6 +141,11 @@
 		color: var(--mbs-text-color);
 		font-family: var(--mbs-font-family);
 		font-size: var(--mbs-font-small);
+	}
+
+	input {
+		box-sizing: border-box;
+		padding: unset;
 	}
 
 	input:invalid {

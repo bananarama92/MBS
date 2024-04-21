@@ -1,9 +1,19 @@
 #mbs-fwitemset {
 	grid-template:
-		"delete header accept cancel exit" min(9vh, 4.5vw)
-		"midDiv midDiv midDiv midDiv midDiv" max-content
-		"botDiv botDiv botDiv botDiv botDiv" auto
-		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"delete header header header accept cancel exit" min(9vh, 4.5vw)
+		". . name-input name-input . . ." min(7vh, 3.5vw)
+		". . outfit-input outfit-input outfit-button outfit-button outfit-button" min(7vh, 3.5vw)
+		". . strip-header lock-header lock-header lock-header lock-header" min(7vh, 3.5vw)
+		". . strip-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
+		". . equip-header lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
+		". . equip-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
+		". . weight-header lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
+		". . weight-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
+			/ min(9vh, 4.5vw) min(40vh, 20vw) auto min(38vh, 19vw) min(16vh, 8vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+
+	span {
+		place-self: end start;
+	}
 }
 
 #mbs-fwitemset-delete {
@@ -17,6 +27,7 @@
 
 #mbs-fwitemset-accept {
 	grid-area: accept;
+	justify-self: end;
 }
 
 #mbs-fwitemset-cancel {
@@ -27,109 +38,76 @@
 	grid-area: exit;
 }
 
-#mbs-fwitemset-mid-grid {
-	display: grid;
-	grid-area: midDiv;
-	grid-template:
-		"name ." min(10vh, 5vw)
-		"outfitCode outfitCodeButton" min(7vh, 3.5vw) / min(78vh, 39vw) auto;
-	margin-left: 35%;
-	grid-gap: min(2vh, 1vw) min(6vh, 3vw);
-}
-
 #mbs-fwitemset-outfit-name {
-	align-self: end;
-	grid-area: name;
-	height: min(7vh, 3.5vw);
+	grid-area: name-input;
 }
 
 #mbs-fwitemset-outfit-input {
-	grid-area: outfitCode;
-	height: min(7vh, 3.5vw);
+	grid-area: outfit-input;
 }
 
 #mbs-fwitemset-outfit-div {
-	grid-area: outfitCodeButton;
-  	grid-template-columns: min(27vh, 13.5vw);
+	grid-area: outfit-button;
+	grid-template-columns: auto;
 	grid-template-rows: min(7vh, 3.5vw) auto;
 }
 
-#mbs-fwitemset-bot-grid {
-	display: grid;
-	grid-area: botDiv;
-	margin-left: 35%;
-	grid-gap: min(2vh, 1vw) min(8vh, 4vw);
-	align-items: end;
-	grid-template:
-		"headerStrip headerLock" min(7vh, 3.5vw)
-		"configStrip gridLock" min(7vh, 3.5vw)
-		"headerEquip gridLock" min(7vh, 3.5vw)
-		"configEquip gridLock" min(7vh, 3.5vw)
-		"headerWeight gridLock" min(7vh, 3.5vw)
-		"configWeight gridLock" min(7vh, 3.5vw) / min(40vh, 20vw) auto;
-	overflow: hidden;
-	text-align: left;
-}
-
 #mbs-fwitemset-strip-header {
-	grid-area: headerStrip;
+	grid-area: strip-header;
 }
 
-#mbs-fwitemset-strip-input {
-	align-self: start;
-	grid-area: configStrip;
+#mbs-fwitemset-strip-dropdown {
+	grid-area: strip-input;
+	width: min(40vh, 20vw);
 }
 
 #mbs-fwitemset-equip-header {
-	grid-area: headerEquip;
+	grid-area: equip-header;
 }
 
-#mbs-fwitemset-equip-input {
-	align-self: start;
-	grid-area: configEquip;
+#mbs-fwitemset-equip-dropdown {
+	grid-area: equip-input;
+	width: min(40vh, 20vw);
 }
 
 #mbs-fwitemset-weight-header {
-	grid-area: headerWeight;
+	grid-area: weight-header;
 }
 
 #mbs-fwitemset-weight-input {
 	align-self: start;
-	grid-area: configWeight;
-	width: min(7vh, 3.5vw);
+	grid-area: weight-input;
+	height: 100%;
+	width: calc(min(7vh, 3.5vw) + 16px);
 }
 
 #mbs-fwitemset-lock-header {
-	grid-area: headerLock;
+	grid-area: lock-header;
 }
 
 #mbs-fwitemset-lock-grid {
 	align-self: start;
 	display: grid;
-	grid-area: gridLock;
-	grid-template-columns: 5fr 5fr;
+	gap: min(2vh, 1vw);
+	grid-area: lock-grid;
+	grid-template-columns: min(38vh, 19vw) min(38vh, 19vw);
 	overflow-y: scroll;
-	grid-gap: min(2vh, 1vw);
 }
 
 .mbs-fwitemset-lock-container {
 	align-items: center;
 	display: grid;
 	word-wrap: break-word;
-	grid-template-columns: 1.5fr 8.5fr;
-	grid-gap: min(2vh, 1vw);
+	gap: min(2vh, 1vw);
+	grid-template-columns: min(7vh, 3.5vw) auto;
 }
 
 .mbs-timer {
-	height: min(5vh, 2.5vw);
+	height: 100%;
 	text-align: center;
-	width: min(21vh, 10.5vw);
-}
-
-#mbs-fwitemset-strip-dropdown-button, #mbs-fwitemset-equip-dropdown-button {
-	height: min(7vh, 3.5vw);
+	width: 100%;
 }
 
 #mbs-fwitemset-strip-dropdown-content, #mbs-fwitemset-equip-dropdown-content {
-	width: min(80vh, 40vw);
+	width: min-content;
 }

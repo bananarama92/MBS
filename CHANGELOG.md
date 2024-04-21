@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## 1.7.1
+* Improve button alignment in the wheel of fortune item set menu
+* Use custom `text`-based inputs (rather than `time`-based) for the wheel of fortune timers;
+  fixes the odd time-offsets and AM/PM markers occasionally observed.
+
 ## 1.7.0
 * Increment the MBS API to version 1.4:
     - Relicense the `mbs.css` API under terms of LPGL-v3
