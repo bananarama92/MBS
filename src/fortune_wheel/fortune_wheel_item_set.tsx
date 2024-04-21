@@ -25,7 +25,7 @@ const STRIP_MAPPING = Object.freeze({
  * @returns The stringified time
  */
 function toInputTime(time: number): string {
-    time = clamp(time, 60, 60 * 240);
+    time = Number.isNaN(time) ? 60 : clamp(time, 60, 60 * 240);
     const unitsTime = { h: 0, m: 0, s: 0 };
 
     unitsTime.h = Math.floor(time / (60 * 60));
@@ -95,21 +95,63 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
     );
 }
 
-function createTimerInput(flag: FWFlagTimerPasswordPadlock , index: number, disabled: boolean) {
+function createTimerInput(flag: FWFlagTimerPasswordPadlock, index: number, disabled: boolean) {
     return (
         <input
-            type="time"
+            type="text"
             class="mbs-timer"
             id={ID.lockTimer + index.toString()}
             disabled={disabled}
-            min="00:01:00"
-            max="04:00:00"
-            step={1}
             value={toInputTime(flag.time)}
+            pattern={/([0]?[0-4]:)?([0-6]?[0-9]:)?([0-6]?[0-9])?/.source}
+            maxLength={8}
             onInput={(e) => {
                 const target = e.target as HTMLInputElement;
-                const [h, m, s] = target.value.split(":").map(i => Number.parseInt(i, 10));
-                flag.time = clamp(h * 60**2 + m * 60 + s, 60, 240 * 60);
+
+                const [start, end] = [target.selectionStart, target.selectionEnd];
+                const value = target.value;
+                target.value = value.replace(/[^0-9:]/g, "");
+                if (target.value !== value && (start !== null || end !== null)) {
+                    const regex = /[^0-9:]/g;
+                    const invalid = Array.from(value).map((i, j) => regex.test(i) ? j : -1).filter(i => i !== -1);
+                    if (start !== null) {
+                        target.selectionStart = invalid.reduce((sum, i) => sum + (start as number >= i ? -1 : 0), start);
+                    }
+                    if (end !== null) {
+                        target.selectionEnd = invalid.reduce((sum, i) => sum + (end as number >= i ? -1 : 0), end);
+                    }
+                }
+
+                const [h, m, s] = target.value.split(":").slice(-3).map(i => Number.parseInt(i, 10) || 0);
+                const time = h * 60**2 + m * 60 + s;
+                flag.time = clamp(time, 60, 4 * 60**2);
+            }}
+            onBlur={(e) => {
+                const target = e.target as HTMLInputElement;
+                if (target.disabled) {
+                    return;
+                }
+
+                const [h, m, s] = target.value.split(":").slice(-3).map(i => Number.parseInt(i, 10) || 0);
+                const time = h * 60**2 + m * 60 + s;
+                target.value = toInputTime(time);
+                flag.time = clamp(time, 60, 4 * 60**2);
+            }}
+            onFocus={(ev) => {
+                const target = ev.target as HTMLInputElement;
+                const start = target.selectionStart;
+                if (start === null) {
+                    return;
+                } else if (start <= 2) {
+                    target.selectionStart = 0;
+                    target.selectionEnd = 2;
+                } else if (start <= 5) {
+                    target.selectionStart = 3;
+                    target.selectionEnd = 5;
+                } else if (start <= 8) {
+                    target.selectionStart = 6;
+                    target.selectionEnd = 8;
+                }
             }}
             onWheel={(e) => {
                 const target = e.target as HTMLInputElement;
@@ -117,15 +159,18 @@ function createTimerInput(flag: FWFlagTimerPasswordPadlock , index: number, disa
                     return;
                 }
 
+                const value = target.value.replace(/[^0-9:]/g, "");
+                const [h, m, s] = value.split(":").slice(-3).map(i => Number.parseInt(i, 10) || 0);
+                let time = h * 60**2 + m * 60 + s;
                 if (e.deltaY < 0) {
-                    target.stepUp(120);
+                    time += 120;
                 } else if (e.deltaY > 0) {
-                    target.stepDown(120);
+                    time -= 120;
                 } else {
                     return;
                 }
-                const [h, m, s] = target.value.split(":").map(i => Number.parseInt(i, 10));
-                flag.time = clamp(h * 60**2 + m * 60 + s, 60, 240 * 60);
+                target.value = toInputTime(time);
+                flag.time = clamp(time, 60, 4 * 60**2);
             }}
         /> as HTMLInputElement
     );
