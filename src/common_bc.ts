@@ -1,6 +1,6 @@
 /** Miscellaneous common BC-related functions and classes */
 
-import { sortBy, omit, clamp, sample } from "lodash-es";
+import { sortBy, omit, clamp, sample, pick } from "lodash-es";
 
 import {
     toStringTemplate,
@@ -15,7 +15,6 @@ import { pushMBSSettings, SettingsType } from "./settings";
 import {
     DEFAULT_FLAGS,
     parseLegacyFlags,
-    applyFlag,
     fromItemBundles,
     fortuneWheelEquip,
     StripLevel,
@@ -249,11 +248,8 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
 
     /**
      * Update this instance with settings from the provided item set.
-     * @param preRunCallback An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList
      */
-    writeSettings(
-        preRunCallback: null | FortuneWheelPreRunCallback = null,
-    ): FWItemSet {
+    writeSettings(): FWItemSet {
         if (this.name === null || this.itemList === null) {
             throw new Error("Cannot create an ItemSet while \"name\" or \"itemList\" is null");
         }
@@ -265,7 +261,6 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
             this.equipLevel,
             this.flags,
             true,
-            preRunCallback,
             this.weight,
         );
     }
@@ -512,8 +507,8 @@ type FWItemSetKwargTypes = {
     equipLevel?: StripLevel,
     flags?: readonly Readonly<FWFlag>[],
     custom?: boolean,
-    preRunCallback?: null | FortuneWheelPreRunCallback,
     weight?: number,
+    activeHooks?: readonly FWHook[],
 };
 
 function validateFlags(flags: readonly Readonly<FWFlag>[]): FWFlag[] {
@@ -550,11 +545,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     readonly equipLevel: StripLevel;
     /** Which flavors of {@link FWItemSetOption} should be created */
     readonly flags: readonly Readonly<FWFlag>[];
-    /** An optional callback for {@link fortuneWheelEquip} that will executed before equipping any items from itemList */
-    readonly preRunCallback: null | FortuneWheelPreRunCallback;
     // @ts-ignore: false positive; narrowing of superclass attribute type
     readonly mbsList: readonly (null | FWItemSet)[];
-
+    readonly activeHooks: readonly FWHook[];
     /** Initialize the instance */
     constructor(
         name: string,
@@ -564,8 +557,8 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
         equipLevel?: StripLevel,
         flags?: readonly Readonly<FWFlag>[],
         custom?: boolean,
-        preRunCallback?: null | FortuneWheelPreRunCallback,
         weight?: number,
+        activeHooks?: readonly FWHook[],
     ) {
         const kwargs = FWItemSet.validate({
             name,
@@ -575,15 +568,15 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             equipLevel,
             flags,
             custom,
-            preRunCallback,
             weight,
+            activeHooks,
         });
         super(kwargs.name, kwargs.custom, kwargs.mbsList, kwargs.weight);
         this.itemList = kwargs.itemList;
         this.stripLevel = kwargs.stripLevel;
         this.equipLevel = kwargs.equipLevel;
         this.flags = kwargs.flags;
-        this.preRunCallback = kwargs.preRunCallback;
+        this.activeHooks = kwargs.activeHooks;
     }
 
     /** Validation function for the classes' constructor */
@@ -655,16 +648,26 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.custom = true;
         }
 
-        if (kwargs.preRunCallback !== null && typeof kwargs.preRunCallback !== "function") {
-            kwargs.preRunCallback = null;
-        }
-
         if (!Number.isInteger(kwargs.weight)) {
             kwargs.weight = 1;
         } else {
             kwargs.weight = clamp(<number>kwargs.weight, 1, 9);
         }
-        return <Required<FWItemSetKwargTypes>>kwargs;
+
+        if (!isArray(kwargs.activeHooks)) {
+            kwargs.activeHooks = [];
+        } else {
+            kwargs.activeHooks = kwargs.activeHooks.map(i => {
+                return (
+                    typeof i === "object"
+                    && i !== null
+                    && typeof i.id === "string"
+                    && typeof i.listener === "string"
+                    && typeof i.mod === "string"
+                ) ? pick(i, "id", "listener", "mod") : null as never;
+            }).filter(Boolean);
+        }
+        return kwargs as Required<FWItemSetKwargTypes>;
     }
 
     /**
@@ -680,7 +683,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             kwargs.equipLevel,
             kwargs.flags,
             kwargs.custom,
-            kwargs.preRunCallback,
             kwargs.weight,
         ];
         return new FWItemSet(...args);
@@ -688,10 +690,9 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
     /**
      * Factory method for generating {@link FWItemSetOption.Script} callbacks.
-     * @param globalCallback A callback (or `null`) that will be applied to all items after they're equipped
      * @returns A valid {@link FWItemSetOption.Script} callback
      */
-    scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
+    scriptFactory(flag: FWFlag, hooks: readonly FWHook[]): (character?: null | Character) => void {
         const assets = this.itemList.map(({Name, Group}) => AssetGet(Player.AssetFamily, Group, Name));
 
         return (character) => {
@@ -708,10 +709,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
                 }
             });
 
-            fortuneWheelEquip(
-                this.name, items, this.stripLevel, globalCallback,
-                this.preRunCallback, character ?? Player,
-            );
+            fortuneWheelEquip(this.name, items, this.stripLevel, character ?? Player, hooks, flag);
         };
     }
 
@@ -773,7 +771,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             return {
                 ID: IDs[i],
                 Color: sample(FORTUNE_WHEEL_COLORS) as FortuneWheelColor,
-                Script: this.scriptFactory((...args) => applyFlag(flag, ...args)),
+                Script: this.scriptFactory(flag, this.activeHooks),
                 Description,
                 Default,
                 Custom: this.custom,
@@ -793,7 +791,6 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
             equipLevel: this.equipLevel,
             flags: this.flags,
             custom: this.custom,
-            preRunCallback: this.preRunCallback,
             weight: this.weight,
         };
     }

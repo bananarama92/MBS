@@ -5,7 +5,6 @@ import { clone, sample } from "lodash-es";
 import {
     MBS_MOD_API,
     waitFor,
-    padArray,
     isArray,
     entries,
     fromEntries,
@@ -28,47 +27,8 @@ import { itemSetType } from "./type_setting";
 import { StripLevel } from "./equipper";
 import { FWSelectScreen, loadFortuneWheelObjects } from "./fortune_wheel_select";
 import { WheelPresetScreen } from "./preset_screen";
-
-/**
- * Copy the character's hair color the to passed item.
- * @param item The item in question
- * @param character The respective player- or simple character
- * @param indices The indices of the {@link item.Color} array whose color will be updated
- */
-function copyHairColor(item: Item, character: Character, indices: readonly number[]): void {
-    if (item === null || typeof item !== "object") {
-        throw new TypeError(`Invalid "item" type: ${typeof item}`);
-    } else if (!isArray(indices)) {
-        throw new TypeError(`Invalid "indices" type: ${typeof indices}`);
-    } else if (character === null || typeof character !== "object") {
-        throw new TypeError(`Invalid "character" type: ${typeof character}`);
-    } else if (!character.IsSimple() && !character.IsPlayer()) {
-        throw new Error("Expected a simple or player character");
-    }
-
-    const hair = character.Appearance.find(i => i.Asset.Group.Name === "HairFront");
-    if (hair === undefined) {
-        return;
-    }
-
-    // Ensure that the item's color is stored as an array
-    const colorLength = Math.max(0, ...indices);
-    let color: string[];
-    if (typeof item.Color === "string") {
-        item.Color = color = padArray([item.Color], colorLength, "Default");
-    } else if (!Array.isArray(item.Color) || item.Color.length === 0) {
-        item.Color = color = Array(colorLength).fill("Default");
-    } else {
-        color = item.Color;
-    }
-
-    // Update the item's color with the hair color
-    if (typeof hair.Color === "string") {
-        indices.forEach(i => color[i] = <string>hair.Color);
-    } else if (Array.isArray(hair.Color) && hair.Color.length >= 1) {
-        indices.forEach(i => color[i] = (<string[]>hair.Color)[0]);
-    }
-}
+import { wheelCallbacks } from "./events";
+import { MBS_REGISTRATION_DATA } from "./registration";
 
 /**
  * Color all items in the passed groups with the specified color.
@@ -92,7 +52,7 @@ function colorItems(groupNames: readonly AssetGroupName[], character: Character,
     }
 }
 
-function statueCopyColors<T>(itemList: T, character: Character): T {
+function statueCopyColors(character: Character) {
     if (character === null || typeof character !== "object") {
         throw new TypeError(`Invalid "character" type: ${typeof character}`);
     } else if (!character.IsSimple() && !character.IsPlayer()) {
@@ -116,8 +76,133 @@ function statueCopyColors<T>(itemList: T, character: Character): T {
         ];
         colorItems(groupNames, character, "#484747");
     }
-    return itemList;
 }
+
+const ASSET_COLORABLE_INDICES: Readonly<Partial<Record<AssetGroupName, Readonly<Record<string, readonly number[]>>>>> = {
+    Suit: {
+        ReverseBunnySuit: [0, 1],
+    },
+    SuitLower: {
+        Catsuit: [0, 1],
+    },
+    Mask: {
+        FaceVeil: [1],
+    },
+    ItemHands: {
+        FuturisticMittens: [0, 1],
+    },
+    ItemHead: {
+        InteractiveVRHeadset: [0],
+    },
+    ItemMouth2: {
+        DuctTape: [0],
+    },
+    ItemMouth3: {
+        FuturisticMuzzle: [3],
+        DuctTape: [0],
+    },
+    ItemPelvis: {
+        SciFiPleasurePanties: [0, 2, 4, 5],
+    },
+    ItemNeck: {
+        BonedNeckCorset: [2, 3],
+    },
+    ItemNeckRestraints: {
+        CollarChainShort: [0],
+    },
+    ItemTorso2: {
+        FuturisticHarness: [0, 1, 2],
+    },
+    ItemEars: {
+        FuturisticEarphones: [1],
+    },
+    ItemAddon: {
+        CeilingChain: [0],
+    },
+    ItemNipplesPiercings: {
+        RoundPiercing: [1, 2],
+    },
+    ItemLegs: {
+        FrogtieStraps: [2],
+        DuctTape: [0],
+    },
+    ItemHood: {
+        DroneMask: [2],
+    },
+    ItemFeet: {
+        DuctTape: [0],
+    },
+    ItemArms: {
+        DuctTape: [0],
+    },
+};
+
+wheelCallbacks.addEventListener("preProcess", MBS_REGISTRATION_DATA, {
+    callback: (event) => statueCopyColors(event.character),
+    id: "statueSetBodyColor",
+    description: "Color the entire body gray (statue color) before equipping any wheel items",
+});
+
+wheelCallbacks.addEventListener("color", MBS_REGISTRATION_DATA, {
+    callback: ({ character, newAsset }, _cache) => {
+        const cache = _cache as { hairColor?: string } & Record<string, any>;
+        if (!cache.hairColor) {
+            const hair = character.Appearance.find(i => i.Asset.Group.Name === "HairFront");
+            if (hair === undefined) {
+                return;
+            }
+
+            if (typeof hair.Color === "string") {
+                cache.hairColor = hair.Color;
+            } else if (isArray(hair.Color) && typeof hair.Color[0] === "string") {
+                cache.hairColor = hair.Color[0];
+            } else {
+                cache.hairColor = hair.Asset.DefaultColor[0];
+            }
+        }
+
+        const indices = ASSET_COLORABLE_INDICES[newAsset.Group.Name]?.[newAsset.Name];
+        if (indices) {
+            const ret: (undefined | string)[] = Array(newAsset.ColorableLayerCount).fill(undefined);
+            indices.slice(0, newAsset.ColorableLayerCount).forEach(i => ret[i] = cache.hairColor);
+            return ret;
+        } else {
+            return null;
+        }
+    },
+    id: "copyHairColor",
+    description: "Copy the characters hair color to a number of items",
+});
+
+wheelCallbacks.addEventListener("typeRecord", MBS_REGISTRATION_DATA, {
+    callback: ({ newAsset }) => {
+        switch (newAsset.Archetype) {
+            case ExtendedArchetype.TYPED:
+            case ExtendedArchetype.VIBRATING: {
+                const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
+                const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                return sample(allowType);
+            }
+            case ExtendedArchetype.MODULAR: {
+                const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
+                let typeRecord: undefined | TypeRecord = undefined;
+                for (const module of data?.modules ?? []) {
+                    const allowType = module.Options.map(o => o.Property.TypeRecord);
+                    const type = sample(allowType);
+                    if (type) {
+                        typeRecord = Object.assign(typeRecord ?? {}, type);
+                    }
+                }
+                return typeRecord;
+            }
+            default:
+                return null;
+        }
+    },
+    id: "randomizeType",
+    description: "randomize the passed type",
+});
+
 
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>> {
@@ -126,18 +211,15 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
             {
                 Name: "ReverseBunnySuit",
                 Group: "Suit",
-                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "Catsuit",
                 Group: "SuitLower",
-                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "FaceVeil",
                 Group: "Mask",
                 Color: ["#000", "Default"],
-                ItemCallback: (item, character) => copyHairColor(item, character, [1]),
             },
             {
                 Name: "FuturisticMittens",
@@ -147,7 +229,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Property: "Secure",
                     Name: "Permanent PSO Mittens",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1]),
             },
             {
                 Name: "InteractiveVRHeadset",
@@ -157,7 +238,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Property: "Secure",
                     Name: "Permanent PSO Headset",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "LargeDildo",
@@ -186,7 +266,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Muzzle",
                     Description: "Keeping your cries muffled",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [3]),
             },
             {
                 Name: "FuturisticVibrator",
@@ -207,7 +286,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Panties",
                     Description: "No escape and no Orgasms",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0, 2, 4, 5]),
             },
             {
                 Name: "BonedNeckCorset",
@@ -218,7 +296,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Property: "Secure",
                     Name: "Permanent PSO Collar",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [2, 3]),
             },
             {
                 Name: "CollarChainShort",
@@ -231,7 +308,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Property: {
                     OverridePriority: 7,
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "StrictLeatherPetCrawler",
@@ -264,7 +340,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Property: {
                     OverridePriority: 23,
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0, 1, 2]),
             },
             {
                 Name: "FuturisticEarphones",
@@ -275,7 +350,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Earphones",
                 },
                 Color: ["#0F0F0F", "Default", "Default"],
-                ItemCallback: (item, character) => copyHairColor(item, character, [1]),
             },
             {
                 Name: "CeilingChain",
@@ -286,7 +360,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Chain",
                     Description: "Never to escape",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "RoundPiercing",
@@ -297,7 +370,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Piercings",
                 },
                 Color: ["#000000", "Default", "Default"],
-                ItemCallback: (item, character) => copyHairColor(item, character, [1, 2]),
             },
             {
                 Name: "CollarAutoShockUnit",
@@ -316,7 +388,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Permanent PSO Straps",
                     Description: "To keep a PSO on their knees",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [2]),
             },
             {
                 Name: "DroneMask",
@@ -326,7 +397,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Property: "Thin",
                     Name: "Permanent PSO Mask",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [2]),
             },
         ],
         mummy: [
@@ -340,7 +410,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
                     const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
                     if (allowType.length === 0) {
@@ -360,7 +429,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
                     const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
                     if (allowType.length === 0) {
@@ -379,7 +447,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
-                ItemCallback: (item, character) => copyHairColor(item, character, [0]),
             },
             {
                 Name: "DuctTape",
@@ -391,7 +458,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
                     const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
                     if (allowType.length === 0) {
@@ -420,7 +486,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     Description: "A bundle of resilient cloth wrappings",
                 },
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
                     const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
                     if (allowType.length < 2) {
@@ -441,7 +506,6 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 },
                 Equip: () => (Math.random() > 0.5),
                 ItemCallback: (item, character) => {
-                    copyHairColor(item, character, [0]);
                     const data = TypedItemDataLookup[`${item.Asset.Group.Name}${item.Asset.Name}`];
                     const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
                     if (allowType.length === 0) {
@@ -921,6 +985,10 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
                 false,
+                undefined,
+                [
+                    { mod: "MBS", listener: "color", id: "copyHairColor" },
+                ],
             ),
             new FWItemSet(
                 "Mummification",
@@ -930,6 +998,11 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [3]),
                 false,
+                undefined,
+                [
+                    { mod: "MBS", listener: "color", id: "copyHairColor" },
+                    { mod: "MBS", listener: "typeRecord", id: "randomizeType" },
+                ],
             ),
             new FWItemSet(
                 "Bondage Maid",
@@ -948,7 +1021,10 @@ waitFor(bcLoaded).then(() => {
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
                 false,
-                statueCopyColors,
+                undefined,
+                [
+                    { mod: "MBS", listener: "preProcess", id: "statueSetBodyColor" },
+                ],
             ),
         ]);
         FORTUNE_WHEEL_ITEM_SETS.forEach(itemSet => itemSet.register(false));
