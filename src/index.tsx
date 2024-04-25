@@ -37,6 +37,7 @@ waitFor(() => bcLoaded(false)).then(() => {
 import "./window_register";
 import "./crafting";
 import "./backport";
+import "./new_items_screen";
 import "./garbling";
 
 // Workaround for checking whether mbs satisfies its declared interface
