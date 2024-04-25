@@ -15,6 +15,15 @@ interface FWItemSetOption extends Required<FWObjectOption> {
     readonly Parent: import("../common_bc").FWItemSet,
 }
 
+interface FWHook {
+    /** The mod SDK name of the mod */
+    readonly mod: string,
+    /** The type of event listener */
+    readonly listener: keyof import("../fortune_wheel/events").WheelEvents,
+    /** The ID of the event listener */
+    readonly id: string,
+}
+
 /** Type representing MBS `FWCommand` fortune wheel options */
 interface FWCommandOption extends FWObjectOption {
     /**
@@ -108,15 +117,6 @@ type FortuneWheelNames = "leash_candy" | "mummy" | "maid" | "statue";
 
 /** Wheel of fortune callbacks that are to-be applied to individual items */
 type FortuneWheelCallback = (item: Item, character: Character) => void;
-
-/**
- * Wheel of fortune callbacks that are to-be applied to the entire item list.
- * The callback must return either a new or the original item list.
- */
-type FortuneWheelPreRunCallback = (
-    itemList: readonly FWItem[],
-    character: Character,
-) => readonly FWItem[];
 
 /** A union of valid wheel of fortune button colors */
 type FortuneWheelColor = "Blue" | "Gold" | "Gray" | "Green" | "Orange" | "Purple" | "Red" | "Yellow";
@@ -216,7 +216,6 @@ interface FWSimpleItemSet {
     equipLevel: StripLevel,
     flags: readonly Readonly<FWFlag>[],
     custom: boolean,
-    preRunCallback: FortuneWheelPreRunCallback | null,
     weight: number,
 }
 
