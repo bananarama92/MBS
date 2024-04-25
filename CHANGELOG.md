@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## 1.7.2
+* FIx the shop not showing newly released assets
+
 ## 1.7.1
 * Improve button alignment in the wheel of fortune item set menu
 * Use custom `text`-based inputs (rather than `time`-based) for the wheel of fortune timers;

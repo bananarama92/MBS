@@ -25,14 +25,14 @@ const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
  * Check whether an integer falls within the specified range and raise otherwise.
  * @param int The to-be validate integer
  * @param varName The name of the variable
- * @param min The minimum allowed value of the integer
- * @param max The maximum allowed value of the integer
+ * @param min The minimum allowed value of the integer, defaults to {@link Number.MIN_SAFE_INTEGER}
+ * @param max The maximum allowed value of the integer, defaults to {@link Number.MAX_SAFE_INTEGER}
  */
 export function validateInt(
     int: number,
     varName: string,
-    min: number = -Infinity,
-    max: number = Infinity,
+    min: number = Number.MIN_SAFE_INTEGER,
+    max: number = Number.MAX_SAFE_INTEGER,
 ): void {
     if (!(Number.isInteger(int) && int >= min && int <= max)) {
         if (typeof int !== "number") {

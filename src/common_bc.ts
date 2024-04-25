@@ -108,7 +108,12 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
  * @param testGameVersion Whether the game version should be validated or not
  */
 export function bcLoaded(testGameVersion=true): boolean {
-    return typeof MainCanvas === "object" && (testGameVersion ? GameVersionFormat.test(GameVersion) : true);
+    // `GameStart()` should be (nearly) fully initialized at this point
+    return (
+        typeof ServerSocket === "object"
+        && ServerSocket !== null
+        && (testGameVersion ? GameVersionFormat.test(GameVersion) : true)
+    );
 }
 
 /** Return whether all vanilla BC online shared settings are loaded. */
