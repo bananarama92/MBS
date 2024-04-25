@@ -1,6 +1,6 @@
 #mbs-fwitemset {
 	grid-template:
-		"delete header header header accept cancel exit" min(9dvh, 4.5dvw)
+		"menubar menubar menubar menubar menubar menubar menubar" min(9dvh, 4.5dvw)
 		". . name-input name-input . . ." min(7dvh, 3.5dvw)
 		". . outfit-input outfit-input outfit-button outfit-button outfit-button" min(7dvh, 3.5dvw)
 		". . strip-header lock-header lock-header lock-header lock-header" min(7dvh, 3.5dvw)
@@ -8,33 +8,49 @@
 		". . equip-header lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
 		". . equip-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
 		". . weight-header lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
-		". . weight-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw) / min(9dvh, 4.5dvw) min(40dvh, 20dvw) auto min(38dvh, 19dvw) min(16dvh, 8dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+		". . weight-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
+		". . event-header event-header event-header event-header event-header" min(7dvh, 3.5dvw)
+		". . event-menu event-menu event-menu event-menu event-menu" min-content / min(9dvh, 4.5dvw) min(40dvh, 20dvw) auto min(38dvh, 19dvw) min(16dvh, 8dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+	overflow-y: scroll;
 
 	span {
 		place-self: end start;
+
 	}
 }
 
+#mbs-fwitemset-menubar {
+	display: grid;
+	gap: min(2dvh, 1dvw);
+	grid-area: menubar;
+	grid-template-columns: subgrid;
+	grid-template-rows: subgrid;
+	position: sticky;
+	top: 0%;
+	z-index: 1;
+}
+
 #mbs-fwitemset-delete {
-	grid-area: delete;
+	grid-column: 1;
 }
 
 #mbs-fwitemset-header {
-	grid-area: header;
+	grid-column: 2 / 5;
+	height: 100%;
 	margin-left: min(20dvh, 10dvw);
 }
 
 #mbs-fwitemset-accept {
-	grid-area: accept;
+	grid-column: 5;
 	justify-self: end;
 }
 
 #mbs-fwitemset-cancel {
-	grid-area: cancel;
+	grid-column: 6;
 }
 
 #mbs-fwitemset-exit {
-	grid-area: exit;
+	grid-column: 7;
 }
 
 #mbs-fwitemset-outfit-name {
@@ -109,4 +125,54 @@
 
 #mbs-fwitemset-strip-dropdown-content, #mbs-fwitemset-equip-dropdown-content {
 	width: min-content;
+}
+
+#mbs-fwitemset-events-label {
+	grid-area: event-header;
+}
+
+#mbs-fwitemset-events {
+	grid-area: event-menu;
+	list-style-type: none;
+	margin: unset;
+	padding: unset;
+
+	label {
+		font-size: var(--mbs-font-small);
+
+		& > span {
+			cursor: pointer;
+		}
+	}
+
+	.mbs-fwitemset-event {
+		align-items: center;
+		display: grid;
+		gap: min(2dvh, 1dvw);
+		grid-template-columns: min-content auto 50%;
+
+
+		& > menu {
+			list-style-type: none;
+		}
+
+		&:not(:first-child) {
+			margin-block: min(2dvh, 1dvw) 0;
+		}
+	}
+
+	.mbs-fwitemset-event-addon {
+		place-self: unset;
+	}
+
+	.mbs-fwitemset-event-select {
+		background-color: var(--mbs-button-color);
+		border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+		box-sizing: border-box;
+		color: var(--mbs-text-color);
+		cursor: pointer;
+		font: inherit;
+		margin-block: min(2dvh, 1dvw) 0;
+		width: 100%;
+	}
 }

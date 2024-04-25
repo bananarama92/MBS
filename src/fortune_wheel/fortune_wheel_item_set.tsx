@@ -8,6 +8,7 @@ import { byteToKB } from "../settings";
 
 import { toItemBundles } from "./item_bundle";
 import { fortuneWheelEquip, StripLevel, getStripCondition } from "./equipper";
+import { wheelCallbacks } from "./events";
 import styles from "./fortune_wheel_item_set.scss";
 
 /** A mapping that maps {@link StripLevel} values to a description. */
@@ -156,9 +157,11 @@ function createTimerInput(flag: FWFlagTimerPasswordPadlock, index: number, disab
             onWheel={(e) => {
                 const target = e.target as HTMLInputElement;
                 if (target.disabled) {
+                    e.stopImmediatePropagation();
                     return;
                 }
 
+                e.preventDefault();
                 const value = target.value.replace(/[^0-9:]/g, "");
                 const [h, m, s] = value.split(":").slice(-3).map(i => Number.parseInt(i, 10) || 0);
                 let time = h * 60**2 + m * 60 + s;
@@ -176,6 +179,60 @@ function createTimerInput(flag: FWFlagTimerPasswordPadlock, index: number, disab
     );
 }
 
+function createHookMenu(
+    groups: Partial<Record<AssetGroup["Category"], { label: string, groups: AssetGroup[] }>>,
+    disabled: boolean,
+): [HTMLSpanElement, HTMLMenuElement] {
+    function changeListener(this: HTMLSelectElement, _ev: Event) {
+
+    }
+
+    function inputListener(this: HTMLInputElement, _ev: Event) {
+
+    }
+
+    return [
+        <span id={ID.eventsLabel}>Addon-specific options:</span> as HTMLSpanElement,
+        <menu id={ID.events} aria-labelledby="mbs-fwitemset-events-label">
+            {wheelCallbacks.entries().map(([id, data]) => {
+                if (!data.conditional) {
+                    return null as never;
+                }
+
+                const menuItems: HTMLElement[] = [];
+                if (data.allowedKwargs.has("groupNames")) {
+                    menuItems.push(
+                        <label role="listitem">
+                            <span>Apply to specific item groups</span>
+                            <select multiple required size={5} disabled={disabled} onChange={changeListener} class="mbs-fwitemset-event-select">
+                                <option value="__all" selected={data.defaultKwargs.groupNames == null}>Select all groups</option>
+                                <option value="__none" selected={data.defaultKwargs.groupNames?.size === 0}>Select no groups</option>
+                                <hr />
+                                {
+                                    Object.values(groups).map(({ label, groups }) => {
+                                        return <optgroup label={label}>{groups.map(g => {
+                                            return <option value={g.Name} selected={groupNames.has(g.Name)}>{g.Description}</option>;
+                                        })}</optgroup>;
+                                    })
+                                }
+                            </select>
+                        </label> as HTMLLabelElement,
+                    );
+                }
+
+                const groupNames = data.defaultKwargs.groupNames ?? new Set;
+                const li = (
+                    <li data-name={id} dat-addon={data.registrationData.name} class="mbs-fwitemset-event">
+                        <input type="checkbox" class="mbs-fwitemset-event-checkbox" id={`${ID.eventsCheckbox}${id}`} disabled={disabled} onInput={inputListener} />
+                        <label class="mbs-fwitemset-event-description" for={`${ID.eventsCheckbox}${id}`}><span>{`${data.registrationData.name}: ${data.description}`}</span></label>
+                        <menu>{menuItems}</menu>
+                    </li>
+                );
+                return li;
+            }).filter(Boolean)}
+        </menu> as HTMLMenuElement,
+    ];
+}
 
 const root = "mbs-fwitemset";
 const ID = Object.freeze({
@@ -224,6 +281,10 @@ const ID = Object.freeze({
     lockContainer: `${root}-lock-container`,
     lockCheckbox: `${root}-lock-checkbox`,
     lockTimer: `${root}-lock-timer`,
+
+    events: `${root}-events`,
+    eventsLabel: `${root}-events-label`,
+    eventsCheckbox: `${root}-events-checkbox`,
 });
 
 export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
@@ -251,56 +312,74 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         this.settings = new FWSelectedItemSet(wheelList);
         this.preview = CharacterLoadSimple("MBSFortuneWheelPreview");
 
+        const groups = {
+            Appearance: { label: "Body and clothes", groups: [] as AssetGroup[] },
+            Item: { label: "Items and restraints", groups: [] as AssetGroup[] },
+        } satisfies Partial<Record<AssetGroup["Category"], { label: string, groups: AssetGroup[] }>>;
+
+        AssetGroup.filter(g => {
+            return g.AllowNone;
+        }).sort((g1, g2) => {
+            return g1.Category.localeCompare(g2.Category) || g1.Description.localeCompare(g2.Description);
+        }).forEach(g => {
+            if (g.Category in groups) {
+                groups[g.Category as keyof typeof groups].groups.push(g);
+            }
+        });
+
         document.body.appendChild(
             <div id={ID.root} class="mbs-screen">
                 <style id={ID.styles}>{styles.toString()}</style>
 
-                <h1 id={ID.header}>{`Customize wheel of fortune item set ${this.index}`}</h1>
-                <div id={ID.delete} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.deleteButton}
-                        style={{ backgroundImage: "url('./Icons/Trash.png')" }}
-                        onClick={() => this.exit(false, ExitAction.DELETE)}
-                        disabled={disabled}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.deleteTooltip} style={{ justifySelf: "left" }}>
-                        Delete item set
+                <div id="mbs-fwitemset-menubar">
+                    <h1 id={ID.header}>{`Customize wheel of fortune item set ${this.index}`}</h1>
+                    <div id={ID.delete} class="mbs-button-div">
+                        <button
+                            class="mbs-button"
+                            id={ID.deleteButton}
+                            style={{ backgroundImage: "url('./Icons/Trash.png')" }}
+                            onClick={() => this.exit(false, ExitAction.DELETE)}
+                            disabled={disabled}
+                        />
+                        <div class="mbs-button-tooltip" id={ID.deleteTooltip} style={{ justifySelf: "left" }}>
+                            Delete item set
+                        </div>
                     </div>
-                </div>
-                <div id={ID.accept} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.acceptButton}
-                        style={{ backgroundImage: "url('./Icons/Accept.png')" }}
-                        onClick={() => this.exit(false, ExitAction.SAVE)}
-                        disabled={true}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.acceptTooltip} style={{ justifySelf: "right" }}>
-                        Save item set:\nMissing outfit
+                    <div id={ID.accept} class="mbs-button-div">
+                        <button
+                            class="mbs-button"
+                            id={ID.acceptButton}
+                            style={{ backgroundImage: "url('./Icons/Accept.png')" }}
+                            onClick={() => this.exit(false, ExitAction.SAVE)}
+                            disabled={true}
+                        />
+                        <div class="mbs-button-tooltip" id={ID.acceptTooltip} style={{ justifySelf: "right" }}>
+                            Save item set:\nMissing outfit
+                        </div>
                     </div>
-                </div>
-                <div id={ID.cancel} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.cancelButton}
-                        style={{ backgroundImage: "url('./Icons/Cancel.png')" }}
-                        onClick={() => this.exit(false, ExitAction.NONE)}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.cancelTooltip} style={{ justifySelf: "right" }}>
-                        Cancel
+                    <div id={ID.cancel} class="mbs-button-div">
+                        <button
+                            class="mbs-button"
+                            id={ID.cancelButton}
+                            style={{ backgroundImage: "url('./Icons/Cancel.png')" }}
+                            onClick={() => this.exit(false, ExitAction.NONE)}
+                        />
+                        <div class="mbs-button-tooltip" id={ID.cancelTooltip} style={{ justifySelf: "right" }}>
+                            Cancel
+                        </div>
                     </div>
-                </div>
-                <div id={ID.exit} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.exitButton}
-                        style={{ backgroundImage: "url('./Icons/Exit.png')" }}
-                        onClick={() => this.exit(true, ExitAction.NONE)}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
-                        Exit
+                    <div id={ID.exit} class="mbs-button-div">
+                        <button
+                            class="mbs-button"
+                            id={ID.exitButton}
+                            style={{ backgroundImage: "url('./Icons/Exit.png')" }}
+                            onClick={() => this.exit(true, ExitAction.NONE)}
+                        />
+                        <div class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
+                            Exit
+                        </div>
                     </div>
+
                 </div>
 
                 <input
@@ -408,6 +487,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                         );
                     })
                 } </div>
+
+                {createHookMenu(groups, disabled)}
             </div>,
         );
     }
@@ -508,10 +589,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 return condition(asset);
             }
         });
-        fortuneWheelEquip(
-            "MBSPreview", items,
-            this.settings.stripLevel, null, null, this.preview,
-        );
+        fortuneWheelEquip("MBSPreview", items, this.settings.stripLevel, this.preview, []);
     }
 
     /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
