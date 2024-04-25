@@ -68,13 +68,15 @@ export function getRandomPassword(n: number): string {
     return range(0, n).map(_ => sample(ALPHABET)).join("");
 }
 
-/** The MBS {@link ModSDKGlobalAPI} instance. */
-export const MBS_MOD_API = bcModSdk.registerMod({
+export const MBS_MOD_INFO = Object.freeze({
     name: "MBS",
     fullName: "Maid's Bondage Scripts",
     repository: "https://github.com/bananarama92/MBS",
     version: MBS_VERSION,
-});
+}) satisfies import("bondage-club-mod-sdk").ModSDKModInfo;
+
+/** The MBS {@link ModSDKGlobalAPI} instance. */
+export const MBS_MOD_API = bcModSdk.registerMod(MBS_MOD_INFO);
 
 /** A proxy for lazily accessing the BCX mod API. */
 class ModAPIProxy implements BCX_ModAPI {

@@ -123,14 +123,16 @@ export function validateInt(
     varName: string,
     min: number = Number.MIN_SAFE_INTEGER,
     max: number = Number.MAX_SAFE_INTEGER,
+    errPrefix: null | string = null,
 ): void {
+    errPrefix = errPrefix == null ? "" : `${errPrefix}: `;
     if (!(Number.isInteger(int) && int >= min && int <= max)) {
         if (typeof int !== "number") {
-            throw new TypeError(`Invalid "${varName}" type: ${typeof int}`);
+            throw new TypeError(`${errPrefix}Invalid "${varName}" type: ${typeof int}`);
         } else if (!Number.isInteger(int)) {
-            throw new Error(`"${varName}" must be an integer: ${int}`);
+            throw new Error(`${errPrefix}"${varName}" must be an integer: ${int}`);
         } else {
-            throw new RangeError(`"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
+            throw new RangeError(`${errPrefix}"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
         }
     }
 }
