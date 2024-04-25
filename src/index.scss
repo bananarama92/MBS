@@ -125,6 +125,8 @@
 	}
 
 	p, h2, ul, span {
+		color: var(--mbs-text-color);
+		font-family: var(--mbs-font-family);
 		font-size: var(--mbs-font-small);
 	}
 
@@ -144,7 +146,12 @@
 	}
 
 	input {
+		background-color: var(--mbs-background-color);
 		box-sizing: border-box;
+		color: var(--mbs-text-color);
+		font: inherit;
+		font-family: var(--mbs-font-family);
+		font-size: var(--mbs-font-small);
 		padding: unset;
 	}
 
@@ -155,6 +162,7 @@
 
 	input[type="checkbox"] {
 		border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+		cursor: pointer;
 		height: min(7dvh, 3.5dvw);
 		width: min(7dvh, 3.5dvw);
 
@@ -163,13 +171,35 @@
 		}
 
 		&:disabled {
-			background-color: var(--mbs-background-color);
-			filter: brightness(60%);
+			background-color: color-mix(in srgb, var(--mbs-background-color) 60%, black 40%);
+			cursor: auto;
 		}
 
 		&::before {
 			height: min(4.6dvh, 2.3dvw);
 			width: min(4.6dvh, 2.3dvw);
+		}
+	}
+
+	select {
+		background-color: var(--mbs-button-color);
+		border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+		box-sizing: border-box;
+		color: var(--mbs-text-color);
+		cursor: pointer;
+		font: inherit;
+		font-family: var(--mbs-font-family);
+		font-size: var(--mbs-font-small);
+
+		&:disabled {
+			background-color: color-mix(in srgb, var(--mbs-background-color) 60%, black 40%);
+			cursor: auto;
+		}
+	}
+
+	label {
+		&:not(:has(:disabled)) > span {
+			cursor: pointer;
 		}
 	}
 }
