@@ -1,7 +1,10 @@
 # MBS Changelog
 
+## 1.7.3
+* Fix a race condition related to the alternate garbling initialization
+
 ## 1.7.2
-* FIx the shop not showing newly released assets
+* Fix the shop not showing newly released assets
 
 ## 1.7.1
 * Improve button alignment in the wheel of fortune item set menu

@@ -1,12 +1,12 @@
 import { MBS_MOD_API, waitFor, logger } from "../common";
-import { bcLoaded } from "../common_bc";
+import { settingsMBSLoaded } from "../common_bc";
 
 import { convertToGagSpeak, GarbleOptions } from "./gag_speak";
 import { json as garblingJSON } from "./json";
 
 export { garblingJSON };
 
-waitFor(bcLoaded).then(() => {
+waitFor(settingsMBSLoaded).then(() => {
     logger.log("Initializing garbling module");
 
     // Only use this hook for ring gags
