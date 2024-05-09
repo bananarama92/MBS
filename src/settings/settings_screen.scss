@@ -1,8 +1,8 @@
 #mbs-preference {
 	grid-template:
-		"header header exit" min(9vh, 4.5vw)
+		"header header exit" min(9dvh, 4.5dvw)
 		"settings misc misc" auto
-		/ auto min(29vh, 14.5vw) min(9vh, 4.5vw);
+		/ auto min(29dvh, 14.5dvw) min(9dvh, 4.5dvw);
 }
 
 #mbs-preference-header {
@@ -14,16 +14,16 @@
 }
 
 .mbs-preference-settings-pair {
-	grid-column-gap: min(3vh, 1.5vw);
+	grid-column-gap: min(3dvh, 1.5dvw);
 	align-items: center;
 	display: grid;
-	grid-template-columns: min(9vh, 4.5vw) auto;
-	padding-right: min(6vh, 3vw);
+	grid-template-columns: min(9dvh, 4.5dvw) auto;
+	padding-right: min(6dvh, 3dvw);
 	text-align: justify;
 
 	button {
-		height: min(9vh, 4.5vw);
-		width: min(9vh, 4.5vw);
+		height: min(9dvh, 4.5dvw);
+		width: min(9dvh, 4.5dvw);
 	}
 
 	&> p {
@@ -36,30 +36,30 @@
 	grid-area: settings;
 	height: 100%;
 	overflow: hidden scroll;
-	grid-gap: min(2vh, 1vw);
+	grid-gap: min(2dvh, 1dvw);
 }
 
 #mbs-preference-misc {
 	align-self: self-end;
 	display: grid;
-	grid-gap: min(2vh, 1vw);
+	grid-gap: min(2dvh, 1dvw);
 	grid-area: misc;
 	grid-template:
-		"reset reset" min(9vh, 4.5vw)
-		"import export" min(9vh, 4.5vw)
-		"changelog changelog" min(9vh, 4.5vw)
+		"reset reset" min(9dvh, 4.5dvw)
+		"import export" min(9dvh, 4.5dvw)
+		"changelog changelog" min(9dvh, 4.5dvw)
 		/ auto auto;
 
 	button {
 		background-origin: padding-box;
 		background-position: left;
-		background-size: min(7vh, 3.5vw) min(7vh, 3.5vw);
+		background-size: min(7dvh, 3.5dvw) min(7dvh, 3.5dvw);
 	}
 }
 
 #mbs-preference-reset {
 	grid-area: reset;
-	grid-template-columns: min(40vh, 20vw);
+	grid-template-columns: min(40dvh, 20dvw);
 
 	button:not(:hover) {
 		background-color: pink;
@@ -68,17 +68,17 @@
 
 #mbs-preference-import {
 	grid-area: import;
-	grid-template-columns: min(19vh, 9.5vw);
+	grid-template-columns: min(19dvh, 9.5dvw);
 }
 
 #mbs-preference-export {
 	grid-area: export;
-	grid-template-columns: min(19vh, 9.5vw);
+	grid-template-columns: min(19dvh, 9.5dvw);
 }
 
 #mbs-preference-changelog {
 	grid-area: changelog;
-	grid-template-columns: min(40vh, 20vw);
+	grid-template-columns: min(40dvh, 20dvw);
 }
 
 #mbs-preference-reset-screen {
@@ -100,8 +100,8 @@
 	mask-position: center;
 	mask-repeat: no-repeat;
 	mask-size: contain;
-	padding: min(6vh, 3vw);
-	padding-top: min(3vh, 1.5vw);
+	padding: min(6dvh, 3dvw);
+	padding-top: min(3dvh, 1.5dvw);
 	position: relative;
 	width: 80%;
 	word-break: break-word;
@@ -111,10 +111,10 @@
 	display: grid;
 	grid-template-columns: auto auto;
 	justify-items: center;
-	padding-top: min(10vh, 5vw);
+	padding-top: min(10dvh, 5dvw);
 
 	.mbs-button {
-		height: min(9vh, 4.5vw);
-		width: min(27vh, 13.5vw);
+		height: min(9dvh, 4.5dvw);
+		width: min(27dvh, 13.5dvw);
 	}
 }

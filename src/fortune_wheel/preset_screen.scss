@@ -1,8 +1,8 @@
 #mbs-fwpreset {
 	grid-template:
-		"delete header accept save exit" min(9vh, 4.5vw)
+		"delete header accept save exit" min(9dvh, 4.5dvw)
 		"mid mid mid mid mid" auto
-		/ min(9vh, 4.5vw) auto min(9vh, 4.5vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		/ min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
 }
 
 #mbs-fwpreset-delete {
@@ -11,7 +11,7 @@
 
 #mbs-fwpreset-header {
 	grid-area: header;
-	margin-left: min(20vh, 10vw);
+	margin-left: min(20dvh, 10dvw);
 }
 
 #mbs-fwpreset-accept {
@@ -30,9 +30,9 @@
 	display: grid;
 	grid-area: mid;
 	text-align: center;
-	grid-gap: min(2vh, 1vw);
+	grid-gap: min(2dvh, 1dvw);
 	grid-template:
-		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9vh, 4.5vw)
+		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9dvh, 4.5dvw)
 		"name builtin-bc builtin-mbs custom-mbs" auto / auto min-content min-content min-content;
 	justify-items: center;
 	justify-self: center;
@@ -61,9 +61,9 @@
 
 .mbs-fwpreset-grid {
 	display: grid;
-	grid-gap: min(1.2vh, 0.6vw);
+	grid-gap: min(1.2dvh, 0.6dvw);
 	grid-auto-flow: column;
-	grid-template-rows: repeat(8, min(7vh, 3.5vw));
+	grid-template-rows: repeat(8, min(7dvh, 3.5dvw));
 	width: fit-content;
 }
 
@@ -72,31 +72,31 @@
 }
 
 #mbs-fwpreset-name-input {
-	height: min(7vh, 3.5vw);
-	width: min(35vh, 17.5vw);
+	height: min(7dvh, 3.5dvw);
+	width: min(35dvh, 17.5dvw);
 }
 
 #mbs-fwpreset-name-dropdown-div {
-	height: min(7vh, 3.5vw);
+	height: min(7dvh, 3.5dvw);
 	position: relative;
 	text-wrap: auto;
 	top: 5%;
-	width: min(36vh, 18vw);
+	width: min(36dvh, 18dvw);
 }
 
 #mbs-fwpreset-builtin-bc-div {
 	grid-area: builtin-bc;
-	grid-template-columns: repeat(4, min(7vh, 3.5vw));
+	grid-template-columns: repeat(4, min(7dvh, 3.5dvw));
 }
 
 #mbs-fwpreset-builtin-mbs-div {
 	grid-area: builtin-mbs;
-	grid-template-columns: min(7vh, 3.5vw);
+	grid-template-columns: min(7dvh, 3.5dvw);
 }
 
 #mbs-fwpreset-custom-mbs-div {
 	grid-area: custom-mbs;
-	grid-template-columns: repeat(8, min(7vh, 3.5vw));
+	grid-template-columns: repeat(8, min(7dvh, 3.5dvw));
 }
 
 .mbs-fwpreset-color {
@@ -130,10 +130,10 @@
 }
 
 .mbs-fwpreset {
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
 	display: grid;
-	grid-template-columns: min(7vh, 3.5vw);
-	grid-template-rows: min(7vh, 3.5vw) auto;
+	grid-template-columns: min(7dvh, 3.5dvw);
+	grid-template-rows: min(7dvh, 3.5dvw) auto;
 
 	&:hover .mbs-fwpreset-color {
 		filter: brightness(60%);

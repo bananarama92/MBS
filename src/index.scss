@@ -5,8 +5,8 @@
 	--mbs-tooltip-color: lightyellow;
 	--mbs-border-color: black;
 	--mbs-text-color: black;
-	--mbs-font-small: min(3.5vh, 1.75vw);
-	--mbs-font-large: min(5vh, 2.5vw);
+	--mbs-font-small: min(3.5dvh, 1.75dvw);
+	--mbs-font-large: min(5dvh, 2.5dvw);
 	--mbs-font-family: arial, sans-serif;
 }
 
@@ -17,8 +17,8 @@
 	background-size: cover;
 	height: 100%;
 	overflow: clip;
-	padding-left: min(2vh, 1vw);
-	padding-right: min(2vh, 1vw);
+	padding-left: min(2dvh, 1dvw);
+	padding-right: min(2dvh, 1dvw);
 	text-align: center;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -36,11 +36,11 @@
 
 .mbs-button-tooltip {
 	background-color: var(--mbs-tooltip-color) !important;
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
 	bottom: -10%;
-	box-shadow: min(0.4vh, 0.2vw) min(0.4vh, 0.2vw) min(2vh, 1vw) 0 rgb(0 0 0 / 50%);
+	box-shadow: min(0.4dvh, 0.2dvw) min(0.4dvh, 0.2dvw) min(2dvh, 1dvw) 0 rgb(0 0 0 / 50%);
 	line-height: 1.4;
-	padding: min(1vh, 0.5vw) min(2vh, 1vw);
+	padding: min(1dvh, 0.5dvw) min(2dvh, 1dvw);
 	position: relative;
 	text-align: center;
 	visibility: hidden;
@@ -51,8 +51,8 @@
 
 .mbs-button-div {
 	display: grid;
-	grid-template-columns: min(9vh, 4.5vw);
-	grid-template-rows: min(9vh, 4.5vw) auto;
+	grid-template-columns: min(9dvh, 4.5dvw);
+	grid-template-rows: min(9dvh, 4.5dvw) auto;
 
 	.mbs-button-tooltip {
 		justify-self: center;
@@ -69,15 +69,15 @@
 }
 
 .mbs-timer {
-	height: min(6vh, 3vw);
+	height: min(6dvh, 3dvw);
 	text-align: center;
-	width: min(21vh, 10.5vw);
+	width: min(21dvh, 10.5dvw);
 }
 
 .mbs-dropdown-button {
 	border: unset !important;
-	padding-bottom: min(1vh, 0.5vw);
-	padding-top: min(1vh, 0.5vw);
+	padding-bottom: min(1dvh, 0.5dvw);
+	padding-top: min(1dvh, 0.5dvw);
 
 	&:nth-child(even) {
 		filter: brightness(85%);
@@ -85,7 +85,7 @@
 }
 
 .mbs-dropdown-content {
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
 	overflow-y: scroll;
 	position: absolute;
 	visibility: hidden;
@@ -102,7 +102,7 @@
 	text-align: center;
 	user-select: none;
 	visibility: hidden;
-	grid-gap: min(2vh, 1vw);
+	grid-gap: min(2dvh, 1dvw);
 
 	h1, h2, p, ul {
 		align-items: center;
@@ -116,7 +116,7 @@
 	}
 
 	h2 {
-		margin: min(1vh, 0.5vw);
+		margin: min(1dvh, 0.5dvw);
 	}
 
 	ul {
@@ -137,7 +137,7 @@
 
 	button {
 		background-color: var(--mbs-button-color);
-		border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+		border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
 		color: var(--mbs-text-color);
 		font-family: var(--mbs-font-family);
 		font-size: var(--mbs-font-small);
@@ -154,9 +154,9 @@
 	}
 
 	input[type="checkbox"] {
-		border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
-		height: min(7vh, 3.5vw);
-		width: min(7vh, 3.5vw);
+		border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+		height: min(7dvh, 3.5dvw);
+		width: min(7dvh, 3.5dvw);
 
 		&:hover {
 			background-color: var(--mbs-hover-color);
@@ -168,8 +168,8 @@
 		}
 
 		&::before {
-			height: min(4.6vh, 2.3vw);
-			width: min(4.6vh, 2.3vw);
+			height: min(4.6dvh, 2.3dvw);
+			width: min(4.6dvh, 2.3dvw);
 		}
 	}
 }

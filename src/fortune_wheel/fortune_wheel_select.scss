@@ -1,20 +1,20 @@
 #mbs-fwselect {
 	grid-template:
-		". buttonOuterGrid exit" min(9vh, 4.5vw)
+		". buttonOuterGrid exit" min(9dvh, 4.5dvw)
 		"storage buttonOuterGrid ." auto
-		"storageFooter buttonOuterGrid ." min(14vh, 7vw) / min(30vh, 15vw) auto min(20vh, 10vw);
+		"storageFooter buttonOuterGrid ." min(14dvh, 7dvw) / min(30dvh, 15dvw) auto min(20dvh, 10dvw);
 }
 
 #mbs-fwselect-exit {
 	grid-area: exit;
-	height: min(9vh, 4.5vw);
+	height: min(9dvh, 4.5dvw);
 	justify-self: end;
-	width: min(9vh, 4.5vw);
+	width: min(9dvh, 4.5dvw);
 }
 
 #mbs-fwselect-storage {
 	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800) !important;
-	border: min(0.3vh, 0.15vw) solid var(--mbs-border-color);
+	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
 	display: grid;
 	grid-area: storage;
 	height: 100%;
@@ -39,26 +39,26 @@
 
 #mbs-fwselect-storage-footer {
 	grid-area: storageFooter;
-	height: min(7vh, 3.5vw);
-	padding-top: min(1vh, 0.5vw);
+	height: min(7dvh, 3.5dvw);
+	padding-top: min(1dvh, 0.5dvw);
 }
 
 #mbs-fwselect-button-grid-outer {
 	display: grid;
 	grid-area: buttonOuterGrid;
-	grid-template-rows: min(9vh, 4.5vw) auto min(9vh, 4.5vw) auto;
+	grid-template-rows: min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) auto;
 	height: 94%;
 	overflow-y: scroll;
-	padding-left: min(2vh, 1vw);
-	padding-right: min(2vh, 1vw);
+	padding-left: min(2dvh, 1dvw);
+	padding-right: min(2dvh, 1dvw);
 }
 
 #mbs-fwselect-button-grid-inner0, #mbs-fwselect-button-grid-inner1 {
 	display: grid;
 	grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
-	grid-gap: min(2vh, 1vw);
-	padding-bottom: min(2vh, 1vw);
-	padding-top: min(2vh, 1vw);
+	grid-gap: min(2dvh, 1dvw);
+	padding-bottom: min(2dvh, 1dvw);
+	padding-top: min(2dvh, 1dvw);
 }
 
 #mbs-fwselect-header0, #mbs-fwselect-header1 {
