@@ -15,7 +15,7 @@ export namespace GarbleOptions {
         readonly maxFrac: number,
     }
 
-    type Fallback = (args: Parameters<typeof SpeechGarbleByGagLevel>) => ReturnType<typeof SpeechGarbleByGagLevel>;
+    type Fallback = (args: Parameters<typeof SpeechTransformGagGarble>) => ReturnType<typeof SpeechTransformGagGarble>;
 
     export interface Base {
         readonly dropChars?: Omit<Partial<DropChars>, "level">,
@@ -112,7 +112,7 @@ function parseOptions(options: null | GarbleOptions.Base, gagLevel: number): Gar
     return {
         dropChars,
         character: options?.character ?? null,
-        fallback: options?.fallback ?? ((args) => MBS_MOD_API.callOriginal("SpeechGarbleByGagLevel", args)),
+        fallback: options?.fallback ?? ((args) => MBS_MOD_API.callOriginal("SpeechGarbleByGagLevel", [args[1], args[0], args[2]])),
         ignoreOOC: options?.ignoreOOC ?? false,
         perSyllable: options?.perSyllable ?? false,
     };
@@ -217,14 +217,14 @@ export function convertToGagSpeak(
                     garbledSentence += garbledWord;
                 }
             } else {
-                garbledSentence += fallback([gagLevel, word]);
+                garbledSentence += fallback([word, gagLevel]);
             }
 
             word = "";
             caps = [];
             if (!charIsLetter) {
                 // Avoid double garbling `char` if it's a letter
-                garbledSentence += fallback([gagLevel, char]);
+                garbledSentence += fallback([char, gagLevel]);
             }
         }
     }

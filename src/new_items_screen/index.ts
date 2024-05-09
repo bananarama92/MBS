@@ -47,14 +47,37 @@ waitFor(bcLoaded).then(() => {
     Shop2.Elements.MBS_VersionHeader = {
         Coords: [345, 155 + (185 - 25), 0, 0],
         Mode: new Set(["Preview", "Buy", "Sell"]),
-        Run: (time, x, y) => DrawText("Filter by BC version", x, y, Shop2Vars.DisplayDropdown ? "Gray" : "White"),
+        // R103
+        Run: (time: number, x?: number, y?: number) => {
+            // @ts-expect-error
+            DrawText("Filter by BC version", x as number, y as number, Shop2Vars.DisplayDropdown ? "Gray" : "White");
+        },
+        // R104
+        Draw: (x: number, y: number) => {
+            DrawText("Filter by BC version", x as number, y as number, Shop2Vars.DropdownState !== "Group" ? "Gray" : "White");
+        },
     };
 
     Shop2.Elements.MBS_ShowCurrentVersion = {
         Coords: [135, Shop2Consts.Grid.y + (185 - 25), 200, 90],
         Mode: new Set(["Preview", "Buy", "Sell"]),
-        Run: (time, ...coords) => {
-            if (Shop2Vars.DisplayDropdown) {
+        // R103
+        // @ts-expect-error
+        Run: (time, ...coords: RectTuple) => {
+            if (GameVersion !== "R103") {
+                return;
+                // @ts-expect-error
+            } else if (Shop2Vars.DisplayDropdown) {
+                DrawButton(...coords, `Version R${NEW_ASSETS_VERSION}`, "Gray", undefined, undefined, true);
+            } else if (!shop2Vars.MBS_ShowAllVersions) {
+                DrawButton(...coords, `Version R${NEW_ASSETS_VERSION}`, "Cyan");
+            } else {
+                DrawButton(...coords, `Version R${NEW_ASSETS_VERSION}`, "White");
+            }
+        },
+        // R104
+        Draw: (...coords: RectTuple) => {
+            if (Shop2Vars.DropdownState !== "Group") {
                 DrawButton(...coords, `Version R${NEW_ASSETS_VERSION}`, "Gray", undefined, undefined, true);
             } else if (!shop2Vars.MBS_ShowAllVersions) {
                 DrawButton(...coords, `Version R${NEW_ASSETS_VERSION}`, "Cyan");
@@ -73,8 +96,23 @@ waitFor(bcLoaded).then(() => {
     Shop2.Elements.MBS_ShowAllVersions = {
         Coords: [355, Shop2Consts.Grid.y + (185 - 25), 200, 90],
         Mode: new Set(["Preview", "Buy", "Sell"]),
-        Run: (time, ...coords) => {
-            if (Shop2Vars.DisplayDropdown) {
+        // R103
+        // @ts-expect-error
+        Run: (time, ...coords: RectTuple) => {
+            if (GameVersion !== "R103") {
+                return;
+            // @ts-expect-error
+            } else if (Shop2Vars.DisplayDropdown) {
+                DrawButton(...coords, "All versions", "Gray", undefined, undefined, true);
+            } else if (shop2Vars.MBS_ShowAllVersions) {
+                DrawButton(...coords, "All versions", "Cyan");
+            } else {
+                DrawButton(...coords, "All versions", "White");
+            }
+        },
+        // R104
+        Draw: (...coords: RectTuple) => {
+            if (Shop2Vars.DropdownState !== "Group") {
                 DrawButton(...coords, "All versions", "Gray", undefined, undefined, true);
             } else if (shop2Vars.MBS_ShowAllVersions) {
                 DrawButton(...coords, "All versions", "Cyan");

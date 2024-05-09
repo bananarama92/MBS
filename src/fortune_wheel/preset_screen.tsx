@@ -31,9 +31,14 @@ let BUILTIN_BC_OPTIONS: Readonly<Record<string, IDData>>;
 let BUILTIN_MBS_OPTIONS: Readonly<Record<string, IDData>>;
 let CUSTOM_MBS_OPTIONS: Readonly<Record<string, IDData>>;
 
-waitFor(bcLoaded).then(() => {
+waitFor(bcLoaded).then(async () => {
     const csvPath = "Screens/MiniGame/WheelFortune/Text_WheelFortune.csv";
-    SCREEN_CACHE = new TextCache(csvPath, "MISSING VALUE FOR TAG: ");
+    if (GameVersion === "R103") {
+        // @ts-expect-error
+        SCREEN_CACHE = new TextCache(csvPath, "MISSING VALUE FOR TAG: ");
+    } else {
+        SCREEN_CACHE = await TextCache.buildAsync(csvPath);
+    }
 });
 
 function initOptions() {
