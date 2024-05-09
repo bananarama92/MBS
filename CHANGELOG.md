@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.7.4
+* Switch from viewport- to dynamic viewport units. This should provide a more consistent UI positioning on mobile.
+* Add BC R104Beta1 support
+
 ## 1.7.3
 * Fix a race condition related to the alternate garbling initialization
 
