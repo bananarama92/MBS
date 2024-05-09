@@ -1,14 +1,14 @@
 #mbs-fwitemset {
 	grid-template:
-		"delete header header header accept cancel exit" min(9vh, 4.5vw)
-		". . name-input name-input . . ." min(7vh, 3.5vw)
-		". . outfit-input outfit-input outfit-button outfit-button outfit-button" min(7vh, 3.5vw)
-		". . strip-header lock-header lock-header lock-header lock-header" min(7vh, 3.5vw)
-		". . strip-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
-		". . equip-header lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
-		". . equip-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
-		". . weight-header lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw)
-		". . weight-input lock-grid lock-grid lock-grid lock-grid" min(7vh, 3.5vw) / min(9vh, 4.5vw) min(40vh, 20vw) auto min(38vh, 19vw) min(16vh, 8vw) min(9vh, 4.5vw) min(9vh, 4.5vw);
+		"delete header header header accept cancel exit" min(9dvh, 4.5dvw)
+		". . name-input name-input . . ." min(7dvh, 3.5dvw)
+		". . outfit-input outfit-input outfit-button outfit-button outfit-button" min(7dvh, 3.5dvw)
+		". . strip-header lock-header lock-header lock-header lock-header" min(7dvh, 3.5dvw)
+		". . strip-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
+		". . equip-header lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
+		". . equip-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
+		". . weight-header lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw)
+		". . weight-input lock-grid lock-grid lock-grid lock-grid" min(7dvh, 3.5dvw) / min(9dvh, 4.5dvw) min(40dvh, 20dvw) auto min(38dvh, 19dvw) min(16dvh, 8dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
 
 	span {
 		place-self: end start;
@@ -21,7 +21,7 @@
 
 #mbs-fwitemset-header {
 	grid-area: header;
-	margin-left: min(20vh, 10vw);
+	margin-left: min(20dvh, 10dvw);
 }
 
 #mbs-fwitemset-accept {
@@ -48,7 +48,7 @@
 #mbs-fwitemset-outfit-div {
 	grid-area: outfit-button;
 	grid-template-columns: auto;
-	grid-template-rows: min(7vh, 3.5vw) auto;
+	grid-template-rows: min(7dvh, 3.5dvw) auto;
 }
 
 #mbs-fwitemset-strip-header {
@@ -57,7 +57,7 @@
 
 #mbs-fwitemset-strip-dropdown {
 	grid-area: strip-input;
-	width: min(40vh, 20vw);
+	width: min(40dvh, 20dvw);
 }
 
 #mbs-fwitemset-equip-header {
@@ -66,7 +66,7 @@
 
 #mbs-fwitemset-equip-dropdown {
 	grid-area: equip-input;
-	width: min(40vh, 20vw);
+	width: min(40dvh, 20dvw);
 }
 
 #mbs-fwitemset-weight-header {
@@ -77,7 +77,7 @@
 	align-self: start;
 	grid-area: weight-input;
 	height: 100%;
-	width: calc(min(7vh, 3.5vw) + 16px);
+	width: calc(min(7dvh, 3.5dvw) + 16px);
 }
 
 #mbs-fwitemset-lock-header {
@@ -87,9 +87,9 @@
 #mbs-fwitemset-lock-grid {
 	align-self: start;
 	display: grid;
-	gap: min(2vh, 1vw);
+	gap: min(2dvh, 1dvw);
 	grid-area: lock-grid;
-	grid-template-columns: min(38vh, 19vw) min(38vh, 19vw);
+	grid-template-columns: min(38dvh, 19dvw) min(38dvh, 19dvw);
 	overflow-y: scroll;
 }
 
@@ -97,8 +97,8 @@
 	align-items: center;
 	display: grid;
 	word-wrap: break-word;
-	gap: min(2vh, 1vw);
-	grid-template-columns: min(7vh, 3.5vw) auto;
+	gap: min(2dvh, 1dvw);
+	grid-template-columns: min(7dvh, 3.5dvw) auto;
 }
 
 .mbs-timer {

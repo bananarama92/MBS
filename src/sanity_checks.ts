@@ -45,10 +45,10 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["5A1B4ACC"]],
-        ["CraftingRun", ["4018E748"]],
-        ["SpeechGarble", ["9D669F73"]],
-        ["SpeechGarbleByGagLevel", ["F7555009"]],
+        ["CraftingClick", ["5A1B4ACC", "9169F897"]],
+        ["CraftingRun", ["4018E748", "51577F65"]],
+        ["SpeechGarble", ["9D669F73", "44AA51A4"]],
+        ["SpeechGarbleByGagLevel", ["F7555009", "1D24B031"]],
         ["PreferenceLoad", ["8BAC28C8"]],
         ["WheelFortuneLoad", ["204D57D4"]],
         ["WheelFortuneClick", ["21CCD6B4"]],
