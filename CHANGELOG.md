@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.7.7
+* Drop BC R103 support
+* Fix the screen shape not being passed on to the fortune wheel command screen
+
 ## 1.7.6
 * Fix the R104 alignment of the item version filter
 
