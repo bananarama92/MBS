@@ -62,11 +62,11 @@ function createButton(screen: FWSelectScreen, i: number) {
             id={ID.button + i.toString()}
             style={{ height: "min(7vh, 3.5vw)" }}
             onClick={() => {
+                const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
                 if (i < MBS_MAX_SETS) {
-                    const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
                     return screen.loadChild(FWItemSetScreen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, params);
                 } else {
-                    return screen.loadChild(FWCommandScreen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character);
+                    return screen.loadChild(FWCommandScreen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character, params);
                 }
             }}
         />
