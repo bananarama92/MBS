@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## 1.7.8
+* Backport two R105 bug fixes
+    - [BondageProjects/Bondage-College#5052](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5052): fix `PreferenceSubscreenExtensionsClear()` when the optional unload function is undefined
+    - [BondageProjects/Bondage-College#5055](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5055): Disable layering for locked items that one cannot unlock
+
 ## 1.7.7
 * Drop BC R103 support
 * Fix the screen shape not being passed on to the fortune wheel command screen
