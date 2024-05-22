@@ -14,6 +14,24 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
+const applyAssetPriority: typeof Layering._ApplyAssetPriority = function applyAssetPriority(priority: number, defaultPriority: string) {
+    const old = Layering.OverridePriority;
+    if (!Number.isInteger(old)) {
+        Layering._UpdateInputColors("asset-priority");
+    }
+
+    if (!Number.isNaN(priority) && priority.toString() !== defaultPriority) {
+        Layering.OverridePriority = CommonClamp(Math.round(priority), -99, 99);
+    } else {
+        // @ts-ignore
+        Layering.OverridePriority = undefined;
+    }
+
+    if (old !== Layering.OverridePriority) {
+        Layering._CharacterRefresh(Layering.Character as Character, false, false);
+    }
+};
+
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
         case "R104": {
@@ -36,23 +54,7 @@ waitFor(bcLoaded).then(() => {
             // `patchFunction` doesnt play nice with bound methods, so use a dirty override instead
             if (MBS_MOD_API.getOriginalHash("Layering._ApplyAssetPriority") === "B738E4DD") {
                 backportIDs.add(5055);
-                Layering._ApplyAssetPriority = function _ApplyAssetPriority(this: typeof Layering, priority: number, defaultPriority: string) {
-                    const old = this.OverridePriority;
-                    if (!Number.isInteger(old)) {
-                        this._UpdateInputColors("asset-priority");
-                    }
-
-                    if (!Number.isNaN(priority) && priority.toString() !== defaultPriority) {
-                        this.OverridePriority = CommonClamp(Math.round(priority), -99, 99);
-                    } else {
-                        // @ts-ignore
-                        this.OverridePriority = undefined;
-                    }
-
-                    if (old !== this.OverridePriority) {
-                        this._CharacterRefresh(this.Character as Character, false, false);
-                    }
-                }.bind(Layering);
+                MBS_MOD_API.hookFunction("Layering._ApplyAssetPriority", 99, (args) => applyAssetPriority(...args));
             }
 
             if (MBS_MOD_API.getOriginalHash("DialogMenuButtonBuild") === "AC1C6466") {
