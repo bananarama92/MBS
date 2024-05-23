@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## 1.7.10
+* Fix a crash in the fortune wheel command screen
+
 ## 1.7.9
 * Use a hook for patching `Layering._ApplyAssetPriority`
 
