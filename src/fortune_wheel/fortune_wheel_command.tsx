@@ -40,6 +40,7 @@ const ID = Object.freeze({
 });
 
 export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
+    static readonly ids = ID;
     static readonly screen = "MBS_FWCommandScreen";
     static readonly background = "Sheet";
     readonly settings: FWSelectedCommand;
