@@ -1,0 +1,75 @@
+/* Mixin for disabling any and all browser-defaulted button styling */
+.blank-button {
+	background: none;
+	border: none;
+	color: inherit;
+	font: inherit;
+	outline: none;
+	padding: 0;
+}
+
+.chat-room-sep {
+	background-color: var(--base-color);
+	background-color: color-mix(in srgb, var(--base-color) 90%, var(--label-color) 10%);
+	border-bottom: min(0.4vh, 0.2vw) black solid !important;
+	padding-left: unset !important;
+	position: sticky !important;
+	top: 0%;
+	z-index: 1;
+
+	--base-color: white;
+	--label-color: rgb(128 128 128);
+}
+
+.chat-room-sep-div {
+	display: grid;
+	grid-template-columns: 6% auto;
+	height: 100%;
+	justify-items: center;
+	margin-right: 6%;
+	width: auto;
+}
+
+.chat-room-sep-header {
+	color: gray;
+	cursor: pointer;
+	height: 100%;
+	text-align: center;
+	user-select: text;
+	width: 100%;
+}
+
+.chat-room-sep-collapse {
+	border-right: min(0.4vh, 0.2vw) black solid;
+	color: gray;
+	cursor: pointer;
+	font-weight: bold;
+	height: 100%;
+	width: 100%;
+}
+
+/* stylelint-disable selector-TextAreaChatLog, selector-id-pattern */
+
+#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-header:hover,
+#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-header:hover,
+#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-collapse:hover,
+#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-collapse:hover {
+	color: black;
+}
+
+#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-header:hover,
+#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-header:hover,
+#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-collapse:hover,
+#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-collapse:hover {
+	color: #eee;
+}
+
+#TextAreaChatLog[data-colortheme="light"] .chat-room-sep,
+#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep {
+	--base-color: white;
+}
+
+#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep,
+#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep {
+	--base-color: #111;
+}
