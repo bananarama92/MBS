@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.7.12
+* Backport PR 5508 - Make the chat room separator much more fancier
+    - [BondageProjects/Bondage-College#5508](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5508): Make the chat room separator much more fancier
+
 ## 1.7.11
 * Fix another crash in the fortune wheel command screen
 
