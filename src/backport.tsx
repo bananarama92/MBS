@@ -194,6 +194,18 @@ waitFor(bcLoaded).then(() => {
                         "if (Player.ChatSettings) { _chatRoomSep.UpdateDisplayNames();",
                 });
             }
+
+            if (MBS_MOD_API.getOriginalHash("PoseCanChangeUnaidedStatus") === "08672286") {
+                backportIDs.add(5059);
+                MBS_MOD_API.patchFunction("PoseCanChangeUnaidedStatus", {
+                    ['} else if (C.HasEffect("Freeze") || ChatRoomOwnerPresenceRule("BlockChangePose", C)) {']:
+                        '} else if (ChatRoomOwnerPresenceRule("BlockChangePose", C)) {',
+                    ['} else if (C.IsStanding() && PoseAllStanding.some(p => PoseSetByItems(C, "BodyLower", p))) {']:
+                        '} else if (C.IsStanding() && (C.HasEffect("Freeze") || PoseAllStanding.some(p => PoseSetByItems(C, "BodyLower", p)))) {',
+                    ['} else if (C.IsKneeling() && PoseAllKneeling.some(p => PoseSetByItems(C, "BodyLower", p))) {']:
+                        '} else if (C.IsKneeling() && (C.HasEffect("Freeze") || PoseAllKneeling.some(p => PoseSetByItems(C, "BodyLower", p)))) {',
+                });
+            }
             break;
         }
     }
