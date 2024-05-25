@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## 1.7.13
+* New improvements to the chat room separator
+* Backport a pose-related bug fix
+    - [BondageProjects/Bondage-College#5509](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5509): Fix the freeze effect accidentally limiting upper body changes
+
 ## 1.7.12
 * Backport PR 5508 - Make the chat room separator much more fancier
     - [BondageProjects/Bondage-College#5508](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5508): Make the chat room separator much more fancier
