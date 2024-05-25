@@ -43,34 +43,22 @@ namespace chatRoomSep {
     // eslint-disable-next-line prefer-const
     export let ActiveElem: null | HTMLDivElement = null;
 
-    /**  Click event listener for collapsing one or more chat room separators */
+    /** Click event listener for collapsing one or more chat room separators */
     async function _ClickCollapse(this: HTMLButtonElement, event: MouseEvent | TouchEvent) {
-        // (un)collapse all separators if the `shift` key is held down while clicking
-        const displayState = this.innerText === "˅" ? "none" : "";
+        const mode = this.innerText === "˅" ? "Collapse" : "Uncollapse";
+        const roomSep = this.parentElement?.parentElement as HTMLDivElement;
         if (event.shiftKey) {
-            const chatArea = this.parentElement?.parentElement?.parentElement as HTMLDivElement;
-            let firstSepVisited = false;
-            for (const elem of Array.from(chatArea.children)) {
-                if (elem.classList.contains("chat-room-sep")) {
-                    const button = elem.children[0].children[0] as HTMLButtonElement;
-                    button.innerText = displayState ? "˃" : "˅";
-                    firstSepVisited = true;
-                } else if (firstSepVisited) {
-                    (elem as HTMLElement).style.display = displayState;
-                }
-            }
+            // (un)collapse all separators if the `shift` key is held down while clicking
+            const roomSeps = Array.from(roomSep.parentElement?.getElementsByClassName("chat-room-sep") ?? []) as HTMLDivElement[];
+            roomSeps.forEach(e => chatRoomSep[mode](e));
         } else {
-            this.innerText = displayState ? "˃" : "˅";
-            let sibbling = this.parentElement?.parentElement?.nextSibling as null | HTMLElement;
-            while (sibbling && !sibbling.classList.contains("chat-room-sep")) {
-                sibbling.style.display = displayState;
-                sibbling = sibbling.nextSibling as null | HTMLElement;
-            }
+            chatRoomSep[mode](roomSep);
         }
     }
 
     /** Click event listener for scrolling towards chat room seperator */
     async function _ClickScrollUp(this: HTMLButtonElement) {
+        // Workaround as we can't directly use `chatArea.scrollIntoView` due to the seperators position being sticky
         const chatRoomSep = this.parentElement?.parentElement as HTMLDivElement;
         const sibbling = chatRoomSep.nextSibling as null | HTMLElement;
         if (sibbling) {
@@ -79,8 +67,19 @@ namespace chatRoomSep {
         }
     }
 
+    /** Return a `innerHTML` representation of the passed button's room name */
+    function _GetDisplayName(button: HTMLButtonElement): string {
+        const segments = [
+            button.dataset.space?.replace("Asylum", InterfaceTextGet("ChatRoomSpaceAsylum")),
+            button.dataset.private ? InterfaceTextGet("PrivateRoom") : undefined,
+            ChatRoomHTMLEntities(ChatSearchMuffle(button.dataset.room ?? "")),
+            button.dataset.messages ? `✉<sup>${button.dataset.messages}</sup>` : undefined,
+        ];
+        return segments.filter(Boolean).join(" - ");
+    }
+
     /** Create a dividing element serving as seperator for different chat rooms */
-    export function Create(): HTMLDivElement {
+    export function Create(appendChat: boolean = true): HTMLDivElement {
         const elem = (
             <div
                 class="ChatMessage ChatMessageAction chat-room-sep"
@@ -94,24 +93,68 @@ namespace chatRoomSep {
             </div>
         ) as HTMLDivElement;
         elem.style.setProperty("--label-color", Player.LabelColor as string);
-        ChatRoomAppendChat(elem);
-        chatRoomSep.ActiveElem = elem;
+        if (appendChat) {
+            ChatRoomAppendChat(elem);
+            chatRoomSep.ActiveElem = elem;
+        }
         return elem;
     }
 
-    /** Return a {@link HTMLElement.InnerHTML} representation of the passed button's room name */
-    function _GetDisplayName(button: HTMLButtonElement): string {
-        const segments = [
-            button.dataset.space?.replace("Asylum", InterfaceTextGet("ChatRoomSpaceAsylum")),
-            button.dataset.private ? InterfaceTextGet("PrivateRoom") : undefined,
-            ChatRoomHTMLEntities(ChatSearchMuffle(button.dataset.room as string)),
-        ];
-        return segments.filter(Boolean).join(" - ");
+    /** Return a {@link HTMLElement.innerHTML} representation of the separators room name */
+    export function GetDisplayName(roomSep: HTMLDivElement): string {
+        const button = roomSep?.querySelector(".chat-room-sep-header") as null | HTMLButtonElement;
+        return button ? _GetDisplayName(button) : "";
+    }
+
+    /** Return whether the passed room separator is collapsed or not */
+    export function IsCollapsed(roomSep: HTMLDivElement): boolean {
+        const button = roomSep?.querySelector(".chat-room-sep-collapse") as null | HTMLButtonElement;
+        return !!button && button.innerText === "˃";
+    }
+
+    /** Uncollapse the passed room separator */
+    export async function Uncollapse(roomSep: HTMLDivElement) {
+        const button = roomSep?.querySelector(".chat-room-sep-collapse")  as null | HTMLButtonElement;
+        if (!button || button.innerText === "˅") {
+            return;
+        }
+
+        button.innerText = "˅";
+        let sibbling = roomSep.nextSibling as null | HTMLElement;
+        while (sibbling && !sibbling.classList.contains("chat-room-sep")) {
+            sibbling.style.display = "";
+            sibbling = sibbling.nextSibling as null | HTMLElement;
+        }
+
+        const headerButton = button.nextSibling as null | HTMLButtonElement;
+        if (headerButton) {
+            headerButton.dataset.messages = "";
+            headerButton.innerHTML = chatRoomSep.GetDisplayName(roomSep);
+        }
+    }
+
+    /** Collapse the passed room separator */
+    export async function Collapse(roomSep: HTMLDivElement) {
+        const button = roomSep?.querySelector(".chat-room-sep-collapse") as null | HTMLButtonElement;
+        if (!button || button.innerText === "˃") {
+            return;
+        }
+
+        button.innerText = "˃";
+        let sibbling = roomSep.nextSibling as null | HTMLElement;
+        while (sibbling && !sibbling.classList.contains("chat-room-sep")) {
+            sibbling.style.display = "none";
+            sibbling = sibbling.nextSibling as null | HTMLElement;
+        }
     }
 
     /** Set the room-specific of the currently active chat room separator */
     export async function SetRoomData(roomSep: HTMLDivElement, data: Pick<ServerChatRoomData, "Name" | "Private" | "Space">) {
-        const button = roomSep.getElementsByClassName("chat-room-sep-header")[0] as HTMLButtonElement;
+        const button = roomSep?.querySelector(".chat-room-sep-header") as null | HTMLButtonElement;
+        if (!button) {
+            return;
+        }
+
         button.dataset.room = data.Name;
         button.dataset.space = data.Space;
         button.dataset.private = (data.Private || "").toString();
@@ -120,7 +163,7 @@ namespace chatRoomSep {
 
     /** Update all the displayed room names based on the player's degree of sensory deprivation. */
     export async function UpdateDisplayNames() {
-        const roomLabels = Array.from(document.getElementsByClassName("chat-room-sep-header")) as HTMLButtonElement[];
+        const roomLabels = Array.from(document.querySelectorAll("#TextAreaChatLog .chat-room-sep-header")) as HTMLButtonElement[];
         roomLabels.forEach(e => e.innerHTML = _GetDisplayName(e));
     }
 }
@@ -168,10 +211,13 @@ waitFor(bcLoaded).then(() => {
 
                 MBS_MOD_API.patchFunction("ChatRoomLoad", {
                     ["if (ChatRoomCharacter.length === 0 && ChatRoomHelpSeen && Player.ChatSettings?.PreserveChat) {"]:
-						"if (ChatRoomCharacter.length === 0 && Player.ChatSettings?.PreserveChat) {",
+                        "if (ChatRoomCharacter.length === 0) {",
                     ['const div = document.createElement("div");']: "",
                     ['div.setAttribute("class", "ChatEnterBorder");']: "",
-                    ["ChatRoomAppendChat(div);"]: "_chatRoomSep.Create();",
+                    ["ChatRoomAppendChat(div);"]: `
+                        const elem = _chatRoomSep.Create();
+                        elem.style.display = (Player.ChatSettings?.PreserveChat ?? true) ? "" : "none";
+                    `.trim(),
                 });
 
                 MBS_MOD_API.patchFunction("ChatRoomMenuClick", {
@@ -192,6 +238,83 @@ waitFor(bcLoaded).then(() => {
                 MBS_MOD_API.patchFunction("ChatRoomRefreshChatSettings", {
                     ["if (Player.ChatSettings) {"]:
                         "if (Player.ChatSettings) { _chatRoomSep.UpdateDisplayNames();",
+                });
+
+                MBS_MOD_API.patchFunction("PreferenceSubscreenChatClick", {
+                    ["if (MouseYIn(732, 64)) Player.ChatSettings.PreserveChat = !Player.ChatSettings.PreserveChat;"]: `
+                        if (MouseYIn(732, 64)) {
+                            Player.ChatSettings.PreserveChat = !Player.ChatSettings.PreserveChat;
+                            const roomSeps = /** @type {HTMLDivElement[]} */(Array.from(document.querySelectorAll("#TextAreaChatLog .chat-room-sep")));
+                            if (Player.ChatSettings.PreserveChat) {
+                                roomSeps.forEach(e => e.style.display = "");
+                            }
+                        }
+                    `.trim(),
+                });
+
+                MBS_MOD_API.hookFunction("ChatRoomAppendChat", 0, ([div, ...args], next) => {
+                    const ret = next([div, ...args]);
+                    const elem = chatRoomSep.ActiveElem as HTMLDivElement;
+                    if (chatRoomSep.IsCollapsed(elem)) {
+                        if (!div.dataset.sender || div.dataset.sender === Player.MemberNumber?.toString()) {
+                            chatRoomSep.Uncollapse(elem);
+                        } else {
+                            div.style.display = "none";
+                            const button = elem.querySelector(".chat-room-sep-header") as null | HTMLButtonElement;
+                            if (button) {
+                                button.dataset.messages = ((Number.parseInt(button.dataset.messages ?? "0", 10) || 0) + 1).toString();
+                                button.innerHTML = chatRoomSep.GetDisplayName(elem);
+                            }
+                        }
+                    }
+                    return ret;
+                });
+
+                MBS_MOD_API.hookFunction("ChatRoomMenuClick", 11, (args, next) => {
+                    const cutIndex = ChatRoomMenuButtons.findIndex(i => i === "Cut");
+                    if (cutIndex === -1) {
+                        return next(args);
+                    }
+
+                    const space = 992 / ChatRoomMenuButtons.length;
+                    if (!MouseXIn(1005 + space * cutIndex, space - 2)) {
+                        return next(args);
+                    }
+
+                    const roomSeps = document.querySelectorAll("#TextAreaChatLog .chat-room-sep");
+                    switch (roomSeps.length) {
+                        case 0:
+                            break;
+                        case 1: {
+                            const roomSep = roomSeps[0];
+                            const parent = roomSep.parentElement as HTMLElement;
+                            while (roomSep.nextSibling && parent.childElementCount > 20) {
+                                parent.removeChild(roomSep.nextSibling);
+                            }
+                            break;
+                        }
+                        default: {
+                            const roomSep = roomSeps[1];
+                            const parent = roomSep.parentElement as HTMLElement;
+                            while (roomSep.previousSibling) {
+                                parent.removeChild(roomSep.previousSibling);
+                            }
+                            break;
+                        }
+                    }
+                    ElementScrollToEnd("TextAreaChatLog");
+                });
+            }
+
+            if (MBS_MOD_API.getOriginalHash("PoseCanChangeUnaidedStatus") === "08672286") {
+                backportIDs.add(5059);
+                MBS_MOD_API.patchFunction("PoseCanChangeUnaidedStatus", {
+                    ['} else if (C.HasEffect("Freeze") || ChatRoomOwnerPresenceRule("BlockChangePose", C)) {']:
+                        '} else if (ChatRoomOwnerPresenceRule("BlockChangePose", C)) {',
+                    ['} else if (C.IsStanding() && PoseAllStanding.some(p => PoseSetByItems(C, "BodyLower", p))) {']:
+                        '} else if (C.IsStanding() && (C.HasEffect("Freeze") || PoseAllStanding.some(p => PoseSetByItems(C, "BodyLower", p)))) {',
+                    ['} else if (C.IsKneeling() && PoseAllKneeling.some(p => PoseSetByItems(C, "BodyLower", p))) {']:
+                        '} else if (C.IsKneeling() && (C.HasEffect("Freeze") || PoseAllKneeling.some(p => PoseSetByItems(C, "BodyLower", p)))) {',
                 });
             }
             break;
