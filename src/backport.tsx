@@ -43,9 +43,12 @@ namespace chatRoomSep {
     // eslint-disable-next-line prefer-const
     export let ActiveElem: null | HTMLDivElement = null;
 
-	/** Touch event listener that automatically deselects the button on mobile after a click */
+    async function _TouchStart(this: HTMLButtonElement) {
+        this.classList.add("chat-room-sep-touch");
+    }
+
     async function _TouchEnd(this: HTMLButtonElement) {
-        this.blur();
+        this.classList.remove("chat-room-sep-touch");
     }
 
     /** Click event listener for collapsing one or more chat room separators */
@@ -92,8 +95,8 @@ namespace chatRoomSep {
                 data-sender={Player.MemberNumber ?? ""}
             >
                 <div class="chat-room-sep-div">
-                    <button class="blank-button chat-room-sep-collapse" onClick={_ClickCollapse} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd}>˅</button>
-                    <button class="blank-button chat-room-sep-header" onClick={_ClickScrollUp} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd} />
+                    <button class="blank-button chat-room-sep-collapse" onClick={_ClickCollapse} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd} onTouchStart={_TouchStart}>˅</button>
+                    <button class="blank-button chat-room-sep-header" onClick={_ClickScrollUp} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd} onTouchStart={_TouchStart} />
                 </div>
             </div>
         ) as HTMLDivElement;
@@ -174,6 +177,12 @@ namespace chatRoomSep {
 }
 
 declare const ChatRoomSep: undefined | typeof chatRoomSep;
+
+declare const ElementCreateSearchInput: undefined | ((
+    id: string,
+    dataCallback: () => Iterable<string>,
+    options?: null | { value?: null | string, parent?: null | Node, maxLength?: null | number },
+) => HTMLInputElement);
 
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
@@ -329,13 +338,130 @@ waitFor(bcLoaded).then(() => {
                         '} else if (C.IsKneeling() && (C.HasEffect("Freeze") || PoseAllKneeling.some(p => PoseSetByItems(C, "BodyLower", p)))) {',
                 });
             }
+
+            if (typeof ElementCreateSearchInput === "undefined") {
+                backportIDs.add(5065);
+
+                function toSearchInput(elem: HTMLInputElement, callback: () => Iterable<string>) {
+                    elem.appendChild(<datalist id={`${elem.id}-datalist`}/>);
+                    elem.setAttribute("list", `${elem.id}-datalist`);
+                    elem.setAttribute("type", "search");
+                    elem.addEventListener("focus", async function() {
+                        if (this.list?.children.length !== 0) {
+                            return;
+                        }
+                        for (const value of callback()) {
+                            this.list.appendChild(<option value={value} />);
+                        }
+                    });
+                }
+
+                MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([mode, ...args], next) => {
+                    const ret = next([mode, ...args]);
+                    const elem = document.getElementById("InputSearch") as null | HTMLInputElement;
+                    if (mode === "Item" && elem) {
+                        toSearchInput(elem, () => {
+                            const visited: Set<string> = new Set();
+                            return Object.values(CraftingAssets).flat().sort((asset1, asset2) => {
+                                return asset1.Description.localeCompare(asset2.Description);
+                            }).filter((asset) => {
+                                const status = InventoryAvailable(Player, asset.Name, asset.Group.Name) && !visited.has(asset.Description);
+                                if (status) {
+                                    visited.add(asset.Description);
+                                }
+                                return status;
+                            }).map((asset) => asset.Description);
+                        });
+                    }
+                    return ret;
+                });
+
+                MBS_MOD_API.hookFunction("Shop2.Elements.InputSearch.Load", 0, (args, next) => {
+                    const ret = next(args);
+                    const elem = document.getElementById("Shop2InputSearch") as null | HTMLInputElement;
+                    if (elem) {
+                        toSearchInput(elem, () => {
+                            switch (Shop2Vars.Mode) {
+                                case "Preview":
+                                    return new Set(Shop2Vars.PreviewItems.map(i => i.Asset.Description).sort());
+                                case "Buy":
+                                    return new Set(Shop2Vars.BuyItems.map(i => i.Asset.Description).sort());
+                                case "Sell":
+                                    return new Set(Shop2Vars.SellItems.map(i => i.Asset.Description).sort());
+                                default:
+                                    return new Set();
+                            }
+                        });
+                    }
+                    return ret;
+                });
+
+                MBS_MOD_API.hookFunction("Shop2.ApplyItemFilters", 0, (args, next) => {
+                    const ret = next(args);
+                    ElementContent("Shop2InputSearch-datalist", "");
+                    return ret;
+                });
+
+                // @ts-expect-error
+                Shop2Vars._Mode = "Buy";
+                // @ts-expect-error
+                Shop2Vars.Defaults._Mode = "Buy";
+                // @ts-expect-error
+                delete Shop2Vars.Mode;
+                Object.defineProperty(Shop2Vars, "Mode", {
+                    // @ts-expect-error
+                    get() { return Shop2Vars._Mode; },
+                    set(value) {
+                        ElementContent("Shop2InputSearch-datalist", "");
+                        // @ts-expect-error
+                        Shop2Vars._Mode = value;
+                    },
+                });
+
+                MBS_MOD_API.hookFunction("BackgroundSelectionLoad", 0, (args, next) => {
+                    const ret = next(args);
+                    const elem = document.getElementById("InputBackground") as null | HTMLInputElement;
+                    if (elem) {
+                        toSearchInput(elem, () => BackgroundSelectionList.map(i => BackgroundsTextGet(i)).sort());
+                    }
+                    return ret;
+                });
+
+                MBS_MOD_API.hookFunction("BackgroundSelectionTagChanged", 0, (args, next) => {
+                    const ret = next(args);
+                    ElementContent("InputBackground-datalist", "");
+                    return ret;
+                });
+
+                for (const funcName of ["ChatSearchLoad", "ChatSearchToggleHiddenMode", "ChatSearchToggleHelpMode"] as const) {
+                    MBS_MOD_API.hookFunction(funcName, 0, (args, next) => {
+                        const ret = next(args);
+                        const elem = document.getElementById("InputSearch") as null | HTMLInputElement;
+                        if (elem) {
+                            toSearchInput(elem, () => {
+                                const rooms = ChatSearchShowHiddenRoomsActive ? ChatSearchHiddenResult : ChatSearchResult;
+                                return rooms.map(i => i.DisplayName).sort();
+                            });
+                        }
+                        return ret;
+                    });
+                }
+
+                for (const funcName of ["ChatSearchResultResponse", "ChatSearchApplyFilterTerms"] as const) {
+                    MBS_MOD_API.hookFunction(funcName, 0, (args, next) => {
+                        const ret = next(args);
+                        ElementContent("InputSearch-datalist", "");
+                        return ret;
+                    });
+                }
+            }
             break;
         }
     }
 
     if (backportIDs.size) {
-        logger.log(`Initializing R${BC_NEXT} bug fix backports`, sortBy(Array.from(backportIDs)));
+        logger.log(`Initializing R${BC_NEXT} backports`, sortBy(Array.from(backportIDs)));
     } else {
-        logger.log(`No R${BC_NEXT} bug fix backports`);
+        logger.log(`No R${BC_NEXT} backports`);
     }
 });

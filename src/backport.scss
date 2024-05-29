@@ -50,18 +50,30 @@
 
 /* stylelint-disable selector-TextAreaChatLog, selector-id-pattern */
 
-#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-header:hover,
-#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-header:hover,
-#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-collapse:hover,
-#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-collapse:hover {
+#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-touch,
+#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-touch {
+	color: #eee;
+}
+
+#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-touch,
+#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-touch {
 	color: black;
 }
 
-#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-header:hover,
-#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-header:hover,
-#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-collapse:hover,
-#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-collapse:hover {
-	color: #eee;
+@media (hover: hover) {
+	#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-header:hover,
+	#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-header:hover,
+	#TextAreaChatLog[data-colortheme="dark"] .chat-room-sep-collapse:hover,
+	#TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep-collapse:hover {
+		color: #eee;
+	}
+
+	#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-header:hover,
+	#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-header:hover,
+	#TextAreaChatLog[data-colortheme="light"] .chat-room-sep-collapse:hover,
+	#TextAreaChatLog[data-colortheme="light2"] .chat-room-sep-collapse:hover {
+		color: black;
+	}
 }
 
 #TextAreaChatLog[data-colortheme="light"] .chat-room-sep,
