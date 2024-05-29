@@ -30,3 +30,4 @@ rules:
   "@typescript-eslint/no-explicit-any": off
   "@typescript-eslint/ban-ts-comment": off
   "@typescript-eslint/no-namespace": off
+  "css/no-unknown-unit": ["error", { ignoreUnits: ["dvh", "dvw"] }]
