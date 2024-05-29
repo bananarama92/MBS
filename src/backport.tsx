@@ -43,6 +43,11 @@ namespace chatRoomSep {
     // eslint-disable-next-line prefer-const
     export let ActiveElem: null | HTMLDivElement = null;
 
+	/** Touch event listener that automatically deselects the button on mobile after a click */
+    async function _TouchEnd(this: HTMLButtonElement) {
+        this.blur();
+    }
+
     /** Click event listener for collapsing one or more chat room separators */
     async function _ClickCollapse(this: HTMLButtonElement, event: MouseEvent | TouchEvent) {
         const mode = this.innerText === "˅" ? "Collapse" : "Uncollapse";
@@ -87,8 +92,8 @@ namespace chatRoomSep {
                 data-sender={Player.MemberNumber ?? ""}
             >
                 <div class="chat-room-sep-div">
-                    <button class="blank-button chat-room-sep-collapse" onClick={_ClickCollapse}>˅</button>
-                    <button class="blank-button chat-room-sep-header" onClick={_ClickScrollUp}></button>
+                    <button class="blank-button chat-room-sep-collapse" onClick={_ClickCollapse} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd}>˅</button>
+                    <button class="blank-button chat-room-sep-header" onClick={_ClickScrollUp} onTouchEnd={_TouchEnd} onTouchCancel={_TouchEnd} />
                 </div>
             </div>
         ) as HTMLDivElement;
@@ -253,10 +258,14 @@ waitFor(bcLoaded).then(() => {
                 });
 
                 MBS_MOD_API.hookFunction("ChatRoomAppendChat", 0, ([div, ...args], next) => {
-                    const ret = next([div, ...args]);
+                    const isPlayerMessage = (
+                        div.dataset.sender === Player.MemberNumber?.toString()
+                        && !div.classList.contains("ChatMessageNonDialogue")
+                    );
+
                     const elem = chatRoomSep.ActiveElem as HTMLDivElement;
                     if (chatRoomSep.IsCollapsed(elem)) {
-                        if (!div.dataset.sender || div.dataset.sender === Player.MemberNumber?.toString()) {
+                        if (isPlayerMessage) {
                             chatRoomSep.Uncollapse(elem);
                         } else {
                             div.style.display = "none";
@@ -267,7 +276,10 @@ waitFor(bcLoaded).then(() => {
                             }
                         }
                     }
-                    return ret;
+                    if (isPlayerMessage) {
+                        ElementScrollToEnd("TextAreaChatLog");
+                    }
+                    return next([div, ...args]);
                 });
 
                 MBS_MOD_API.hookFunction("ChatRoomMenuClick", 11, (args, next) => {

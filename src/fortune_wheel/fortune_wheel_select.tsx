@@ -60,7 +60,7 @@ function createButton(screen: FWSelectScreen, i: number) {
         <button
             class="mbs-button"
             id={ID.button + i.toString()}
-            style={{ height: "min(7vh, 3.5vw)" }}
+            style={{ height: "min(7dvh, 3.5dvw)" }}
             onClick={() => {
                 if (i < MBS_MAX_SETS) {
                     const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
@@ -189,9 +189,9 @@ export class FWSelectScreen extends MBSScreen {
             storageFooter.innerText = `${nKBTotal} / ${MAX_DATA / 1000} KB`;
             storageInner.style.height = `${100 - percentage}%`;
             storageInner.style.backgroundColor = "var(--mbs-background-color)";
-            storageInner.style.borderBottom = "min(0.3vh, 0.15vw) solid var(--mbs-border-color)";
+            storageInner.style.borderBottom = "min(0.3dvh, 0.15dvw) solid var(--mbs-border-color)";
             if (percentage >= 90) {
-                storageOuter.style.boxShadow = "0 0 min(2vh, 1vw) red";
+                storageOuter.style.boxShadow = "0 0 min(2dvh, 1dvw) red";
             }
 
             const sanitizePattern = /\W/g;
@@ -211,7 +211,7 @@ export class FWSelectScreen extends MBSScreen {
                 storageTooltip.appendChild(
                     <li>
                         <span style={{ float: "left" }}>{field}</span>
-                        <span style={{ float: "right", paddingLeft: "min(7vh, 3.5vw)" }}>{nKB}</span>
+                        <span style={{ float: "right", paddingLeft: "min(7dvh, 3.5dvw)" }}>{nKB}</span>
                     </li>,
                 );
             }

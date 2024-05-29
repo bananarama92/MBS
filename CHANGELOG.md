@@ -1,13 +1,20 @@
 # MBS Changelog
 
+## 1.7.14
+* Switch a few remaining units from viewport- to dynamic viewport
+* Chat room separator tweaks (xref [BondageProjects/Bondage-College#5063](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5063): Various minor chat room separator adjustments):
+    - Fix the spurious chat room separator transparency when in sens dep
+    - Ensure that the chat room separator buttons are unfocused on mobile after a click
+    - Ensure that sending a message or action scrolls the chat area to the bottom
+
 ## 1.7.13
 * New improvements to the chat room separator
 * Backport a pose-related bug fix
-    - [BondageProjects/Bondage-College#5509](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5509): Fix the freeze effect accidentally limiting upper body changes
+    - [BondageProjects/Bondage-College#5059](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5059): Fix the freeze effect accidentally limiting upper body changes
 
 ## 1.7.12
 * Backport PR 5508 - Make the chat room separator much more fancier
-    - [BondageProjects/Bondage-College#5508](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5508): Make the chat room separator much more fancier
+    - [BondageProjects/Bondage-College#5058](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5058): Make the chat room separator much more fancier
 
 ## 1.7.11
 * Fix another crash in the fortune wheel command screen

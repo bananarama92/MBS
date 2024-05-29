@@ -73,3 +73,7 @@
 #TextAreaChatLog[data-colortheme="dark2"] .chat-room-sep {
 	--base-color: #111;
 }
+
+#TextAreaChatLog[data-coloractions="false"] .chat-room-sep {
+	background-color: var(--base-color) !important;
+}
