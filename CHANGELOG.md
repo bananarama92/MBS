@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## 1.7.15
+* Allow search inputs to provide suggestions
+    - Backports [BondageProjects/Bondage-College#5065](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5065): Offer search suggestions when typing into search bars
+
 ## 1.7.14
 * Switch a few remaining units from viewport- to dynamic viewport
 * Chat room separator tweaks (xref [BondageProjects/Bondage-College#5063](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5063): Various minor chat room separator adjustments):
