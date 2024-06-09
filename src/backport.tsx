@@ -402,18 +402,15 @@ waitFor(bcLoaded).then(() => {
                     return ret;
                 });
 
-                // @ts-expect-error
                 Shop2Vars._Mode = "Buy";
                 // @ts-expect-error
                 Shop2Vars.Defaults._Mode = "Buy";
                 // @ts-expect-error
                 delete Shop2Vars.Mode;
                 Object.defineProperty(Shop2Vars, "Mode", {
-                    // @ts-expect-error
                     get() { return Shop2Vars._Mode; },
                     set(value) {
                         ElementContent("Shop2InputSearch-datalist", "");
-                        // @ts-expect-error
                         Shop2Vars._Mode = value;
                     },
                 });

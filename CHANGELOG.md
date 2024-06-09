@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## 1.7.16
+* Add R105Beta1 support
+
 ## 1.7.15
 * Allow search inputs to provide suggestions
     - Backports [BondageProjects/Bondage-College#5065](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5065): Offer search suggestions when typing into search bars
