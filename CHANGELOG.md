@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## 1.7.17
+* Drop R104 support
+
 ## 1.7.16
 * Add R105Beta1 support
 
