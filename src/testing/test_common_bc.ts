@@ -150,10 +150,6 @@ export function test_equipLock(): void {
     const name = "test_equipLock";
     const characterNames = range(0, 5).map(i => `${name}-${i}`);
     const characters = characterNames.map(CharacterLoadSimple);
-    if (!characters[4].PermissionItems) {
-        return;
-    }
-
     try {
         characters[4].PermissionItems["ItemMisc/ExclusivePadlock"] = PreferencePermissionGetDefault();
         characters[4].PermissionItems["ItemMisc/ExclusivePadlock"].Permission = "Block";
