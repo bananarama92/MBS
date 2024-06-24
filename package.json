@@ -1,6 +1,6 @@
 {
     "name": "maids-bondage-scripts",
-    "version": "1.7.17",
+    "version": "1.7.18",
     "private": true,
     "description": "Various additions and utility scripts for BC",
     "homepage": "https://github.com/bananarama92/MBS#readme",
@@ -28,7 +28,7 @@
     "dependencies": {
         "@types/lodash-es": "^4.17.12",
         "bc-data": "^105.0.0",
-        "bc-stubs": "^105.0.0",
+        "bc-stubs": "^105.0.3",
         "bondage-club-mod-sdk": "^1.2.0",
         "lodash-es": "^4.17.21",
         "typed-scss-modules": "^8.0.1"
@@ -61,6 +61,6 @@
         "stylelint-scss": "^6.3.0",
         "tslib": "^2.6.2",
         "tsx-dom": "^2.0.0",
-        "typescript": "^5.4.5"
+        "typescript": "^5.5.2"
     }
 }

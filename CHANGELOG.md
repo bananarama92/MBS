@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## 1.7.18
+* Backport two bug fixes:
+    - [BondageProjects/Bondage-College#5108](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5108): Fix number inputs being clamped to zero if no min/max is specified on the input element
+    - [BondageProjects/Bondage-College#5109](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5109): Fix item visibility settings not saving
+
 ## 1.7.17
 * Drop R104 support
 
