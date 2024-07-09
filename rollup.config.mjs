@@ -10,6 +10,7 @@ import simpleGit from "simple-git";
 import json from "@rollup/plugin-json";
 import scss from "rollup-plugin-scss";
 import license from "rollup-plugin-license";
+import md from "rollup-plugin-md";
 
 import packageJson from "./package.json" assert { type: "json" };
 
@@ -107,6 +108,7 @@ const config = {
         typescript({ tsconfig: "./tsconfig.json", inlineSources: true }),
         commonjs(),
         json(),
+        md(),
         scss({ output: false }),
         license({ banner: { content: LICENSE, commentStyle: "ignored" } }),
     ],
