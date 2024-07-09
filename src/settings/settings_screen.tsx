@@ -3,10 +3,10 @@ import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 
+import { getChangeLogURL } from "./changelog";
 import {
     pushMBSSettings,
     SettingsType,
-    getChangeLogURL,
     importSettings,
     exportSettings,
     logSettingsSize,
@@ -154,7 +154,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                                 based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
                             </p>
                             <p>
-                                Incompatible-ish with <a href="https://sidiousious.gitlab.io/bce/" target="_blank">FBC</a>'s
+                                Incompatible-ish with <a href="https://wce-docs.vercel.app/docs/intro" target="_blank">WCE/FBC</a>'s
                                 garbling anti-cheat as of the moment
                             </p>
                         </span>

@@ -24,6 +24,7 @@ import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
 import { garblingJSON } from "../garbling";
 
+import { showChangelog } from "./changelog";
 import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
 export type SettingsType = 0 | 1;
@@ -63,37 +64,6 @@ function detectUpgrade(versionString?: string): boolean {
     }
 }
 
-/** Construct a git tag and a tag for the `changelog.md` file given the current MBS version. */
-function getGitTags(): [gitTag: string, mdTag: string] {
-    const version = Version.fromVersion(MBS_VERSION);
-    const mdTag = `#v${version.major}${version.minor}${version.micro}`;
-    return version.beta ? ["blob/devel", ""] : ["blob/main", mdTag];
-}
-
-/** Return the URL to the MBS changelog */
-export function getChangeLogURL(): string {
-    const mbs_tags = getGitTags();
-    return `https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
-}
-
-/** Show the MBS changelog to the player */
-function showChangelog(): void {
-    const message = `New MBS version detected: ${MBS_VERSION}
-
-See below for the updated changelog:
-${getChangeLogURL()}`;
-    if (typeof Player.MemberNumber === "number") {
-        ServerAccountBeep({
-            MemberNumber: Player.MemberNumber,
-            MemberName: "MBS",
-            ChatRoomName: "MBS Changelog",
-            Private: true,
-            Message: message,
-            ChatRoomSpace: "",
-            BeepType: "",
-        });
-    }
-}
 
 /** Show any errors encountered during settings parsing to the player via a beep. */
 function showSettingsError(err: SettingsStatus.Base["err"]): void {

@@ -276,3 +276,8 @@ declare module "*.scss" {
     export default styles;
     export type ClassNames = keyof Styles;
 }
+
+declare module "*.md" {
+    const md: string;
+    export default md;
+}
