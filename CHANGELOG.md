@@ -1,81 +1,81 @@
 # MBS Changelog
 
-## 1.7.18
+## v1.7.18
 * Backport two bug fixes:
     - [BondageProjects/Bondage-College#5108](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5108): Fix number inputs being clamped to zero if no min/max is specified on the input element
     - [BondageProjects/Bondage-College#5109](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5109): Fix item visibility settings not saving
 
-## 1.7.17
+## v1.7.17
 * Drop R104 support
 
-## 1.7.16
+## v1.7.16
 * Add R105Beta1 support
 
-## 1.7.15
+## v1.7.15
 * Allow search inputs to provide suggestions
     - Backports [BondageProjects/Bondage-College#5065](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5065): Offer search suggestions when typing into search bars
 
-## 1.7.14
+## v1.7.14
 * Switch a few remaining units from viewport- to dynamic viewport
 * Chat room separator tweaks (xref [BondageProjects/Bondage-College#5063](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5063): Various minor chat room separator adjustments):
     - Fix the spurious chat room separator transparency when in sens dep
     - Ensure that the chat room separator buttons are unfocused on mobile after a click
     - Ensure that sending a message or action scrolls the chat area to the bottom
 
-## 1.7.13
+## v1.7.13
 * New improvements to the chat room separator
 * Backport a pose-related bug fix
     - [BondageProjects/Bondage-College#5059](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5059): Fix the freeze effect accidentally limiting upper body changes
 
-## 1.7.12
+## v1.7.12
 * Backport PR 5508 - Make the chat room separator much more fancier
     - [BondageProjects/Bondage-College#5058](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5058): Make the chat room separator much more fancier
 
-## 1.7.11
+## v1.7.11
 * Fix another crash in the fortune wheel command screen
 
-## 1.7.10
+## v1.7.10
 * Fix a crash in the fortune wheel command screen
 
-## 1.7.9
+## v1.7.9
 * Use a hook for patching `Layering._ApplyAssetPriority`
 
-## 1.7.8
+## v1.7.8
 * Backport two R105 bug fixes
     - [BondageProjects/Bondage-College#5052](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5052): fix `PreferenceSubscreenExtensionsClear()` when the optional unload function is undefined
     - [BondageProjects/Bondage-College#5055](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5055): Disable layering for locked items that one cannot unlock
 
-## 1.7.7
+## v1.7.7
 * Drop BC R103 support
 * Fix the screen shape not being passed on to the fortune wheel command screen
 
-## 1.7.6
+## v1.7.6
 * Fix the R104 alignment of the item version filter
 
-## 1.7.4
+## v1.7.4
 * Switch from viewport- to dynamic viewport units. This should provide a more consistent UI positioning on mobile.
 * Add BC R104Beta1 support
 
-## 1.7.3
+## v1.7.3
 * Fix a race condition related to the alternate garbling initialization
 
-## 1.7.2
+## v1.7.2
 * Fix the shop not showing newly released assets
 
-## 1.7.1
+## v1.7.1
 * Improve button alignment in the wheel of fortune item set menu
 * Use custom `text`-based inputs (rather than `time`-based) for the wheel of fortune timers;
   fixes the odd time-offsets and AM/PM markers occasionally observed.
 
-## 1.7.0
+## v1.7.0
 * Increment the MBS API to version 1.4:
     - Relicense the `mbs.css` API under terms of LPGL-v3
 
-## 1.6.3
+## v1.6.3
 * Drop support for BC R102
 * Fix the save-condition being broken for the fortune wheel commands screen
 
-## 1.6.2
+## v1.6.2
 * Update for BC R103Beta2
 * Add a safeguard for loading MBS while the `WheelFortuneCustomize` screen is open
 * Remote-fetch the alternative garbling JSON data rather than directly vendoring it (again...)
@@ -83,15 +83,15 @@
 * Add the option to vary the (alternative) garbling strength per syllable
 * Switch from the en_UK phonetic data to the larger en_US dataset
 
-## 1.6.1
+## v1.6.1
 * Fix the garbling JSON data failing to load
 
-## 1.6.0
+## v1.6.0
 * Experimental: Add an alternative form of more phonetically-acurate garbling based on Cordelia Mist's [Dalamud-GagSpeak](https://github.com/CordeliaMist/Dalamud-GagSpeak).
   Note that the alternative garbling is disabled by default.
 * Add support for BC R103Beta1
 
-## 1.5.0
+## v1.5.0
 * Use DOM elements for all remaining MBS screens, wrapping up the DOM-ification
 * Remove a few redundant functions and replace the with lodash equivalents
 * Reduce the tooltip overlap in the wheel preset screen and improve the tooltip standardization
@@ -100,29 +100,29 @@
 * Increment the MBS API to version 1.3:
     - Add the new `mbs.css` namespace, which contains functions modifying MBS's style sheets.
 
-## 1.4.7
+## v1.4.7
 * Fix the MBS settings menu sometimes requiring two clicks to exit
 * Fix the MBS settings menu locking being incorrectly locked when restrained
 
-## 1.4.6
+## v1.4.6
 * Use DOM elements for the MBS preference screens
 * Bump the BC mod SDK to 1.2.0
 
-## 1.4.5
+## v1.4.5
 * Remove MBS's dedicated "show new item screen" buttons when in R103
 * Rewrite the MBS fortune wheel preset screen using DOM elements
 
-## 1.4.4
+## v1.4.4
 * Fix the broken exit button image in the MBS wheel of fortune selection menu
 * Rewrite the MBS fortune wheel item set screen using DOM elements
 
-## 1.4.3
+## v1.4.3
 * Remove the the fortune wheel option hiding checkbox
 * Fix the [BondageProjects/Bondage-College#4900](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/4900) backport not hiding owner/lovers/family-locked items when required
 * Rewrite the MBS fortune wheel selection screen using DOM elements; add a scroll bar
 * Fix spurious MBS warnings about duplicate crafts
 
-## 1.4.2
+## v1.4.2
 * Drop support for BCR101
 * Fix the FUSAM button not disappearing when accessing the SHOP via the MBS preferences menu
 * Backport one BC R103 change to R102:
