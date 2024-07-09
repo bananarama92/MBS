@@ -175,8 +175,8 @@
 }
 
 .mbs-changelog-delete {
-	background: unset;
-	border: unset;
+	background: unset !important;
+	border: unset !important;
 	color: #003f91;
 
 	&:hover {

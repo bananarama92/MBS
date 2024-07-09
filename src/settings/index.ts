@@ -1,7 +1,7 @@
+import { getChangeLogURL } from "./changelog";
 import {
     pushMBSSettings,
     SettingsType,
-    getChangeLogURL,
     unpackSettings,
     parseFWObjects,
     exportSettings,

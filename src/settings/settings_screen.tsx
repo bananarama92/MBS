@@ -3,10 +3,10 @@ import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 
+import { getChangeLogURL } from "./changelog";
 import {
     pushMBSSettings,
     SettingsType,
-    getChangeLogURL,
     importSettings,
     exportSettings,
     logSettingsSize,

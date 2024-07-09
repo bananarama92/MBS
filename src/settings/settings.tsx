@@ -1,6 +1,5 @@
 /** Function for managing all MBS related settings. */
 
-import showdown from "showdown";
 import { omit, sumBy } from "lodash-es";
 
 import {
@@ -24,8 +23,8 @@ import {
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
 import { garblingJSON } from "../garbling";
-import changelog from "../../CHANGELOG.md";
 
+import { showChangelog } from "./changelog";
 import { measureDataSize, MAX_DATA, byteToKB } from "./storage_usage";
 
 export type SettingsType = 0 | 1;
@@ -65,65 +64,6 @@ function detectUpgrade(versionString?: string): boolean {
     }
 }
 
-/** Construct a git tag and a tag for the `changelog.md` file given the current MBS version. */
-function getGitTags(): [gitTag: string, mdTag: string] {
-    const version = Version.fromVersion(MBS_VERSION);
-    const mdTag = `#v${version.major}${version.minor}${version.micro}`;
-    return version.beta ? ["blob/devel", ""] : ["blob/main", mdTag];
-}
-
-/** Return the URL to the MBS changelog */
-export function getChangeLogURL(): string {
-    const mbs_tags = getGitTags();
-    return `https://github.com/bananarama92/MBS/${mbs_tags[0]}/CHANGELOG.md${mbs_tags[1]}`;
-}
-
-/** Show the MBS changelog to the player */
-async function showChangelog() {
-    const branch = Version.fromVersion(MBS_VERSION).beta ? "devel" : "main";
-    const converter = new showdown.Converter();
-    const elem = <div class="ChatMessage mbs-changelog" data-sender={Player.MemberNumber} data-time={ChatRoomCurrentTime()} /> as HTMLDivElement;
-    elem.innerHTML = converter.makeHtml(changelog.replaceAll("(static/images/", `(https://bananarama92.github.io/MBS/${branch}/images/`));
-
-    let headerCount = 0;
-    for (const child of Array.from(elem.children)) {
-        if (child.tagName === "H2") {
-            headerCount++;
-        }
-        if (headerCount !== 1) {
-            child.remove();
-        }
-    }
-
-    elem.querySelectorAll("a").forEach((a) => a.target = "_blank");
-
-    elem.querySelectorAll("img").forEach((img) => {
-        img.decoding = "async";
-        img.loading = "lazy";
-        const a = <a href={img.src} target="_blank" class="mbs-changelog-image" />;
-        img.replaceWith(a);
-        a.appendChild(img);
-    });
-
-    elem.querySelectorAll("h2").forEach((h2, i) => {
-        elem.replaceChild(
-            <div class="mbs-changelog-header">
-                <h1><a href={`https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md#${h2.id}`} target="_blank">{`MBS Changelog: ${h2.innerText}`}</a></h1>
-                <span>•</span>
-                {ElementButton.Create(
-                    `mbs-changelog-delete-${i}`,
-                    async function() { this.closest(".mbs-changelog")?.remove(); },
-                    { tooltip: "Clear changelog", tooltipPosition: "bottom" },
-                    { button: { children: ["🗑"], classList: ["mbs-changelog-delete"] } },
-                )}
-            </div>,
-            h2,
-        );
-    });
-
-    await waitFor(() => !!document.getElementById("TextAreaChatLog"), 1000);
-    ChatRoomAppendChat(elem);
-}
 
 /** Show any errors encountered during settings parsing to the player via a beep. */
 function showSettingsError(err: SettingsStatus.Base["err"]): void {
