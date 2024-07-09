@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.7.19
+* Add R106Beta1 support
+* Show the MBS changelog in the chat
+* Add the `/mbschangelog` chat command to show the latest MBS changelog (default behavior) or alternatively the changelog of a specific version or version range.
+
 ## v1.7.18
 * Backport two bug fixes:
     - [BondageProjects/Bondage-College#5108](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5108): Fix number inputs being clamped to zero if no min/max is specified on the input element
