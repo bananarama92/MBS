@@ -16,32 +16,8 @@ export const backportIDs: Set<number> = new Set();
 
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
-        case "R105": {
-            if (MBS_MOD_API.getOriginalHash("ElementNumberInputBlur") === "1C8DFD30") {
-                backportIDs.add(5108);
-                MBS_MOD_API.patchFunction("ElementNumberInputBlur", {
-                    "const min = Number(this.min);":
-                        "const min = this.min ? Number(this.min) : -Infinity;",
-                    "const max = Number(this.max);":
-                        "const max = this.max ? Number(this.max) : Infinity;",
-                });
-            }
-
-            if (MBS_MOD_API.getOriginalHash("PreferenceSubscreenVisibilityClick") === "F70765AB") {
-                backportIDs.add(5109);
-                MBS_MOD_API.patchFunction("PreferenceSubscreenVisibilityClick", {
-                    "Player.ItemPermission[key] ??= permission;":
-                        "Player.PermissionItems[key] ??= permission;",
-                    "Player.ItemPermission[key].Permission = permission.Permission;":
-                        "Player.PermissionItems[key].Hidden = permission.Hidden; Player.PermissionItems[key].Permission = permission.Permission;",
-                });
-                MBS_MOD_API.patchFunction("CharacterOnlineRefresh", {
-                    "Char.PermissionItems = ServerUnPackItemPermissions(data, Char);":
-                        ";",
-                    "if (!Char.IsPlayer()) {":
-                        "if (!Char.IsPlayer()) {Char.PermissionItems = ServerUnPackItemPermissions(data, Char);",
-                });
-            }
+        case "R106": {
+            break;
         }
     }
 
