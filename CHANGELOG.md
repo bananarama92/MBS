@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.20
+* Add R107Beta1 support
+* Drop R105 support
+
 ## v1.7.19
 * Add R106Beta1 support
 * Show the MBS changelog in the chat
