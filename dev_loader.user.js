@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MBS_dev - Maid's Bondage Scripts Development Version
 // @namespace    MBS_dev
-// @version     1.7.20.dev0
+// @version     1.7.21.dev0
 // @description  Loader of Bananarama92's "Maid's Bondage Scripts" mod (dev version)
 // @author       Bananarama92
 // @match        http://localhost:*/*

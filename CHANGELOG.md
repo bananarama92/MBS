@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.21
+* Drop R106 support
+* Update reported R107 items
+
 ## v1.7.20
 * Add R107Beta1 support
 * Drop R105 support
