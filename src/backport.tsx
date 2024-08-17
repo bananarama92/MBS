@@ -16,7 +16,7 @@ export const backportIDs: Set<number> = new Set();
 
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
-        case "R106": {
+        case "R107": {
             break;
         }
     }
