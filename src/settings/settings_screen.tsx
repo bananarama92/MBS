@@ -169,6 +169,15 @@ export class MBSPreferenceScreen extends MBSScreen {
                         Interpolate between the three alternative garbling levels, allowing for a more gradual increase
                         in garbling strength (on a syllable by syllable basis) as the gag level increases
                     </div>
+
+                    <h2>Crafting settings</h2>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="ExtendedCraftingDescription" onClick={this.#boolSwitch.bind(this)}/>
+                        <span>
+                            Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
+                            WARNING: Note that these descriptions are only legible for those with MBS enabled (including yourself).
+                        </span>
+                    </div>
                 </div>
 
                 <div id={ID.miscGrid}>
