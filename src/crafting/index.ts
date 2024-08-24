@@ -7,6 +7,22 @@ import { pushMBSSettings, SettingsType } from "../settings";
 export const BC_SLOT_MAX_ORIGINAL = 80;
 const MBS_SLOT_MAX_ORIGINAL = 160;
 
+/** Control character used for marking extended crafted item descriptions. */
+const EXTENDED_DESCRIPTION_MARKER = "\x00";
+const EXTENDED_DESCRIPTION_ENABLED: boolean = true;
+
+/** A set of all illegal non-control (extended) ASCII character codes. */
+const CHAR_CODE_ILLEGAL = new Set([
+    "§".charAt(0), // `CraftingSerializeItemSep`
+    "¶".charAt(0), // `CraftingSerializeFieldSep`
+    127, // Delete
+    129, // Unused
+    141, // Unused
+    143, // Unused
+    144, // Unused
+    157, // Unused
+]);
+
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
     if (items == null) {
@@ -94,6 +110,50 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     }
 }
 
+function descriptionDecode(description: string): string {
+    if (!description) {
+        return "";
+    }
+
+    if (description.startsWith(EXTENDED_DESCRIPTION_MARKER)) {
+        return Array.from(description.slice(1, 200)).flatMap(char => {
+            const id = char.charCodeAt(0);
+            const bit1 = Math.floor(id / 256);
+            const bit2 = id - bit1 * 256;
+            return [
+                bit1 < 32 ? "" : String.fromCharCode(bit1),
+                bit2 < 32 ? "" : String.fromCharCode(bit2),
+            ];
+        }).join("");
+    } else {
+        return description.slice(0, 200);
+    }
+}
+
+/** Check whether it the passed character code fall in the (extended) ASCII range and does not contain any control- or otherwise illegal characters. */
+function charCodeIsValid(charCode: number): boolean {
+    return charCode >= 32 && charCode < 256 && !CHAR_CODE_ILLEGAL.has(charCode);
+}
+
+function descriptionEncode(description: string): string {
+    if (!description) {
+        return "";
+    }
+
+    let ret = EXTENDED_DESCRIPTION_MARKER;
+    let i = 0;
+    const iMax = Math.min(199, Math.ceil(description.length / 2));
+    while (i < iMax) {
+        const charCodeA = description.charCodeAt(i * 2) || 0;
+        const charCodeB = description.charCodeAt(1 + i * 2) || 0;
+        if (charCodeIsValid(charCodeA) && charCodeIsValid(charCodeB)) {
+            ret += String.fromCharCode(charCodeA * 256 + charCodeB);
+        }
+        i++;
+    }
+    return ret;
+}
+
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing crafting hooks");
 
@@ -107,6 +167,54 @@ waitFor(bcLoaded).then(() => {
     MBS_MOD_API.patchFunction("CraftingRun", {
         "/ ${80 / 20}.":
             `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
+    });
+
+    MBS_MOD_API.patchFunction("DialogDrawCrafting", {
+        'DrawTextWrap(InterfaceTextGet("CraftingDescription").replace("CraftDescription", Item.Craft.Description.substring(0, 200)), 1050, 600, 900, 125, "White", null, 4, 23, "Top");':
+            ";",
+    });
+
+    MBS_MOD_API.hookFunction("DialogDrawCrafting", 0, ([C, item, ...args], next) => {
+        if (typeof item?.Craft?.Description === "string") {
+            const nLines = item.Craft.Description.startsWith(EXTENDED_DESCRIPTION_MARKER) ? 6 : 4;
+            DrawTextWrap(
+                InterfaceTextGet("CraftingDescription").replace("CraftDescription", descriptionDecode(item.Craft.Description)),
+                1050, 600, 900, 125, "White", undefined, nLines, 23, "Top",
+            );
+        }
+        return next([C, item, ...args]);
+    });
+
+    MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
+        const ret = next([newMode, ...args]);
+        if (CraftingSelectedItem && newMode === "Name") {
+            const elem = document.getElementById("InputDescription");
+            if (elem && elem instanceof HTMLInputElement) {
+                elem.maxLength = 398;
+                elem.pattern = "^[\x20-\xFF]+$";
+                elem.value = descriptionDecode(CraftingSelectedItem.Description || "");
+            }
+        }
+        return ret;
+    });
+
+    MBS_MOD_API.hookFunction("CraftingKeyUp", 0, (args, next) => {
+        if (CraftingSelectedItem && document.getElementById("InputDescription") != null) {
+            if (EXTENDED_DESCRIPTION_ENABLED) {
+                CraftingSelectedItem.Description = descriptionEncode(ElementValue("InputDescription"));
+            } else {
+                CraftingSelectedItem.Description = ElementValue("InputDescription");
+            }
+        }
+        return next(args);
+    });
+
+    MBS_MOD_API.hookFunction("CraftingConvertSelectedToItem", 0, (args, next) => {
+        const ret = next(args);
+        if (Player.MBSSettings.ExtendedCraftingDescription) {
+            ret.Description = descriptionEncode(ElementValue("InputDescription").trim());
+        }
+        return ret;
     });
 
     waitFor(settingsMBSLoaded).then(() => {
