@@ -148,6 +148,8 @@ interface MBSProtoSettings {
     DropTrailing?: boolean;
     /** Whether to interpolate between gag levels using different garbling tables */
     GarblePerSyllable?: boolean;
+    /** Whether to allow up to 398 extended ASCII characters in a crafted item description */
+    ExtendedCraftingDescription?: boolean;
 }
 
 /** The MBS settings */
@@ -175,6 +177,8 @@ interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, "FortuneWhe
     DropTrailing: boolean;
     /** Whether to interpolate between gag levels using different garbling tables */
     GarblePerSyllable: boolean;
+    /** Whether to allow up to 398 extended ASCII characters in a crafted item description */
+    ExtendedCraftingDescription: boolean;
 }
 
 /** An interface for representing clickable buttons */

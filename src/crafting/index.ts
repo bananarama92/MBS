@@ -9,7 +9,6 @@ const MBS_SLOT_MAX_ORIGINAL = 160;
 
 /** Control character used for marking extended crafted item descriptions. */
 const EXTENDED_DESCRIPTION_MARKER = "\x00";
-const EXTENDED_DESCRIPTION_ENABLED: boolean = true;
 
 /** A set of all illegal non-control (extended) ASCII character codes. */
 const CHAR_CODE_ILLEGAL = new Set([
@@ -200,7 +199,7 @@ waitFor(bcLoaded).then(() => {
 
     MBS_MOD_API.hookFunction("CraftingKeyUp", 0, (args, next) => {
         if (CraftingSelectedItem && document.getElementById("InputDescription") != null) {
-            if (EXTENDED_DESCRIPTION_ENABLED) {
+            if (Player.MBSSettings.ExtendedCraftingDescription) {
                 CraftingSelectedItem.Description = descriptionEncode(ElementValue("InputDescription"));
             } else {
                 CraftingSelectedItem.Description = ElementValue("InputDescription");

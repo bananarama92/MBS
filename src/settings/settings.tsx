@@ -194,6 +194,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: [],
         DropTrailing: [],
         GarblePerSyllable: [],
+        ExtendedCraftingDescription: [],
     };
 
     const scalars = {
@@ -203,6 +204,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
+        ExtendedCraftingDescription: false,
     } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
@@ -226,6 +228,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: scalars.AlternativeGarbling,
         DropTrailing: scalars.DropTrailing,
         GarblePerSyllable: scalars.GarblePerSyllable,
+        ExtendedCraftingDescription: scalars.ExtendedCraftingDescription,
     };
     if (settings.AlternativeGarbling) {
         garblingJSON.init();
@@ -322,6 +325,7 @@ export function clearMBSSettings(): void {
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
+        ExtendedCraftingDescription: false,
     });
 
     ServerAccountUpdate.QueueData({
