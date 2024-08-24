@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.23
+* Add a missing extended crafted item description check to `CraftingModeSet`
+
 ## v1.7.22
 * Include the new BC EU host URL in the MBS user script
 * Add the ability to create crafted item description with up to 398 "simple" characters (_i.e._ extended ASCII).
