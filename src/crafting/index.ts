@@ -188,9 +188,11 @@ waitFor(bcLoaded).then(() => {
         const ret = next([newMode, ...args]);
         if (CraftingSelectedItem && newMode === "Name") {
             const elem = document.getElementById("InputDescription");
-            if (elem && elem instanceof HTMLInputElement) {
-                elem.maxLength = 398;
-                elem.pattern = "^[\x20-\xFF]+$";
+            if (elem instanceof HTMLInputElement) {
+                if (Player.MBSSettings.ExtendedCraftingDescription) {
+                    elem.maxLength = 398;
+                    elem.pattern = "^[\x20-\xFF]+$";
+                }
                 elem.value = descriptionDecode(CraftingSelectedItem.Description || "");
             }
         }
