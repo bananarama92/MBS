@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.24
+* Fix extended crafting descriptions sometimes dropping the last character
+
 ## v1.7.23
 * Add a missing extended crafted item description check to `CraftingModeSet`
 
