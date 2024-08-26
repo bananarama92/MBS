@@ -143,10 +143,14 @@ function descriptionEncode(description: string): string {
     let i = 0;
     const iMax = Math.min(199, Math.ceil(description.length / 2));
     while (i < iMax) {
-        const charCodeA = description.charCodeAt(i * 2) || 0;
-        const charCodeB = description.charCodeAt(1 + i * 2) || 0;
-        if (charCodeIsValid(charCodeA) && charCodeIsValid(charCodeB)) {
-            ret += String.fromCharCode(charCodeA * 256 + charCodeB);
+        const charCodeA = description.charCodeAt(i * 2);
+        const charCodeB = description.charCodeAt(1 + i * 2);
+        if (charCodeIsValid(charCodeA)) {
+            if (Number.isNaN(charCodeB)) {
+                ret += String.fromCharCode(charCodeA * 256);
+            } else if (charCodeIsValid(charCodeB)) {
+                ret += String.fromCharCode(charCodeA * 256 + charCodeB);
+            }
         }
         i++;
     }
