@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.25
+* Set the max supported BC version to R107 until full beta support can be added
+
 ## v1.7.24
 * Fix extended crafting descriptions sometimes dropping the last character
 
