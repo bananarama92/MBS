@@ -379,30 +379,51 @@ export class MBSPreferenceScreen extends MBSScreen {
 let preferenceState: PreferenceScreenProxy;
 
 waitFor(bcLoaded).then(() => {
-    MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
-        next(args);
-        preferenceLoadHook();
-    });
-
-    ServerPlayerChatRoom.register({
-        screen: MBSPreferenceScreen.screen,
-        callback: () => InformationSheetPreviousScreen === "ChatRoom",
-    });
-
-    MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
-        const previousScreen = PreferenceSubscreen;
-        next(args);
-        if (!previousScreen && PreferenceSubscreen as string === MBSPreferenceScreen.screen) {
-            PreferenceExit();
-            preferenceState.loadChild(MBSPreferenceScreen);
-        }
-    });
-
-    (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
     preferenceState = new PreferenceScreenProxy();
 
-    switch (CurrentScreen) {
-        case "Preference":
-            return preferenceLoadHook();
+    switch (GameVersion) {
+        case "R107": {
+            MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
+                next(args);
+                preferenceLoadHook();
+            });
+
+            ServerPlayerChatRoom.register({
+                screen: MBSPreferenceScreen.screen,
+                callback: () => InformationSheetPreviousScreen === "ChatRoom",
+            });
+
+            MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
+                const previousScreen = PreferenceSubscreen;
+                next(args);
+                if (!previousScreen && PreferenceSubscreen as string === MBSPreferenceScreen.screen) {
+                    PreferenceExit();
+                    preferenceState.loadChild(MBSPreferenceScreen);
+                }
+            });
+
+            (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
+
+            if (CurrentScreen === "Preference") {
+                preferenceLoadHook();
+            }
+            break;
+        }
+
+        default: { // R108
+            PreferenceRegisterExtensionSetting({
+                Identifier: "MBS",
+                load() {
+                    PreferenceExit();
+                    preferenceState.loadChild(MBSPreferenceScreen);
+                },
+                run() {},
+                click() {},
+                exit() {},
+                ButtonText: "MBS Settings",
+                Image: "Icons/Maid.png",
+            });
+            break;
+        }
     }
 });
