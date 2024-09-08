@@ -31,8 +31,11 @@ export const BC_MIN_VERSION = 107 satisfies number;
 export function validateBCVersion(version: string): void {
     const BC_VERSION = Version.fromBCVersion(version);
     const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
+    const bc_max_version = Version.fromBCVersion("R107");
     if (BC_VERSION.lesser(bc_min_version)) {
         throw new Error(`BC ${GameVersion} detected; MBS requires version R${BC_MIN_VERSION} or later`);
+    } else if (BC_VERSION.greater(bc_max_version)) {
+        throw new Error(`BC ${GameVersion} detected; MBS requires version R107 or earlier`);
     } else {
         logger.log(`Detected BC ${GameVersion}`);
     }
