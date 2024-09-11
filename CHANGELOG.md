@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v1.7.26
+* Add R108Beta1 support
+* Move the MBS preferences from `Preferences > MBS` to `Preferences > Extensions > MBS` starting from R108
+* Partially backport two changes to R108Beta1:
+    - [BondageProjects/Bondage-College#5187](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5187): Minor crafting UI-related tweaks
+    - [BondageProjects/Bondage-College#5188](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5188): Fix the subscreen exiting logic in `PreferenceExit()` and `PreferenceSubscreenExtensionsExit()`
+
 ## v1.7.25
 * Set the max supported BC version to R107 until full beta support can be added
 
