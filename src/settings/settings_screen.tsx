@@ -396,6 +396,7 @@ waitFor(bcLoaded).then(() => {
             MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
                 const previousScreen = PreferenceSubscreen;
                 next(args);
+                // @ts-expect-error
                 if (!previousScreen && PreferenceSubscreen as string === MBSPreferenceScreen.screen) {
                     PreferenceExit();
                     preferenceState.loadChild(MBSPreferenceScreen);

@@ -915,7 +915,11 @@ export function createWeightedWheelIDs(ids: string): string {
         return option === undefined ? [] : Array(option.Weight ?? 1).fill(id);
     });
     if (idBaseList.length === 0) {
-        return Array.from(ids.length > 0 ? ids : WheelFortuneDefault).sort(Math.random).join();
+        if (GameVersion === "R107") {
+            return Array.from(ids.length > 0 ? ids : WheelFortuneDefault).sort(Math.random).join();
+        } else {
+            return "";
+        }
     }
 
     const idList: string[] = [];

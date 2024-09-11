@@ -814,10 +814,26 @@ waitFor(bcLoaded).then(() => {
         return;
     }
 
-    MBS_MOD_API.patchFunction("WheelFortuneRun", {
-        'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");': ";",
-        'DrawButton(1720, 60, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));': ";",
-    });
+    switch (GameVersion) {
+        case "R107": {
+            MBS_MOD_API.patchFunction("WheelFortuneRun", {
+                'DrawTextWrap(TextGet((WheelFortuneVelocity == 0) ? (WheelFortuneForced ? "Forced" : "Title") : "Wait"), 1375, 200, 550, 200, "White");':
+                    ";",
+                'DrawButton(1720, 60, 90, 90, "", BackColor, "Icons/Random.png", TextGet("Random"));':
+                    ";",
+            });
+            break;
+        }
+        default: {
+            MBS_MOD_API.patchFunction("WheelFortuneRun", {
+                'DrawTextWrap(TextGet(textTag), 1375, 200, 550, 200, "White")':
+                    ";",
+                'DrawButton(1720, 60, 90, 90, "", (WheelFortuneVelocity == 0 && !isInvalidWheel) ? "White" : "Silver", "Icons/Random.png", TextGet("Random"), isInvalidWheel);':
+                    ";",
+            });
+            break;
+        }
+    }
 
     MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
         wheelFortuneLoadHook();
@@ -849,7 +865,7 @@ waitFor(bcLoaded).then(() => {
         const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
         DrawButton(...COORDS.preset, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
 
-        const backColor = (WheelFortuneVelocity == 0 && canSpin) ? "White" : "Silver";
+        const backColor = (WheelFortuneVelocity == 0 && canSpin && WheelFortuneList.length > 0) ? "White" : "Silver";
         DrawButton(
             ...COORDS.roll, "", backColor, "Icons/Random.png",
             canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
@@ -857,7 +873,9 @@ waitFor(bcLoaded).then(() => {
         );
 
         let text = "";
-        if (WheelFortuneVelocity !== 0) {
+        if (WheelFortuneList.length === 0) {
+            text = GameVersion === "R107" ? "Invalid empty fortune wheel; at least one option required" : TextGet("Invalid");
+        } else if (WheelFortuneVelocity !== 0) {
             text = TextGet("Wait");
         } else if (!canSpin) {
             text = "MBS: Cannot spin the wheel of fortune while restrained";
