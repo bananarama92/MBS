@@ -31,11 +31,8 @@ export const BC_MIN_VERSION = 107 satisfies number;
 export function validateBCVersion(version: string): void {
     const BC_VERSION = Version.fromBCVersion(version);
     const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
-    const bc_max_version = Version.fromBCVersion("R107");
     if (BC_VERSION.lesser(bc_min_version)) {
         throw new Error(`BC ${GameVersion} detected; MBS requires version R${BC_MIN_VERSION} or later`);
-    } else if (BC_VERSION.greater(bc_max_version)) {
-        throw new Error(`BC ${GameVersion} detected; MBS requires version R107 or earlier`);
     } else {
         logger.log(`Detected BC ${GameVersion}`);
     }
@@ -48,18 +45,18 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["9169F897", "33579054"]],
-        ["CraftingRun", ["51577F65"]],
+        ["CraftingClick", ["33579054", "083CC3CA"]],
+        ["CraftingRun", ["51577F65", "CA7B4FE0"]],
         ["SpeechTransformProcess", ["666DDA2F"]],
-        ["SpeechTransformGagGarble", ["C056FE08"]],
-        ["PreferenceLoad", ["8BAC28C8"]],
-        ["WheelFortuneLoad", ["204D57D4"]],
-        ["WheelFortuneClick", ["21CCD6B4"]],
-        ["WheelFortuneRun", ["150059B6"]],
-        ["WheelFortuneMouseUp", ["1465BDFA"]],
-        ["WheelFortuneMouseDown", ["306C80B6"]],
+        ["SpeechTransformGagGarble", ["C056FE08", "691A05BF"]],
+        ["PreferenceLoad", ["8BAC28C8", "FEEBF556"]],
+        ["WheelFortuneLoad", ["204D57D4", "EA252C35"]],
+        ["WheelFortuneClick", ["21CCD6B4", "D368BBF2"]],
+        ["WheelFortuneRun", ["150059B6", "D4DF7BB8"]],
+        ["WheelFortuneMouseUp", ["1465BDFA", "887E5D09"]],
+        ["WheelFortuneMouseDown", ["306C80B6", "78354D35"]],
         ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
-        ["WheelFortuneDrawWheel", ["A8BF62A5"]],
+        ["WheelFortuneDrawWheel", ["A8BF62A5", "B21DAEA9"]],
     ];
     return Object.freeze(Object.fromEntries(hashes.map(item => {
         const [key, value] = item;

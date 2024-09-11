@@ -19,6 +19,38 @@ waitFor(bcLoaded).then(() => {
         case "R107": {
             break;
         }
+        case "R108Beta1": {
+            if (
+                MBS_MOD_API.getOriginalHash("PreferenceExit") === "180F0DB5"
+                && MBS_MOD_API.getOriginalHash("PreferenceSubscreenExtensionsExit") === "FF486E53"
+            ) {
+                backportIDs.add(5188);
+                MBS_MOD_API.patchFunction("PreferenceExit", {
+                    "if (!PreferenceSubscreenExit())":
+                        "if (PreferenceSubscreenExit())",
+                });
+                MBS_MOD_API.patchFunction("PreferenceSubscreenExtensionsExit", {
+                    "if (PreferenceExtensionsCurrent.exit()) {":
+                        "if (PreferenceExtensionsCurrent.exit() ?? true) {",
+                });
+
+                const prefSubscreen = PreferenceSubscreens.find(({ name }) => name === "Extensions");
+                if (prefSubscreen) {
+                    prefSubscreen.exit = PreferenceSubscreenExtensionsExit;
+                }
+            }
+
+            if (MBS_MOD_API.getOriginalHash("CraftingLoad") === "AF96A27B") {
+                backportIDs.add(5187);
+                MBS_MOD_API.patchFunction("CraftingLoad", {
+                    'attributes: { id: CraftingID.root, "screen-generated": CurrentScreen },':
+                        'attributes: { id: CraftingID.root, "screen-generated": CurrentScreen, "aria-busy": "true" },',
+                    'parent.setAttribute("data-loaded", true);':
+                        'parent.setAttribute("data-loaded", true); parent.setAttribute("aria-busy", "false");',
+                });
+            }
+            break;
+        }
     }
 
     if (backportIDs.size) {

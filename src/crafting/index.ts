@@ -157,12 +157,6 @@ function descriptionEncode(description: string): string {
     return ret;
 }
 
-declare const CraftingID: undefined | Readonly<Record<string, string>>;
-declare const CraftingEventListeners: undefined | {
-    readonly _ChangeDescription: (this: HTMLTextAreaElement, ev: Event) => void,
-    readonly _ClickAsset: (this: HTMLButtonElement, ev: Event) => void,
-};
-
 waitFor(bcLoaded).then(() => {
     logger.log("Initializing crafting hooks");
 
@@ -237,18 +231,19 @@ waitFor(bcLoaded).then(() => {
                 break;
             }
 
-            async function waitForCraft(root: Element) {
-                if (typeof CraftingID !== "object") {
-                    return null;
+            function loadCallback(mutations: null | readonly MutationRecord[], observer: MutationObserver) {
+                const descriptionInput = document.getElementById(CraftingID.descriptionInput);
+                if (!(descriptionInput instanceof HTMLTextAreaElement)) {
+                    observer.disconnect();
+                    return;
                 }
 
-                while (root.getAttribute("data-loaded") !== "true") {
-                    if (!root.parentElement) {
-                        return null;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                if (Player.MBSSettings.ExtendedCraftingDescription) {
+                    descriptionInput.maxLength = 398;
+                    // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
                 }
-                return document.getElementById(CraftingID.descriptionInput);
+                descriptionInput.value = descriptionDecode(descriptionInput.value);
+                observer.disconnect();
             }
 
             MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
@@ -258,17 +253,13 @@ waitFor(bcLoaded).then(() => {
                     return ret;
                 }
 
-                waitForCraft(root).then((descriptionInput) => {
-                    if (!(descriptionInput instanceof HTMLTextAreaElement)) {
-                        return;
-                    }
+                const observer = new MutationObserver(loadCallback);
+                if ((root.ariaBusy ?? "false") === "false") {
+                    loadCallback(null, observer);
+                } else {
+                    observer.observe(root, { attributes: true, attributeFilter: ["aria-busy"] });
+                }
 
-                    if (Player.MBSSettings.ExtendedCraftingDescription) {
-                        descriptionInput.maxLength = 398;
-                        // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
-                    }
-                    descriptionInput.value = descriptionDecode(descriptionInput.value);
-                });
                 return ret;
             });
 
