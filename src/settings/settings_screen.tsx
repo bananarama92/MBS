@@ -1,4 +1,4 @@
-import { MBS_MOD_API, waitFor, logger } from "../common";
+import { waitFor, logger } from "../common";
 import { bcLoaded } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
@@ -16,17 +16,6 @@ import {
 import { garblingJSON } from "../garbling";
 
 import styles from "./settings_screen.scss";
-
-function preferenceLoadHook() {
-    if (TextScreenCache != null) {
-        TextScreenCache.cache[`Homepage${MBSPreferenceScreen.screen}`] = "MBS Settings";
-    }
-
-    const img = new Image();
-    img.addEventListener("error", () => DrawGetImageOnError(img, false));
-    img.src = "Icons/Maid.png";
-    DrawCacheImage.set(`Icons/${MBSPreferenceScreen.screen}.png`, img);
-}
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
@@ -381,50 +370,16 @@ let preferenceState: PreferenceScreenProxy;
 waitFor(bcLoaded).then(() => {
     preferenceState = new PreferenceScreenProxy();
 
-    switch (GameVersion) {
-        case "R107": {
-            MBS_MOD_API.hookFunction("PreferenceLoad", 0, (args, next) => {
-                next(args);
-                preferenceLoadHook();
-            });
-
-            ServerPlayerChatRoom.register({
-                screen: MBSPreferenceScreen.screen,
-                callback: () => InformationSheetPreviousScreen === "ChatRoom",
-            });
-
-            MBS_MOD_API.hookFunction("PreferenceClick", 0, (args, next) => {
-                const previousScreen = PreferenceSubscreen;
-                next(args);
-                // @ts-expect-error
-                if (!previousScreen && PreferenceSubscreen as string === MBSPreferenceScreen.screen) {
-                    PreferenceExit();
-                    preferenceState.loadChild(MBSPreferenceScreen);
-                }
-            });
-
-            (PreferenceSubscreenList as string[]).push(MBSPreferenceScreen.screen);
-
-            if (CurrentScreen === "Preference") {
-                preferenceLoadHook();
-            }
-            break;
-        }
-
-        default: { // R108
-            PreferenceRegisterExtensionSetting({
-                Identifier: "MBS",
-                load() {
-                    PreferenceExit();
-                    preferenceState.loadChild(MBSPreferenceScreen);
-                },
-                run() {},
-                click() {},
-                exit() {},
-                ButtonText: "MBS Settings",
-                Image: "Icons/Maid.png",
-            });
-            break;
-        }
-    }
+    PreferenceRegisterExtensionSetting({
+        Identifier: "MBS",
+        load() {
+            PreferenceExit();
+            preferenceState.loadChild(MBSPreferenceScreen);
+        },
+        run() {},
+        click() {},
+        exit() {},
+        ButtonText: "MBS Settings",
+        Image: "Icons/Maid.png",
+    });
 });
