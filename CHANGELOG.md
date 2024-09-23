@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.7.27
+* Drop R107 support
+* Ensure that exiting the MBS preference screen returns one to the preference extension subscreen
+* Backport two R109 changes:
+    - [BondageProjects/Bondage-College#5205](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5205): Take `Asset.CraftGroup` into account when sorting crafted items
+    - [BondageProjects/Bondage-College#5207](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5207): Fix two crafting screen bugs
+    - [BondageProjects/Bondage-College#5208](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5208): Fix the appropriate default color failing to be selected upon creating a new crafted item
+
 ## v1.7.26
 * Add R108Beta1 support
 * Move the MBS preferences from `Preferences > MBS` to `Preferences > Extensions > MBS` starting from R108
