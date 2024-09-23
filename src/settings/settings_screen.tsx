@@ -29,7 +29,15 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Run: PreferenceRun,
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
-                Load: () => CommonSetScreen("Character", "Preference"),
+                Load: () => {
+                    CommonSetScreen("Character", "Preference");
+                    PreferencePageCurrent = 1;
+                    const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
+                    if (screen) {
+                        screen.load?.();
+                        PreferenceSubscreen = screen;
+                    }
+                },
             },
         );
     }
