@@ -188,99 +188,53 @@ waitFor(bcLoaded).then(() => {
         return next([C, item, ...args]);
     });
 
-    switch (GameVersion) {
-        case "R107": {
-            MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
-                const ret = next([newMode, ...args]);
-                if (CraftingSelectedItem && newMode === "Name") {
-                    const elem = document.getElementById("InputDescription");
-                    if (elem instanceof HTMLInputElement) {
-                        if (Player.MBSSettings.ExtendedCraftingDescription) {
-                            elem.maxLength = 398;
-                            elem.pattern = "^[\x20-\xFF]+$";
-                        }
-                        elem.value = descriptionDecode(CraftingSelectedItem.Description || "");
-                    }
-                }
-                return ret;
-            });
-
-            MBS_MOD_API.hookFunction("CraftingKeyUp", 0, (args, next) => {
-                if (CraftingSelectedItem && document.getElementById("InputDescription") != null) {
-                    if (Player.MBSSettings.ExtendedCraftingDescription) {
-                        CraftingSelectedItem.Description = descriptionEncode(ElementValue("InputDescription"));
-                    } else {
-                        CraftingSelectedItem.Description = ElementValue("InputDescription");
-                    }
-                }
-                return next(args);
-            });
-
-            MBS_MOD_API.hookFunction("CraftingConvertSelectedToItem", 0, (args, next) => {
-                const ret = next(args);
-                if (Player.MBSSettings.ExtendedCraftingDescription) {
-                    ret.Description = descriptionEncode(ElementValue("InputDescription").trim());
-                }
-                return ret;
-            });
-            break;
+    function loadCallback(mutations: null | readonly MutationRecord[], observer: MutationObserver) {
+        const descriptionInput = document.getElementById(CraftingID.descriptionInput);
+        if (!(descriptionInput instanceof HTMLTextAreaElement)) {
+            observer.disconnect();
+            return;
         }
 
-        default: { // R108
-            if (typeof CraftingEventListeners !== "object" || typeof CraftingID !== "object") {
-                break;
-            }
-
-            function loadCallback(mutations: null | readonly MutationRecord[], observer: MutationObserver) {
-                const descriptionInput = document.getElementById(CraftingID.descriptionInput);
-                if (!(descriptionInput instanceof HTMLTextAreaElement)) {
-                    observer.disconnect();
-                    return;
-                }
-
-                if (Player.MBSSettings.ExtendedCraftingDescription) {
-                    descriptionInput.maxLength = 398;
-                    // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
-                }
-                descriptionInput.value = descriptionDecode(descriptionInput.value);
-                observer.disconnect();
-            }
-
-            MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
-                const ret = next(args);
-                const root = document.getElementById(CraftingID.root);
-                if (!root) {
-                    return ret;
-                }
-
-                const observer = new MutationObserver(loadCallback);
-                if ((root.ariaBusy ?? "false") === "false") {
-                    loadCallback(null, observer);
-                } else {
-                    observer.observe(root, { attributes: true, attributeFilter: ["aria-busy"] });
-                }
-
-                return ret;
-            });
-
-            MBS_MOD_API.hookFunction("CraftingEventListeners._ClickAsset", 0, (args, next) => {
-                const ret = next(args);
-                if (CraftingSelectedItem) {
-                    ElementValue(CraftingID.descriptionInput, descriptionDecode(CraftingSelectedItem.Description));
-                }
-                return ret;
-            });
-
-            MBS_MOD_API.hookFunction("CraftingEventListeners._ChangeDescription", 0, (args, next) => {
-                const ret = next(args);
-                if (CraftingSelectedItem && Player.MBSSettings.ExtendedCraftingDescription) {
-                    CraftingSelectedItem.Description = descriptionEncode(ElementValue(CraftingID.descriptionInput));
-                }
-                return ret;
-            });
-            break;
+        if (Player.MBSSettings.ExtendedCraftingDescription) {
+            descriptionInput.maxLength = 398;
+            // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
         }
+        descriptionInput.value = descriptionDecode(descriptionInput.value);
+        observer.disconnect();
     }
+
+    MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
+        const ret = next(args);
+        const root = document.getElementById(CraftingID.root);
+        if (!root) {
+            return ret;
+        }
+
+        const observer = new MutationObserver(loadCallback);
+        if ((root.ariaBusy ?? "false") === "false") {
+            loadCallback(null, observer);
+        } else {
+            observer.observe(root, { attributes: true, attributeFilter: ["aria-busy"] });
+        }
+
+        return ret;
+    });
+
+    MBS_MOD_API.hookFunction("CraftingEventListeners._ClickAsset", 0, (args, next) => {
+        const ret = next(args);
+        if (CraftingSelectedItem) {
+            ElementValue(CraftingID.descriptionInput, descriptionDecode(CraftingSelectedItem.Description));
+        }
+        return ret;
+    });
+
+    MBS_MOD_API.hookFunction("CraftingEventListeners._ChangeDescription", 0, (args, next) => {
+        const ret = next(args);
+        if (CraftingSelectedItem && Player.MBSSettings.ExtendedCraftingDescription) {
+            CraftingSelectedItem.Description = descriptionEncode(ElementValue(CraftingID.descriptionInput));
+        }
+        return ret;
+    });
 
     waitFor(settingsMBSLoaded).then(() => {
         logger.log("Initializing crafting cache");
