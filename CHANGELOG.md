@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.28
+* Disable MBS's extended crafting descriptions in R109 in favor of BC's native implementation
+
 ## v1.7.27
 * Drop R107 support
 * Ensure that exiting the MBS preference screen returns one to the preference extension subscreen
