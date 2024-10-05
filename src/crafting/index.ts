@@ -172,69 +172,71 @@ waitFor(bcLoaded).then(() => {
             `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
     });
 
-    MBS_MOD_API.patchFunction("DialogDrawCrafting", {
-        'DrawTextWrap(InterfaceTextGet("CraftingDescription").replace("CraftDescription", Item.Craft.Description.substring(0, 200)), 1050, 600, 900, 125, "White", null, 4, 23, "Top");':
-            ";",
-    });
+    if (GameVersion === "R108") {
+        MBS_MOD_API.patchFunction("DialogDrawCrafting", {
+            'DrawTextWrap(InterfaceTextGet("CraftingDescription").replace("CraftDescription", Item.Craft.Description.substring(0, 200)), 1050, 600, 900, 125, "White", null, 4, 23, "Top");':
+                ";",
+        });
 
-    MBS_MOD_API.hookFunction("DialogDrawCrafting", 0, ([C, item, ...args], next) => {
-        if (typeof item?.Craft?.Description === "string") {
-            const nLines = item.Craft.Description.startsWith(EXTENDED_DESCRIPTION_MARKER) ? 6 : 4;
-            DrawTextWrap(
-                InterfaceTextGet("CraftingDescription").replace("CraftDescription", descriptionDecode(item.Craft.Description)),
-                1050, 600, 900, 125, "White", undefined, nLines, 23, "Top",
-            );
-        }
-        return next([C, item, ...args]);
-    });
+        MBS_MOD_API.hookFunction("DialogDrawCrafting", 0, ([C, item, ...args], next) => {
+            if (typeof item?.Craft?.Description === "string") {
+                const nLines = item.Craft.Description.startsWith(EXTENDED_DESCRIPTION_MARKER) ? 6 : 4;
+                DrawTextWrap(
+                    InterfaceTextGet("CraftingDescription").replace("CraftDescription", descriptionDecode(item.Craft.Description)),
+                    1050, 600, 900, 125, "White", undefined, nLines, 23, "Top",
+                );
+            }
+            return next([C, item, ...args]);
+        });
 
-    function loadCallback(mutations: null | readonly MutationRecord[], observer: MutationObserver) {
-        const descriptionInput = document.getElementById(CraftingID.descriptionInput);
-        if (!(descriptionInput instanceof HTMLTextAreaElement)) {
+        function loadCallback(mutations: null | readonly MutationRecord[], observer: MutationObserver) {
+            const descriptionInput = document.getElementById(CraftingID.descriptionInput);
+            if (!(descriptionInput instanceof HTMLTextAreaElement)) {
+                observer.disconnect();
+                return;
+            }
+
+            if (Player.MBSSettings.ExtendedCraftingDescription) {
+                descriptionInput.maxLength = 398;
+                // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
+            }
+            descriptionInput.value = descriptionDecode(descriptionInput.value);
             observer.disconnect();
-            return;
         }
 
-        if (Player.MBSSettings.ExtendedCraftingDescription) {
-            descriptionInput.maxLength = 398;
-            // descriptionInput.pattern = "^[\x20-\xFF]+$"; FIXME
-        }
-        descriptionInput.value = descriptionDecode(descriptionInput.value);
-        observer.disconnect();
-    }
+        MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
+            const ret = next(args);
+            const root = document.getElementById(CraftingID.root);
+            if (!root) {
+                return ret;
+            }
 
-    MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
-        const ret = next(args);
-        const root = document.getElementById(CraftingID.root);
-        if (!root) {
+            const observer = new MutationObserver(loadCallback);
+            if ((root.ariaBusy ?? "false") === "false") {
+                loadCallback(null, observer);
+            } else {
+                observer.observe(root, { attributes: true, attributeFilter: ["aria-busy"] });
+            }
+
             return ret;
-        }
+        });
 
-        const observer = new MutationObserver(loadCallback);
-        if ((root.ariaBusy ?? "false") === "false") {
-            loadCallback(null, observer);
-        } else {
-            observer.observe(root, { attributes: true, attributeFilter: ["aria-busy"] });
-        }
+        MBS_MOD_API.hookFunction("CraftingEventListeners._ClickAsset", 0, (args, next) => {
+            const ret = next(args);
+            if (CraftingSelectedItem) {
+                ElementValue(CraftingID.descriptionInput, descriptionDecode(CraftingSelectedItem.Description));
+            }
+            return ret;
+        });
 
-        return ret;
-    });
-
-    MBS_MOD_API.hookFunction("CraftingEventListeners._ClickAsset", 0, (args, next) => {
-        const ret = next(args);
-        if (CraftingSelectedItem) {
-            ElementValue(CraftingID.descriptionInput, descriptionDecode(CraftingSelectedItem.Description));
-        }
-        return ret;
-    });
-
-    MBS_MOD_API.hookFunction("CraftingEventListeners._ChangeDescription", 0, (args, next) => {
-        const ret = next(args);
-        if (CraftingSelectedItem && Player.MBSSettings.ExtendedCraftingDescription) {
-            CraftingSelectedItem.Description = descriptionEncode(ElementValue(CraftingID.descriptionInput));
-        }
-        return ret;
-    });
+        MBS_MOD_API.hookFunction("CraftingEventListeners._ChangeDescription", 0, (args, next) => {
+            const ret = next(args);
+            if (CraftingSelectedItem && Player.MBSSettings.ExtendedCraftingDescription) {
+                CraftingSelectedItem.Description = descriptionEncode(ElementValue(CraftingID.descriptionInput));
+            }
+            return ret;
+        });
+    }
 
     waitFor(settingsMBSLoaded).then(() => {
         logger.log("Initializing crafting cache");

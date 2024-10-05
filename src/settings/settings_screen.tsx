@@ -172,7 +172,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         <input type="checkbox" data-field="ExtendedCraftingDescription" onClick={this.#boolSwitch.bind(this)}/>
                         <span>
                             Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
-                            WARNING: Note that these descriptions are only legible for those with MBS enabled (including yourself).
+                            Note: Available in unmodded Bondage Club as of R109
                         </span>
                     </div>
                 </div>
@@ -243,6 +243,13 @@ export class MBSPreferenceScreen extends MBSScreen {
                 </div>
             </div>,
         );
+
+        const asciiDescriptionInput = document.querySelector("input[data-field='ExtendedCraftingDescription']");
+        if (asciiDescriptionInput instanceof HTMLInputElement && GameVersion !== "R108") {
+            asciiDescriptionInput.disabled = true;
+            asciiDescriptionInput.dataset.disabled = "true";
+            (asciiDescriptionInput.nextSibling as HTMLSpanElement).style.color = "gray";
+        }
     }
 
     #boolSwitch(event: MouseEvent) {
@@ -345,7 +352,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         for (const elemOuter of root.children) {
             for (const elemInner of elemOuter.children as Iterable<HTMLInputElement>) {
                 const field = elemInner.dataset?.field;
-                if (field && field in Player.MBSSettings) {
+                if (field && field in Player.MBSSettings && elemInner.dataset.disabled !== "true") {
                     elemInner.checked = Player.MBSSettings[field as BoolSettings];
                     elemInner.disabled = disabled;
                 }
