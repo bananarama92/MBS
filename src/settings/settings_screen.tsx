@@ -249,6 +249,7 @@ export class MBSPreferenceScreen extends MBSScreen {
             asciiDescriptionInput.disabled = true;
             asciiDescriptionInput.dataset.disabled = "true";
             (asciiDescriptionInput.nextSibling as HTMLSpanElement).style.color = "gray";
+            (asciiDescriptionInput.nextSibling as HTMLSpanElement).textContent += "; see the crafting screen";
         }
     }
 

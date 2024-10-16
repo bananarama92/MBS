@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.29
+* Add R109Beta1 support
+
 ## v1.7.28
 * Disable MBS's extended crafting descriptions in R109 in favor of BC's native implementation
 
