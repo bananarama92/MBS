@@ -17,6 +17,13 @@ export const backportIDs: Set<number> = new Set();
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
         case "R109": {
+            if (MBS_MOD_API.getOriginalHash("CraftingDescription.Decode") === "D2A80436") {
+                backportIDs.add(5237);
+                MBS_MOD_API.patchFunction("CraftingDescription.Decode", {
+                    "return [String.fromCharCode(bit1), String.fromCharCode(bit2)];":
+                        "return [bit1, bit2].filter(Boolean).map(i => String.fromCharCode(i));",
+                });
+            }
             break;
         }
     }
