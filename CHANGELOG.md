@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.7.30
+* Drop R108 support
+* Add R110Beta1 support
+* Backport one R110 bug fix:
+    - [BondageProjects/Bondage-College#5237](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5237): Fix `CraftingDescription.Decode` failing to properly handle zero-terminated bits
+
 ## v1.7.29
 * Add R109Beta1 support
 

@@ -12,7 +12,7 @@ import { runTests } from "./testing";
 
 import styles from "./index.scss";
 
-const _getFunctionHash = MBS_MOD_API.getOriginalHash;
+const _getOriginalHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
 
 export {
@@ -22,7 +22,7 @@ export {
     wheelOutfits,
     getDebug,
     css,
-    _getFunctionHash,
+    _getOriginalHash,
     _toItemBundles,
     _unpackSettings,
 };
