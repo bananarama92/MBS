@@ -200,6 +200,7 @@
 	display: block;
 	line-height: 0;
 	margin-top: min(1dvh, 0.5dvw);
+	border: min(0.3dvh, 0.15dvw) solid black;
 }
 
 .mbs-changelog {
