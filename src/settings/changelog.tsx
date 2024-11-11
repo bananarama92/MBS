@@ -76,20 +76,30 @@ export async function showChangelog(start: null | string = null, end: null | str
         a.appendChild(img);
     });
 
-    elem.querySelectorAll("h2").forEach((h2, i) => {
-        elem.replaceChild(
+    elem.querySelectorAll("h2").forEach(h2 => {
+        const sibblings: HTMLElement[] = [];
+        let sibbling = h2.nextElementSibling;
+        while (sibbling instanceof HTMLElement && sibbling.tagName !== "H2") {
+            sibblings.push(sibbling);
+            sibbling = sibbling.nextElementSibling;
+        }
+
+        const region = <section aria-labelledby={`mbs-changelog-header-${h2.id}`}>
             <div class="mbs-changelog-header">
-                <h1><a href={`https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md#${h2.id}`} target="_blank">{`MBS Changelog: ${h2.innerText}`}</a></h1>
-                <span>•</span>
+                <h1 id={`mbs-changelog-header-${h2.id}`}>
+                    <a href={`https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md#${h2.id}`} target="_blank">{`MBS Changelog: ${h2.innerText}`}</a>
+                </h1>
+                <span aria-hidden="true">•</span>
                 {ElementButton.Create(
-                    `mbs-changelog-delete-${i}-${Date.now()}`,
+                    `mbs-changelog-delete-${h2.id}-${Date.now()}`,
                     async function () { this.closest(".mbs-changelog")?.remove(); },
-                    { tooltip: "Clear changelog", tooltipPosition: "bottom" },
-                    { button: { children: ["🗑"], classList: ["mbs-changelog-delete"] } },
+                    { tooltip: [`Clear ${h2.innerText} changelog`, <br/>, <span><kbd>shift</kbd> + <kbd>click</kbd> to clear all changelogs</span>], tooltipPosition: "bottom" },
+                    { button: { children: ["🗑"], classList: ["mbs-changelog-delete"], attributes: { "aria-label": `Clear ${h2.innerText} changelog` } } },
                 )}
-            </div>,
-            h2,
-        );
+            </div>
+            {sibblings}
+        </section>;
+        elem.replaceChild(region, h2);
     });
 
     await waitFor(() => !!document.getElementById("TextAreaChatLog"), 1000);

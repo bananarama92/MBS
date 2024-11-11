@@ -197,10 +197,11 @@
 }
 
 .mbs-changelog-image {
+	border: min(0.3dvh, 0.15dvw) solid black;
 	display: block;
 	line-height: 0;
+	margin-right: min(2dvh, 1dvw);
 	margin-top: min(1dvh, 0.5dvw);
-	border: min(0.3dvh, 0.15dvw) solid black;
 }
 
 .mbs-changelog {
@@ -221,7 +222,6 @@
 	}
 
 	ul {
-		list-style-position: inside;
 		margin-bottom: min(1dvh, 0.5dvw);
 		margin-top: min(1dvh, 0.5dvw);
 		padding-left: min(4dvh, 2dvw);
