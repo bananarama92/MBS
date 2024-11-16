@@ -36,3 +36,16 @@ interface WheelFortuneOptionType {
     /** The weight of a particular option within the wheel of fortune */
     readonly Weight?: number,
 }
+
+// R110 backport
+declare let CommandsChangelog: undefined | {
+    Parse(innerHTML: string, options?: null | { id?: null | string, href?: null | string, startID?: null | string, stopID?: null | string }): HTMLDivElement,
+    Publish(innerHTML: string, options?: null | { id?: null | string, href?: null | string, startID?: null | string, stopID?: null | string }): HTMLDivElement,
+    _FilterContent(root: Element, startID: string, stopID?: null | string): void,
+    _GetH1Button(id: string, header: HTMLHeadingElement, level: number): HTMLButtonElement,
+    _GetHNButton(id: string, header: HTMLHeadingElement, level: number): HTMLButtonElement,
+    _ParseHeader(root: Element, id: string, href: string, headerLevel: number, headerPrefix?: null | string): void,
+    _ParseImg(root: Element): void,
+    _ParseA(root: Element): void,
+    _SetTranslationText(changelog: Element): Promise<void>,
+};

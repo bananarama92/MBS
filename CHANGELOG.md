@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.31
+* Backport one R111 feature:
+    - [BondageProjects/Bondage-College#5254](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5254): Add the `/changelog` chat command
+
 ## v1.7.30
 * Drop R108 support
 * Add R110Beta1 support

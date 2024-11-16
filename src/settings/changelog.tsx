@@ -20,83 +20,36 @@ export function getChangeLogURL(): string {
  * Show the MBS changelog to the player for the specified versions.
  * Defaults to the latest version of no bounds are specified.
  */
-export async function showChangelog(start: null | string = null, end: null | string = null) {
-    const branch = Version.fromVersion(MBS_VERSION).beta ? "devel" : "main";
-    const elem = <div class="ChatMessage mbs-changelog" data-sender={Player.MemberNumber} data-time={ChatRoomCurrentTime()} /> as HTMLDivElement;
-    elem.innerHTML = changelog.replaceAll('<img src="static/images/', `<img loading="lazy" src="https://bananarama92.github.io/MBS/${branch}/images/`);
+export async function showChangelog(startID: null | string = null, stopID: null | string = null) {
+    // R110 safeguard
+    if (typeof CommandsChangelog === "undefined") {
+        return;
+    }
 
-    let endVisited = false;
-    const endCallback: (e: Element) => boolean = (end === null)
-        ? (e) => e.tagName === "H2"
-        : (e) => {
-            if (e.tagName === "H2" && endVisited) {
-                return true;
-            } else if (e.id === end) {
-                endVisited = true;
-            }
-            return false;
-        };
-    const startCallback: (e: Element) => boolean = (start === null)
-        ? (e) => e.tagName === "H2"
-        : (e) => e.id === start;
-
-    const iter = Array.from(elem.children).values();
-    let state: "start" | "mid" | "end" = "start";
-    let elemResult = iter.next();
-    while (!elemResult.done) {
-        const elem = elemResult.value;
-        switch (state) {
-            case "start":
-                if (startCallback(elem)) {
-                    state = "mid";
-                } else {
-                    elem.remove();
-                }
-                break;
-            case "mid":
-                if (endCallback(elem)) {
-                    state = "end";
-                    elem.remove();
-                }
-                break;
-            case "end":
-                elem.remove();
-                break;
+    const changelogElem = document.getElementById("mbs-changelog");
+    if (changelogElem) {
+        // Move a previously opened changelog to the end of the chat again
+        if (changelogElem.getAttribute("data-start") === startID && changelogElem.getAttribute("data-stop") === stopID) {
+            changelogElem.remove();
+            ChatRoomAppendChat(changelogElem);
+            return;
+        } else {
+            changelogElem.remove();
         }
-        elemResult = iter.next();
     }
 
-    elem.querySelectorAll("a").forEach((a) => a.target = "_blank");
-
-    elem.querySelectorAll("img").forEach((img) => {
-        img.decoding = "async";
-        img.loading = "eager";
-        const a = <a href={img.src} target="_blank" class="mbs-changelog-image" />;
-        img.replaceWith(a);
-        a.appendChild(img);
-    });
-
-    elem.querySelectorAll("h2").forEach((h2, i) => {
-        elem.replaceChild(
-            <div class="mbs-changelog-header">
-                <h1><a href={`https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md#${h2.id}`} target="_blank">{`MBS Changelog: ${h2.innerText}`}</a></h1>
-                <span>•</span>
-                {ElementButton.Create(
-                    `mbs-changelog-delete-${i}-${Date.now()}`,
-                    async function () { this.closest(".mbs-changelog")?.remove(); },
-                    { tooltip: "Clear changelog", tooltipPosition: "bottom" },
-                    { button: { children: ["🗑"], classList: ["mbs-changelog-delete"] } },
-                )}
-            </div>,
-            h2,
-        );
-    });
-
+    const branch = Version.fromVersion(MBS_VERSION).beta ? "devel" : "main";
+    const innerHTML = changelog.replaceAll('<img src="static/images/', `<img src="https://bananarama92.github.io/MBS/${branch}/images/`);
     await waitFor(() => !!document.getElementById("TextAreaChatLog"), 1000);
-    document.querySelectorAll("#TextAreaChatLog .mbs-changelog").forEach(e => e.remove());
-    if (elem.children) {
-        ChatRoomAppendChat(elem);
-    }
+    CommandsChangelog.Publish(
+        innerHTML,
+        {
+            id: "mbs-changelog",
+            href: `https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md`,
+            startID,
+            stopID,
+        },
+    );
 }
 
 const VERSION_PATTERN = /^(v?)([0-9]+)(\.([0-9]+))?(\.([0-9]+))?(\.\S+)?$/i;
@@ -122,6 +75,9 @@ function showChangelogSync(_args: string, _msg: string, parsed: (string | undefi
         start = `v${startReg[2]}${startReg[4] || 0}${startReg[6] || 0}`;
     } else if (endReg) {
         start = `v${endReg[2]}${endReg[4] || 0}${endReg[6] || 0}`;
+    } else {
+        const version = Version.fromVersion(MBS_VERSION);
+        start = `v${version.major}${version.minor}${version.beta ? version.micro - 1 : version.micro}`;
     }
     showChangelog(start, end);
 }
