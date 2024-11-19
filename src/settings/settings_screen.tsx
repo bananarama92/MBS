@@ -167,6 +167,12 @@ export class MBSPreferenceScreen extends MBSScreen {
                         in garbling strength (on a syllable by syllable basis) as the gag level increases
                     </div>
 
+                    <h2>Misc settings</h2>
+                    <div class="mbs-preference-settings-pair">
+                        <input type="checkbox" data-field="ShowChangelog" onClick={this.#boolSwitch.bind(this)}/>
+                        Show the MBS changelog in chat whenever a new MBS version is released
+                    </div>
+
                     <h2>Crafting settings</h2>
                     <div class="mbs-preference-settings-pair">
                         <input type="checkbox" disabled={true}/>

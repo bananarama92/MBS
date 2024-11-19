@@ -20,7 +20,7 @@ export function getChangeLogURL(): string {
  * Show the MBS changelog to the player for the specified versions.
  * Defaults to the latest version of no bounds are specified.
  */
-export async function showChangelog(startID: null | string = null, stopID: null | string = null) {
+export async function showChangelog(startID: string, stopID: null | string = null) {
     // R110 safeguard
     if (typeof CommandsChangelog === "undefined") {
         return;

@@ -194,6 +194,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: [],
         DropTrailing: [],
         GarblePerSyllable: [],
+        ShowChangelog: [],
     };
 
     const scalars = {
@@ -203,6 +204,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
+        ShowChangelog: true,
     } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
@@ -226,6 +228,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
         AlternativeGarbling: scalars.AlternativeGarbling,
         DropTrailing: scalars.DropTrailing,
         GarblePerSyllable: scalars.GarblePerSyllable,
+        ShowChangelog: scalars.ShowChangelog,
     };
     if (settings.AlternativeGarbling) {
         garblingJSON.init();
@@ -255,10 +258,6 @@ function initMBSSettings(
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
-    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings?.MBSVersion)) {
-        showChangelog();
-    }
-
     // Moved to `Player.OnlineSharedSettings` as of v0.6.26
     let syncOnlineSettings = false;
     if (Player.OnlineSettings?.MBSVersion !== undefined) {
@@ -280,6 +279,10 @@ function initMBSSettings(
     const settingsStatus = parseProtoSettings(settings);
     if (settingsStatus.ok || allowFailure) {
         Player.MBSSettings = settingsStatus.settings;
+        if (Player.MBSSettings.ShowChangelog && settings.Version !== undefined && detectUpgrade(settings.Version)) {
+            const version = Version.fromVersion(MBS_VERSION);
+            showChangelog(`v${version.major}${version.minor}${version.micro}`);
+        }
     }
     if (!settingsStatus.ok) {
         logger.warn("Encountered and fixed one or more errors while parsing MBS settings", settingsStatus.err);
@@ -322,6 +325,7 @@ export function clearMBSSettings(): void {
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
+        ShowChangelog: true,
     });
 
     ServerAccountUpdate.QueueData({

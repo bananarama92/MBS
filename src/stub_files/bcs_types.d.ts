@@ -153,6 +153,8 @@ interface MBSProtoSettings {
      * @deprecated Removed as of MBS v1.7.32; functionality incorporated into base BC as of R109
      */
     ExtendedCraftingDescription?: boolean;
+    /** Show the MBS changelog in chat whenever a new MBS version is released */
+    ShowChangelog?: boolean;
 }
 
 type MBSSettingsDeprecated = keyof Pick<MBSProtoSettings,
@@ -185,6 +187,7 @@ interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, MBSSettings
     DropTrailing: boolean;
     /** Whether to interpolate between gag levels using different garbling tables */
     GarblePerSyllable: boolean;
+    ShowChangelog: boolean;
 }
 
 /** An interface for representing clickable buttons */
