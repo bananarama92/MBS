@@ -148,12 +148,20 @@ interface MBSProtoSettings {
     DropTrailing?: boolean;
     /** Whether to interpolate between gag levels using different garbling tables */
     GarblePerSyllable?: boolean;
-    /** Whether to allow up to 398 extended ASCII characters in a crafted item description */
+    /**
+     * Whether to allow up to 398 extended ASCII characters in a crafted item description
+     * @deprecated Removed as of MBS v1.7.32; functionality incorporated into base BC as of R109
+     */
     ExtendedCraftingDescription?: boolean;
 }
 
+type MBSSettingsDeprecated = keyof Pick<MBSProtoSettings,
+    "FortuneWheelSets"
+    | "ExtendedCraftingDescription"
+>;
+
 /** The MBS settings */
-interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, "FortuneWheelSets">, unknown> {
+interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, MBSSettingsDeprecated>, unknown> {
     /** The MBS version */
     readonly Version: typeof mbs.MBS_VERSION,
     /** A backup string containing the serialized crafting data of all crafting items beyond the BC default */
@@ -177,8 +185,6 @@ interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, "FortuneWhe
     DropTrailing: boolean;
     /** Whether to interpolate between gag levels using different garbling tables */
     GarblePerSyllable: boolean;
-    /** Whether to allow up to 398 extended ASCII characters in a crafted item description */
-    ExtendedCraftingDescription: boolean;
 }
 
 /** An interface for representing clickable buttons */
