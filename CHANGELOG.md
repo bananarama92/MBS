@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.7.32
+* Drop R109 support
+* Add a setting for enabling or disabling MBS changelog notifications
+* Add a BC version selection dropdown in the shop
+
 ## v1.7.31
 * Backport one R111 feature:
     - [BondageProjects/Bondage-College#5254](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5254): Add the `/changelog` chat command
