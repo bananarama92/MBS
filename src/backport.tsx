@@ -19,6 +19,56 @@ export const backportIDs: Set<number> = new Set();
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
         case "R110": {
+            if (MBS_MOD_API.getOriginalHash("PropertyAutoPunishParseMessage") === "B0B55044") {
+                backportIDs.add(5264);
+                MBS_MOD_API.hookFunction("PropertyAutoPunishParseMessage", 0, ([sensitivity, msg, ...args], next) => {
+                    const oocRanges = SpeechGetOOCRanges(msg).reverse();
+                    const arrayMsg = Array.from(msg);
+                    oocRanges.forEach(({ start, length }) => arrayMsg.splice(start, length));
+                    msg = arrayMsg.join("");
+                    return (next([sensitivity, msg, ...args]));
+                });
+            }
+
+            if (!document.head.querySelector("meta[name='mobile-web-app-capable']")) {
+                backportIDs.add(5272);
+                const titleElem = document.head.querySelector("title");
+                if (titleElem) {
+                    document.head.insertBefore(<meta name="mobile-web-app-capable" content="yes" />, titleElem);
+                } else {
+                    document.head.append(<meta name="mobile-web-app-capable" content="yes" />);
+                }
+            }
+
+            if (MBS_MOD_API.getOriginalHash("Shop2.Elements.InputSearch.Load") === "0F083C95") {
+                backportIDs.add(5274);
+
+                MBS_MOD_API.hookFunction("Shop2.Elements.InputSearch.Load", 0, (args, next) => {
+                    const ret = next(args);
+                    const elem = document.getElementById("Shop2InputSearch");
+                    if (elem) {
+                        elem.style.display = "";
+                    }
+                    return ret;
+                });
+
+                Layering._ExitCallbacks.pop();
+                Layering.RegisterExitCallbacks({
+                    screen: "Shop2",
+                    callback: () => {
+                        Shop2Vars.Mode = "Preview";
+                        Shop2Load();
+                    },
+                });
+            }
+
+            if (MBS_MOD_API.getOriginalHash("DrawRoomBackground") === "5B829E54") {
+                backportIDs.add(5290);
+                MBS_MOD_API.patchFunction("DrawRoomBackground", {
+                    "blur ??= 1.0;":
+                        "blur ??= 0.0;",
+                });
+            }
             break;
         }
     }
