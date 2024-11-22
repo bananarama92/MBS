@@ -184,27 +184,28 @@ export function unpackSettings(
 /** Parsed the passed protosettings */
 function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
     const err: Required<SettingsStatus.Base["err"]> = {
-        Version: [],
+        AlternativeGarbling: [],
         CraftingCache: [],
-        FortuneWheelItemSets: [],
+        DropTrailing: [],
         FortuneWheelCommands: [],
+        FortuneWheelItemSets: [],
         FortuneWheelPresets: [],
         LockedWhenRestrained: [],
-        RollWhenRestrained: [],
-        AlternativeGarbling: [],
-        DropTrailing: [],
         GarblePerSyllable: [],
-        ExtendedCraftingDescription: [],
+        RollWhenRestrained: [],
+        ShowChangelog: [],
+        Version: [],
     };
 
     const scalars = {
         CraftingCache: "",
-        LockedWhenRestrained: false,
-        RollWhenRestrained: true,
+
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
-        ExtendedCraftingDescription: false,
+        LockedWhenRestrained: false,
+        RollWhenRestrained: true,
+        ShowChangelog: true,
     } satisfies { [k in keyof typeof err]?: number | boolean | string };
 
     for (const [field, defaultValue] of entries(scalars as Record<keyof typeof scalars, unknown>)) {
@@ -218,17 +219,17 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
     }
 
     const settings: MBSSettings = {
-        Version: MBS_VERSION,
+        AlternativeGarbling: scalars.AlternativeGarbling,
         CraftingCache: scalars.CraftingCache,
-        FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, s.FortuneWheelSets ?? s.FortuneWheelItemSets ?? [], err.FortuneWheelItemSets),
+        DropTrailing: scalars.DropTrailing,
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, s.FortuneWheelCommands ?? [], err.FortuneWheelCommands),
+        FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, s.FortuneWheelSets ?? s.FortuneWheelItemSets ?? [], err.FortuneWheelItemSets),
         FortuneWheelPresets: parsePresetArray(s.FortuneWheelPresets ?? [], err.FortuneWheelPresets),
         LockedWhenRestrained: scalars.LockedWhenRestrained,
-        RollWhenRestrained: scalars.RollWhenRestrained,
-        AlternativeGarbling: scalars.AlternativeGarbling,
-        DropTrailing: scalars.DropTrailing,
         GarblePerSyllable: scalars.GarblePerSyllable,
-        ExtendedCraftingDescription: scalars.ExtendedCraftingDescription,
+        RollWhenRestrained: scalars.RollWhenRestrained,
+        ShowChangelog: scalars.ShowChangelog,
+        Version: MBS_VERSION,
     };
     if (settings.AlternativeGarbling) {
         garblingJSON.init();
@@ -258,10 +259,6 @@ function initMBSSettings(
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
-    if (settings.Version !== undefined && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings?.MBSVersion)) {
-        showChangelog();
-    }
-
     // Moved to `Player.OnlineSharedSettings` as of v0.6.26
     let syncOnlineSettings = false;
     if (Player.OnlineSettings?.MBSVersion !== undefined) {
@@ -283,6 +280,10 @@ function initMBSSettings(
     const settingsStatus = parseProtoSettings(settings);
     if (settingsStatus.ok || allowFailure) {
         Player.MBSSettings = settingsStatus.settings;
+        if (Player.MBSSettings.ShowChangelog && settings.Version !== undefined && detectUpgrade(settings.Version)) {
+            const version = Version.fromVersion(MBS_VERSION);
+            showChangelog(`v${version.major}${version.minor}${version.micro}`);
+        }
     }
     if (!settingsStatus.ok) {
         logger.warn("Encountered and fixed one or more errors while parsing MBS settings", settingsStatus.err);
@@ -315,17 +316,17 @@ export function clearMBSSettings(): void {
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
     Player.Crafting = Player.Crafting?.slice(0, BC_SLOT_MAX_ORIGINAL);
     Player.MBSSettings = Object.seal({
-        Version: MBS_VERSION,
+        AlternativeGarbling: false,
         CraftingCache: "",
-        FortuneWheelItemSets: Object.seal(Array(MBS_MAX_SETS).fill(null)),
+        DropTrailing: false,
         FortuneWheelCommands: Object.seal(Array(MBS_MAX_SETS).fill(null)),
+        FortuneWheelItemSets: Object.seal(Array(MBS_MAX_SETS).fill(null)),
+        FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
+        GarblePerSyllable: false,
         LockedWhenRestrained: false,
         RollWhenRestrained: true,
-        FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
-        AlternativeGarbling: false,
-        DropTrailing: false,
-        GarblePerSyllable: false,
-        ExtendedCraftingDescription: false,
+        ShowChangelog: true,
+        Version: MBS_VERSION,
     });
 
     ServerAccountUpdate.QueueData({

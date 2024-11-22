@@ -1,0 +1,28 @@
+#mbs-shop-root {
+    display: grid;
+    grid-template-rows: 2fr 3fr;
+
+    &[data-unload] {
+        display: none;
+    }
+}
+
+#mbs-shop-label {
+    color: white;
+    place-self: center center;
+    user-select: none;
+}
+
+#mbs-shop-select {
+    background-color: var(--mbs-button-color);
+    border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+    box-sizing: border-box;
+    cursor: pointer;
+    font: inherit;
+}
+
+/* stylelint-disable selector-id-pattern */
+
+#Shop2GroupSelect, #Shop2PoseSelect {
+    z-index: 1;
+}
