@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v1.7.33
+* Backport four R111 bug fixes:
+    - [BondageProjects/Bondage-College#5264](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5264): Ensure that voice-triggered auto-punishments more thoroughly check for OOC blocks
+    - [BondageProjects/Bondage-College#5272](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5272): Silence deprecation warning about mobile-web-app-capable
+    - [BondageProjects/Bondage-College#5274](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5274): Fix the shop not properly unhiding DOM elements after exiting certain subscreens
+    - [BondageProjects/Bondage-College#5290](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5290): Fix blur effects being enabled by default when rendering backgrounds
+
 ## v1.7.32
 * Drop R109 support
 * Add a setting for enabling or disabling MBS changelog notifications

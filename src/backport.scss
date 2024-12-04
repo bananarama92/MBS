@@ -6,6 +6,10 @@
     white-space: normal;
 }
 
+.chat-room-changelog + .chat-room-changelog {
+    border-top: min(0.4dvh, 0.2dvw) solid black;
+}
+
 #TextAreaChatLog[data-colortheme="dark"] > .chat-room-changelog,
 #TextAreaChatLog[data-colortheme="dark2"] > .chat-room-changelog {
     background-color: #481D64;
