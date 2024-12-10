@@ -46,11 +46,11 @@ waitFor(bcLoaded).then(() => {
         logger.error(`Invalid BC version: "${GameVersion}"`);
         return;
     }
-    NEW_ASSETS_VERSION = Number.parseInt(result[1]);
+    NEW_ASSETS_VERSION = Number.parseInt(result[1], 10);
 
     for (const [groupName, assetRecord] of entries(assetVersion)) {
         for (const [assetName, version] of entries(assetRecord)) {
-            const asset = AssetGet("Female3DCG", groupName, assetName);
+            const asset = AssetGet("Female3DCG", groupName as AssetGroupName, assetName);
             if (asset == null) {
                 continue;
             }
@@ -68,12 +68,14 @@ waitFor(bcLoaded).then(() => {
         Load: () => {
             let root = document.getElementById(IDs.root);
             if (!root) {
-                const versions = Object.keys(ASSETS).filter(i => i !== "R98").sort((_a, _b) => {
-                    const a = Number.parseInt(_a.slice(1), 10);
-                    const b = Number.parseInt(_b.slice(1), 10);
-                    if (a > b) {
+                const versions = Object.keys(ASSETS).filter(version => {
+                    return version !== "R98";
+                }).sort((_version1, _version2) => {
+                    const version1 = Number.parseInt(_version1.slice(1), 10);
+                    const version2 = Number.parseInt(_version2.slice(1), 10);
+                    if (version1 > version2) {
                         return -1;
-                    } else if (b > a) {
+                    } else if (version2 > version1) {
                         return 1;
                     } else {
                         return 0;

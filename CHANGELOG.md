@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.34
+* Fix the MBS changelog showing up more than intended
+* Add R111Beta1 support
+
 ## v1.7.33
 * Backport four R111 bug fixes:
     - [BondageProjects/Bondage-College#5264](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5264): Ensure that voice-triggered auto-punishments more thoroughly check for OOC blocks

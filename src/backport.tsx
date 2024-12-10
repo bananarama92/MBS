@@ -174,7 +174,6 @@ waitFor(bcLoaded).then(() => {
                         }
                     },
                     {
-                        // @ts-expect-error
                         tooltip: ["Collapse changelog", { tag: "br" }, { tag: "kbd", children: ["shift"] }, " to collapse all"],
                         tooltipPosition: "bottom",
                         noStyling: true,

@@ -259,6 +259,11 @@ function initMBSSettings(
         ...unpackSettings(Player.OnlineSharedSettings.MBS, "OnlineSharedSettings"),
     };
 
+    const newVersion = (
+        settings.Version !== undefined
+        && detectUpgrade(Player.OnlineSharedSettings.MBSVersion ?? Player.OnlineSettings?.MBSVersion)
+    );
+
     // Moved to `Player.OnlineSharedSettings` as of v0.6.26
     let syncOnlineSettings = false;
     if (Player.OnlineSettings?.MBSVersion !== undefined) {
@@ -280,7 +285,7 @@ function initMBSSettings(
     const settingsStatus = parseProtoSettings(settings);
     if (settingsStatus.ok || allowFailure) {
         Player.MBSSettings = settingsStatus.settings;
-        if (Player.MBSSettings.ShowChangelog && settings.Version !== undefined && detectUpgrade(settings.Version)) {
+        if (Player.MBSSettings.ShowChangelog && newVersion) {
             const version = Version.fromVersion(MBS_VERSION);
             showChangelog(`v${version.major}${version.minor}${version.micro}`);
         }
