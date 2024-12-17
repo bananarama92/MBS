@@ -1,8 +1,8 @@
-/** Backports of R91 bug fixes */
+/** Backports of BC bug fixes */
 
 import { sortBy } from "lodash-es";
 
-// @ts-ignore
+// @ts-ignore: ignore "variable is declared but never read" warnings; always keep the symbol in accessible
 import { MBS_MOD_API } from "./common";
 import { waitFor, logger } from "./common";
 import { bcLoaded } from "./common_bc";
@@ -19,6 +19,8 @@ export const backportIDs: Set<number> = new Set();
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
         case "R111": {
+            backportIDs.add(5309);
+            document.body.append(<style id="mbs-backport">{styles.toString()}</style>);
             break;
         }
     }

@@ -1,0 +1,23 @@
+*[role="radiogroup"][aria-required="true"] .button[role="radio"][aria-checked="true"],
+*[role="menubar"][aria-required="true"] .button[role="menuitemradio"][aria-checked="true"],
+*[role="menu"][aria-required="true"] .button[role="menuitemradio"][aria-checked="true"] {
+	cursor: auto;
+}
+
+*[role="menubar"][aria-required="true"] .button-styling[role="menuitemradio"][aria-checked="true"],
+*[role="menu"][aria-required="true"] .button-styling[role="menuitemradio"][aria-checked="true"],
+*[role="radiogroup"][aria-required="true"] .button-styling[role="radio"][aria-checked="true"] {
+	background-color: var(--disabled-color) !important;
+	background-color: color-mix(in srgb, var(--disabled-color) 50%, var(--hover-color) 50%) !important;
+}
+
+*[role="menubar"][aria-required="true"] .button-styling[role="menuitemradio"][aria-checked="true"] > .button-label,
+*[role="menu"][aria-required="true"] .button-styling[role="menuitemradio"][aria-checked="true"] > .button-label,
+*[role="radiogroup"][aria-required="true"] .button-styling[role="radio"][aria-checked="true"] > .button-label {
+	background-color: var(--disabled-color) !important;
+	background-color: color-mix(
+		in srgb,
+		color-mix(in srgb, var(--disabled-color) 50%, var(--hover-color) 50%),
+		transparent
+	) !important;
+}
