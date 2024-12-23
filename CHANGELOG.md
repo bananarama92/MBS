@@ -1,5 +1,18 @@
 # MBS Changelog
 
+## v1.7.35
+* Drop R110 support
+* Forcefully set the `<select>`-element text color to black (affects specific browsers such as iOS Safari)
+* Add R112Beta1 support
+* Backport five R112 changes to R111:
+    - [BondageProjects/Bondage-College#5309](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5309): Add styling for un-toggleable radio buttons
+    - [BondageProjects/Bondage-College#5348](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5348): Ensure that crafted items are first sorted by asset name and then custom craft name
+    - [BondageProjects/Bondage-College#5349](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5349): Change the crafting description text-alignment to `left`
+    - [BondageProjects/Bondage-College#5357](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5357): Provide better DOM element support for older browsers
+    - [BondageProjects/Bondage-College#5360](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5360): Fix the padlock validation failing to properly validate the `Lock` effect
+* Backport one R112-Beta2 change to R112-Beta1:
+    - [BondageProjects/Bondage-College#5364](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5364): Do not set the button aria-labelledby/describedby attribute if there's no tooltip
+
 ## v1.7.34
 * Fix the MBS changelog showing up more than intended
 * Add R111Beta1 support
