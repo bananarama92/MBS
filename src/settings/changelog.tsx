@@ -21,11 +21,6 @@ export function getChangeLogURL(): string {
  * Defaults to the latest version of no bounds are specified.
  */
 export async function showChangelog(startID: string, stopID: null | string = null) {
-    // R110 safeguard
-    if (typeof CommandsChangelog === "undefined") {
-        return;
-    }
-
     const changelogElem = document.getElementById("mbs-changelog");
     if (changelogElem) {
         // Move a previously opened changelog to the end of the chat again
