@@ -16,6 +16,61 @@ export const backportIDs: Set<number> = new Set();
 
 waitFor(bcLoaded).then(() => {
     switch (GameVersion) {
+        case "R112":
+            if (
+                MBS_MOD_API.getOriginalHash("DialogMenuMapping.items._ReloadStatus") === "F29AC8A4"
+                && MBS_MOD_API.getOriginalHash("DialogMenuMapping.items.clickStatusCallbacks.InventoryGroupIsAvailable") === "86642438"
+            ) {
+                backportIDs.add(5377);
+                MBS_MOD_API.hookFunction("DialogMenuMapping.items._ReloadStatus", 0, (args) => {
+                    const [root, _status, C, focusGroup, options] = args as never as [HTMLElement, HTMLElement, Character, AssetItemGroup, Pick<DialogMenu.ReloadOptions, "status" | "statusTimer">];
+                    const asset: undefined | Asset = undefined;
+                    let showIcon = false;
+                    let textContent = options.status;
+                    if (textContent == null) {
+                        if (InventoryGroupIsBlockedByOwnerRule(C, focusGroup.Name)) {
+                            textContent = InterfaceTextGet("ZoneBlockedOwner");
+                            showIcon = true;
+                        } else if (InventoryIsBlockedByDistance(C)) {
+                            textContent = InterfaceTextGet("ZoneBlockedRange");
+                            showIcon = true;
+                        } else if (InventoryGroupIsBlocked(C, focusGroup.Name)) {
+                            textContent = InterfaceTextGet("ZoneBlocked");
+                            showIcon = true;
+                        } else if (!Player.CanInteract()) {
+                            textContent = InterfaceTextGet("AccessBlocked");
+                            showIcon = true;
+                        } else {
+                            textContent = InterfaceTextGet("SelectItemGroup");
+                        }
+                    }
+
+                    root.toggleAttribute("data-show-icon", showIcon);
+                    DialogSetStatus(textContent, options.statusTimer ?? 0, { asset, group: focusGroup, C });
+                });
+                MBS_MOD_API.patchFunction("DialogMenuMapping.items.clickStatusCallbacks.InventoryGroupIsAvailable", {
+                    "return equippedItem ? InventoryGroupIsAvailable(C, C.FocusGroup.Name, false) : null;":
+                        "return equippedItem ? InventoryGroupIsAvailable(C, clickedItem.Asset.Group.Name, false) : null;",
+                });
+            }
+
+            if (
+                MBS_MOD_API.getOriginalHash("CharacterSetFacialExpression") === "EC032BEE"
+                && MBS_MOD_API.getOriginalHash("DialogLeave") === "AD3A0840"
+            ) {
+                backportIDs.add(5378);
+                MBS_MOD_API.patchFunction("CharacterSetFacialExpression", {
+                    "CharacterRefresh(C, !inChatRoom && !isTransient);":
+                        "CharacterRefresh(C, !inChatRoom && !isTransient, false);",
+                });
+                MBS_MOD_API.patchFunction("DialogLeave", {
+                    "if (CurrentCharacter) {":
+                        "if (StruggleMinigameIsRunning()) { StruggleMinigameStop(); } AudioDialogStop(); Player.FocusGroup = null; if (CurrentCharacter && !CurrentCharacter.IsPlayer()) { CurrentCharacter.FocusGroup = null;",
+                    "DialogChangeFocusToGroup(CurrentCharacter, null);":
+                        ";",
+                });
+            }
+            break;
     }
 
     if (backportIDs.size) {
