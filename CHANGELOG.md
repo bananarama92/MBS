@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.7.36
+* Backport two R113 fixes:
+    - [BondageProjects/Bondage-College#5377](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5377): Fix an issue wherein the focus group could be `null`
+    - [BondageProjects/Bondage-College#5378](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5378): Fix more unintended dialog refreshes
+
 ## v1.7.35
 * Drop R110 support
 * Forcefully set the `<select>`-element text color to black (affects specific browsers such as iOS Safari)
