@@ -59,6 +59,7 @@ waitFor(bcLoaded).then(() => {
             if (
                 MBS_MOD_API.getOriginalHash("CharacterSetFacialExpression") === "EC032BEE"
                 && MBS_MOD_API.getOriginalHash("DialogLeave") === "AD3A0840"
+                && MBS_MOD_API.getOriginalHash("DialogLeaveFocusItemHandlers.DialogFocusItem.Appearance") === "C1F40E3E"
             ) {
                 backportIDs.add(5378);
                 backportIDs.add(5389);
@@ -68,9 +69,13 @@ waitFor(bcLoaded).then(() => {
                 });
                 MBS_MOD_API.patchFunction("DialogLeave", {
                     "if (CurrentCharacter) {":
-                        "if (StruggleMinigameIsRunning()) { StruggleMinigameStop(); } AudioDialogStop(); if (CurrentCharacter && !CurrentCharacter.IsPlayer()) { CurrentCharacter.FocusGroup = null; Player.FocusGroup = null;",
+                        "if (StruggleMinigameIsRunning()) { StruggleMinigameStop(); } AudioDialogStop(); Player.FocusGroup = null; if (CurrentCharacter) { CurrentCharacter.FocusGroup = null;",
                     "DialogChangeFocusToGroup(CurrentCharacter, null);":
                         ";",
+                });
+                MBS_MOD_API.patchFunction("DialogLeaveFocusItemHandlers.DialogFocusItem.Appearance", {
+                    "DialogLeave();":
+                        "const focusGroup = Player.FocusGroup; DialogLeave(); Player.FocusGroup = focusGroup;",
                 });
             }
 
