@@ -8,6 +8,8 @@ import { waitFor, logger } from "./common";
 import { bcLoaded } from "./common_bc";
 import { BC_MIN_VERSION } from "./sanity_checks";
 
+import styles from "./backport.scss";
+
 /** The next BC version */
 const BC_NEXT = BC_MIN_VERSION + 1;
 
@@ -59,16 +61,22 @@ waitFor(bcLoaded).then(() => {
                 && MBS_MOD_API.getOriginalHash("DialogLeave") === "AD3A0840"
             ) {
                 backportIDs.add(5378);
+                backportIDs.add(5389);
                 MBS_MOD_API.patchFunction("CharacterSetFacialExpression", {
                     "CharacterRefresh(C, !inChatRoom && !isTransient);":
                         "CharacterRefresh(C, !inChatRoom && !isTransient, false);",
                 });
                 MBS_MOD_API.patchFunction("DialogLeave", {
                     "if (CurrentCharacter) {":
-                        "if (StruggleMinigameIsRunning()) { StruggleMinigameStop(); } AudioDialogStop(); Player.FocusGroup = null; if (CurrentCharacter && !CurrentCharacter.IsPlayer()) { CurrentCharacter.FocusGroup = null;",
+                        "if (StruggleMinigameIsRunning()) { StruggleMinigameStop(); } AudioDialogStop(); if (CurrentCharacter && !CurrentCharacter.IsPlayer()) { CurrentCharacter.FocusGroup = null; Player.FocusGroup = null;",
                     "DialogChangeFocusToGroup(CurrentCharacter, null);":
                         ";",
                 });
+            }
+
+            if (!document.getElementById("mbs-backport-style")) {
+                backportIDs.add(5383);
+                document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
             }
             break;
     }
