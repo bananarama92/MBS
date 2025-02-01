@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.7.37
+* Backport two more R113 fixes:
+    - [BondageProjects/Bondage-College#5383](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5383): Misc chat-related styling changes
+    - [BondageProjects/Bondage-College#5389](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5389): Fix `DialogLeave()` clearing the player's focus group if there's no current character
+
 ## v1.7.36
 * Backport two R113 fixes:
     - [BondageProjects/Bondage-College#5377](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5377): Fix an issue wherein the focus group could be `null`
