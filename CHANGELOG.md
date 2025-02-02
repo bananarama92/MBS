@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.38
+* Fix the players `FocusGroup` grid persisting after performing an activity
+
 ## v1.7.37
 * Backport two more R113 fixes:
     - [BondageProjects/Bondage-College#5383](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5383): Misc chat-related styling changes
