@@ -20,10 +20,9 @@
     },
     "include": [
         "node_modules/bc-stubs/bc/**/*.d.ts",
-        "./src/**/*",
-        "./api/**/*",
-        "rollup.config.mjs",
-        "dev_loader.user.js",
-        "loader.user.js"
+        "src/**/*",
+        "api/**/*",
+        "**/*.config.mjs",
+        "**/*.user.js"
     ]
 }

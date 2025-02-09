@@ -49,7 +49,7 @@ function detectUpgrade(versionString?: string): boolean {
     try {
         oldVersion = Version.fromVersion(versionString);
     } catch (error) {
-        logger.warn(`Failed to parse previous MBS version: ${versionString}`);
+        logger.warn(`Failed to parse previous MBS version: ${versionString}`, error);
         return false;
     }
 

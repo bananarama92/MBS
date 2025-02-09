@@ -18,8 +18,8 @@
 setTimeout(
     () => {
         const n = document.createElement("script");
-        n.language = "JavaScript";
-        n.crossorigin = "anonymous";
+        n.type = "text/javascript";
+        n.crossOrigin = "anonymous";
         n.src = `https://bananarama92.github.io/MBS/devel/mbs.js?_=${Date.now()}`;
         document.head.appendChild(n);
     },
