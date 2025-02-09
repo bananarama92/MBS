@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.39
+* Update build dependencies
+* Add BC R113Beta1 support
+
 ## v1.7.38
 * Fix the players `FocusGroup` grid persisting after performing an activity
 
