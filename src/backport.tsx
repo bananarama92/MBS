@@ -74,8 +74,8 @@ waitFor(bcLoaded).then(() => {
                         ";",
                 });
                 MBS_MOD_API.patchFunction("DialogLeaveFocusItemHandlers.DialogFocusItem.Appearance", {
-                    "DialogLeave();":
-                        "const focusGroup = Player.FocusGroup; DialogLeave(); Player.FocusGroup = focusGroup;",
+                    "DialogLeave()":
+                        "{ const focusGroup = Player.FocusGroup; DialogLeave(); Player.FocusGroup = focusGroup; }",
                 });
             }
 
