@@ -19,7 +19,7 @@ import packageJson from "./package.json" assert { type: "json" };
 const LICENSE = `
 MBS: Maid's Bondage Scripts
 
-Copyright (C) 2023-2024 Bananarama92
+Copyright (C) 2023-2025 Bananarama92
 
 This program is free software: you can redistribute it and/or modify it under the terms of
 the GNU General Public License as published by the Free Software Foundation,
