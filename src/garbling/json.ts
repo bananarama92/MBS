@@ -60,7 +60,9 @@ class JSON {
     /** Fetch the JSON files and initialize the caches. */
     init() {
         // Fire up the getters to fetch the JSON data
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.gagData;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         this.phoneticDict;
     }
 }
