@@ -8,24 +8,19 @@ import styles, { ClassNames } from "./shop.scss";
 /** Type representing a concatenation of a group and asset name */
 type AssetKey = `${AssetGroupName}${string}`;
 
-/** The BC version (well, its numerical part) for which new items should be displayed */
-let NEW_ASSETS_VERSION: number;
-
 /**
- * A record mapping BC versions, to asset names mapped to actual assets
- * for all assets added in {@link NEW_ASSETS_VERSION}
+ * A record mapping BC versions, to asset names, to the actual assets.
  */
 const ASSETS: Record<`R${number}`, Record<AssetKey, Asset>> = {};
 
 const IDs = Object.freeze({
     root: "mbs-shop-root",
-    label: "mbs-shop-label",
     select: "mbs-shop-select",
     style: "mbs-shop-style",
 }) satisfies Record<string, "mbs-shop-style" | ClassNames>;
 
 function versionSelectChange(this: HTMLSelectElement) {
-    if (this.value === "All versions") {
+    if (!this.value) {
         delete Shop2Vars.Filters.MBS_VersionFilter;
         Shop2.ApplyItemFilters();
     } else {
@@ -38,6 +33,35 @@ function versionSelectChange(this: HTMLSelectElement) {
     }
 }
 
+function getShopItems() {
+    const assets = Object.fromEntries(Object.entries(ASSETS).filter(([k]) => k !== "R98").flatMap(([_, v]) => Object.entries(v)));
+    return Shop2.ParseAssets(
+        Asset.filter(a => {
+            return (
+                a.Group.Name === a.DynamicGroupName
+                && (assets[`${a.Group.Name}${a.Name}`] || ((Shop2Consts.BuyGroups[a.BuyGroup as string]?.Value ?? a.Value) > 0))
+                && !ShopHideGenderedAsset(a)
+            );
+        }).sort((a1, a2) => {
+            return (
+                a1.Group.Category.localeCompare(a2.Group.Category)
+                || a1.Group.Description.localeCompare(a2.Group.Description)
+                || a1.Description.localeCompare(a2.Description)
+            );
+        }),
+    );
+}
+
+function loadHook(forceItemReset: boolean) {
+    if (!document.getElementById(IDs.style)) {
+        document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
+    }
+
+    if (Shop2InitVars.Items.length === 0 || forceItemReset) {
+        Shop2InitVars.Items = getShopItems();
+    }
+}
+
 waitForBC("new_items_screen", {
     async afterLoad() {
         logger.log("Initializing new item screen hooks");
@@ -47,7 +71,6 @@ waitForBC("new_items_screen", {
             logger.error(`Invalid BC version: "${GameVersion}"`);
             return;
         }
-        NEW_ASSETS_VERSION = Number.parseInt(result[1], 10);
 
         for (const [groupName, assetRecord] of entries(assetVersion)) {
             for (const [assetName, version] of entries(assetRecord)) {
@@ -83,14 +106,15 @@ waitForBC("new_items_screen", {
                         }
                     });
 
-                    root = <div id={IDs.root}>
-                        <span id={IDs.label}>Filter by BC version</span>
-                        <select id={IDs.select} aria-labelledby={IDs.label} onChange={versionSelectChange}>
+                    root = <label id={IDs.root}>
+                        <span>Filter by BC version</span>
+                        <select id={IDs.select} onChange={versionSelectChange}>
                             <option selected={true}>All versions</option>
                             <hr />
                             {versions.map(value => <option>{value}</option>)}
                         </select>
-                    </div> as HTMLDivElement;
+                    </label> as HTMLLabelElement;
+                    root.querySelector("option[selected]")?.setAttribute("value", "");
                     document.body.append(root);
                 }
                 root.toggleAttribute("data-unload", false);
@@ -107,29 +131,16 @@ waitForBC("new_items_screen", {
         };
 
         MBS_MOD_API.hookFunction("Shop2Load", 0, (args, next) => {
-            if (!document.getElementById(IDs.style)) {
-                document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
-            }
-
-            if (Shop2InitVars.Items.length === 0) {
-                const assets = Object.fromEntries(Object.entries(ASSETS).filter(([k]) => k !== "R98").flatMap(([_, v]) => Object.entries(v)));
-                Shop2InitVars.Items = Shop2.ParseAssets(
-                    Asset.filter(a => {
-                        return (
-                            a.Group.Name === a.DynamicGroupName
-                            && (assets[`${a.Group.Name}${a.Name}`] || ((Shop2Consts.BuyGroups[a.BuyGroup as string]?.Value ?? a.Value) > 0))
-                            && !ShopHideGenderedAsset(a)
-                        );
-                    }).sort((a1, a2) => {
-                        return (
-                            a1.Group.Category.localeCompare(a2.Group.Category)
-                            || a1.Group.Description.localeCompare(a2.Group.Description)
-                            || a1.Description.localeCompare(a2.Description)
-                        );
-                    }),
-                );
-            }
-            next(args);
+            loadHook(false);
+            return next(args);
         });
+
+        if (CurrentScreen === "Shop2") {
+            loadHook(true);
+            if (Shop2.Elements.MBS.Mode.has(Shop2Vars.Mode)) {
+                Shop2.Elements.MBS.Load?.();
+                Shop2.Elements.MBS.Resize?.(true);
+            }
+        }
     },
 });
