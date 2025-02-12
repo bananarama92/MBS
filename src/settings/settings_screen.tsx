@@ -1,5 +1,5 @@
-import { waitFor, logger } from "../common";
-import { bcLoaded } from "../common_bc";
+import { logger } from "../common";
+import { waitForBC } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 
@@ -381,19 +381,21 @@ export class MBSPreferenceScreen extends MBSScreen {
 
 let preferenceState: PreferenceScreenProxy;
 
-waitFor(bcLoaded).then(() => {
-    preferenceState = new PreferenceScreenProxy();
+waitForBC("settings_screen", {
+    async afterLoad() {
+        preferenceState = new PreferenceScreenProxy();
 
-    PreferenceRegisterExtensionSetting({
-        Identifier: "MBS",
-        load() {
-            PreferenceExit();
-            preferenceState.loadChild(MBSPreferenceScreen);
-        },
-        run() {},
-        click() {},
-        exit() {},
-        ButtonText: "MBS Settings",
-        Image: "Icons/Maid.png",
-    });
+        PreferenceRegisterExtensionSetting({
+            Identifier: "MBS",
+            load() {
+                PreferenceExit();
+                preferenceState.loadChild(MBSPreferenceScreen);
+            },
+            run() {},
+            click() {},
+            exit() {},
+            ButtonText: "MBS Settings",
+            Image: "Icons/Maid.png",
+        });
+    },
 });

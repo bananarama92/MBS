@@ -1,7 +1,7 @@
 import { cloneDeep, range, clamp } from "lodash-es";
 
-import { validateInt, waitFor } from "../common";
-import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, bcLoaded, FWCommand } from "../common_bc";
+import { validateInt } from "../common";
+import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, waitForBC, FWCommand } from "../common_bc";
 import { MBSScreen, ScreenParams } from "../screen_abc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
@@ -31,9 +31,11 @@ let BUILTIN_BC_OPTIONS: Readonly<Record<string, IDData>>;
 let BUILTIN_MBS_OPTIONS: Readonly<Record<string, IDData>>;
 let CUSTOM_MBS_OPTIONS: Readonly<Record<string, IDData>>;
 
-waitFor(bcLoaded).then(async () => {
-    const csvPath = "Screens/MiniGame/WheelFortune/Text_WheelFortune.csv";
-    SCREEN_CACHE = await TextCache.buildAsync(csvPath);
+waitForBC("preset_screen", {
+    async afterLoad() {
+        const csvPath = "Screens/MiniGame/WheelFortune/Text_WheelFortune.csv";
+        SCREEN_CACHE = await TextCache.buildAsync(csvPath);
+    },
 });
 
 function initOptions() {

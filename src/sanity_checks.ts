@@ -1,6 +1,9 @@
 /** Various sanity checks for BC */
 
-import { Version, MBS_MOD_API, logger } from "./common";
+import { BC_MIN_VERSION } from "./lpgl/common";
+import { MBS_MOD_API, logger } from "./common";
+
+export { BC_MIN_VERSION };
 
 /**
  * Check whether all builtin wheel of fortune IDs are (extended) ASCII characters.
@@ -18,23 +21,6 @@ export function validateBuiltinWheelIDs(): boolean {
         return false;
     } else {
         return true;
-    }
-}
-
-/** The minimum supported BC version. */
-export const BC_MIN_VERSION = 112 satisfies number;
-
-/**
- * Check whether the passed BC version is supported and raise otherwise.
- * @param version The to-be checked BC version
- */
-export function validateBCVersion(version: string): void {
-    const BC_VERSION = Version.fromBCVersion(version);
-    const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
-    if (BC_VERSION.lesser(bc_min_version)) {
-        throw new Error(`BC ${GameVersion} detected; MBS requires version R${BC_MIN_VERSION} or later`);
-    } else {
-        logger.log(`Detected BC ${GameVersion}`);
     }
 }
 

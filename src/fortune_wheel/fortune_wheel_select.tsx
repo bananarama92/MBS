@@ -49,7 +49,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
         const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
         const errList: [msg: string, ...rest: unknown[]][] = [];
         wheelList = parseFWObjects(constructor as any, protoWheelList, errList) as typeof wheelList;
-        errList.forEach(err => console.warn(err));
+        errList.forEach(err => logger.warn(err));
     }
     wheelList.forEach(i =>  i?.register(false));
     return wheelList;
