@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.7.40
+* Drop R112 support
+* Restructure the way MBS handles the detection of BC and BC logins
+* Misc cleanup of the MBS settings screen
+* Backport two R113 hotfixes:
+    - [BondageProjects/Bondage-College#5410](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5410): Ensures that updating `C.Stage` and `C.CurrentDialog` triggers an appropriate dialog menu reload
+    - [BondageProjects/Bondage-College#5412](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5412): Fix `ElementButton` creator function failing to properly expand the `options.icons` array
+
 ## v1.7.39
 * Update build dependencies
 * Add BC R113Beta1 support
