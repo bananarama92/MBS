@@ -1,3 +1,5 @@
+import { MBS_MOD_API } from "../common";
+
 /**
  * A more readonly-friendly version of {@link Array.isArray}.
  * @param arg The to-be checked object
@@ -350,13 +352,21 @@ async function contentLoadedListener() {
     }
 
     if (!GameVersionFormat.test(GameVersion)) {
-        throw new Error(`Invalid BC game version: "${GameVersion}"`);
+        logger.error(`Detected an invalid BC version: "${GameVersion}"`);
+        logger.log("Unloading MBS from Mod SDK");
+        MBS_MOD_API.unload();
+        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} detected an invalid BC version: "${GameVersion}"`);
+        return;
     }
 
     const bc_version = Version.fromBCVersion(GameVersion);
     const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
     if (bc_version.lesser(bc_min_version)) {
-        throw new Error(`BC ${GameVersion} detected; MBS requires version R${BC_MIN_VERSION} or later`);
+        logger.error(`BC version "R${BC_MIN_VERSION}" or later required; detected "${GameVersion}"`);
+        logger.log("Unloading MBS from Mod SDK");
+        MBS_MOD_API.unload();
+        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${GameVersion}"`);
+        return;
     } else {
         logger.log(`Detected BC ${GameVersion}`);
     }
