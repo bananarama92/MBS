@@ -147,7 +147,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         <input type="checkbox" data-field="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)}/>
                         <span>
                             <p>
-                                <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
+                                <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically accurate, speech garbling
                                 based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
                             </p>
                             <p>
