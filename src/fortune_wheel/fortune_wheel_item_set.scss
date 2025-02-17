@@ -1,4 +1,5 @@
 #mbs-fwitemset {
+	background: unset;
 	grid-template:
 		"delete header header header accept cancel exit" min(9dvh, 4.5dvw)
 		". . name-input name-input . . ." min(7dvh, 3.5dvw)
