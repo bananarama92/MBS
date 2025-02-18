@@ -103,6 +103,7 @@
 	user-select: none;
 	visibility: hidden;
 	grid-gap: min(2dvh, 1dvw);
+	background-color: var(--mbs-background-color);
 
 	h1, h2, p, ul {
 		align-items: center;
@@ -129,7 +130,6 @@
 	}
 
 	div, input {
-		background-color: var(--mbs-background-color);
 		color: var(--mbs-text-color);
 		font-family: var(--mbs-font-family);
 		font-size: var(--mbs-font-small);
@@ -144,6 +144,7 @@
 	}
 
 	input {
+		background-color: var(--mbs-background-color);
 		box-sizing: border-box;
 		padding: unset;
 	}

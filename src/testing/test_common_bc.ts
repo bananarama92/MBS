@@ -5,7 +5,6 @@ import {
     FORTUNE_WHEEL_COLORS,
     canChangeCosplay,
     sanitizeWheelFortuneIDs,
-    settingsLoaded,
     settingsMBSLoaded,
 } from "../common_bc";
 
@@ -215,11 +214,5 @@ export function test_equipLock(): void {
 export function test_settingsMBSLoaded(): void {
     const name = "test_settingsMBSLoaded";
     const output = assertPasses(`${name}:${PASSES}:0`, settingsMBSLoaded);
-    assertEqual(`${name}:${PASSES}:0`, output, true);
-}
-
-export function test_settingsLoaded(): void {
-    const name = "test_settingsLoaded";
-    const output = assertPasses(`${name}:${PASSES}:0`, settingsLoaded);
     assertEqual(`${name}:${PASSES}:0`, output, true);
 }

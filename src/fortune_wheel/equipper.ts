@@ -2,8 +2,8 @@
 
 import { cloneDeep, sortBy } from "lodash-es";
 
-import { BCX_MOD_API, waitFor, isArray, entries, includes, logger } from "../common";
-import { bcLoaded, canChangeCosplay, validateCharacter } from "../common_bc";
+import { BCX_MOD_API, isArray, entries, includes, logger } from "../common";
+import { waitForBC, canChangeCosplay, validateCharacter } from "../common_bc";
 
 import { itemSetType, getBaselineProperty } from "./type_setting";
 
@@ -26,7 +26,11 @@ export const StripLevel = Object.freeze({
 
 /** A dummy character without any blocked or limited items. */
 let MBSDummy: Character;
-waitFor(bcLoaded).then(() => MBSDummy = CharacterLoadSimple("MBSDummy"));
+waitForBC("equipper", {
+    async afterLoad() {
+        MBSDummy = CharacterLoadSimple("MBSDummy");
+    },
+});
 
 /**
  * Return that a callable that returns whether the passed asset satisfies the specified strip {@link StripLevel}

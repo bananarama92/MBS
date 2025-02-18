@@ -1,7 +1,7 @@
 /** Main module for managing all crafting-related additions */
 
-import { MBS_MOD_API, waitFor, padArray, logger } from "../common";
-import { settingsMBSLoaded, bcLoaded } from "../common_bc";
+import { MBS_MOD_API, padArray, logger } from "../common";
+import { waitForBC } from "../common_bc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
 export const BC_SLOT_MAX_ORIGINAL = 80;
@@ -94,22 +94,23 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     }
 }
 
-waitFor(bcLoaded).then(() => {
-    logger.log("Initializing crafting hooks");
+waitForBC("crafting", {
+    async afterLoad() {
+        logger.log("Initializing crafting hooks");
 
-    MBS_MOD_API.patchFunction("CraftingClick", {
-        "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
-            `if (CraftingOffset < 0) CraftingOffset = ${MBS_SLOT_MAX_ORIGINAL} - 20;`,
-        "if (CraftingOffset >= 80) CraftingOffset = 0;":
-            `if (CraftingOffset >= ${MBS_SLOT_MAX_ORIGINAL}) CraftingOffset = 0;`,
-    });
+        MBS_MOD_API.patchFunction("CraftingClick", {
+            "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
+                `if (CraftingOffset < 0) CraftingOffset = ${MBS_SLOT_MAX_ORIGINAL} - 20;`,
+            "if (CraftingOffset >= 80) CraftingOffset = 0;":
+                `if (CraftingOffset >= ${MBS_SLOT_MAX_ORIGINAL}) CraftingOffset = 0;`,
+        });
 
-    MBS_MOD_API.patchFunction("CraftingRun", {
-        "/ ${80 / 20}.":
-            `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
-    });
-
-    waitFor(settingsMBSLoaded).then(() => {
+        MBS_MOD_API.patchFunction("CraftingRun", {
+            "/ ${80 / 20}.":
+                `/ ${MBS_SLOT_MAX_ORIGINAL / 20}.`,
+        });
+    },
+    async afterMBS() {
         logger.log("Initializing crafting cache");
 
         // Mirror the extra MBS-specific crafted items to the MBS settings
@@ -129,5 +130,5 @@ waitFor(bcLoaded).then(() => {
         });
 
         loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
-    });
+    },
 });

@@ -4,7 +4,6 @@ import { clone, sample } from "lodash-es";
 
 import {
     MBS_MOD_API,
-    waitFor,
     padArray,
     isArray,
     entries,
@@ -13,11 +12,10 @@ import {
 } from "../common";
 import {
     FWItemSet,
-    settingsMBSLoaded,
     canChangeCosplay,
     MBS_MAX_SETS,
     createWeightedWheelIDs,
-    bcLoaded,
+    waitForBC,
 } from "../common_bc";
 import { validateBuiltinWheelIDs } from "../sanity_checks";
 import { ScreenProxy } from "../screen_abc";
@@ -780,138 +778,150 @@ class FWScreenProxy extends ScreenProxy {
 
 function wheelFortuneLoadHook() {
     fortuneWheelState.initialize();
-    if (TextScreenCache != null) {
-        for (const { Description, Custom, ID } of WheelFortuneOption) {
-            if (Description !== undefined) {
-                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-            }
+    if (TextScreenCache == null) {
+        return;
+    }
+
+    for (const { Description, Custom, ID } of WheelFortuneOption) {
+        if (Description !== undefined) {
+            TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
         }
     }
 }
 
 function wheelFortuneCustomizeLoadHook() {
-    if (TextScreenCache != null) {
-        for (const { Description, Custom, ID } of WheelFortuneOption) {
-            if (Description !== undefined) {
-                TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
-            }
+    if (TextScreenCache == null) {
+        return;
+    }
+
+    for (const { Description, Custom, ID } of WheelFortuneOption) {
+        if (Description !== undefined) {
+            TextScreenCache.cache[`Option${ID}`] = (Custom) ? `*${Description}` : Description;
         }
     }
 }
 
 export let fortuneWheelState: FWScreenProxy;
 
-waitFor(bcLoaded).then(() => {
-    const COORDS = {
-        exit: [1830, 60, 90, 90],
-        roll: [1720, 60, 90, 90],
-        select: [1610, 60, 90, 90],
-        preset: [1500, 60, 90, 90],
-    } satisfies Record<string, RectTuple>;
+waitForBC("fortune_wheel", {
+    async afterLoad() {
+        const COORDS = {
+            exit: [1830, 60, 90, 90],
+            roll: [1720, 60, 90, 90],
+            select: [1610, 60, 90, 90],
+            preset: [1500, 60, 90, 90],
+        } satisfies Record<string, RectTuple>;
 
-    logger.log("Initializing wheel of fortune hooks");
-    if (!validateBuiltinWheelIDs()) {
-        return;
-    }
-
-    MBS_MOD_API.patchFunction("WheelFortuneRun", {
-        'DrawTextWrap(TextGet(textTag), 1375, 200, 550, 200, "White")':
-            ";",
-        'DrawButton(1720, 60, 90, 90, "", (WheelFortuneVelocity == 0 && !isInvalidWheel) ? "White" : "Silver", "Icons/Random.png", TextGet("Random"), isInvalidWheel);':
-            ";",
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
-        wheelFortuneLoadHook();
-        return next(args);
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
-        wheelFortuneCustomizeLoadHook();
-        return next(args);
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
-        const canSpin = (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained());
-        if (!canSpin) {
-            WheelFortuneForced = false;
+        logger.log("Initializing wheel of fortune hooks");
+        if (!validateBuiltinWheelIDs()) {
+            return;
         }
 
-        next(args);
+        MBS_MOD_API.patchFunction("WheelFortuneRun", {
+            'DrawTextWrap(TextGet(textTag), 1375, 200, 550, 200, "White")':
+                ";",
+            'DrawButton(1720, 60, 90, 90, "", (WheelFortuneVelocity == 0 && !isInvalidWheel) ? "White" : "Silver", "Icons/Random.png", TextGet("Random"), isInvalidWheel);':
+                ";",
+        });
 
-        const enabledConfig = WheelFortuneVelocity === 0;
-        const colorConfig = enabledConfig ? "White" : "Silver";
-        const nameConfig = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
-        const descriptionConfig = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${nameConfig}'s option config`;
-        DrawButton(...COORDS.select, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
+        MBS_MOD_API.hookFunction("WheelFortuneLoad", 11, (args, next) => {
+            wheelFortuneLoadHook();
+            return next(args);
+        });
 
-        const enabledPreset = !!(WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
-        const colorPreset = enabledPreset ? "White" : "Silver";
-        const namePreset = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
-        const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
-        DrawButton(...COORDS.preset, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
+        MBS_MOD_API.hookFunction("WheelFortuneCustomizeLoad", 0, (args, next) => {
+            wheelFortuneCustomizeLoadHook();
+            return next(args);
+        });
 
-        const backColor = (WheelFortuneVelocity == 0 && canSpin && WheelFortuneList.length > 0) ? "White" : "Silver";
-        DrawButton(
-            ...COORDS.roll, "", backColor, "Icons/Random.png",
-            canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
-            !canSpin,
-        );
-
-        let text = "";
-        if (WheelFortuneList.length === 0) {
-            text = TextGet("Invalid");
-        } else if (WheelFortuneVelocity !== 0) {
-            text = TextGet("Wait");
-        } else if (!canSpin) {
-            text = "MBS: Cannot spin the wheel of fortune while restrained";
-        } else if (WheelFortuneForced) {
-            text = TextGet("Forced");
-        } else {
-            text = TextGet("Title");
-        }
-        DrawTextWrap(text, 1375, 200, 550, 200, "White");
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
-        if (!Player.MBSSettings.RollWhenRestrained && Player.IsRestrained()) {
-            WheelFortuneForced = false;
-            if (MouseIn(...COORDS.roll)) {
-                return;
+        MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
+            const canSpin = (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained());
+            if (!canSpin) {
+                WheelFortuneForced = false;
             }
-        }
 
-        if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.select)) {
-            const struct = {
-                FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
-                FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
-            };
-            fortuneWheelState.loadChild(FWSelectScreen, struct, fortuneWheelState.character);
-        } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
-            fortuneWheelState.loadChild(WheelPresetScreen, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
-        }
-        return next(args);
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneMouseUp", 11, (args, next) => {
-        if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
             next(args);
+
+            const enabledConfig = WheelFortuneVelocity === 0;
+            const colorConfig = enabledConfig ? "White" : "Silver";
+            const nameConfig = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+            const descriptionConfig = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${nameConfig}'s option config`;
+            DrawButton(...COORDS.select, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
+
+            const enabledPreset = !!(WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
+            const colorPreset = enabledPreset ? "White" : "Silver";
+            const namePreset = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
+            const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
+            DrawButton(...COORDS.preset, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
+
+            const backColor = (WheelFortuneVelocity == 0 && canSpin && WheelFortuneList.length > 0) ? "White" : "Silver";
+            DrawButton(
+                ...COORDS.roll, "", backColor, "Icons/Random.png",
+                canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
+                !canSpin,
+            );
+
+            let text = "";
+            if (WheelFortuneList.length === 0) {
+                text = TextGet("Invalid");
+            } else if (WheelFortuneVelocity !== 0) {
+                text = TextGet("Wait");
+            } else if (!canSpin) {
+                text = "MBS: Cannot spin the wheel of fortune while restrained";
+            } else if (WheelFortuneForced) {
+                text = TextGet("Forced");
+            } else {
+                text = TextGet("Title");
+            }
+            DrawTextWrap(text, 1375, 200, 550, 200, "White");
+        });
+
+        MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
+            if (!Player.MBSSettings.RollWhenRestrained && Player.IsRestrained()) {
+                WheelFortuneForced = false;
+                if (MouseIn(...COORDS.roll)) {
+                    return;
+                }
+            }
+
+            if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.select)) {
+                const struct = {
+                    FortuneWheelItemSets: fortuneWheelState.FortuneWheelItemSets,
+                    FortuneWheelCommands: fortuneWheelState.FortuneWheelCommands,
+                };
+                fortuneWheelState.loadChild(FWSelectScreen, struct, fortuneWheelState.character);
+            } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
+                fortuneWheelState.loadChild(WheelPresetScreen, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
+            }
+            return next(args);
+        });
+
+        MBS_MOD_API.hookFunction("WheelFortuneMouseUp", 11, (args, next) => {
+            if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+                next(args);
+            }
+        });
+
+        MBS_MOD_API.hookFunction("WheelFortuneMouseDown", 11, (args, next) => {
+            if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+                next(args);
+            }
+        });
+
+        MBS_MOD_API.hookFunction("WheelFortuneDrawWheel", 11, ([_, ...args], next) => {
+            return next([fortuneWheelState.weightedIDs, ...args]);
+        });
+
+        fortuneWheelState = new FWScreenProxy();
+
+        switch (CurrentScreen) {
+            case "WheelFortune":
+                return wheelFortuneLoadHook();
+            case "WheelFortuneCustomize":
+                return wheelFortuneCustomizeLoadHook();
         }
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneMouseDown", 11, (args, next) => {
-        if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
-            next(args);
-        }
-    });
-
-    MBS_MOD_API.hookFunction("WheelFortuneDrawWheel", 11, ([_, ...args], next) => {
-        return next([fortuneWheelState.weightedIDs, ...args]);
-    });
-
-    fortuneWheelState = new FWScreenProxy();
-
-    waitFor(settingsMBSLoaded).then(() => {
+    },
+    async afterMBS() {
         logger.log("Initializing wheel of fortune module");
 
         // Load and register the default MBS item sets
@@ -959,12 +969,5 @@ waitFor(bcLoaded).then(() => {
         FORTUNE_WHEEL_OPTIONS_BASE = Object.freeze(WheelFortuneOption.filter(i => !i.Custom));
         FORTUNE_WHEEL_DEFAULT_BASE = WheelFortuneDefault;
         pushMBSSettings([SettingsType.SHARED]);
-    });
-
-    switch (CurrentScreen) {
-        case "WheelFortune":
-            return wheelFortuneLoadHook();
-        case "WheelFortuneCustomize":
-            return wheelFortuneCustomizeLoadHook();
-    }
+    },
 });

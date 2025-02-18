@@ -3,9 +3,9 @@
 import { range, sample } from "lodash-es";
 import bcModSdk from "bondage-club-mod-sdk";
 
-import { isArray, includes, keys, entries, fromEntries, logger, waitFor, isInteger } from "./lpgl/common";
+import { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate } from "./lpgl/common";
 
-export { isArray, includes, keys, entries, fromEntries, logger, waitFor, isInteger };
+export { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate };
 
 /** An array with all alpha-numerical characters. */
 const ALPHABET = Object.freeze([
@@ -17,33 +17,6 @@ const ALPHABET = Object.freeze([
     "U", "V", "W", "X",
     "Y", "Z",
 ]);
-
-/** Regular expression for the MBS version */
-const MBS_VERSION_PATTERN = /^(v?)([0-9]+)\.([0-9]+)\.([0-9]+)(\.\S+)?$/;
-
-/**
- * Check whether an integer falls within the specified range and raise otherwise.
- * @param int The to-be validate integer
- * @param varName The name of the variable
- * @param min The minimum allowed value of the integer, defaults to {@link Number.MIN_SAFE_INTEGER}
- * @param max The maximum allowed value of the integer, defaults to {@link Number.MAX_SAFE_INTEGER}
- */
-export function validateInt(
-    int: number,
-    varName: string,
-    min: number = Number.MIN_SAFE_INTEGER,
-    max: number = Number.MAX_SAFE_INTEGER,
-): void {
-    if (!(Number.isInteger(int) && int >= min && int <= max)) {
-        if (typeof int !== "number") {
-            throw new TypeError(`Invalid "${varName}" type: ${typeof int}`);
-        } else if (!Number.isInteger(int)) {
-            throw new Error(`"${varName}" must be an integer: ${int}`);
-        } else {
-            throw new RangeError(`"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
-        }
-    }
-}
 
 /**
  * Pad an array with a given value to a given length if necessary.
@@ -120,19 +93,6 @@ class ModAPIProxy implements BCX_ModAPI {
 
 /** A lazily-loaded version of the BCX mod API */
 export const BCX_MOD_API = new ModAPIProxy();
-
-/**
- * Helper function for creating {@link Object.prototype.toString} methods.
- * @param typeName The name of the object
- * @param obj The object
- * @returns A stringified version of the passed `obj`
- */
-export function toStringTemplate(typeName: string, obj: object): string {
-    let ret = `${typeName}(`;
-    ret += Object.values(obj).map(i => String(i)).join(", ");
-    ret += ")";
-    return ret;
-}
 
 export class LoopIterator<T> {
     /** The iterator's underlying array. */
@@ -253,130 +213,4 @@ export function generateIDs(
  */
 export function isIterable(obj: unknown): obj is Iterable<unknown> {
     return (Symbol.iterator in Object(obj));
-}
-
-/** A class for representing semantic versions */
-export class Version {
-    /** The major semantic version */
-    readonly major: number;
-    /** The minor semantic version */
-    readonly minor: number;
-    /** The micro semantic version */
-    readonly micro: number;
-    /** Whether this concerns a beta version or not */
-    readonly beta: boolean;
-    /** Length-4 UTF16 string encoding the major, minor, micro & beta components of the version. */
-    readonly #string: string;
-
-    constructor(major: number = 0, minor: number = 0, micro: number = 0, beta: boolean = false) {
-        validateInt(major, "major", 0, 2**16 - 1);
-        validateInt(minor, "minor", 0, 2**16 - 1);
-        validateInt(micro, "micro", 0, 2**16 - 1);
-        if (typeof beta !== "boolean") {
-            throw new TypeError(`Invalid "beta" type: ${typeof beta}`);
-        }
-
-        this.major = major;
-        this.minor = minor;
-        this.micro = micro;
-        this.beta = beta;
-        this.#string = [major, minor, micro].map(i => String.fromCharCode(i)) + String.fromCharCode(beta ? 0 : 1);
-        Object.freeze(this);
-    }
-
-    /**
-     * Check whether two versions are equal
-     * @param other The to-be compared version
-     * @returns Whether `this` and `other` are the same version
-     */
-    equal(other: Version): boolean {
-        return other instanceof Version ? this.valueOf() === other.valueOf() : false;
-    }
-
-    /**
-     * Check whether this version is greater than the other
-     * @param other The to-be compared version
-     * @returns Whether the version of `this` is greater than `other`
-     */
-    greater(other: Version): boolean {
-        return other instanceof Version ? this.valueOf() > other.valueOf() : false;
-    }
-
-    /**
-     * Check whether this version is lesser than the other
-     * @param other The to-be compared version
-     * @returns Whether the version of `this` is lesser than `other`
-     */
-    lesser(other: Version): boolean {
-        return other instanceof Version ? this.valueOf() < other.valueOf() : false;
-    }
-
-    /**
-     * Check whether this version is greater than or equal to the other
-     * @param other The to-be compared version
-     * @returns Whether the version of `this` is greater than or equal to `other`
-     */
-    greaterOrEqual(other: Version): boolean {
-        return other instanceof Version ? this.valueOf() >= other.valueOf() : false;
-    }
-
-    /**
-     * Check whether this version is lesser than or equal to the other
-     * @param other The to-be compared version
-     * @returns Whether the version of `this` is lesser than or equal to `other`
-     */
-    lesserOrEqual(other: Version): boolean {
-        return other instanceof Version ? this.valueOf() <= other.valueOf() : false;
-    }
-
-    /**
-     * Construct a new instance from the passed version string
-     * @param version The to-be parsed version
-     * @returns A new {@link Version} instance
-     */
-    static fromVersion(version: string): Version {
-        const match = MBS_VERSION_PATTERN.exec(version);
-        if (match === null) {
-            throw new Error(`Invalid "version": ${version}`);
-        }
-        return new Version(
-            Number(match[2]),
-            Number(match[3]),
-            Number(match[4]),
-            (match[5] !== undefined),
-        );
-    }
-
-    /**
-     * Construct a new instance from the passed BC version string
-     * @param version The to-be parsed BC version
-     * @returns A new {@link Version} instance
-     */
-    static fromBCVersion(version: string): Version {
-        const match = GameVersionFormat.exec(version);
-        if (match === null) {
-            throw new Error(`Invalid BC version: "${version}"`);
-        }
-        return new Version(Number(match[1]), 0, 0, match[2] !== undefined);
-    }
-
-    /** Return a string representation of this instance. */
-    toString(): string {
-        return toStringTemplate(typeof this, this.toJSON());
-    }
-
-    /** Return a length-4 UTF16 string encoding the major, minor, micro & beta components of the version */
-    valueOf(): string {
-        return this.#string;
-    }
-
-    /** Return an object representation of this instance. */
-    toJSON() {
-        return {
-            major: this.major,
-            minor: this.minor,
-            micro: this.micro,
-            beta: this.beta,
-        };
-    }
 }

@@ -1,5 +1,5 @@
-import { waitFor, Version } from "../common";
-import { bcLoaded } from "../common_bc";
+import { MBS_MOD_API, Version } from "../common";
+import { waitForBC } from "../common_bc";
 
 import changelog from "../../CHANGELOG.md";
 
@@ -35,16 +35,35 @@ export async function showChangelog(startID: string, stopID: null | string = nul
 
     const branch = Version.fromVersion(MBS_VERSION).beta ? "devel" : "main";
     const innerHTML = changelog.replaceAll('<img src="static/images/', `<img src="https://bananarama92.github.io/MBS/${branch}/images/`);
-    await waitFor(() => !!document.getElementById("TextAreaChatLog"), 1000);
-    CommandsChangelog.Publish(
-        innerHTML,
-        {
-            id: "mbs-changelog",
-            href: `https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md`,
-            startID,
-            stopID,
-        },
-    );
+    if (document.getElementById("TextAreaChatLog")) {
+        CommandsChangelog.Publish(
+            innerHTML,
+            {
+                id: "mbs-changelog",
+                href: `https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md`,
+                startID,
+                stopID,
+            },
+        );
+    } else {
+        let published = false;
+        MBS_MOD_API.hookFunction("ChatRoomCreateElement", 0, (args, next) => {
+            const ret = next(args);
+            if (!published) {
+                published = true;
+                CommandsChangelog.Publish(
+                    innerHTML,
+                    {
+                        id: "mbs-changelog",
+                        href: `https://github.com/bananarama92/MBS/blob/${branch}/CHANGELOG.md`,
+                        startID,
+                        stopID,
+                    },
+                );
+            }
+            return ret;
+        });
+    }
 }
 
 const VERSION_PATTERN = /^(v?)([0-9]+)(\.([0-9]+))?(\.([0-9]+))?(\.\S+)?$/i;
@@ -77,10 +96,12 @@ function showChangelogSync(_args: string, _msg: string, parsed: (string | undefi
     showChangelog(start, end);
 }
 
-waitFor(bcLoaded).then(() => {
-    CommandCombine({
-        Tag: "mbschangelog",
-        Description: "[version-start] [version-end]: Show the changelog(s) of the specified MBS version or version range; defaults to the latest version",
-        Action: showChangelogSync,
-    });
+waitForBC("changelog", {
+    async afterLoad() {
+        CommandCombine({
+            Tag: "mbschangelog",
+            Description: "[version-start] [version-end]: Show the changelog(s) of the specified MBS version or version range; defaults to the latest version",
+            Action: showChangelogSync,
+        });
+    },
 });

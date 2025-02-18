@@ -2,9 +2,9 @@
 
 import "tsx-dom";
 
-import { waitFor, MBS_MOD_API, logger } from "./common";
-import { validateBCVersion, validateHookHashes } from "./sanity_checks";
-import { bcLoaded } from "./common_bc";
+import { MBS_MOD_API, logger } from "./common";
+import { validateHookHashes } from "./sanity_checks";
+import { waitForBC } from "./common_bc";
 import { toItemBundles as _toItemBundles } from "./fortune_wheel";
 import { unpackSettings as _unpackSettings } from "./settings";
 import { wheelOutfits, getDebug, API_VERSION, css } from "./api";
@@ -28,10 +28,11 @@ export {
 };
 
 logger.log(`Initializing MBS version ${MBS_VERSION}`);
-waitFor(() => bcLoaded(false)).then(() => {
-    validateBCVersion(GameVersion);
-    validateHookHashes();
-    document.body.appendChild(<style id="mbs-style">{styles.toString()}</style>);
+waitForBC("mbs", {
+    async afterLoad() {
+        validateHookHashes();
+        document.body.appendChild(<style id="mbs-style">{styles.toString()}</style>);
+    },
 });
 
 import "./window_register";

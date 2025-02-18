@@ -1,5 +1,5 @@
-import { waitFor, logger } from "../common";
-import { bcLoaded } from "../common_bc";
+import { logger } from "../common";
+import { waitForBC } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
 import { FWSelectScreen, loadFortuneWheelObjects } from "../fortune_wheel";
 
@@ -51,23 +51,26 @@ const ID = Object.freeze({
     styles: `${root}-style`,
 
     header: `${root}-header`,
+    menubar: `${root}-menubar`,
     exit: `${root}-exit`,
     exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
 
     settingsGrid: `${root}-settings`,
-    settingsPair: `${root}-settings-pair`,
-    itemsButton: `${root}-items-button`,
-    itemsHeader: `${root}-items-header`,
     wheelButton: `${root}-wheel-button`,
-    wheelHeader: `${root}-wheel-header`,
 
-    rollCheckbox: `${root}-roll-checkbox`,
-    rollHeader: `${root}-roll-header`,
-    lockCheckbox: `${root}-lock-checkbox`,
-    lockHeader: `${root}-lock-header`,
-    gagCheckbox: `${root}-gag-checkbox`,
-    gagHeader: `${root}-gag-header`,
+    wheelHeader: `${root}-wheel-header`,
+    miscHeader: `${root}-misc-header`,
+    garbleHeader: `${root}-garble-header`,
+    craftingHeader: `${root}-garble-header`,
+
+    wheelLabel: `${root}-wheel-label`,
+    rollRestrainedLabel: `${root}-roll-restrained-label`,
+    lockSettingsLabel: `${root}-lock-settings-label`,
+    garbleLabel: `${root}-garble-label`,
+    garbleTrailingLabel: `${root}-garble-trailing-label`,
+    garbleSyllableLabel: `${root}-garble-syllable-label`,
+    extendedCraftLabel: `${root}-extended-craft-label`,
+    changelogLabel: `${root}-changelog-label`,
 
     miscGrid: `${root}-misc`,
     reset: `${root}-reset`,
@@ -80,14 +83,8 @@ const ID = Object.freeze({
     resetCancel: `${root}-reset-cancel`,
 
     import: `${root}-import`,
-    importButton: `${root}-import-button`,
-    importTooltip: `${root}-import-tooltip`,
     export: `${root}-export`,
-    exportButton: `${root}-export-button`,
-    exportTooltip: `${root}-export-tooltip`,
     changelog: `${root}-changelog`,
-    changelogButton: `${root}-changelog-button`,
-    changelogTooltip: `${root}-changelog-tooltip`,
 });
 
 export class MBSPreferenceScreen extends MBSScreen {
@@ -108,120 +105,113 @@ export class MBSPreferenceScreen extends MBSScreen {
         super(parent, MBSPreferenceScreen.screenParamsDefault, params);
 
         document.body.appendChild(
-            <div id={ID.root} class="mbs-screen">
+            <div id={ID.root} class="mbs-screen" aria-labelledby={ID.header}>
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <h1 id={ID.header}>{`Maid's Bondage Scripts ${MBS_VERSION}`}</h1>
 
-                <div id={ID.exit} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.exitButton}
-                        onClick={this.exit.bind(this)}
-                        style={{ backgroundImage: "url('./Icons/Exit.png')" }}
-                    />
-                    <span class="mbs-button-tooltip" style={{ justifySelf: "right" }}>Exit</span>
-                </div>
+                {ElementMenu.Create(
+                    ID.menubar,
+                    [
+                        ElementButton.Create(
+                            ID.exit,
+                            this.exit.bind(this),
+                            { image: "Icons/Exit.png", tooltip: "Exit" },
+                        ),
+                    ],
+                    { direction: "ltr" },
+                )}
 
-                <div id={ID.settingsGrid}>
-                    <h2>Wheel of fortune settings</h2>
-                    <div class="mbs-preference-settings-pair">
-                        <button
-                            class="mbs-button"
-                            style={{ backgroundImage: "url('./Icons/Crafting.png')" }}
-                            onClick={this.#loadWheel.bind(this)}
-                        />
-                        Configure the wheel of fortune
-                    </div>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="RollWhenRestrained" onClick={this.#boolSwitch.bind(this)}/>
-                        Allow wheel rolling while restrained
-                    </div>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)}/>
-                        Lock MBS settings while restrained
-                    </div>
+                <main id={ID.settingsGrid} role="form" aria-label="Configure MBS">
+                    <section aria-labelledby={ID.wheelHeader}>
+                        <h2 id={ID.wheelHeader}>Wheel of fortune settings</h2>
+                        <p class="mbs-preference-settings-pair">
+                            {ElementButton.Create(ID.wheelButton, this.#loadWheel.bind(this), { image: "Icons/Crafting.png" }, { button: { attributes: { "aria-labelledby": ID.wheelLabel } } })}
+                            <span id={ID.wheelLabel}>Configure the wheel of fortune</span>
+                        </p>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="RollWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.rollRestrainedLabel}/>
+                            <span id={ID.rollRestrainedLabel}>Allow wheel rolling while restrained</span>
+                        </p>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.lockSettingsLabel}/>
+                            <span id={ID.lockSettingsLabel}>Lock MBS settings while restrained</span>
+                        </p>
+                    </section>
 
-                    <h2>Garbling settings</h2>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)}/>
-                        <span>
-                            <p>
-                                <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically acurate, speech garbling
-                                based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
-                            </p>
-                            <p>
-                                Incompatible-ish with <a href="https://wce-docs.vercel.app/docs/intro" target="_blank">WCE/FBC</a>'s
-                                garbling anti-cheat as of the moment
-                            </p>
-                        </span>
-                    </div>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="DropTrailing" onClick={this.#boolSwitch.bind(this)}/>
-                        Whether to heaviest gags will drop up to half of all trailing characters
-                        when alternate garbling is enabled
-                    </div>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="GarblePerSyllable" onClick={this.#boolSwitch.bind(this)}/>
-                        Interpolate between the three alternative garbling levels, allowing for a more gradual increase
-                        in garbling strength (on a syllable by syllable basis) as the gag level increases
-                    </div>
+                    <section aria-labelledby={ID.garbleHeader}>
+                        <h2 id={ID.garbleHeader}>Garbling settings</h2>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleLabel}/>
+                            <span id={ID.garbleLabel}>
+                                <p>
+                                    <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically accurate, speech garbling
+                                    based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
+                                </p>
+                                <p>
+                                    Incompatible-ish with <a href="https://wce-docs.vercel.app/docs/intro" target="_blank">WCE/FBC</a>'s
+                                    garbling anti-cheat as of the moment
+                                </p>
+                            </span>
+                        </p>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="DropTrailing" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleTrailingLabel}/>
+                            <span id={ID.garbleTrailingLabel}>
+                                Whether to heaviest gags will drop up to half of all trailing characters
+                                when alternate garbling is enabled
+                            </span>
+                        </p>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="GarblePerSyllable" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleSyllableLabel}/>
+                            <span id={ID.garbleSyllableLabel}>
+                                Interpolate between the three alternative garbling levels, allowing for a more gradual increase
+                                in garbling strength (on a syllable by syllable basis) as the gag level increases
+                            </span>
+                        </p>
+                    </section>
 
-                    <h2>Misc settings</h2>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" data-field="ShowChangelog" onClick={this.#boolSwitch.bind(this)}/>
-                        Show the MBS changelog in chat whenever a new MBS version is released
-                    </div>
+                    <section aria-labelledby={ID.miscHeader}>
+                        <h2 id={ID.miscHeader}>Misc settings</h2>
+                        <div class="mbs-preference-settings-pair">
+                            <input type="checkbox" name="ShowChangelog" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.changelogLabel}/>
+                            <span id={ID.changelogLabel}>Show the MBS changelog in chat whenever a new MBS version is released</span>
+                        </div>
+                    </section>
 
-                    <h2>Crafting settings</h2>
-                    <div class="mbs-preference-settings-pair">
-                        <input type="checkbox" disabled={true}/>
-                        <span style={{ color: "gray" }}>
-                            Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
-                            Note: Available in unmodded Bondage Club as of R109; see the crafting screen
-                        </span>
-                    </div>
-                </div>
+                    <section aria-labelledby={ID.craftingHeader}>
+                        <h2 id={ID.craftingHeader}>Crafting settings</h2>
+                        <p class="mbs-preference-settings-pair">
+                            <input type="checkbox" disabled={true} aria-labelledby={ID.extendedCraftLabel}/>
+                            <span style={{ color: "gray" }} id={ID.extendedCraftLabel}>
+                                Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
+                                Note: Available in unmodded Bondage Club as of R109; see the crafting screen
+                            </span>
+                        </p>
+                    </section>
+                </main>
 
-                <div id={ID.miscGrid}>
-                    <div id={ID.reset} class="mbs-button-div">
-                        <button
-                            class="mbs-button"
-                            id={ID.resetButton}
-                            style={{ backgroundImage: "url('./Icons/ServiceBell.png')" }}
-                            onClick={this.#settingsReset.bind(this)}
-                        >Reset MBS</button>
-                        <span class="mbs-button-tooltip">Clear all MBS data</span>
-                    </div>
-
-                    <div id={ID.import} class="mbs-button-div">
-                        <button
-                            class="mbs-button"
-                            id={ID.importButton}
-                            onClick={this.#settingsImport.bind(this)}
-                        >Import</button>
-                        <span class="mbs-button-tooltip">Import MBS settings</span>
-                    </div>
-
-                    <div id={ID.export} class="mbs-button-div">
-                        <button
-                            class="mbs-button"
-                            id={ID.exportButton}
-                            onClick={this.#settingsExport.bind(this)}
-                        >Export</button>
-                        <span class="mbs-button-tooltip"> Export MBS settings</span>
-                    </div>
-
-                    <div id={ID.changelog} class="mbs-button-div">
-                        <button
-                            class="mbs-button"
-                            id={ID.changelogButton}
-                            style={{ backgroundImage: "url('./Icons/Changelog.png')" }}
-                            onClick={() => open(getChangeLogURL(), "_blank")}
-                        >Latest Changes</button>
-                        <span class="mbs-button-tooltip">Open the MBS changelog</span>
-                    </div>
-                </div>
+                <menu id={ID.miscGrid}>
+                    <li>{ElementButton.Create(
+                        ID.resetButton,
+                        this.#settingsReset.bind(this),
+                        { image: "Icons/ServiceBell.png", label: "Reset MBS", tooltip: "Clear all MBS data", labelPosition: "center" },
+                    )}</li>
+                    <li>{ElementButton.Create(
+                        ID.import,
+                        this.#settingsImport.bind(this),
+                        { image: "Icons/Upload.png", label: "Import", tooltip: "Import MBS settings", labelPosition: "center" },
+                    )}</li>
+                    <li>{ElementButton.Create(
+                        ID.export,
+                        this.#settingsExport.bind(this),
+                        { image: "Icons/Download.png", label: "Export", tooltip: "Export MBS settings", labelPosition: "center" },
+                    )}</li>
+                    <li>{ElementButton.Create(
+                        ID.changelog,
+                        () => open(getChangeLogURL(), "_blank"),
+                        { image: "Icons/Changelog.png", label: "Latest Changes", tooltip: "Open the MBS changelog", labelPosition: "center" },
+                    )}</li>
+                </menu>
             </div>,
         );
 
@@ -252,7 +242,7 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     #boolSwitch(event: MouseEvent) {
-        const field = (event.target as HTMLInputElement).dataset.field as BoolSettings;
+        const field = (event.target as HTMLInputElement).name as BoolSettings;
         if (field in Player.MBSSettings) {
             Player.MBSSettings[field] = !Player.MBSSettings[field];
             pushMBSSettings([SettingsType.SETTINGS]);
@@ -347,14 +337,10 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     #lockInputs() {
         const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
-        const root = document.getElementById(ID.settingsGrid) as HTMLDivElement;
-        for (const elemOuter of root.children) {
-            for (const elemInner of elemOuter.children as Iterable<HTMLInputElement>) {
-                const field = elemInner.dataset?.field;
-                if (field && field in Player.MBSSettings) {
-                    elemInner.checked = Player.MBSSettings[field as BoolSettings];
-                    elemInner.disabled = disabled;
-                }
+        for (const inp of document.querySelectorAll(`#${ID.settingsGrid} input[type="checkbox"]`) as NodeListOf<HTMLInputElement>) {
+            if (inp.name in Player.MBSSettings) {
+                inp.checked = Player.MBSSettings[inp.name as BoolSettings];
+                inp.disabled = disabled;
             }
         }
     }
@@ -381,19 +367,21 @@ export class MBSPreferenceScreen extends MBSScreen {
 
 let preferenceState: PreferenceScreenProxy;
 
-waitFor(bcLoaded).then(() => {
-    preferenceState = new PreferenceScreenProxy();
+waitForBC("settings_screen", {
+    async afterLoad() {
+        preferenceState = new PreferenceScreenProxy();
 
-    PreferenceRegisterExtensionSetting({
-        Identifier: "MBS",
-        load() {
-            PreferenceExit();
-            preferenceState.loadChild(MBSPreferenceScreen);
-        },
-        run() {},
-        click() {},
-        exit() {},
-        ButtonText: "MBS Settings",
-        Image: "Icons/Maid.png",
-    });
+        PreferenceRegisterExtensionSetting({
+            Identifier: "MBS",
+            load() {
+                PreferenceExit();
+                preferenceState.loadChild(MBSPreferenceScreen);
+            },
+            run() {},
+            click() {},
+            exit() {},
+            ButtonText: "MBS Settings",
+            Image: "Icons/Maid.png",
+        });
+    },
 });

@@ -5,12 +5,12 @@
     &[data-unload] {
         display: none;
     }
-}
 
-#mbs-shop-label {
-    color: white;
-    place-self: center center;
-    user-select: none;
+    & > span {
+        color: white;
+        place-self: center center;
+        user-select: none;
+    }
 }
 
 #mbs-shop-select {

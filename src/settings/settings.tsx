@@ -3,7 +3,6 @@
 import { omit, sumBy } from "lodash-es";
 
 import {
-    waitFor,
     Version,
     trimArray,
     logger,
@@ -14,11 +13,11 @@ import {
 import {
     FWItemSet,
     FWCommand,
-    settingsLoaded,
     sanitizeWheelFortuneIDs,
     MBS_MAX_SETS,
     MBS_MAX_ID_SETS,
     FWObject,
+    waitForBC,
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
 import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
@@ -445,9 +444,11 @@ export function importSettings(base64: string): SettingsStatus.Expanded {
     return { status: SettingsStatus.OK, ...status };
 }
 
-waitFor(settingsLoaded).then(() => {
-    initMBSSettings();
-    pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
-    logger.log("Initializing settings module");
-    logSettingsSize();
+waitForBC("settings", {
+    async afterLogin() {
+        initMBSSettings();
+        pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], false);
+        logger.log("Initializing settings module");
+        logSettingsSize();
+    },
 });

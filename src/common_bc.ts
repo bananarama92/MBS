@@ -11,6 +11,7 @@ import {
     isArray,
     logger,
 } from "./common";
+import { waitForBC } from "./lpgl/common";
 import { pushMBSSettings, SettingsType } from "./settings";
 import {
     DEFAULT_FLAGS,
@@ -24,6 +25,7 @@ import {
     getFlagDescription,
 } from "./fortune_wheel";
 
+export { waitForBC };
 
 /** The maximum number of IDs within an item set category (builtin, MBS default, MBS custom) */
 const ITEM_SET_CATEGORY_ID_RANGE = 256; // 2**8
@@ -103,27 +105,9 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/**
- * Return Whether BC had been loaded.
- * @param testGameVersion Whether the game version should be validated or not
- */
-export function bcLoaded(testGameVersion=true): boolean {
-    // `GameStart()` should be (nearly) fully initialized at this point
-    return (
-        typeof ServerSocket === "object"
-        && ServerSocket !== null
-        && (testGameVersion ? GameVersionFormat.test(GameVersion) : true)
-    );
-}
-
-/** Return whether all vanilla BC online shared settings are loaded. */
-export function settingsLoaded(): boolean {
-    return bcLoaded() && Player.OnlineSharedSettings !== undefined;
-}
-
 /** Return whether all online settings (including MBS ones) are loaded. */
 export function settingsMBSLoaded(): boolean {
-    return settingsLoaded() && Player.MBSSettings !== undefined;
+    return typeof Player !== "undefined" && Player.MBSSettings !== undefined;
 }
 
 /** Indices of the default MBS wheel of fortune item sets */
