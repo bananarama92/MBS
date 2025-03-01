@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.7.41
+* Backport three BC R114 fixes:
+    - [BondageProjects/Bondage-College#5433](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5433): Make the `dialog` status scroll + expand upon overflow rather than clamping
+    - [BondageProjects/Bondage-College#5429](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5429): Fix password padlock drawing hint text with last assigned color
+    - [BondageProjects/Bondage-College#5432](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5432): Connect normalize
+
 ## v1.7.40
 * Drop R112 support
 * Restructure the way MBS handles the detection of BC and BC logins
