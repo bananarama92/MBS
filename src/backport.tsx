@@ -16,83 +16,56 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
-type Character2 = Character & { _Stage: string, _CurrentDialog: string };
-
-function updateGetters(char: Character) {
-    if ("_Stage" in char && "_CurrentDialog" in char) {
-        return;
-    }
-
-    const char2 = char as Character2;
-    char2._Stage = char2.Stage;
-    char2._CurrentDialog = char2.CurrentDialog;
-    Object.defineProperty(char2, "Stage", {
-        get(this: Character2) {
-            return this._Stage;
-        },
-        set(this: Character2, value: string) {
-            if (this._Stage === value) {
-                return;
-            }
-            this._Stage = value;
-            if (DialogMenuMode === "dialog") {
-                DialogMenuMapping.dialog.Reload();
-            }
-        },
-    });
-    Object.defineProperty(char2, "CurrentDialog", {
-        get(this: Character2) {
-            return this._CurrentDialog;
-        },
-        set(this: Character2, value: string) {
-            if (this._CurrentDialog === value) {
-                return;
-            }
-            this._CurrentDialog = value;
-            if (DialogMenuMode === "dialog") {
-                DialogSetStatus(value);
-            }
-        },
-    });
-}
-
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R113":
-                if (MBS_MOD_API.getOriginalHash("CharacterCreate") === "F078CBBE") {
-                    backportIDs.add(5410);
-                    MBS_MOD_API.hookFunction("CharacterCreate", 11, (args, next) => {
-                        const char = next(args);
-                        updateGetters(char);
-                        return char;
+            case "R113": {
+                if (MBS_MOD_API.getOriginalHash("CharacterCreate") === "E571DB6D") {
+                    backportIDs.add(5433);
+                    MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
+                        const ret = next(args);
+                        ret.ClickedOption = null;
+                        return ret;
                     });
-                    MBS_MOD_API.patchFunction("DialogLoad", {
-                        "C.CurrentDialog = newDialog;":
-                            "C._CurrentDialog = newDialog;",
+                    MBS_MOD_API.hookFunction("DialogLeave", 0, (args, next) => {
+                        if (CurrentCharacter) {
+                            CurrentCharacter.ClickedOption = null;
+                        }
+                        return next(args);
                     });
-                    Character.forEach(char => updateGetters(char));
+                    MBS_MOD_API.hookFunction("DialogMenuMapping.dialog._ClickButton", 0, ([button, char, clickedDialog, ...args], next) => {
+                        char.ClickedOption = clickedDialog.Option;
+                        return next([button, char, clickedDialog, ...args]);
+                    });
+                    MBS_MOD_API.patchFunction("DialogRemove", {
+                        "const dialogIndex = C.Dialog.findIndex(dialog => dialog.Stage === C.Stage && dialog.Option != null && DialogPrerequisite(dialog));":
+                            "const dialogIndex = C.Dialog.findIndex(dialog => dialog.Stage === C.Stage && dialog.Option === C.ClickedOption && dialog.Option != null && DialogPrerequisite(dialog));",
+                    });
                 }
 
-                if (
-                    MBS_MOD_API.getOriginalHash("ElementButton.CreateForAsset") === "591D7DCF"
-                    && MBS_MOD_API.getOriginalHash("ElementButton.CreateForActivity") === "3A1D0F81"
-                ) {
-                    backportIDs.add(5412);
-                    MBS_MOD_API.patchFunction("ElementButton.CreateForAsset", {
-                        "options.icons ??= [":
-                            "options.icons = [",
+                if (MBS_MOD_API.getOriginalHash("InventoryItemMiscPasswordPadlockDrawControls") === "AC76D6DE") {
+                    backportIDs.add(5429);
+                    MBS_MOD_API.patchFunction("InventoryItemMiscPasswordPadlockDrawControls", {
+                        ", 1000, 640, 1000, 120, null, null, 2);":
+                            ', 1000, 640, 1000, 120, "white", null, 2);',
                     });
-                    MBS_MOD_API.patchFunction("ElementButton.CreateForActivity", {
-                        "options.icons ??= [":
-                            "options.icons = [",
-                    });
+                }
+
+                let normalizeLink = document.head.querySelector("link[href='CSS/normalize.css']") as null | HTMLLinkElement;
+                const nextSibling = document.head.querySelector("link[href='CSS/Styles.css']");
+                if (!normalizeLink && nextSibling) {
+                    backportIDs.add(5432);
+                    normalizeLink = document.createElement("link");
+                    normalizeLink.href = "CSS/normalize.css";
+                    normalizeLink.rel = "stylesheet";
+                    document.head.insertBefore(normalizeLink, nextSibling);
                 }
 
                 if (!document.getElementById("mbs-backport-style")) {
                     document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
                 }
                 break;
+            }
         }
 
         if (backportIDs.size) {
