@@ -51,7 +51,7 @@ function _GetClickTouchListeners() {
             return;
         }
 
-        console.log("touchstart", holdAndClick);
+        console.log("touchend", holdAndClick);
         if (!holdAndClick) {
             this.blur();
         }
