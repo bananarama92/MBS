@@ -34,6 +34,7 @@ function _GetClickTouchListeners() {
             ev.stopImmediatePropagation();
             return;
         }
+        console.log("touchstart");
         isTouch = true;
     }
 
@@ -50,12 +51,14 @@ function _GetClickTouchListeners() {
             return;
         }
 
+        console.log("touchstart", holdAndClick);
         if (!holdAndClick) {
             this.blur();
         }
     }
 
     function click(this: HTMLButtonElement, ev: MouseEvent | PointerEvent) {
+        console.log("click", holdAndClick);
         if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
             ev.stopImmediatePropagation();
         } else if (holdAndClick) {
@@ -67,6 +70,7 @@ function _GetClickTouchListeners() {
     }
 
     function focus(this: HTMLButtonElement, ev: FocusEvent) {
+        console.log("focus", isTouch);
         if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
             ev.stopImmediatePropagation();
         } else if (isTouch) {
@@ -77,6 +81,7 @@ function _GetClickTouchListeners() {
     }
 
     function blur(this: HTMLButtonElement, _ev: FocusEvent) {
+        console.log("blur", { isTouch, holdAndClick, holdAndClickTimeoutID });
         this.removeAttribute("data-show-tooltip");
         if (holdAndClickTimeoutID != null) {
             clearTimeout(holdAndClickTimeoutID);
