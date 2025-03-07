@@ -16,6 +16,79 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
+function _GetClickTouchListeners() {
+    let holdAndClickTimeoutID: null | number = null;
+    /** Whether a touch-based hold-and-click action was detected */
+    let holdAndClick = false;
+    /** Used by `focus` for checking whether the focus was triggered by a touch event */
+    let isTouch = false;
+
+    function touchstartTimeout(elem: HTMLButtonElement) {
+        holdAndClickTimeoutID = null;
+        holdAndClick = true;
+        elem.toggleAttribute("data-show-tooltip", true);
+    }
+
+    function touchstart(this: HTMLButtonElement, ev: TouchEvent) {
+        if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
+            ev.stopImmediatePropagation();
+            return;
+        }
+        isTouch = true;
+    }
+
+    function touchmove(this: HTMLButtonElement, _ev: TouchEvent) {
+        if (holdAndClickTimeoutID != null) {
+            clearTimeout(holdAndClickTimeoutID);
+            holdAndClickTimeoutID = null;
+        }
+    }
+
+    function touchend(this: HTMLButtonElement, ev: TouchEvent) {
+        if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
+            ev.stopImmediatePropagation();
+            return;
+        }
+
+        if (!holdAndClick) {
+            this.blur();
+        }
+    }
+
+    function click(this: HTMLButtonElement, ev: MouseEvent | PointerEvent) {
+        if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
+            ev.stopImmediatePropagation();
+        } else if (holdAndClick) {
+            ev.stopImmediatePropagation();
+        } else if (this.getAttribute("aria-disabled") === "true") {
+            this.dispatchEvent(new PointerEvent("bcClickDisabled", ev));
+            ev.stopImmediatePropagation();
+        }
+    }
+
+    function focus(this: HTMLButtonElement, ev: FocusEvent) {
+        if (ev.target instanceof Element && ev.target.classList.contains("button-tooltip")) {
+            ev.stopImmediatePropagation();
+        } else if (isTouch) {
+            holdAndClick = false;
+            isTouch = false;
+            holdAndClickTimeoutID ??= setTimeout(touchstartTimeout, 150, this);
+        }
+    }
+
+    function blur(this: HTMLButtonElement, _ev: FocusEvent) {
+        this.removeAttribute("data-show-tooltip");
+        if (holdAndClickTimeoutID != null) {
+            clearTimeout(holdAndClickTimeoutID);
+            holdAndClickTimeoutID = null;
+        }
+        holdAndClick = false;
+        isTouch = false;
+    }
+
+    return { click, touchend, touchmove, touchstart, blur, focus, touchcancel: touchend };
+}
+
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
@@ -60,6 +133,26 @@ waitForBC("backport", {
                     normalizeLink.rel = "stylesheet";
                     document.head.insertBefore(normalizeLink, nextSibling);
                 }
+
+                MBS_MOD_API.patchFunction("ElementButton.Create", {
+                    "click: this._Click,":
+                        "",
+                    "touchend: this._MouseUp,":
+                        "",
+                    "touchcancel: this._MouseUp,":
+                        "",
+                    'elem.addEventListener("click", onClick);':
+                        ";",
+                });
+
+                MBS_MOD_API.hookFunction("ElementButton.Create", 0, ([id, onClick, ...args], next) => {
+                    const button = next([id, onClick, ...args]);
+                    for (const [name, listener] of Object.entries(_GetClickTouchListeners())) {
+                        button.addEventListener(name, listener as EventListenerOrEventListenerObject);
+                    }
+                    button.addEventListener("click", onClick);
+                    return button;
+                });
 
                 if (!document.getElementById("mbs-backport-style")) {
                     document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);

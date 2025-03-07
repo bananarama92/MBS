@@ -36,3 +36,9 @@
 	max-height: 7.2em; /* 6 lines */
 	min-height: 3.6em; /* 3 lines */
 }
+
+@media (hover: none) {
+	.button[data-show-tooltip] > .button-tooltip {
+		visibility: visible;
+	}
+}
