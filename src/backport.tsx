@@ -51,6 +51,24 @@ waitForBC("backport", {
                     });
                 }
 
+                if (MBS_MOD_API.getOriginalHash("InventoryItemDevicesWheelFortuneLoadHook") === "CDE51F46") {
+                    backportIDs.add(5440);
+                    MBS_MOD_API.patchFunction("InventoryItemDevicesWheelFortuneLoadHook", {
+                        "WheelFortuneCharacter = CurrentCharacter;":
+                            "WheelFortuneCharacter = CharacterGetCurrent();",
+                    });
+                }
+
+                const gag2 = AssetGet("Female3DCG", "ItemMouth2", "TonguePiercingGag");
+                const gag3 = AssetGet("Female3DCG", "ItemMouth3", "TonguePiercingGag");
+                const idx2 = gag2?.Block?.findIndex(i => i === "ItemMouth2") ?? -1;
+                const idx3 = gag3?.Block?.findIndex(i => i === "ItemMouth3") ?? -1;
+                if (gag2 && gag3 && idx2 !== -1 && idx3 !== -1) {
+                    backportIDs.add(5438);
+                    (gag2.Block as AssetGroupItemName[])[idx2] = "ItemMouth";
+                    (gag3.Block as AssetGroupItemName[])[idx3] = "ItemMouth";
+                }
+
                 let normalizeLink = document.head.querySelector("link[href='CSS/normalize.css']") as null | HTMLLinkElement;
                 const nextSibling = document.head.querySelector("link[href='CSS/Styles.css']");
                 if (!normalizeLink && nextSibling) {
