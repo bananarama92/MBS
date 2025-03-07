@@ -1,1 +1,7 @@
 /* stylelint-disable no-empty-source */
+
+@media (hover: none) {
+	.button[data-show-tooltip] > .button-tooltip {
+		visibility: visible;
+	}
+}
