@@ -66,7 +66,26 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
             return false;
         }
     },
-    Opacity: (p, a) => typeof p === "number" && p <= a.MaxOpacity && p >= a.MinOpacity,
+    Opacity: (p, a) => {
+        if (typeof p === "number") {
+            return p <= a.MaxOpacity && p >= a.MinOpacity;
+        } else if (isArray(p)) {
+            const layers = ItemColorGetColorableLayers({ Asset: a });
+            return p.every((opacity, i) => {
+                const layer = layers[i];
+                if (!layer) {
+                    return false;
+                }
+                return (
+                    typeof opacity === "number"
+                    && opacity <= layer.MaxOpacity
+                    && opacity >= layer.MinOpacity
+                );
+            });
+        } else {
+            return false;
+        }
+    },
     Text: (p, a) => validateText("Text", p, a),
     Text2: (p, a) => validateText("Text2", p, a),
     Text3: (p, a) => validateText("Text3", p, a),
@@ -86,6 +105,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     },
     TargetAngle: (p, _) => typeof p === "number" && p >= 0 && p <= 360,
     OverrideHeight: validateOverrideHeight,
+    PunishActivity: (p, _) => typeof p === "boolean",
     PunishStruggle: (p, _) => typeof p === "boolean",
     PunishStruggleOther: (p, _) => typeof p === "boolean",
     PunishRequiredSpeechWord: (p, _) => typeof p === "string" && p.length <= 70,
@@ -97,6 +117,11 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     PublicModePermission: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltPermissions.length,
     ShockLevel: (p, _) => isInteger(p) && p >= 0 && p <= 2,
     PortalLinkCode: (p, _) => typeof p === "string" && PortalLinkCodeRegex.test(p),
+    OpenPermission: (p, _) => typeof p === "boolean",
+    OpenPermissionChastity: (p, _) => typeof p === "boolean",
+    OpenPermissionArm: (p, _) => typeof p === "boolean",
+    OpenPermissionLeg: (p, _) => typeof p === "boolean",
+    BlockRemotes: (p, _) => typeof p === "boolean",
 });
 
 /**

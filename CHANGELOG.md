@@ -1,5 +1,14 @@
 # MBS Changelog
 
+## v1.7.42
+* Expand the number of supported wheel of fortune item properties
+    - Includes, among others, expanded item opacity support
+* Add BC R114Beta1 support
+* Backport two BC R114 fixes:
+    - [BondageProjects/Bondage-College#5438](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5438): Stop the tongue piercing gag from blocking its own group
+    - [BondageProjects/Bondage-College#5440](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5440): Fix the wheel of fortune potentially initializing to the wrong character
+    - [BondageProjects/Bondage-College#5447](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5447): Fix `CommonDynamicFunctionParams()` incorrectly parsing parameters of length 0
+
 ## v1.7.41
 * Backport three BC R114 fixes:
     - [BondageProjects/Bondage-College#5433](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5433): Make the `dialog` status scroll + expand upon overflow rather than clamping

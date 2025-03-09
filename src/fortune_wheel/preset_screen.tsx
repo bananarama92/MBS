@@ -169,7 +169,7 @@ const ID = Object.freeze({
 
 export class WheelPresetScreen extends MBSScreen {
     static readonly background = "Sheet";
-    static readonly screen = `MBS_${WheelPresetScreen.name}`;
+    static readonly screen = "MBS_WheelPresetScreen";
     static readonly ids = ID;
     static readonly screenParamsDefault = {
         [root]: Object.freeze({

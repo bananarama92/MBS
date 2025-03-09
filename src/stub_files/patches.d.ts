@@ -41,3 +41,13 @@ interface WheelFortuneOptionType {
     /** The weight of a particular option within the wheel of fortune */
     readonly Weight?: number,
 }
+
+interface ModuleScreens {
+    MBS: (
+        "MBS_PreferenceScreen"
+        | "MBS_FWSelectScreen"
+        | "MBS_WheelPresetScreen"
+        | "MBS_FWItemSetScreen"
+        | "MBS_FWCommandScreen"
+    );
+}
