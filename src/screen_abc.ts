@@ -19,7 +19,7 @@ export abstract class MBSScreen {
     /** The name of the screen's background. */
     static readonly background: string = "Sheet";
     /** The name of the screen. */
-    static readonly screen: string = "";
+    static readonly screen: RoomName;
     /** The name of the screen. */
     get screen() {
         return (this.constructor as typeof MBSScreen).screen;
@@ -100,7 +100,6 @@ export abstract class MBSScreen {
 
     /** Called when screen is loaded */
     load(): void {
-        const prevScreen = CurrentScreen;
         CurrentScreenFunctions?.Unload?.();
         if (ControllerIsActive()) {
             ControllerClearAreas();
@@ -112,9 +111,6 @@ export abstract class MBSScreen {
         CommonGetFont.clearCache();
         CommonGetFontName.clearCache();
         CurrentScreenFunctions?.Resize?.(true);
-        if (prevScreen == "ChatSearch" || prevScreen == "ChatCreate") {
-            ChatRoomStimulationMessage("Walk");
-        }
     }
 
     loadChild<T extends readonly any[], RT extends MBSScreen>(
