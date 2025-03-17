@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.7.43
+* Drop R113 support and add full R114 support
+
 ## v1.7.42
 * Expand the number of supported wheel of fortune item properties
     - Includes, among others, expanded item opacity support
