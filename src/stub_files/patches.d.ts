@@ -10,11 +10,6 @@ interface PlayerCharacter {
     MBSSettings: MBSSettings,
 }
 
-// R113 patch
-interface Character {
-    ClickedOption: null | string;
-}
-
 interface PlayerOnlineSettings {
     /** @deprecated moved to {@link ExtensionSettings.MBS} as of v1.1.0 */
     MBS?: string,
