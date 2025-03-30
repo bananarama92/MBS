@@ -508,10 +508,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 return condition(asset);
             }
         });
-        fortuneWheelEquip(
-            "MBSPreview", items,
-            this.settings.stripLevel, null, null, this.preview,
-        );
+        fortuneWheelEquip("MBSPreview", items, this.settings.stripLevel, null, null, this.preview, Player);
     }
 
     /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */

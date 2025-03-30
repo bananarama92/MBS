@@ -678,9 +678,10 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
     scriptFactory(globalCallback: null | FortuneWheelCallback = null): (character?: null | Character) => void {
         const assets = this.itemList.map(({Name, Group}) => AssetGet(Player.AssetFamily, Group, Name));
 
-        return (character) => {
-            character = character ?? Player;
-            const condition = getStripCondition(this.equipLevel, character);
+        return (charTarget) => {
+            charTarget ??= Player;
+            const charSource = WheelFortuneCharacter ?? charTarget;
+            const condition = getStripCondition(this.equipLevel, charTarget);
             const items = this.itemList.filter((_, i) => {
                 const asset = assets[i];
                 if (asset == null) {
@@ -694,7 +695,7 @@ export class FWItemSet extends FWObject<FWItemSetOption> implements Omit<FWSimpl
 
             fortuneWheelEquip(
                 this.name, items, this.stripLevel, globalCallback,
-                this.preRunCallback, character ?? Player,
+                this.preRunCallback, charTarget, charSource,
             );
         };
     }
