@@ -78,8 +78,8 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
                 }
                 return (
                     typeof opacity === "number"
-                    && opacity <= layer.MaxOpacity
-                    && opacity >= layer.MinOpacity
+                    && opacity <= 1
+                    && opacity >= 0
                 );
             });
         } else {
