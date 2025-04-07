@@ -394,7 +394,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                             <div class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
                                 <input
                                     type="checkbox"
-                                    class={ID.lockCheckbox}
+                                    class={`checkbox ${ID.lockCheckbox}`}
                                     id={ID.lockCheckbox + i.toString()}
                                     disabled={disabled}
                                     checked={flag.enabled}

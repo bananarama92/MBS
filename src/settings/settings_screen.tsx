@@ -130,11 +130,11 @@ export class MBSPreferenceScreen extends MBSScreen {
                             <span id={ID.wheelLabel}>Configure the wheel of fortune</span>
                         </p>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="RollWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.rollRestrainedLabel}/>
+                            <input type="checkbox" class="checkbox" name="RollWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.rollRestrainedLabel}/>
                             <span id={ID.rollRestrainedLabel}>Allow wheel rolling while restrained</span>
                         </p>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.lockSettingsLabel}/>
+                            <input type="checkbox" class="checkbox" name="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.lockSettingsLabel}/>
                             <span id={ID.lockSettingsLabel}>Lock MBS settings while restrained</span>
                         </p>
                     </section>
@@ -142,7 +142,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <section aria-labelledby={ID.garbleHeader}>
                         <h2 id={ID.garbleHeader}>Garbling settings</h2>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleLabel}/>
+                            <input type="checkbox" class="checkbox" name="AlternativeGarbling" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleLabel}/>
                             <span id={ID.garbleLabel}>
                                 <p>
                                     <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically accurate, speech garbling
@@ -155,14 +155,14 @@ export class MBSPreferenceScreen extends MBSScreen {
                             </span>
                         </p>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="DropTrailing" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleTrailingLabel}/>
+                            <input type="checkbox" class="checkbox" name="DropTrailing" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleTrailingLabel}/>
                             <span id={ID.garbleTrailingLabel}>
                                 Whether to heaviest gags will drop up to half of all trailing characters
                                 when alternate garbling is enabled
                             </span>
                         </p>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="GarblePerSyllable" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleSyllableLabel}/>
+                            <input type="checkbox" class="checkbox" name="GarblePerSyllable" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleSyllableLabel}/>
                             <span id={ID.garbleSyllableLabel}>
                                 Interpolate between the three alternative garbling levels, allowing for a more gradual increase
                                 in garbling strength (on a syllable by syllable basis) as the gag level increases
@@ -173,7 +173,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <section aria-labelledby={ID.miscHeader}>
                         <h2 id={ID.miscHeader}>Misc settings</h2>
                         <div class="mbs-preference-settings-pair">
-                            <input type="checkbox" name="ShowChangelog" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.changelogLabel}/>
+                            <input type="checkbox" class="checkbox" name="ShowChangelog" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.changelogLabel}/>
                             <span id={ID.changelogLabel}>Show the MBS changelog in chat whenever a new MBS version is released</span>
                         </div>
                     </section>
@@ -181,7 +181,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <section aria-labelledby={ID.craftingHeader}>
                         <h2 id={ID.craftingHeader}>Crafting settings</h2>
                         <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" disabled={true} aria-labelledby={ID.extendedCraftLabel}/>
+                            <input type="checkbox" class="checkbox" disabled={true} aria-labelledby={ID.extendedCraftLabel}/>
                             <span style={{ color: "gray" }} id={ID.extendedCraftLabel}>
                                 Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
                                 Note: Available in unmodded Bondage Club as of R109; see the crafting screen
@@ -337,7 +337,7 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     #lockInputs() {
         const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
-        for (const inp of document.querySelectorAll(`#${ID.settingsGrid} input[type="checkbox"]`) as NodeListOf<HTMLInputElement>) {
+        for (const inp of document.querySelectorAll(`#${ID.settingsGrid} input[type="checkbox" class="checkbox"]`) as NodeListOf<HTMLInputElement>) {
             if (inp.name in Player.MBSSettings) {
                 inp.checked = Player.MBSSettings[inp.name as BoolSettings];
                 inp.disabled = disabled;

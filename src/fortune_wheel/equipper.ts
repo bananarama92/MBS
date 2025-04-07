@@ -376,6 +376,7 @@ export function fortuneWheelEquip(
         const color = [...(Color ?? asset.DefaultColor)];
         const newItem = CharacterAppearanceSetItem(
             charTarget, Group, asset, color, SkillGetWithRatio(charTarget, "Bondage"),
+            // @ts-expect-error: `Refresh` parameter got removed in R115
             charTarget.MemberNumber, false,
         );
         if (newItem == null) {
