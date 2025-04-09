@@ -79,11 +79,11 @@ function _GetClickTouchListeners() {
     }
 
     function bcTouchHold(this: HTMLButtonElement) {
-        this.focus({ preventScroll: false });
+        this.focus({ preventScroll: true });
         this.toggleAttribute("data-show-tooltip", true);
     }
 
-    return { click, touchend, touchmove, touchstart, blur, focus, bcTouchHold, touchcancel: touchend };
+    return { click, touchend, touchmove, touchstart, blur, bcTouchHold, touchcancel: touchend };
 }
 
 waitForBC("backport", {
