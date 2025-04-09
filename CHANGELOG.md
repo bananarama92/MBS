@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.45
+* Fix a crash due to an invalid CSS selector in the MBS settings screen
+* Fix a [BondageProjects/Bondage-College#5347](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5347) backport crash due to usage of an invalid event listener
+
 ## v1.7.44
 * Add BC R115Beta1 support
 * Relax the validation of min/max opacities in wheel of fortune outfits
