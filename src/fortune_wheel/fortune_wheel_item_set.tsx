@@ -394,7 +394,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                             <div class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
                                 <input
                                     type="checkbox"
-                                    class={ID.lockCheckbox}
+                                    class={`checkbox ${ID.lockCheckbox}`}
                                     id={ID.lockCheckbox + i.toString()}
                                     disabled={disabled}
                                     checked={flag.enabled}
@@ -508,10 +508,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 return condition(asset);
             }
         });
-        fortuneWheelEquip(
-            "MBSPreview", items,
-            this.settings.stripLevel, null, null, this.preview,
-        );
+        fortuneWheelEquip("MBSPreview", items, this.settings.stripLevel, null, null, this.preview, Player);
     }
 
     /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */

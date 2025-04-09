@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v1.7.44
+* Add BC R115Beta1 support
+* Relax the validation of min/max opacities in wheel of fortune outfits
+* Ensure that wheel-equipped crafted items are attributed to the wheel owner
+* Backport one R115 BC change:
+    - [BondageProjects/Bondage-College#5347](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5347): Show DOM button tooltips on mobile after touching them for 300 ms
+
 ## v1.7.43
 * Drop R113 support and add full R114 support
 
