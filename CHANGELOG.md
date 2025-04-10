@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.7.46
+* Remove all reference to the old extended crafted description feature as it's been available in unmodded Bondage Club ever since R109 (see the crafting screen)
+* Fix a [BondageProjects/Bondage-College#5347](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5347) backport making player names in the chat log unselectable
+
 ## v1.7.45
 * Fix a crash due to an invalid CSS selector in the MBS settings screen
 * Fix a [BondageProjects/Bondage-College#5347](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5347) backport crash due to usage of an invalid event listener

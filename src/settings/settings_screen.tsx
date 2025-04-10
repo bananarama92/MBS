@@ -61,7 +61,6 @@ const ID = Object.freeze({
     wheelHeader: `${root}-wheel-header`,
     miscHeader: `${root}-misc-header`,
     garbleHeader: `${root}-garble-header`,
-    craftingHeader: `${root}-garble-header`,
 
     wheelLabel: `${root}-wheel-label`,
     rollRestrainedLabel: `${root}-roll-restrained-label`,
@@ -119,7 +118,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                             { image: "Icons/Exit.png", tooltip: "Exit" },
                         ),
                     ],
-                    { direction: "ltr" },
+                    { direction: "rtl" },
                 )}
 
                 <main id={ID.settingsGrid} role="form" aria-label="Configure MBS">
@@ -176,17 +175,6 @@ export class MBSPreferenceScreen extends MBSScreen {
                             <input type="checkbox" class="checkbox" name="ShowChangelog" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.changelogLabel}/>
                             <span id={ID.changelogLabel}>Show the MBS changelog in chat whenever a new MBS version is released</span>
                         </div>
-                    </section>
-
-                    <section aria-labelledby={ID.craftingHeader}>
-                        <h2 id={ID.craftingHeader}>Crafting settings</h2>
-                        <p class="mbs-preference-settings-pair">
-                            <input type="checkbox" class="checkbox" disabled={true} aria-labelledby={ID.extendedCraftLabel}/>
-                            <span style={{ color: "gray" }} id={ID.extendedCraftLabel}>
-                                Allow crafted item descriptions to use up to 398 "simple" characters (<i>e.g.</i> no smilies or other non-ASCII characters).<br />
-                                Note: Available in unmodded Bondage Club as of R109; see the crafting screen
-                            </span>
-                        </p>
                     </section>
                 </main>
 

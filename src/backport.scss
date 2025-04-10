@@ -4,6 +4,11 @@
 	user-select: none;
 }
 
+/* stylelint-disable selector-class-pattern */
+.ChatMessageName {
+	user-select: text;
+}
+
 @media (hover: none) {
 	.button[data-show-tooltip] > .button-tooltip {
 		visibility: visible;

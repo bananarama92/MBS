@@ -397,8 +397,11 @@ async function contentLoadedListener() {
 export function waitForBC(
     name: BCListenerNames,
     listeners: {
+        /** To be executed after the documents `DOMContentLoaded` event */
         afterLoad?: () => Promise<void>,
+        /** To be executed after logging in and running `afterLoad` */
         afterLogin?: () => Promise<void>,
+        /** To be executed after the documents `DOMContentLoaded` event */
         afterMBS?: () => Promise<void>,
     },
 ) {
