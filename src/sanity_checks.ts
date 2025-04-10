@@ -32,7 +32,7 @@ const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
         ["CraftingClick", ["5E7225EA"]],
-        ["CraftingRun", ["4CD7AB08"]],
+        ["CraftingRun", ["4CD7AB08", "BF33E4B6"]],
         ["SpeechTransformProcess", ["666DDA2F"]],
         ["SpeechTransformGagGarble", ["691A05BF"]],
         ["WheelFortuneLoad", ["EA252C35"]],
