@@ -351,24 +351,27 @@ async function contentLoadedListener() {
         mbsLoadingStarted = true;
     }
 
-    if (!GameVersionFormat.test(GameVersion)) {
-        logger.error(`Detected an invalid BC version: "${GameVersion}"`);
+    const gameVersion = globalThis.GameVersion;
+    if (typeof gameVersion !== "string" || !GameVersionFormat.test(gameVersion)) {
+        logger.error(`Detected an invalid BC version: "${gameVersion}"`);
         logger.log("Unloading MBS from Mod SDK");
         MBS_MOD_API.unload();
-        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} detected an invalid BC version: "${GameVersion}"`);
+        if (gameVersion !== undefined) {
+            window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} detected an invalid BC version: "${gameVersion}"`);
+        }
         return;
     }
 
-    const bc_version = Version.fromBCVersion(GameVersion);
+    const bc_version = Version.fromBCVersion(gameVersion);
     const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
     if (bc_version.lesser(bc_min_version)) {
-        logger.error(`BC version "R${BC_MIN_VERSION}" or later required; detected "${GameVersion}"`);
+        logger.error(`BC version "R${BC_MIN_VERSION}" or later required; detected "${gameVersion}"`);
         logger.log("Unloading MBS from Mod SDK");
         MBS_MOD_API.unload();
-        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${GameVersion}"`);
+        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${gameVersion}"`);
         return;
     } else {
-        logger.log(`Detected BC ${GameVersion}`);
+        logger.log(`Detected BC ${gameVersion}`);
     }
 
     logger.debug("Executing afterLoad hooks", Object.keys(bcListeners.afterLoad).sort());
