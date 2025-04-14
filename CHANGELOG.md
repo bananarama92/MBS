@@ -1,5 +1,16 @@
 # MBS Changelog
 
+## v1.8.0
+* Drop support for BC R104
+* Add support for building MBS with Node >=22
+* Make MBS's load system a bit more robust w.r.t. BC load errors
+* Refactor the MBS's wheel of fortune outfit equipping logic, switchting to an event-based structure
+* Add the ability to enable third-party addon-specific options when equipping wheel of fortune outfits. Such options can be used if the following three conditions are fulfilled:
+    - An addon registers its own custom options for MBS
+    - The wheel owner enables and configures aforementioned option(s)
+    - The wheel spinner has the relevant third-party addon enabled
+* The MBS public API has been incremented to version 1.5, exposing a new `mbs.wheelEvents` namespace for registering wheel event listeners (see [api/README.md] for a few examples)
+
 ## v1.7.46
 * Remove all reference to the old extended crafted description feature as it's been available in unmodded Bondage Club ever since R109 (see the crafting screen)
 * Fix a [BondageProjects/Bondage-College#5347](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5347) backport making player names in the chat log unselectable
