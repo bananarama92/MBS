@@ -544,9 +544,6 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 </div>
             </div>,
         );
-
-        // @ts-ignore: FIXME
-        window.bob = this;
     }
 
     #canSave() {
@@ -626,7 +623,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
 
     #previewUpdate = false;
 
-    /** Reload the appearance of thepreview character based on the current settings. */
+    /** Reload the appearance of the review character based on the current settings. */
     reloadPreviewAppearance(): void {
         if (this.#previewUpdate) {
             return;
@@ -637,6 +634,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         this.preview.OnlineSharedSettings = this.character.OnlineSharedSettings;
         if (this.settings.itemList === null) {
             this.#previewUpdate = false;
+            CharacterRefresh(this.preview, false, false);
             return;
         }
         const equiplevel = this.settings.equipLevel;
@@ -732,7 +730,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         const eventsElement = document.getElementById(ID.events) as HTMLElement;
         eventsElement?.querySelectorAll(".mbs-fwitemset-event-checkbox").forEach(e => (e as HTMLInputElement).checked = false);
         if (eventsElement) {
-            resetKwargElements(eventsElement, !isPlayer);
+            resetKwargElements(eventsElement, true);
             eventsElement.querySelectorAll("input[type='checkbox'].mbs-fwitemset-event-checkbox").forEach(_e => {
                 const e = _e as HTMLInputElement;
                 e.checked = false;
