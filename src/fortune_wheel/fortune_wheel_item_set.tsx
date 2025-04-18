@@ -544,9 +544,6 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                 </div>
             </div>,
         );
-
-        // @ts-ignore: FIXME
-        window.bob = this;
     }
 
     #canSave() {
@@ -626,7 +623,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
 
     #previewUpdate = false;
 
-    /** Reload the appearance of thepreview character based on the current settings. */
+    /** Reload the appearance of the review character based on the current settings. */
     reloadPreviewAppearance(): void {
         if (this.#previewUpdate) {
             return;
@@ -637,6 +634,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         this.preview.OnlineSharedSettings = this.character.OnlineSharedSettings;
         if (this.settings.itemList === null) {
             this.#previewUpdate = false;
+            CharacterRefresh(this.preview, false, false);
             return;
         }
         const equiplevel = this.settings.equipLevel;
