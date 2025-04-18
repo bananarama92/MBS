@@ -730,7 +730,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
         const eventsElement = document.getElementById(ID.events) as HTMLElement;
         eventsElement?.querySelectorAll(".mbs-fwitemset-event-checkbox").forEach(e => (e as HTMLInputElement).checked = false);
         if (eventsElement) {
-            resetKwargElements(eventsElement, !isPlayer);
+            resetKwargElements(eventsElement, true);
             eventsElement.querySelectorAll("input[type='checkbox'].mbs-fwitemset-event-checkbox").forEach(_e => {
                 const e = _e as HTMLInputElement;
                 e.checked = false;
