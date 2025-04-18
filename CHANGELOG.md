@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.8.1
+* Fix a crash when creating a new wheel outfit
+* Fix wheel of fortune hook kwargs not being initially disabled when creating new item sets
+
 ## v1.8.0
 * Drop support for BC R114
 * Add support for building MBS with Node >=22
