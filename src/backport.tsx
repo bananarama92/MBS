@@ -89,32 +89,31 @@ function _GetClickTouchListeners() {
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R114": {
+            case "R115": {
+                if (MBS_MOD_API.getOriginalHash("ElementButton.Create") === "1FB1B43A") {
+                    backportIDs.add(5347);
+                    MBS_MOD_API.patchFunction("ElementButton.Create", {
+                        "click: this._Click,":
+                            "",
+                        "touchend: this._MouseUp,":
+                            "",
+                        "touchcancel: this._MouseUp,":
+                            "",
+                        'elem.addEventListener("click", onClick);':
+                            ";",
+                    });
+
+                    MBS_MOD_API.hookFunction("ElementButton.Create", 0, ([id, onClick, ...args], next) => {
+                        const button = next([id, () => null, ...args]);
+                        for (const [name, listener] of Object.entries(_GetClickTouchListeners())) {
+                            button.addEventListener(name, listener as EventListenerOrEventListenerObject);
+                        }
+                        button.addEventListener("click", onClick);
+                        return button;
+                    });
+                }
                 break;
             }
-        }
-
-        if (MBS_MOD_API.getOriginalHash("ElementButton.Create") === "C76159AC") {
-            backportIDs.add(5347);
-            MBS_MOD_API.patchFunction("ElementButton.Create", {
-                "click: this._Click,":
-                    "",
-                "touchend: this._MouseUp,":
-                    "",
-                "touchcancel: this._MouseUp,":
-                    "",
-                'elem.addEventListener("click", onClick);':
-                    ";",
-            });
-
-            MBS_MOD_API.hookFunction("ElementButton.Create", 0, ([id, onClick, ...args], next) => {
-                const button = next([id, () => null, ...args]);
-                for (const [name, listener] of Object.entries(_GetClickTouchListeners())) {
-                    button.addEventListener(name, listener as EventListenerOrEventListenerObject);
-                }
-                button.addEventListener("click", onClick);
-                return button;
-            });
         }
 
         if (!document.getElementById("mbs-backport-style")) {

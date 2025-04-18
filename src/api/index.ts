@@ -3,8 +3,9 @@ import { waitForBC, settingsMBSLoaded } from "../common_bc";
 
 import * as wheelOutfits from "./wheel_outfits";
 import * as css from "./css";
+import * as wheelEvents from "./wheel_events";
 
-export { wheelOutfits, css };
+export { wheelOutfits, css, wheelEvents };
 
 /**
  * The version of the MBS API.
@@ -16,8 +17,22 @@ export const API_VERSION = Object.freeze({
     /** The major API versions; increments are reserved for changes and removals */
     major: 1,
     /** The minor API versions; increments are reserved for additions */
-    minor: 4,
+    minor: 5,
 }) satisfies typeof mbs.API_VERSION;
+
+function jsonStringifier(key: string, value: any) {
+    if (value instanceof Set) {
+        return Array.from(value);
+    } else if (value instanceof Map) {
+        return Object.fromEntries(value);
+    } else if (value instanceof Error) {
+        return { ...value };
+    } else if (value instanceof Date) {
+        return value.toString();
+    } else {
+        return value;
+    }
+}
 
 /**
  * Return MBS debug output in human-readable, JSON-safe, stringified form.
@@ -30,7 +45,7 @@ export const getDebug: typeof mbs.getDebug = function getDebug() {
         return JSON.stringify({
             log: logger,
             settings: Player.MBSSettings,
-        }, undefined, 4);
+        }, jsonStringifier, 4);
     } else {
         return JSON.stringify({
             log: logger,

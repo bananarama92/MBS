@@ -95,16 +95,6 @@ class MBSLog extends Array<LogEntry> {
     error(...args: unknown[]) {
         this.#log("error", args);
     }
-
-    toJSON() {
-        return this.map(arg => {
-            return {
-                date: arg.date.toUTCString(),
-                level: arg.level,
-                args: arg.args.map(i => (i instanceof Map || i instanceof Set) ? Array.from(i) : i),
-            };
-        });
-    }
 }
 
 /** The MBS logger */
@@ -133,14 +123,16 @@ export function validateInt(
     varName: string,
     min: number = Number.MIN_SAFE_INTEGER,
     max: number = Number.MAX_SAFE_INTEGER,
+    errPrefix: null | string = null,
 ): void {
+    errPrefix = errPrefix == null ? "" : `${errPrefix}: `;
     if (!(Number.isInteger(int) && int >= min && int <= max)) {
         if (typeof int !== "number") {
-            throw new TypeError(`Invalid "${varName}" type: ${typeof int}`);
+            throw new TypeError(`${errPrefix}Invalid "${varName}" type: ${typeof int}`);
         } else if (!Number.isInteger(int)) {
-            throw new Error(`"${varName}" must be an integer: ${int}`);
+            throw new Error(`${errPrefix}"${varName}" must be an integer: ${int}`);
         } else {
-            throw new RangeError(`"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
+            throw new RangeError(`${errPrefix}"${varName}" must fall in the [${min}, ${max}] interval: ${int}`);
         }
     }
 }
@@ -288,7 +280,7 @@ export class Version {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 114 satisfies number;
+export const BC_MIN_VERSION = 115 satisfies number;
 
 const bcListenerNames = [
     "api",
@@ -351,24 +343,27 @@ async function contentLoadedListener() {
         mbsLoadingStarted = true;
     }
 
-    if (!GameVersionFormat.test(GameVersion)) {
-        logger.error(`Detected an invalid BC version: "${GameVersion}"`);
+    const gameVersion = globalThis.GameVersion;
+    if (typeof gameVersion !== "string" || !GameVersionFormat.test(gameVersion)) {
+        logger.error(`Detected an invalid BC version: "${gameVersion}"`);
         logger.log("Unloading MBS from Mod SDK");
         MBS_MOD_API.unload();
-        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} detected an invalid BC version: "${GameVersion}"`);
+        if (gameVersion !== undefined) {
+            window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} detected an invalid BC version: "${gameVersion}"`);
+        }
         return;
     }
 
-    const bc_version = Version.fromBCVersion(GameVersion);
+    const bc_version = Version.fromBCVersion(gameVersion);
     const bc_min_version = Version.fromBCVersion(`R${BC_MIN_VERSION}`);
     if (bc_version.lesser(bc_min_version)) {
-        logger.error(`BC version "R${BC_MIN_VERSION}" or later required; detected "${GameVersion}"`);
+        logger.error(`BC version "R${BC_MIN_VERSION}" or later required; detected "${gameVersion}"`);
         logger.log("Unloading MBS from Mod SDK");
         MBS_MOD_API.unload();
-        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${GameVersion}"`);
+        window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${gameVersion}"`);
         return;
     } else {
-        logger.log(`Detected BC ${GameVersion}`);
+        logger.log(`Detected BC ${gameVersion}`);
     }
 
     logger.debug("Executing afterLoad hooks", Object.keys(bcListeners.afterLoad).sort());
