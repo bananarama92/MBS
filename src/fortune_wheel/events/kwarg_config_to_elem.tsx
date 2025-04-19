@@ -147,7 +147,7 @@ function _parseNumber(
     options: WheelEvents.KwargsConfig.Number,
     settings: import("../../common_bc").FWSelectedItemSet,
 ): HTMLInputElement {
-    const children: (string | Element)[] = [options.default.toString()];
+    const children: (string | Element)[] = [];
     let list: undefined | string = undefined;
     if (options.suggestions) {
         children.push(<datalist id={`${idPrefix}-${name}-datalist`}>{options.suggestions.map(i => <option>{i}</option>)}</datalist>);
@@ -165,9 +165,10 @@ function _parseNumber(
         tag: "input",
         attributes: {
             type: "number",
-            min: options.min.toString(),
-            max: options.max.toString(),
-            step: options.step == null ? undefined : options.step.toString(),
+            min: options.min,
+            max: options.max,
+            value: options.default,
+            step: options.step == null ? undefined : options.step,
             inputmode: options.inputmode ?? inputmode,
             list,
             size: 0,
