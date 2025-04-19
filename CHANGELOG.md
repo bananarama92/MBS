@@ -1,5 +1,14 @@
 # MBS Changelog
 
+## v1.8.2
+* Wheel event API:
+    - Fix the example mod names as used in the readme
+    - Clean up the styling of various kwarg-related DOM elements
+    - Fix default values of `number` kwarg inputs failing to be assigned
+    - Fix a failure to look up the original kwarg config
+    - Fix `number` kwargs improperly checking for finite values
+    - Make the wheel event registration logic more strict w.r.t. checking for MBS-esque names
+
 ## v1.8.1
 * Fix a crash when creating a new wheel outfit
 * Fix wheel of fortune hook kwargs not being initially disabled when creating new item sets
