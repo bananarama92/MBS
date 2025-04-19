@@ -100,12 +100,12 @@ function _validateNumber(
 
     switch (kwargConfig?.type) {
         case undefined:
-            if (typeof kwargParsed.value !== "number" || Number.isFinite(kwargParsed.value)) {
+            if (typeof kwargParsed.value !== "number" || !Number.isFinite(kwargParsed.value)) {
                 return null;
             }
             return kwargParsed;
         case "number":
-            if (typeof kwargParsed.value !== "number" || Number.isFinite(kwargParsed.value)) {
+            if (typeof kwargParsed.value !== "number" || !Number.isFinite(kwargParsed.value)) {
                 kwargParsed.value = kwargConfig.default;
             }
             if (!inRange(kwargParsed.value, kwargConfig.min, kwargConfig.max)) {
