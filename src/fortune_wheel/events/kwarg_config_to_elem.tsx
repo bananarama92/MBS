@@ -212,7 +212,7 @@ function _parseCheckbox(
             name,
             disabled: true,
         },
-        classList: ["mbs-fwitemset-event-kwarg-config"],
+        classList: ["checkbox", "mbs-fwitemset-event-kwarg-config"],
         eventListeners: {
             change: _getChangeInput(settings),
         },
