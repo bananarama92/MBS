@@ -224,20 +224,37 @@
 				box-shadow: unset;
 			}
 
-			&[type="text"] {
-				height: 1em;
-				width: 100%;
+			&:disabled {
+				background-color: color-mix(in srgb, var(--mbs-button-color) 60%, black 40%);
 			}
 
+			&[type="text"],
 			&[type="number"] {
-				height: 1em;
-				width: 50%;
+				border-color: black;
+				direction: ltr;
+				height: 1.15em;
+				width: 100%;
 			}
 		}
 	}
 
 	.mbs-fwitemset-event-kwargs {
+		align-items: center;
+		column-gap: var(--gap);
+		direction: rtl;
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-columns: 3fr 1fr;
+		text-align: left;
+		width: 100%;
+
+		&:has(select) {
+			display: block;
+			text-align: center;
+		}
+
 		& > * {
+			direction: ltr;
 			margin-block: var(--gap);
 		}
 

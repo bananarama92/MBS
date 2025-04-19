@@ -28,7 +28,7 @@ export const addEventListener: typeof mbs.wheelEvents.addEventListener = functio
     const addonData = bcModSdk.getModsInfo().find(i => i.name === addonName);
     if (!addonData) {
         throw new Error(`Addon "${addonName}" is not registered in bcModSdk`);
-    } else if (addonName === "mbs") {
+    } else if (addonName.normalize().toLowerCase() === "mbs") {
         throw new Error("Cannot register event listener to addon \"MBS\"");
     }
 

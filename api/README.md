@@ -27,11 +27,18 @@ Since MBS v1.8.0 it is possible for addons to register event listeners for the w
 ## Wheel event listener examples
 
 ```ts
-const MySdkInfo: import("bondage-club-mod-sdk").ModSDKModInfo;
+import bcModSdk from "bondage-club-mod-sdk";
+
+const modName = "TST";
+bcModSdk.registerMod({
+    name: modName,
+    fullName: "My test mod",
+    version: "1.0.0",
+});
 
 mbs.wheelEvents.addEventListener(
     "beforeItemEquip",
-    MySdkInfo,
+    modName,
     {
         listener(ev, kwargs) {
             const difficulty = kwargs.difficulty;
@@ -55,11 +62,11 @@ mbs.wheelEvents.addEventListener(
 
 mbs.wheelEvents.addEventListener(
     "beforeItemEquip",
-    MySdkInfo,
+    modName,
     {
         listener(ev, kwargs) {
             const color = kwargs.color;
-            if (color?.type === "select" && color.value !== und efined) {
+            if (color?.type === "select" && color.value !== undefined) {
                 ev.color.fill(color.value);
             }
         },
@@ -81,7 +88,7 @@ mbs.wheelEvents.addEventListener(
 
 mbs.wheelEvents.addEventListener(
     "validateItemEquip",
-    MySdkInfo,
+    modName,
     {
         listener(ev, kwargs) {
             if (ev.newAsset.Name.includes("Cheese")) {
@@ -97,7 +104,7 @@ mbs.wheelEvents.addEventListener(
 
 mbs.wheelEvents.addEventListener(
     "afterOutfitEquip",
-    MySdkInfo,
+    modName,
     {
         listener(ev, kwargs) {
             ChatRoomSendLocal("Hello world!");

@@ -100,12 +100,12 @@ function _validateNumber(
 
     switch (kwargConfig?.type) {
         case undefined:
-            if (typeof kwargParsed.value !== "number" || Number.isFinite(kwargParsed.value)) {
+            if (typeof kwargParsed.value !== "number" || !Number.isFinite(kwargParsed.value)) {
                 return null;
             }
             return kwargParsed;
         case "number":
-            if (typeof kwargParsed.value !== "number" || Number.isFinite(kwargParsed.value)) {
+            if (typeof kwargParsed.value !== "number" || !Number.isFinite(kwargParsed.value)) {
                 kwargParsed.value = kwargConfig.default;
             }
             if (!inRange(kwargParsed.value, kwargConfig.min, kwargConfig.max)) {
@@ -178,7 +178,7 @@ export function validateHooks(
             && (typeof hook.kwargs === "object" && hook.kwargs !== null)
         ) {
             const allKwargs: Mutable<FWHook["kwargs"]> = {};
-            const allKwargsConfig = register[hook.hookType]?.find(i => i.hookName === hook.hookName && i.hookType === hook.hookName)?.kwargs ?? {};
+            const allKwargsConfig = register[hook.hookType]?.find(i => i.hookName === hook.hookName && i.hookType === hook.hookType)?.kwargs ?? {};
             for (const [kwargName, _kwarg] of Object.entries(hook.kwargs)) {
                 const kwarg: WheelEvents.Kwargs.All | WheelEvents.Kwargs.JsonAll = _kwarg;
                 const kwargConfig = allKwargsConfig[kwargName];
