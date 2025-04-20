@@ -90,7 +90,8 @@ waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
             case "R115": {
-                if (MBS_MOD_API.getOriginalHash("ElementButton.Create") === "1FB1B43A") {
+                const hash = MBS_MOD_API.getOriginalHash("ElementButton.Create");
+                if (hash === "1FB1B43A" || hash === "238C310E") {
                     backportIDs.add(5347);
                     MBS_MOD_API.patchFunction("ElementButton.Create", {
                         "click: this._Click,":

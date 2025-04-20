@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.8.3
+* Adapt the mobile button tooltip patch to a BC hotfix
+
 ## v1.8.2
 * Wheel event API:
     - Fix the example mod names as used in the readme
