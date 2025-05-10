@@ -70,14 +70,11 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
         if (typeof p === "number") {
             return p <= a.MaxOpacity && p >= a.MinOpacity;
         } else if (isArray(p)) {
-            const layers = ItemColorGetColorableLayers({ Asset: a });
             return p.every((opacity, i) => {
-                const layer = layers[i];
-                if (!layer) {
-                    return false;
-                }
+                const layer = a.Layer[i];
                 return (
-                    typeof opacity === "number"
+                    layer != null
+                    && typeof opacity === "number"
                     && opacity <= 1
                     && opacity >= 0
                 );
@@ -134,7 +131,10 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
         return {};
     }
 
-    const validPropKeys: Set<keyof ItemProperties> = new Set(["OverridePriority"]);
+    const validPropKeys: Set<keyof ItemProperties> = new Set([
+        "OverridePriority",
+        asset.EditOpacity ? "Opacity" : null,
+    ].filter((i): i is keyof ItemProperties => i != null));
     if (asset.Archetype) {
         const item: Item = { Asset: asset, Property: properties };
         const options = ExtendedItemGatherOptions(item);

@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.8.4
+* Add support for BC R116Beta1
+* Fix the `Opacity` item property not being considered legal for clothes
+* Fix the "Parse" button in the fortune wheel customization menu raising if the name is empty
+
 ## v1.8.3
 * Adapt the mobile button tooltip patch to a BC hotfix
 

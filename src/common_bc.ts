@@ -244,8 +244,12 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
     /**
      * Update this instance with settings from the provided item set.
      */
-    writeSettings(): FWItemSet {
-        if (this.name === null || this.itemList === null) {
+    writeSettings(isPreview: boolean = false): FWItemSet {
+        let name = this.name;
+        if (isPreview) {
+            name ??= "preview";
+        }
+        if (name === null || this.itemList === null) {
             throw new Error("Cannot create an ItemSet while \"name\" or \"itemList\" is null");
         }
 
@@ -261,7 +265,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
         }
 
         return new FWItemSet(
-            this.name,
+            name,
             this.itemList,
             this.mbsList,
             this.stripLevel,
