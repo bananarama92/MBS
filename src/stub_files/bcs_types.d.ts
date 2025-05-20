@@ -273,7 +273,7 @@ interface DataSize {
     /** The currently used data size in bytes */
     value: number,
     /** The currently used data size in bytes per key */
-    valueRecord: Record<string, number>;
+    valueRecord: Readonly<Record<string, number>>;
     /** The maximum data size in bytes */
     readonly max: number,
     /** A safety marigin in the `[0, 1]` interval applied as a factor to `max` */
