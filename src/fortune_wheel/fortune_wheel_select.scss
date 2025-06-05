@@ -44,6 +44,7 @@
 }
 
 #mbs-fwselect-button-grid-outer {
+	background-color: var(--mbs-background-color);
 	display: grid;
 	grid-area: buttonOuterGrid;
 	grid-template-rows: min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) auto;
