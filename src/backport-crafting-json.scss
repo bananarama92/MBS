@@ -1,0 +1,252 @@
+dialog {
+	--button-size: min(9dvh, 4.5dvw);
+	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
+	--scrollbar-gutter: max(20px, 1.25 * var(--gap));
+
+	display: grid;
+	gap: var(--gap);
+	grid-template: "import aside" auto / auto min-content;
+	height: 100%;
+	padding: 0 var(--gap) var(--gap) var(--gap);
+	pointer-events: auto;
+	user-select: none;
+	width: 95%;
+}
+
+dialog::backdrop {
+	background-color: rgb(0 0 0 / 30%);
+}
+
+.aside {
+	display: grid;
+	grid-area: aside;
+	grid-template-rows: auto min-content;
+	margin-top: calc(1.15em / 2);
+}
+
+.aside > [role="menubar"] {
+	direction: rtl;
+	display: grid;
+	gap: var(--gap);
+	grid-auto-flow: column;
+	grid-template-columns: repeat(3, var(--button-size));
+	justify-self: end;
+}
+
+.aside > [role="menubar"] [role="menuitem"] {
+	height: var(--button-size);
+	width: var(--button-size);
+}
+
+.tooltip-container > [role="tooltip"] {
+	width: 100%;
+	line-clamp: 5;
+	-webkit-line-clamp: 5;
+	-webkit-box-orient: vertical;
+	border: unset;
+	box-shadow: unset;
+	display: none;
+	height: 100%;
+	overflow: hidden;
+	position: unset;
+	visibility: unset;
+}
+
+.aside > [role="menubar"] [role="tooltip"] {
+	--tooltip-gap: var(--gap);
+}
+
+.aside > .description {
+	font-size: 0.65em;
+}
+
+.aside > .description ol {
+	margin-block: unset;
+}
+
+fieldset[name="import"] {
+	column-gap: var(--gap);
+	display: grid;
+	grid-area: import;
+	grid-template:
+		"legend legend" min-content
+		"file search" min-content
+		"output output" auto / 1fr 1fr;
+	margin: unset;
+	overflow: hidden;
+	padding: 0 var(--half-gap) var(--half-gap) var(--half-gap);
+}
+
+fieldset[name="import"] > legend {
+	grid-area: legend;
+}
+
+fieldset[name="import"] > input[type="file"] {
+	grid-area: file;
+	margin-top: var(--half-gap);
+	min-height: calc(1.35em + 6px);
+}
+
+fieldset[name="import"] > input[type="file"]::file-selector-button {
+	border-block: unset;
+	border-left: unset;
+	cursor: pointer;
+	height: 100%;
+}
+
+fieldset[name="import"] > input[type="search"] {
+	grid-area: search;
+	margin-top: var(--half-gap);
+	min-height: calc(1.35em + 6px);
+}
+
+fieldset[name="import"] > output {
+	border: min(0.2vh, 0.1vw) solid black;
+	border-radius: 1.15em 1.15em 0 0;
+	display: grid;
+	grid-area: output;
+	grid-template:
+		"new old" min-content
+		"radiogroup radiogroup" auto
+		"tooltips tooltips" min-content / 1fr 1fr;
+	margin-top: var(--gap);
+	overflow: hidden;
+}
+
+.tooltip-container {
+	background-color: #FF8;
+	border-top: min(0.2vh, 0.1vw) solid black;
+	font-size: 0.65em;
+	height: calc(5 * 1.15em + 2 * 0.3em);
+	width: 100%;
+}
+
+fieldset[name="import"] > output > .tooltip-container {
+	grid-area: tooltips;
+}
+
+.tooltip-container > [role="tooltip"][data-focus],
+.tooltip-container > [role="tooltip"][data-hover] {
+	display: -webkit-box;
+}
+
+fieldset[name="import"] > output > button {
+	border: unset;
+	border-bottom: min(0.2vh, 0.1vw) solid black;
+	height: calc(1.35em + 6px);
+	width: 100%;
+}
+
+fieldset[name="import"] > output > button .button-label {
+	background-color: unset !important;
+}
+
+fieldset[name="import"] > output > button[name="select-old"] {
+	border-left: min(0.2vh, 0.1vw) solid black;
+	grid-area: old;
+}
+
+fieldset[name="import"] > output > button[name="select-old"],
+fieldset[name="import"] > output > button[name="select-old"]::before,
+fieldset[name="import"] > output > button[name="select-old"]:active::before {
+	border-radius: 0 1.15em 0 0;
+}
+
+fieldset[name="import"] > output > button[name="select-new"] {
+	grid-area: new;
+}
+
+fieldset[name="import"] > output > button[name="select-new"],
+fieldset[name="import"] > output > button[name="select-new"]::before,
+fieldset[name="import"] > output > button[name="select-new"]:active::before {
+	border-radius: 1.15em 0 0;
+}
+
+.radio-supergroup {
+	box-sizing: border-box;
+	max-height: fit-content;
+	overflow-y: scroll;
+	padding-block: 0;
+	padding-inline: var(--scrollbar-gutter);
+	scroll-padding: 0;
+	width: 100%;
+}
+
+fieldset[name="import"] > output > .radio-supergroup {
+	grid-area: radiogroup;
+}
+
+.radio-supergroup > [role="radiogroup"] {
+	align-items: center;
+	border: unset;
+	display: grid;
+	gap: var(--gap);
+	grid-template-columns: 1fr 1fr;
+	margin: unset;
+	padding: unset;
+}
+
+.radio-supergroup > [role="radiogroup"] [draggable="true"] {
+	align-items: center;
+	display: grid;
+	grid-template-columns: min-content auto min-content;
+}
+
+.radio-supergroup > [role="radiogroup"] .radiogroup-label {
+	border-block: 3px solid rgb(255 255 255 / 0%);
+	box-sizing: content-box;
+	cursor: pointer;
+	display: flex;
+	float: left;
+	height: 1.15em;
+	justify-content: end;
+	min-width: 1.6em;
+	padding-block: 0.1em;
+	padding-right: 0.5em;
+}
+
+.radio-supergroup > [role="radiogroup"] button {
+	border-block: 3px solid rgb(255 255 255 / 0%);
+	box-sizing: content-box;
+	height: 1.15em;
+	padding-block: 0.1em;
+	width: 1.15em;
+}
+
+.radio-supergroup > [role="radiogroup"] input[type="radio"] {
+	height: 1.15em;
+	width: 1.15em;
+}
+
+.radio-supergroup > [role="radiogroup"] img {
+	height: 1.15em;
+	pointer-events: none;
+	width: 1.15em;
+}
+
+.radio-supergroup > [role="radiogroup"] img[src="./Icons/HiddenItem.png"] {
+	opacity: 0.2;
+}
+
+.radio-supergroup > [role="radiogroup"] label {
+	align-items: center;
+	border-block: 3px solid rgb(255 255 255 / 0%);
+	column-gap: 0.25em;
+	display: grid;
+	grid-template-columns: min-content min-content auto;
+	padding-block: 0.1em;
+}
+
+.border-top [draggable="true"] > * {
+	border-top-color: rgb(0 96 223) !important;
+}
+
+.border-bottom [draggable="true"] > * {
+	border-bottom-color: rgb(0 96 223) !important;
+}
+
+.label-highlight {
+	background-color: #FF8;
+	font-style: normal;
+}

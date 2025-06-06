@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.9.0
+* Backport the crafting mass import + export functionality
+    - [BondageProjects/Bondage-College#5618](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5618): Add an importer + exporter for entire crafting inventories
+![Crafting import](static/images/craft_mass_import.png)
+
 ## v1.8.4
 * Add support for BC R116Beta1
 * Fix the `Opacity` item property not being considered legal for clothes

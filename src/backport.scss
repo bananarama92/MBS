@@ -1,16 +1,7 @@
 /* stylelint-disable no-empty-source */
 
-.button {
-	user-select: none;
-}
-
-/* stylelint-disable selector-class-pattern */
-.ChatMessageName {
-	user-select: text;
-}
-
-@media (hover: none) {
-	.button[data-show-tooltip] > .button-tooltip {
-		visibility: visible;
-	}
+#crafting-import-dialog {
+	height: 100%;
+	pointer-events: none;
+	width: 100%;
 }

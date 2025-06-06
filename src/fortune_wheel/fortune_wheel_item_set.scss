@@ -2,7 +2,7 @@
 	--gap: min(2dvh, 1dvw);
 	--height: min(7dvh, 3.5dvw);
 
-	background: unset;
+	background: var(--mbs-background-color);
 	grid-template:
 		"menubar menubar menubar menubar menubar menubar menubar" min(9dvh, 4.5dvw)
 		". . name-input name-input . . ." var(--height)
@@ -15,6 +15,7 @@
 		". . weight-input lock-grid lock-grid lock-grid lock-grid" var(--height)
 		". . event-header event-header event-header event-header event-header" var(--height)
 		". . event-menu event-menu event-menu event-menu event-menu" min-content / min(9dvh, 4.5dvw) min(40dvh, 20dvw) auto min(38dvh, 19dvw) min(16dvh, 8dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+	overflow-y: scroll;
 
 	.button-tooltip {
 		--tooltip-gap: var(--gap);
