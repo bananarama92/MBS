@@ -2,7 +2,7 @@
 	--gap: min(2dvh, 1dvw);
 	--height: min(7dvh, 3.5dvw);
 
-	background: var(--mbs-background-color);
+	background: unset;
 	grid-template:
 		"menubar menubar menubar menubar menubar menubar menubar" min(9dvh, 4.5dvw)
 		". . name-input name-input . . ." var(--height)
