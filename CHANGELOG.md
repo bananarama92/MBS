@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.9.1
+* Add BC R117Beta1 support
+* Fix an issue wherein the wheel of fortune preview character would fail to render
+
 ## v1.9.0
 * Backport the crafting mass import + export functionality
     - [BondageProjects/Bondage-College#5618](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5618): Add an importer + exporter for entire crafting inventories

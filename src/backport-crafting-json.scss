@@ -63,6 +63,7 @@ dialog::backdrop {
 
 .aside > .description ol {
 	margin-block: unset;
+	padding-left: 1.15em;
 }
 
 fieldset[name="import"] {
@@ -83,6 +84,7 @@ fieldset[name="import"] > legend {
 }
 
 fieldset[name="import"] > input[type="file"] {
+	color: black;
 	grid-area: file;
 	margin-top: var(--half-gap);
 	min-height: calc(1.35em + 6px);
