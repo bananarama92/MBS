@@ -34,7 +34,7 @@
 * Drop support for BC R114
 * Add support for building MBS with Node >=22
 * Make MBS's load system a bit more robust w.r.t. BC load errors
-* Refactor the MBS's wheel of fortune outfit equipping logic, switchting to an event-based structure
+* Refactor the MBS's wheel of fortune outfit equipping logic, switching to an event-based structure
 * Add the ability to register and use third-party, external addon-specific options when spinning the wheel of fortune. Such options can be used if the following three conditions are fulfilled:
     - An addon registers its own custom options for MBS
     - The wheel owner enables and configures aforementioned option(s)

@@ -159,7 +159,7 @@ function _validateText(
 }
 
 /**
- * Validate the passed kwargs; if possibile w.r.t. their config
+ * Validate the passed kwargs; if possible w.r.t. their config
  * @param hooks
  * @param kwargsConfig
  * @returns

@@ -279,7 +279,7 @@ function _parseSelect(
             throw new Error;
     }
 
-    // NOTE: falsly values are not automatically converted into attributes, so explicitly assign them afterwards
+    // NOTE: falsely values are not automatically converted into attributes, so explicitly assign them afterwards
     extraOptions.forEach(o => o.setAttribute("value", ""));
     children.unshift(
         ...extraOptions,
