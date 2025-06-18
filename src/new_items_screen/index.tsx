@@ -117,13 +117,13 @@ waitForBC("new_items_screen", {
                     root.querySelector("option[selected]")?.setAttribute("value", "");
                     document.body.append(root);
                 }
-                root.toggleAttribute("data-unload", false);
+                root.toggleAttribute("hidden", false);
             },
             Resize: () => {
                 ElementPositionFix(IDs.root, 36, ...Shop2.Elements.MBS.Coords);
             },
             Unload: () => {
-                document.getElementById(IDs.root)?.toggleAttribute("data-unload", true);
+                document.getElementById(IDs.root)?.toggleAttribute("hidden", true);
             },
             Exit: () => {
                 ElementRemove(IDs.root);
