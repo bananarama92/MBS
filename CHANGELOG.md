@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.9.2
+* Drop R116 support
+* Fix the cancel button being disabled when creating a new wheel item set
+
 ## v1.9.1
 * Add BC R117Beta1 support
 * Fix an issue wherein the wheel of fortune preview character would fail to render
