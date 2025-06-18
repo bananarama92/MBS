@@ -407,7 +407,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                             ElementButton.Create(
                                 ID.cancel,
                                 () => this.exit(false, ExitAction.NONE),
-                                { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left", disabled },
+                                { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left" },
                                 { button: { attributes: { "screen-generated": undefined } } },
                             ),
                             ElementButton.Create(

@@ -306,7 +306,7 @@ wheelHookRegister.addEventListener(
             return (oldItem && !canUnlock(oldItem, character)) ? "Locked item equipped" : null;
         },
         hookName: "LockedItem",
-        label: "Check whether character can unlock the currently equiped item.",
+        label: "Check whether character can unlock the currently equipped item.",
         conditional: false,
     },
 );
@@ -466,7 +466,7 @@ export function fortuneWheelEquip(
         charTarget,
     );
 
-    const eventLog: Partial<Record<ExtendedWheelEvents.Events.Names, Record<string, Record<string, Record<"succes" | "error" | "skip", {
+    const eventLog: Partial<Record<ExtendedWheelEvents.Events.Names, Record<string, Record<string, Record<"success" | "error" | "skip", {
         readonly event: WheelEvents.Events.Base;
         readonly kwargs: Record<string, WheelEvents.Kwargs.All>;
         readonly reason?: unknown;

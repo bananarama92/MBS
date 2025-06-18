@@ -288,7 +288,7 @@ export class WheelHookRegister implements _WheelHookRegister {
         hookType: T,
         event: ExtendedWheelEvents.Events.Mapping[T],
         allKwargs: Partial<Record<string, Record<string, WheelEvents.Kwargs.All>>>,
-        loggerOutputs: Partial<Record<ExtendedWheelEvents.Events.Names, Record<string, Record<string, Record<"succes" | "error" | "skip", {
+        loggerOutputs: Partial<Record<ExtendedWheelEvents.Events.Names, Record<string, Record<string, Record<"success" | "error" | "skip", {
             readonly event: WheelEvents.Events.Base;
             readonly kwargs: Record<string, WheelEvents.Kwargs.All>;
             readonly reason?: unknown;
@@ -297,7 +297,7 @@ export class WheelHookRegister implements _WheelHookRegister {
         const log: typeof loggerOutputs[ExtendedWheelEvents.Events.Names] = (loggerOutputs[hookType] ??= {});
         const ret = this[hookType].map(({ listener, hookName, conditional, registrationData }) => {
             log[registrationData.name] ??= {};
-            log[registrationData.name][hookName] ??= { "error": [], "succes": [], "skip": [] };
+            log[registrationData.name][hookName] ??= { "error": [], "success": [], "skip": [] };
 
             const key = `${registrationData.name}-${hookType}-${hookName}`;
             let kwargs = allKwargs[key];
@@ -334,7 +334,7 @@ export class WheelHookRegister implements _WheelHookRegister {
                 return null;
             }
 
-            log[registrationData.name][hookName].succes.push({ event, kwargs });
+            log[registrationData.name][hookName].success.push({ event, kwargs });
             return result;
         }).filter(Boolean) as NonNullable<ExtendedWheelEvents.ListenerReturnType[T]>[];
         return ret;

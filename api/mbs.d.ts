@@ -116,7 +116,7 @@ declare namespace WheelEvents {
          */
         export interface ValidateItemEquip extends ItemBase {}
 
-        /** Fired before equipping an item, after it has been succesfully validated.  */
+        /** Fired before equipping an item, after it has been successfully validated.  */
         export interface BeforeItemEquip extends ItemBase {
             /** The to-be equipped lock (if any) */
             readonly lock: null | AssetLockType;
