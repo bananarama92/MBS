@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.9.3
+* Add BC R118Beta1 support
+* Backport one BC R118 bug fix:
+    - [BondageProjects/Bondage-College#5674](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5674): Fix `ExtendedItemSetOptionByRecord()` unconditionally failing to handle non-extended items
+
 ## v1.9.2
 * Drop R116 support
 * Fix the cancel button being disabled when creating a new wheel item set
