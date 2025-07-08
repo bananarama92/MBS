@@ -2,10 +2,6 @@
     display: grid;
     grid-template-rows: 2fr 3fr;
 
-    &[data-unload] {
-        display: none;
-    }
-
     & > span {
         color: white;
         place-self: center center;
