@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.9.4
+* Add BC R119 support
+* Drop R117 support
+
 ## v1.9.3
 * Add BC R118Beta1 support
 * Backport one BC R118 bug fix:
