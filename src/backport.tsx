@@ -19,17 +19,7 @@ export const backportIDs: Set<number> = new Set();
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R117":
-            case "R118Beta1": {
-                if (MBS_MOD_API.getOriginalHash("ExtendedItemSetOptionByRecord") === "E6FC165D") {
-                    backportIDs.add(5674);
-                    MBS_MOD_API.patchFunction("ExtendedItemSetOptionByRecord", {
-                        "if (item?.Asset?.Archetype == null) return;":
-                            "if (!item) return;",
-                        "const previousOptions = ExtendedItemGatherOptions(item);":
-                            "const previousOptions = item.Asset.Archetype == null ? [] : ExtendedItemGatherOptions(item);",
-                    });
-                }
+            case "R118": {
                 break;
             }
         }

@@ -85,40 +85,42 @@ waitForBC("new_items_screen", {
             }
         }
 
+        const load = () => {
+            let root = document.getElementById(IDs.root);
+            if (!root) {
+                const versions = Object.keys(ASSETS).filter(version => {
+                    return version !== "R98";
+                }).sort((_version1, _version2) => {
+                    const version1 = Number.parseInt(_version1.slice(1), 10);
+                    const version2 = Number.parseInt(_version2.slice(1), 10);
+                    if (version1 > version2) {
+                        return -1;
+                    } else if (version2 > version1) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+
+                root = <label id={IDs.root}>
+                    <span>Filter by BC version</span>
+                    <select id={IDs.select} onChange={versionSelectChange}>
+                        <option selected={true}>All versions</option>
+                        <hr />
+                        {versions.map(value => <option>{value}</option>)}
+                    </select>
+                </label> as HTMLLabelElement;
+                root.querySelector("option[selected]")?.setAttribute("value", "");
+                document.body.append(root);
+            }
+            root.toggleAttribute("hidden", false);
+        };
+
         Shop2.Elements.MBS = {
             Coords: [135, 155 + (2 * 160 - 30), 420, 180],
             Mode: new Set(["Preview", "Buy", "Sell"]),
             Draw: () => null,
-            Load: () => {
-                let root = document.getElementById(IDs.root);
-                if (!root) {
-                    const versions = Object.keys(ASSETS).filter(version => {
-                        return version !== "R98";
-                    }).sort((_version1, _version2) => {
-                        const version1 = Number.parseInt(_version1.slice(1), 10);
-                        const version2 = Number.parseInt(_version2.slice(1), 10);
-                        if (version1 > version2) {
-                            return -1;
-                        } else if (version2 > version1) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                    });
-
-                    root = <label id={IDs.root}>
-                        <span>Filter by BC version</span>
-                        <select id={IDs.select} onChange={versionSelectChange}>
-                            <option selected={true}>All versions</option>
-                            <hr />
-                            {versions.map(value => <option>{value}</option>)}
-                        </select>
-                    </label> as HTMLLabelElement;
-                    root.querySelector("option[selected]")?.setAttribute("value", "");
-                    document.body.append(root);
-                }
-                root.toggleAttribute("hidden", false);
-            },
+            Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
             Resize: () => {
                 ElementPositionFix(IDs.root, 36, ...Shop2.Elements.MBS.Coords);
             },

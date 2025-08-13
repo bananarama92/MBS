@@ -19,8 +19,17 @@ import styles from "./settings_screen.scss";
 
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
-
     constructor() {
+        const load = () => {
+            CommonSetScreen("Character", "Preference");
+            PreferencePageCurrent = 1;
+            const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
+            if (screen) {
+                screen.load?.();
+                PreferenceSubscreen = screen;
+            }
+        };
+
         super(
             null,
             "Character",
@@ -29,15 +38,7 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Run: PreferenceRun,
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
-                Load: () => {
-                    CommonSetScreen("Character", "Preference");
-                    PreferencePageCurrent = 1;
-                    const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
-                    if (screen) {
-                        screen.load?.();
-                        PreferenceSubscreen = screen;
-                    }
-                },
+                Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
             },
         );
     }

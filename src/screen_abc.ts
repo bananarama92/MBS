@@ -165,11 +165,12 @@ export abstract class MBSScreen {
 
     /** Get an object with all {@link ScreenFunctions} and the screen background */
     getFunctions(): ScreenFunctions {
+        const load = this.load.bind(this);
         return {
             Run: this.run?.bind(this) ?? CommonNoop,
             Draw: this.draw?.bind(this),
             Click: this.click?.bind(this) ?? CommonNoop,
-            Load: this.load.bind(this),
+            Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
             Unload: this.unload?.bind(this),
             Resize: this.resize?.bind(this),
             Exit: this.exit.bind(this),
