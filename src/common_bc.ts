@@ -83,7 +83,7 @@ export function canChangeCosplay(character: Character): boolean {
     return (
         ruleState.inEffect
         && ruleState.isEnforced
-        && <number>ruleState.customData.minimumRole > 3
+        && (ruleState.customData?.minimumRole ?? -1) > 3
     );
 }
 
