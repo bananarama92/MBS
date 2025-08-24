@@ -79,17 +79,67 @@ export const MBS_MOD_INFO = Object.freeze({
 export const MBS_MOD_API = bcModSdk.registerMod(MBS_MOD_INFO);
 
 /** A proxy for lazily accessing the BCX mod API. */
-class ModAPIProxy implements BCX_ModAPI {
+class ModAPIProxy implements Omit<BCX_ModAPI, "sendQuery"> {
     /** The lazily loaded BCX mod API */
     #api: null | BCX_ModAPI = null;
+    #isLogged = false;
+
+    get api() {
+        if (this.#api !== null) {
+            return this.#api;
+        } else if (typeof bcx === "undefined" || !CommonIsObject(bcx)) {
+            if (!this.#isLogged) {
+                this.#isLogged = true;
+                logger.debug("Failed to detect BCX");
+            }
+            return this.#api;
+        }
+
+        const version = bcx.versionParsed ?? {};
+        if (
+            version.major === 1
+            && version.minor >= 1
+            && (version.minor > 1 || version.patch >= 7)
+        ) {
+            if (!this.#isLogged) {
+                this.#isLogged = true;
+                logger.debug(`Detecting supported BCX version ${bcx.version}`);
+            }
+            return this.#api = bcx.getModApi("MBS");
+        } else {
+            if (!this.#isLogged) {
+                this.#isLogged = true;
+                logger.debug(`Detecting unsupported BCX version ${bcx.version}; requires [1.1.7, 2.0)`);
+            }
+            return this.#api;
+        }
+    }
 
     get modName(): string { return "MBS"; }
 
     getRuleState<T extends BCX_Rule>(rule: T): BCX_RuleStateAPI<T> | null {
-        if (this.#api === null && typeof bcx !== "undefined") {
-            this.#api = bcx.getModApi("MBS");
-        }
-        return this.#api?.getRuleState(rule) ?? null;
+        return this.api?.getRuleState(rule) ?? null;
+    }
+
+    getCurseInfo(group: AssetGroupName): BCX_CurseInfo | null {
+        return this.api?.getCurseInfo(group) ?? null;
+    }
+
+    sendQuery<T extends keyof BCX_queries>(
+        type: T,
+        data: BCX_queries[T][0],
+        target: number | "Player",
+        timeout?: number,
+    ): Promise<null | BCX_queries[T][1]> {
+        return this.api?.sendQuery(type, data, target, timeout) ?? Promise.resolve(null);
+    }
+
+    on<K extends keyof BCX_Events>(s: K, listener: (v: BCX_Events[K]) => void): () => void {
+        return this.api?.on(s, listener) ?? (() => undefined);
+    }
+
+    onAny(listener: (value: BCXAnyEvent<BCX_Events>) => void): () => void {
+        return this.api?.onAny(listener) ?? (() => undefined);
     }
 }
 
