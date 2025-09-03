@@ -27,6 +27,17 @@
 	font-family: var(--mbs-font-family);
 	font-size: var(--mbs-font-small);
 
+	.button,
+	.custom-select {
+		--button-color: var(--mbs-button-color);
+		--hover-color: var(--mbs-hover-color);
+	}
+
+	.button-styling,
+	.button-tooltip {
+		border-color: var(--mbs-border-color);
+	}
+ 
 	h1, h2, h3, h4, h5, h6, [role="heading"], p, ul {
 		align-items: center;
 		align-self: center;
