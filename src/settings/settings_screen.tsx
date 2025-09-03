@@ -283,7 +283,7 @@ export class MBSPreferenceScreen extends MBSScreen {
     #settingsReset() {
         const screen = document.getElementById(ID.resetScreen) as HTMLDivElement;
         const button = document.getElementById(ID.resetAccept) as HTMLButtonElement;
-        screen.style.visibility = "visible";
+        screen.hidden = false;
         button.disabled = true;
         this.#startTimer(button);
     }
@@ -337,8 +337,8 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     exit() {
         const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (resetScreen.style.visibility === "visible") {
-            resetScreen.style.visibility = "hidden";
+        if (!resetScreen.hidden) {
+            resetScreen.hidden = true;
         } else {
             super.exit();
             this.exitScreens(false);

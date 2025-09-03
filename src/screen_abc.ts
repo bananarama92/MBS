@@ -65,6 +65,7 @@ export abstract class MBSScreen {
             const width = shape[2] * widthRatio;
             const height = shape[3] * heightRatio;
 
+            const elem = document.getElementById(id) as HTMLElement;
             const style: Partial<CSSStyleDeclaration> = {
                 left: `${left}px`,
                 top: `${top}px`,
@@ -73,10 +74,9 @@ export abstract class MBSScreen {
             };
             if (load) {
                 style.fontFamily = CommonGetFontName();
-                style.visibility = visibility;
+                elem.toggleAttribute("hidden", visibility === "hidden");
             }
 
-            const elem = document.getElementById(id) as HTMLElement;
             Object.assign(elem.style, style);
         }
     }
@@ -87,7 +87,7 @@ export abstract class MBSScreen {
         for (const id of keys(this.screenParams)) {
             const elem = document.getElementById(id);
             if (elem !== null) {
-                elem.style.visibility = "hidden";
+                elem.hidden = true;
             }
         }
     }
