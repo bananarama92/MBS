@@ -3,6 +3,10 @@
 		". buttonOuterGrid exit" min(9dvh, 4.5dvw)
 		"storage buttonOuterGrid ." auto
 		"storageFooter buttonOuterGrid ." min(14dvh, 7dvw) / min(30dvh, 15dvw) auto min(20dvh, 10dvw);
+
+	.button-tooltip {
+		--tooltip-gap: min(2dvh, 1dvw);
+	}
 }
 
 #mbs-fwselect-exit {
@@ -52,6 +56,10 @@
 	overflow-y: scroll;
 	padding-left: min(2dvh, 1dvw);
 	padding-right: min(2dvh, 1dvw);
+
+	.button {
+		height: min(7dvh, 3.5dvw); 
+	}
 }
 
 #mbs-fwselect-button-grid-inner0, #mbs-fwselect-button-grid-inner1 {
@@ -69,4 +77,5 @@
 	justify-content: center;
 	position: sticky;
 	top: 0%;
+	z-index: 1;
 }

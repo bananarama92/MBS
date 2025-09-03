@@ -2,3 +2,6 @@
 
 static/vendor/en_UK.json linguist-generated
 static/vendor/gag_data.json linguist-generated
+
+src/stub_files/bcxExternalInterface.d.ts linguist-vendored
+src/stub_files/fusam.d.ts linguist-vendored

@@ -85,7 +85,7 @@ waitForBC("new_items_screen", {
             }
         }
 
-        const load = () => {
+        const load = async () => {
             let root = document.getElementById(IDs.root);
             if (!root) {
                 const versions = Object.keys(ASSETS).filter(version => {
@@ -120,7 +120,7 @@ waitForBC("new_items_screen", {
             Coords: [135, 155 + (2 * 160 - 30), 420, 180],
             Mode: new Set(["Preview", "Buy", "Sell"]),
             Draw: () => null,
-            Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
+            Load: load,
             Resize: () => {
                 ElementPositionFix(IDs.root, 36, ...Shop2.Elements.MBS.Coords);
             },

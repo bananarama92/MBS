@@ -778,7 +778,6 @@ class FWScreenProxy extends ScreenProxy {
     weightedIDs: string;
 
     constructor() {
-        const load = () => CommonSetScreen("MiniGame", "WheelFortune");
         super(
             null,
             "WheelFortune",
@@ -787,7 +786,7 @@ class FWScreenProxy extends ScreenProxy {
                 Run: WheelFortuneRun,
                 Click: WheelFortuneClick,
                 Exit: WheelFortuneExit,
-                Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
+                Load: async () => CommonSetScreen("MiniGame", "WheelFortune"),
             },
         );
         this.character = Player;

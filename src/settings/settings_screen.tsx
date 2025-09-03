@@ -20,8 +20,8 @@ import styles from "./settings_screen.scss";
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
     constructor() {
-        const load = () => {
-            CommonSetScreen("Character", "Preference");
+        const load = async () => {
+            await CommonSetScreen("Character", "Preference");
             PreferencePageCurrent = 1;
             const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
             if (screen) {
@@ -38,7 +38,7 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Run: PreferenceRun,
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
-                Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
+                Load: load,
             },
         );
     }
@@ -213,17 +213,8 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <p>You will be able to continue using MBS, but all of your configuration will be reset to default!</p>
                     <p><strong>This action cannot be undone!</strong></p>
                     <div id={ID.resetGrid}>
-                        <button
-                            class="mbs-button"
-                            onClick={this.#resetConfirm.bind(this)}
-                            disabled={true}
-                            id={ID.resetAccept}
-                        >Confirm (10)</button>
-                        <button
-                            class="mbs-button"
-                            onClick={this.exit.bind(this)}
-                            id={ID.resetCancel}
-                        >Cancel</button>
+                        {ElementButton.Create(ID.resetAccept, () => this.#resetConfirm(), { disabled: true, label: "Confirm (10)" })}
+                        {ElementButton.Create(ID.resetCancel, () => this.exit(), { label: "Cancel" })}
                     </div>
                 </div>
             </div>,
@@ -292,19 +283,20 @@ export class MBSPreferenceScreen extends MBSScreen {
     #settingsReset() {
         const screen = document.getElementById(ID.resetScreen) as HTMLDivElement;
         const button = document.getElementById(ID.resetAccept) as HTMLButtonElement;
-        screen.style.visibility = "visible";
+        screen.hidden = false;
         button.disabled = true;
         this.#startTimer(button);
     }
 
     async #startTimer(button: HTMLButtonElement) {
+        const label = button.querySelector(".button-label");
         let i = 9;
         while (i >= 0) {
             await new Promise(resolve => setTimeout(resolve, 1000));
-            button.innerText = `Confirm (${i})`;
+            label?.replaceChildren(`Confirm (${i})`);
             i--;
         }
-        button.innerText = "Confirm";
+        label?.replaceChildren("Confirm");
         button.disabled = false;
     }
 
@@ -313,7 +305,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         this.exit();
     }
 
-    #loadWheel() {
+    async #loadWheel() {
         const wheelStruct = {
             FortuneWheelItemSets: loadFortuneWheelObjects(Player, "FortuneWheelItemSets", "item sets"),
             FortuneWheelCommands: loadFortuneWheelObjects(Player, "FortuneWheelCommands", "commands"),
@@ -334,7 +326,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         }
     }
 
-    load() {
+    async load() {
         this.#lockInputs();
         super.load();
     }
@@ -345,8 +337,8 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     exit() {
         const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (resetScreen.style.visibility === "visible") {
-            resetScreen.style.visibility = "hidden";
+        if (!resetScreen.hidden) {
+            resetScreen.hidden = true;
         } else {
             super.exit();
             this.exitScreens(false);

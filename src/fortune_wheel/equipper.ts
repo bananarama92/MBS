@@ -355,6 +355,23 @@ wheelHookRegister.addEventListener(
 );
 
 wheelHookRegister.addEventListener(
+    "validateItemUnequip",
+    MBS_MOD_INFO,
+    {
+        listener: ({ character, oldItem }) => {
+            if (!character.IsPlayer() || oldItem == null) {
+                return null;
+            }
+            const curseData = BCX_MOD_API.getCurseInfo(oldItem.Asset.Group.Name);
+            return curseData?.active ? "Blocked via BCX curse" : null;
+        },
+        hookName: "BCXCurse",
+        label: "Check whether removal of the old item is blocked due to a BCX curse.",
+        conditional: false,
+    },
+);
+
+wheelHookRegister.addEventListener(
     "validateItemEquip",
     MBS_MOD_INFO,
     {

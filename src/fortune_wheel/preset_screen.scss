@@ -3,6 +3,10 @@
 		"delete header accept save exit" min(9dvh, 4.5dvw)
 		"mid mid mid mid mid" auto
 		/ min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+
+	.button-tooltip {
+		--tooltip-gap: min(2dvh, 1dvw);
+	}
 }
 
 #mbs-fwpreset-delete {
@@ -76,11 +80,9 @@
 	width: min(35dvh, 17.5dvw);
 }
 
-#mbs-fwpreset-name-dropdown-div {
+#mbs-fwpreset-name-dropdown {
 	height: min(7dvh, 3.5dvw);
-	position: relative;
-	text-wrap: auto;
-	top: 5%;
+	margin-top: min(2dvh, 1dvw);
 	width: min(36dvh, 18dvw);
 }
 
@@ -99,47 +101,23 @@
 	grid-template-columns: repeat(8, min(7dvh, 3.5dvw));
 }
 
-.mbs-fwpreset-color {
-	border: unset !important;
-	height: 84%;
-	left: 4%;
-	position: relative;
-	top: 4%;
-	width: 84%;
+.mbs-fwpreset {
+	border: min(0.2dvh, 0.1dvw) solid black;
 
-	&[data-color="red"] {
+	&::before {
+		content: "";
+		height: 90%;
+		left: 5%;
+		position: absolute;
+		top: 5%;
+		width: 90%;
+	}
+
+	&[data-color="red"]::before {
 		background-color: red;
 	}
 
-	&[data-color="green"] {
+	&[data-color="green"]::before {
 		background-color: green;
-	}
-
-	&:focus {
-		filter: brightness(60%);
-	}
-
-	+ .mbs-button-tooltip {
-		z-index: 2;
-	}
-
-	&:focus + .mbs-button-tooltip {
-		visibility: visible;
-		z-index: 1;
-	}
-}
-
-.mbs-fwpreset {
-	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
-	display: grid;
-	grid-template-columns: min(7dvh, 3.5dvw);
-	grid-template-rows: min(7dvh, 3.5dvw) auto;
-
-	&:hover .mbs-fwpreset-color {
-		filter: brightness(60%);
-	}
-
-	&:hover .mbs-button-tooltip {
-		visibility: visible;
 	}
 }

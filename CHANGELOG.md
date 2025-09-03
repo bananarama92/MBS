@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.9.5
+* Drop BC R119 support
+* Ensure that the wheel of fortunate does not try to remove BCX-cursed items or any items made unreachable by BCX-cursed items
+* Fix `mbs.css` API calls failing to correctly apply their styling to buttons in a number of cases
+* Fix checkbox marks persisting after hiding an MBS screen
+
 ## v1.9.4
 * Add BC R119 support
 * Drop R117 support

@@ -56,21 +56,18 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
 }
 
 function createButton(screen: FWSelectScreen, i: number) {
-    return (
-        <button
-            class="mbs-button"
-            id={ID.button + i.toString()}
-            style={{ height: "min(7dvh, 3.5dvw)" }}
-            onClick={() => {
-                if (i < MBS_MAX_SETS) {
-                    const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
-                    return screen.loadChild(FWItemSetScreen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, params);
-                } else {
-                    const params = { [FWCommandScreen.ids.root]: { shape: screen.rootParams.shape } };
-                    return screen.loadChild(FWCommandScreen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character, params);
-                }
-            }}
-        />
+    return ElementButton.Create(
+        `${ID.button}${i}`,
+        () => {
+            if (i < MBS_MAX_SETS) {
+                const params = { [FWItemSetScreen.ids.root]: { shape: screen.rootParams.shape } };
+                return screen.loadChild(FWItemSetScreen, screen.wheelStruct.FortuneWheelItemSets, i, screen.character, params);
+            } else {
+                const params = { [FWCommandScreen.ids.root]: { shape: screen.rootParams.shape } };
+                return screen.loadChild(FWCommandScreen, screen.wheelStruct.FortuneWheelCommands, i - MBS_MAX_SETS, screen.character, params);
+            }
+        },
+        { label: " " },
     );
 }
 
@@ -80,8 +77,6 @@ const ID = Object.freeze({
     styles: `${root}-style`,
 
     exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
     storage: `${root}-storage`,
     storageInner: `${root}-storage-cover`,
     storageTooltip: `${root}-storage-tooltip`,
@@ -133,13 +128,13 @@ export class FWSelectScreen extends MBSScreen {
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <div id={ID.buttonOuterGrid}>
-                    <h1 id={ID.itemSets} z-index={1}>
+                    <h1 id={ID.itemSets}>
                         {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
                     </h1>
                     <div id={ID.buttonInnerGrid0}>
                         {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
                     </div>
-                    <h1 id={ID.commandSets} z-index={1}>
+                    <h1 id={ID.commandSets}>
                         {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
                     </h1>
                     <div id={ID.buttonInnerGrid1}>
@@ -147,21 +142,11 @@ export class FWSelectScreen extends MBSScreen {
                     </div>
                 </div>
 
-                <div id={ID.exit} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.exitButton}
-                        onClick={this.exit.bind(this)}
-                        style={{ backgroundImage: "url('./Icons/Exit.png')" }}
-                    />
-                    <span class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
-                        Exit
-                    </span>
-                </div>
+                {ElementButton.Create(ID.exit, () => this.exit(), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" })}
 
                 <div id={ID.storage}>
-                    <div id={ID.storageInner}/>
-                    <div id={ID.storageTooltip} class="mbs-button-tooltip">
+                    <div id={ID.storageInner} role="meter"/>
+                    <div id={ID.storageTooltip} class="button-tooltip" role="tooltip">
                         <h2 id={ID.storageTooltip + "-header"}>OnlineSharedSettings Data Usage</h2>
                         <ul id={ID.storageTooltip + "-list"} />
                     </div>
@@ -174,9 +159,11 @@ export class FWSelectScreen extends MBSScreen {
     #updateElements() {
         const isPlayer = this.character.IsPlayer();
         for (const [i, wheelSet] of this.wheelList.entries()) {
-            const button = document.getElementById(`${ID.button}${i}`) as HTMLButtonElement;
-            button.innerText = `${(i % MBS_MAX_SETS).toString().padStart(2)}: ${wheelSet?.name ?? "<Empty>"}`;
-            button.disabled = wheelSet === null && !isPlayer;
+            const button = document.getElementById(`${ID.button}${i}`) as null | HTMLButtonElement;
+            if (button) {
+                button.querySelector(".button-label")?.replaceChildren(`${(i % MBS_MAX_SETS).toString().padStart(2)}: ${wheelSet?.name ?? "<Empty>"}`);
+                button.disabled = wheelSet === null && !isPlayer;
+            }
         }
 
         const storageOuter = document.getElementById(ID.storage) as HTMLElement;
@@ -224,7 +211,7 @@ export class FWSelectScreen extends MBSScreen {
         }
     }
 
-    load() {
+    async load() {
         const nByte = measureDataSize(this.character.OnlineSharedSettings);
         this.dataSize.value = sumBy(Object.values(nByte), (i) => Number.isNaN(i) ? 0 : i);
         this.dataSize.valueRecord = nByte;

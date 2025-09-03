@@ -660,8 +660,8 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     }
 
     /** Loads the club crafting room in slot selection mode, creates a dummy character for previews. */
-    load() {
-        super.load();
+    async load() {
+        await super.load();
 
         // Load the settings
         const itemSet = this.mbsObject;
