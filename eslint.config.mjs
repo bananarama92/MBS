@@ -67,6 +67,7 @@ export default [
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/ban-ts-comment": "off",
             "@typescript-eslint/no-namespace": "off",
+            "@typescript-eslint/no-this-alias": "off",
             "@typescript-eslint/no-empty-object-type": ["error", {
                 allowInterfaces: "with-single-extends",
             }],

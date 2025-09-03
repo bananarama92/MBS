@@ -4,6 +4,10 @@
 		"commandInput commandInput commandInput commandInput commandInput" min(7dvh, 3.5dvw)
 		"weightHeader weightHeader weightHeader weightHeader weightHeader" min(7dvh, 3.5dvw)
         "weightInput weightInput weightInput weightInput weightInput" min(7dvh, 3.5dvw) / min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+	
+	.button-tooltip {
+		--tooltip-gap: min(2dvh, 1dvw);
+	}
 }
 
 #mbs-fwcommand-delete {

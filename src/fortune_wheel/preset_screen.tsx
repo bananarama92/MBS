@@ -1,4 +1,4 @@
-import { cloneDeep, range, clamp } from "lodash-es";
+import { cloneDeep, range } from "lodash-es";
 
 import { validateInt } from "../common";
 import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, waitForBC, FWCommand } from "../common_bc";
@@ -120,17 +120,9 @@ const ID = Object.freeze({
     styles: `${root}-style`,
 
     delete: `${root}-delete`,
-    deleteButton: `${root}-delete-button`,
-    deleteTooltip: `${root}-delete-tooltip`,
     accept: `${root}-accept`,
-    acceptButton: `${root}-accept-button`,
-    acceptTooltip: `${root}-accept-tooltip`,
     save: `${root}-save`,
-    saveButton: `${root}-save-button`,
-    saveTooltip: `${root}-save-tooltip`,
     exit: `${root}-exit`,
-    exitButton: `${root}-exit-button`,
-    exitTooltip: `${root}-exit-tooltip`,
     header: `${root}-header`,
 
     midDiv: `${root}-mid-div`,
@@ -139,8 +131,6 @@ const ID = Object.freeze({
     nameHeader: `${root}-name-header`,
     nameInput: `${root}-name-input`,
     nameDropdown: `${root}-name-dropdown`,
-    nameDropdownDiv: `${root}-name-dropdown-div`,
-    nameDropdownContent: `${root}-name-dropdown-content`,
 
     builtinBC: `${root}-builtin-bc`,
     builtinBCColor: `${root}-builtin-bc-color`,
@@ -218,57 +208,16 @@ export class WheelPresetScreen extends MBSScreen {
             ...cloneDeep(CUSTOM_MBS_OPTIONS),
         };
 
+        const screen = this;
         document.body.appendChild(
             <div id={ID.root} class="mbs-screen">
                 <style id={ID.styles}>{styles.toString()}</style>
 
                 <h1 id={ID.header}>Wheel of Fortune preset {this.index}</h1>
-                <div id={ID.delete} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.deleteButton}
-                        style={{ backgroundImage: "url('./Icons/Trash.png')" }}
-                        onClick={this.deletePreset.bind(this)}
-                        disabled={true}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.deleteTooltip} style={{ justifySelf: "left" }}>
-                        Delete the current preset
-                    </div>
-                </div>
-                <div id={ID.accept} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.acceptButton}
-                        style={{ backgroundImage: "url('./Icons/Accept.png')" }}
-                        onClick={this.equipPreset.bind(this)}
-                        disabled={true}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.acceptTooltip} style={{ justifySelf: "right" }}>
-                        Equip the current preset
-                    </div>
-                </div>
-                <div id={ID.save} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.saveButton}
-                        style={{ backgroundImage: "url('./Icons/Save.png')" }}
-                        onClick={this.savePreset.bind(this)}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.saveTooltip} style={{ justifySelf: "right" }}>
-                        Save the current preset
-                    </div>
-                </div>
-                <div id={ID.exit} class="mbs-button-div">
-                    <button
-                        class="mbs-button"
-                        id={ID.exitButton}
-                        style={{ backgroundImage: "url('./Icons/Exit.png')" }}
-                        onClick={() => this.exit(false)}
-                    />
-                    <div class="mbs-button-tooltip" id={ID.exitTooltip} style={{ justifySelf: "right" }}>
-                        Exit
-                    </div>
-                </div>
+                {ElementButton.Create(ID.delete, () => this.deletePreset(), { disabled: true, image: "./Icons/Trash.png", tooltip: "Delete the current preset", tooltipPosition: "right" })}
+                {ElementButton.Create(ID.accept, () => this.equipPreset(), { disabled: true, image: "./Icons/Accept.png", tooltip: "Equip the current preset", tooltipPosition: "left" })}
+                {ElementButton.Create(ID.save, () => this.savePreset(), { image: "./Icons/Save.png", tooltip: "Save the current preset", tooltipPosition: "left" })}
+                {ElementButton.Create(ID.exit, () => this.exit(false), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" })}
 
                 <div id={ID.midDiv}>
                     <p id={ID.nameHeader}>Preset Name</p>
@@ -284,22 +233,11 @@ export class WheelPresetScreen extends MBSScreen {
                             onFocus={(e) => (e.target as HTMLInputElement).select()}
                             onInput={(e) => this.activePreset.name = (e.target as HTMLInputElement).value}
                         />
-                        <div
-                            id={ID.nameDropdownDiv}
-                            class="mbs-dropdown"
-                            onWheel={(e) => this.index = clamp(this.index + Math.sign(e.deltaY), 0, this.presets.length - 1)}
-                        >
-                            <button class="mbs-button" id={ID.nameDropdown}/>
-                            <div class="mbs-dropdown-content" id={ID.nameDropdownContent}> {
-                                Object.values(this.presets).map((preset, i) => {
-                                    return <button
-                                        class="mbs-button mbs-dropdown-button"
-                                        id={ID.nameDropdown + i.toString()}
-                                        onClick={() => this.index = i}
-                                    >{`${i}: ${preset?.name ?? "<Empty>"}`}</button>;
-                                })
-                            } </div>
-                        </div>
+                        {ElementCreateDropdown(
+                            ID.nameDropdown,
+                            Object.values(this.presets).map((preset, i) => { return { attributes: { value: i, label: `${i}: ${preset?.name ?? "<Empty>"}` }};}),
+                            function () { screen.index = this.selectedIndex; },
+                        )}
                     </div>
 
                     <div id={ID.builtinBCDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.builtinBC)}</div>
@@ -346,53 +284,52 @@ export class WheelPresetScreen extends MBSScreen {
     #loadPresetElement(
         index: number,
         prefix: undefined | string,
-        justify: "left" | "right" | "center",
+        tooltipPosition: "left" | "right" | "top" | "bottom",
         ids: Readonly<{ root: string, color: string, tooltip: string, tooltipHeader: string, tooltipList: string }>,
-    ): HTMLDivElement {
+    ): HTMLButtonElement {
         const i = index.toString();
-        return (
-            <div id={ids.root + i} class="mbs-fwpreset">
-                <button
-                    id={ids.color + i}
-                    class="mbs-fwpreset-color"
-                    data-color="red"
-                    onClick={(event) => (event.target as HTMLButtonElement).focus()}
-                />
-                <div id={ids.tooltip + i} class="mbs-button-tooltip" style={{ justifySelf: justify }}>
-                    <h2 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />
-                    <ul id={ids.tooltipList + i} />
-                </div>
-            </div>
-        ) as HTMLDivElement;
+        return ElementButton.Create(
+            `${ids.root}${i}`, 
+            function () { this.focus(); },
+            { 
+                noStyling: true, 
+                tooltipPosition,
+                tooltip: [
+                    <h2 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />,
+                    <ul id={ids.tooltipList + i} />,
+                ],
+            },
+            { button: { classList: ["mbs-fwpreset"], dataAttributes: { color: "red" } } },
+        );
     }
 
-    #loadPresetElements(type: OptionType): HTMLDivElement[] {
+    #loadPresetElements(type: OptionType): HTMLButtonElement[] {
         let objects: readonly unknown[];
-        let justify: "left" | "right" | "center";
+        let tooltipPosition: "left" | "right" | "bottom";
         let getPrefix: undefined | ((item: unknown, i: number) => string) = undefined;
         const ids = this.#getPresetIDs(type);
         switch (type) {
             case OptionType.builtinBC:
                 objects = BUILTIN_BC_OPTIONS_HEADERS;
-                justify = "left";
+                tooltipPosition = "right";
                 break;
             case OptionType.builtinMBS:
                 objects = FORTUNE_WHEEL_ITEM_SETS;
-                justify = "center";
+                tooltipPosition = "bottom";
                 break;
             case OptionType.customMBS:
                 objects = [
                     ...Player.MBSSettings.FortuneWheelItemSets,
                     ...Player.MBSSettings.FortuneWheelCommands,
                 ];
-                justify = "right";
+                tooltipPosition = "left";
                 getPrefix = (_, i) => i >= MBS_MAX_SETS ? `Command Set ${i - 32}: ` : `Item Set ${i}: `;
                 break;
             default:
                 throw new Error(`Unknown type: ${type}`);
         }
 
-        return objects.map((obj, i) => this.#loadPresetElement(i, getPrefix?.(obj, i), justify, ids));
+        return objects.map((obj, i) => this.#loadPresetElement(i, getPrefix?.(obj, i), tooltipPosition, ids));
     }
 
     #getPresetIDs(type: OptionType): { root: string, color: string, tooltip: string, tooltipHeader: string, tooltipList: string } {
@@ -430,29 +367,28 @@ export class WheelPresetScreen extends MBSScreen {
         const state = this.presets[this.#index];
 
         const inputField = document.getElementById(ID.nameInput) as HTMLInputElement;
-        const inputButton = document.getElementById(ID.nameDropdown) as HTMLButtonElement;
-        const dropdownButton = document.getElementById(`${ID.nameDropdown}${this.index}`) as HTMLButtonElement;
+        const inputSelect = document.getElementById(ID.nameDropdown) as HTMLSelectElement;
         inputField.placeholder = `Preset ${this.index}`;
-        dropdownButton.innerText = inputButton.innerText = `${this.#index}: ${this.activePreset.name}`;
+        inputSelect.selectedIndex = this.#index;
 
-        const deleteButton = document.getElementById(ID.deleteButton) as HTMLButtonElement;
-        const deleteTooltip = document.getElementById(ID.deleteTooltip) as HTMLDivElement;
-        const equipButtonm = document.getElementById(ID.acceptButton) as HTMLButtonElement;
-        const equipTooltip = document.getElementById(ID.acceptTooltip) as HTMLDivElement;
+        const deleteButton = document.getElementById(ID.delete) as HTMLButtonElement;
+        const deleteTooltip = deleteButton?.querySelector(".button-tooltip");
+        const equipButtonm = document.getElementById(ID.accept) as HTMLButtonElement;
+        const equipTooltip = equipButtonm?.querySelector(".button-tooltip");
         const header = document.getElementById(ID.header) as HTMLDivElement;
         if (state === null) {
             inputField.value = "";
             deleteButton.disabled = true;
             equipButtonm.disabled = true;
-            deleteTooltip.innerText = "Delete the current preset:\nunsaved preset";
-            equipTooltip.innerText = "Equip the current preset:\nunsaved preset";
+            deleteTooltip?.replaceChildren("Delete the current preset:", <br />, "unsaved preset");
+            equipTooltip?.replaceChildren("Equip the current preset:", <br />, "unsaved preset");
             header.innerText = `Wheel of Fortune preset ${this.index} (unsaved)`;
         } else {
             inputField.value = state.name;
             deleteButton.disabled = false;
             equipButtonm.disabled = false;
-            deleteTooltip.innerText = "Delete the current preset";
-            equipTooltip.innerText = "Equip the current preset";
+            deleteTooltip?.replaceChildren("Delete the current preset");
+            equipTooltip?.replaceChildren("Equip the current preset");
             header.innerText = `Wheel of Fortune preset ${this.index}`;
         }
     }
@@ -483,7 +419,7 @@ export class WheelPresetScreen extends MBSScreen {
         for (const type of Object.values(OptionType)) {
             const ids = this.#getPresetIDs(type);
             for (const [i, data] of Object.entries(dataGrouped[type])) {
-                const color = document.getElementById(`${ids.color}${i}`) as HTMLDivElement;
+                const color = document.getElementById(`${ids.root}${i}`) as HTMLButtonElement;
                 color.dataset.color = data.enabled ? "green" : "red";
 
                 const tooltipHeader = document.getElementById(`${ids.tooltipHeader}${i}`) as HTMLHeadingElement;

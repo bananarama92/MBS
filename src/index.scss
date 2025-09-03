@@ -10,92 +10,10 @@
 	--mbs-font-family: arial, sans-serif;
 }
 
-.mbs-button {
-	background-color: var(--mbs-button-color);
-	background-origin: content-box;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
-	font: inherit;
-	height: 100%;
-	overflow: clip;
-	padding-left: min(2dvh, 1dvw);
-	padding-right: min(2dvh, 1dvw);
-	text-align: center;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 100%;
-
-	&:hover {
-		background-color: var(--mbs-hover-color);
-	}
-
-	&:disabled {
-		background-color: color-mix(in srgb, var(--mbs-button-color) 60%, black 40%);
-	}
-}
-
-.mbs-button-tooltip {
-	background-color: var(--mbs-tooltip-color) !important;
-	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
-	bottom: -10%;
-	box-shadow: min(0.4dvh, 0.2dvw) min(0.4dvh, 0.2dvw) min(2dvh, 1dvw) 0 rgb(0 0 0 / 50%);
-	line-height: 1.4;
-	padding: min(1dvh, 0.5dvw) min(2dvh, 1dvw);
-	position: relative;
-	text-align: center;
-	visibility: hidden;
-	white-space: nowrap;
-	width: fit-content;
-	z-index: 1;
-}
-
-.mbs-button-div {
-	display: grid;
-	grid-template-columns: min(9dvh, 4.5dvw);
-	grid-template-rows: min(9dvh, 4.5dvw) auto;
-
-	.mbs-button-tooltip {
-		justify-self: center;
-	}
-
-	.mbs-button {
-		height: inherit;
-		width: inherit;
-
-		&:hover + .mbs-button-tooltip {
-			visibility: visible;
-		}
-	}
-}
-
 .mbs-timer {
 	height: min(6dvh, 3dvw);
 	text-align: center;
 	width: min(21dvh, 10.5dvw);
-}
-
-.mbs-dropdown-button {
-	border: unset !important;
-	padding-bottom: min(1dvh, 0.5dvw);
-	padding-top: min(1dvh, 0.5dvw);
-
-	&:nth-child(even) {
-		background-color: color-mix(in srgb, var(--mbs-button-color) 85%, black 15%);
-	}
-}
-
-.mbs-dropdown-content {
-	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
-	overflow-y: scroll;
-	position: absolute;
-	visibility: hidden;
-	z-index: 1;
-}
-
-.mbs-dropdown:hover .mbs-dropdown-content {
-	visibility: visible;
 }
 
 .mbs-screen {
