@@ -20,8 +20,8 @@ import styles from "./settings_screen.scss";
 export class PreferenceScreenProxy extends ScreenProxy {
     static readonly screen = "Preference";
     constructor() {
-        const load = () => {
-            CommonSetScreen("Character", "Preference");
+        const load = async () => {
+            await CommonSetScreen("Character", "Preference");
             PreferencePageCurrent = 1;
             const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
             if (screen) {
@@ -38,7 +38,7 @@ export class PreferenceScreenProxy extends ScreenProxy {
                 Run: PreferenceRun,
                 Click: PreferenceClick,
                 Exit: PreferenceExit,
-                Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
+                Load: load,
             },
         );
     }
@@ -305,7 +305,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         this.exit();
     }
 
-    #loadWheel() {
+    async #loadWheel() {
         const wheelStruct = {
             FortuneWheelItemSets: loadFortuneWheelObjects(Player, "FortuneWheelItemSets", "item sets"),
             FortuneWheelCommands: loadFortuneWheelObjects(Player, "FortuneWheelCommands", "commands"),
@@ -326,7 +326,7 @@ export class MBSPreferenceScreen extends MBSScreen {
         }
     }
 
-    load() {
+    async load() {
         this.#lockInputs();
         super.load();
     }

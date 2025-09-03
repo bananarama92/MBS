@@ -112,8 +112,8 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
         );
     }
 
-    load() {
-        super.load();
+    async load() {
+        await super.load();
 
         // Load the settings
         if (this.mbsObject !== null) {

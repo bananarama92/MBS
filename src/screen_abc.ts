@@ -101,7 +101,7 @@ export abstract class MBSScreen {
     }
 
     /** Called when screen is loaded */
-    load(): void {
+    async load(): Promise<void> {
         CurrentScreenFunctions?.Unload?.();
         if (ControllerIsActive()) {
             ControllerClearAreas();
@@ -115,14 +115,14 @@ export abstract class MBSScreen {
         CurrentScreenFunctions?.Resize?.(true);
     }
 
-    loadChild<T extends readonly any[], RT extends MBSScreen>(
+    async loadChild<T extends readonly any[], RT extends MBSScreen>(
         screenType: new (parent: null | MBSScreen, ...args: T) => RT, ...args: T
-    ): RT {
+    ): Promise<RT> {
         if (this.child) {
             this.child.exit();
         }
         this.child = new screenType(this, ...args);
-        this.child.load();
+        await this.child.load();
         return this.child as RT;
     }
 
@@ -165,12 +165,11 @@ export abstract class MBSScreen {
 
     /** Get an object with all {@link ScreenFunctions} and the screen background */
     getFunctions(): ScreenFunctions {
-        const load = this.load.bind(this);
         return {
             Run: this.run?.bind(this) ?? CommonNoop,
             Draw: this.draw?.bind(this),
             Click: this.click?.bind(this) ?? CommonNoop,
-            Load: GameVersion === "R118" ? load as ScreenLoadHandler : (async () => load()),
+            Load: this.load.bind(this),
             Unload: this.unload?.bind(this),
             Resize: this.resize?.bind(this),
             Exit: this.exit.bind(this),
@@ -199,7 +198,7 @@ export class ScreenProxy extends MBSScreen {
     run(time: number) { return this.screenFunctions.Run(time); }
     draw() { return this.screenFunctions.Draw?.(); }
     click(event: MouseEvent | TouchEvent) { return this.screenFunctions.Click(event); }
-    load() { return this.screenFunctions.Load?.(); }
+    load() { return this.screenFunctions.Load?.() ?? Promise.resolve(undefined); }
     unload() { return this.screenFunctions.Unload?.(); }
     resize(load: boolean) { return this.screenFunctions.Resize?.(load); }
     keyDown(event: KeyboardEvent) { return this.screenFunctions.KeyDown?.(event) ?? false; }
@@ -269,7 +268,7 @@ export abstract class MBSObjectScreen<
         });
     }
 
-    load() {
+    async load() {
         const nByte = measureDataSize(this.character.OnlineSharedSettings);
         this.dataSize.value = sumBy(Object.values(nByte), (i) => Number.isNaN(i) ? 0 : i);
         this.dataSize.valueRecord = nByte;

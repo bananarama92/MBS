@@ -466,8 +466,8 @@ export class WheelPresetScreen extends MBSScreen {
         this.#loadPreset();
     }
 
-    load() {
-        super.load();
+    async load() {
+        await super.load();
         this.#loadIDMapping();
         this.#loadPreset();
     }

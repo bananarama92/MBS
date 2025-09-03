@@ -211,7 +211,7 @@ export class FWSelectScreen extends MBSScreen {
         }
     }
 
-    load() {
+    async load() {
         const nByte = measureDataSize(this.character.OnlineSharedSettings);
         this.dataSize.value = sumBy(Object.values(nByte), (i) => Number.isNaN(i) ? 0 : i);
         this.dataSize.valueRecord = nByte;
