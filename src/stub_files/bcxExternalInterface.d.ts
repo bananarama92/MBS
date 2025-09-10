@@ -866,7 +866,7 @@ interface BCX_RuleStateAPI_Generic {
 	/** If the rule is logged (inEffect and logging enabled) */
 	readonly isLogged: boolean;
 
-	/** Rule setttings */
+	/** Rule settings */
 	readonly customData: any;
 	/** Rule internal data */
 	readonly internalData: any;
@@ -942,7 +942,7 @@ interface BCX_Events {
 		 */
 		triggerType: "trigger" | "triggerAttempt";
 		/**
-		 * Character that was being targetted (e.g. for whisper/beep rules, possibly few others).
+		 * Character that was being targeted (e.g. for whisper/beep rules, possibly few others).
 		 * Most rules do not use this.
 		 */
 		targetCharacter: number | null;
@@ -996,7 +996,7 @@ interface BCX_ModAPI extends BCXEventEmitter<BCX_Events> {
 	 * This allows same level of access to BCX data as BCX itself has for others, which includes almost all actions possible through UI (but there are exceptions).
 	 * Requests done to "Player" will have the same limitations user has when interacting with the UI.
 	 *
-	 * This is a very low-level API and properly forming and interpretting the requests requires care.
+	 * This is a very low-level API and properly forming and interpreting the requests requires care.
 	 * Also note, that this method sends requests to other characters, which might respond in an arbitrary way or not at all.
 	 * Also consider that using this with different target than "Player" sends a message through BC's server and is subject to rate limiting.
 	 * @param type - The type of query to send
