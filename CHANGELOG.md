@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.9.6
+* Add BC R120Beta1 support
+
 ## v1.9.5
 * Drop BC R118 support
 * Ensure that the wheel of fortune does not try to remove BCX-cursed items or any items made unreachable by BCX-cursed items
