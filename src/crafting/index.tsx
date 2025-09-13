@@ -151,6 +151,16 @@ waitForBC("crafting", {
                 `(CraftingOffset >= ${BC_SLOT_MAX_ORIGINAL} ? (CraftingOffset >= ${MBS_SLOT_MAX_SERVER} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
         });
 
+        MBS_MOD_API.patchFunction("CraftingJSON.encode", {
+            "const max = Math.max(80, crafts.length);":
+                `const max = Math.max(${MBS_SLOT_MAX_LOCAL}, crafts.length);`,
+        });
+
+        MBS_MOD_API.patchFunction("CraftingJSON.eventListeners.changeFile", {
+            "}).slice(0, 80);":
+                `}).slice(0, ${MBS_SLOT_MAX_LOCAL});`,
+        });
+
         MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
             const ret = next([newMode, ...args]);
             if (newMode === "Name") {
