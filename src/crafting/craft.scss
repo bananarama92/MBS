@@ -1,0 +1,37 @@
+#crafting-screen {
+    h1 {
+        padding-left: unset;
+    }
+}
+
+#mbs-crafting-info {
+    direction: ltr;
+    height: var(--button-size);
+    width: var(--button-size);
+
+    #mbs-crafting-info-marker {
+        -webkit-text-stroke: 1px white;
+        bottom: min(0.2dvh, 0.1dvw);
+        font-size: 0.5em;
+        font-weight: 900;
+        position: absolute;
+        right: min(0.2dvh, 0.1dvw);
+    }
+
+    [role="tooltip"] {
+        text-wrap: unset;
+        top: 0%;
+        transform: unset;
+        width: min(100dvh, 50dvw);
+    }
+
+    #mbs-crafting-info-browser,
+    #mbs-crafting-info-account {
+        display: none;
+    }
+
+    &[data-type="account"] #mbs-crafting-info-account,
+    &[data-type="browser"] #mbs-crafting-info-browser {
+        display: inline;
+    }
+}
