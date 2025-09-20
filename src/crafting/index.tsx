@@ -37,6 +37,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
     let refresh = false;
     for (const [i, item] of data.entries()) {
         if (item == null) {
+            character.Crafting.push(null);
             continue;
         } else if (i >= BC_SLOT_MAX_ORIGINAL) {
             break;
@@ -45,13 +46,15 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
         // Make sure that the item is a valid craft
         validate: switch (CraftingValidate(item)) {
             case CraftingStatusType.OK:
+                character.Crafting.push(item);
                 break validate;
             case CraftingStatusType.ERROR:
                 refresh = true;
+                character.Crafting.push(item);
                 break validate;
             case CraftingStatusType.CRITICAL_ERROR:
                 logger.error(`Removing corrupt crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item?.Name} (${item?.Item})"`);
-                data[i] = null;
+                character.Crafting.push(null);
                 break validate;
         }
     }
@@ -85,15 +88,15 @@ async function loadCraftingNameDOM() {
     let infoButton = document.getElementById(IDs.button);
     if (!infoButton) {
         infoButton = ElementButton.Create(
-            IDs.button, 
+            IDs.button,
             () => null,
-            { 
+            {
                 image: "./Icons/Question.png",
                 tooltip: [
                     <span id={IDs.buttonBrowser}>
-                        Extra MBS crafting slot stored locally in your Browser. 
+                        Extra MBS crafting slot stored locally in your Browser.
                         <br />
-                        These crafts are <em>exclusively</em> available for this specific combination of web browser, BC account and BC URL (<code>{window.location.href}</code>). 
+                        These crafts are <em>exclusively</em> available for this specific combination of web browser, BC account and BC URL (<code>{window.location.href}</code>).
                         As such, it will <em>not</em> be shared between the EU, US and Asia servers.
                     </span>,
                     <span id={IDs.buttonServer}>
@@ -101,12 +104,12 @@ async function loadCraftingNameDOM() {
                         <br />
                         These crafts are linked to your BC account and will, as such, persists across different web browsers and BC servers.
                     </span>,
-                ], 
+                ],
                 tooltipPosition: "left",
                 tooltipRole: "description",
             },
-            { button: { 
-                attributes: { "aria-label": "Show MBS extra crafting slot description", "aria-disabled": "true" }, 
+            { button: {
+                attributes: { "aria-label": "Show MBS extra crafting slot description", "aria-disabled": "true" },
                 dataAttributes: { type: "account" },
                 children: [<span aria-hidden="true" id={IDs.buttonMBS}>MBS</span>],
             }},
@@ -211,7 +214,7 @@ waitForBC("crafting", {
                 Player.MBSSettings.CraftingCache = cache;
                 pushMBSSettings([SettingsType.SETTINGS]);
             }
-            
+
             // Crafts are synced from within a place of unknown origin; sync the local crafts just in case
             if (CraftingSlot === 0 && CraftingMode !== "Name") {
                 saveAllCraft(db, Player.Crafting.slice(MBS_SLOT_MAX_SERVER, MBS_SLOT_MAX_LOCAL));
