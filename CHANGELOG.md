@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.10.0
+* Add the ability to save crafted items locally in your browser. Note that these crafts are exclusive to a specific combination of BC account, web browser and BC server (_i.e._ no mixing of the US, EU and Asia servers)
+* Provide increased clarification as to whether a craft is from base BC, MBS (server-stored) or MBS (locally-stored)
+* Ensure that the crafting JSON exporter also exports the extra MBS crafts
+* Drop BC R119 support
+
 ## v1.9.6
 * Add BC R120Beta1 support
 
