@@ -20,7 +20,7 @@ import {
     waitForBC,
 } from "../common_bc";
 import { FORTUNE_WHEEL_DEFAULT_BASE } from "../fortune_wheel";
-import { BC_SLOT_MAX_ORIGINAL } from "../crafting";
+import { BC_SLOT_MAX_ORIGINAL, deleteDB } from "../crafting";
 import { garblingJSON } from "../garbling";
 
 import { showChangelog } from "./changelog";
@@ -318,7 +318,7 @@ export function clearMBSSettings(): void {
 
     WheelFortuneOption = WheelFortuneOption.filter(o => o.Custom !== true);
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
-    Player.Crafting = Player.Crafting?.slice(0, BC_SLOT_MAX_ORIGINAL);
+    Player.Crafting = Player.Crafting.slice(0, BC_SLOT_MAX_ORIGINAL);
     Player.MBSSettings = Object.seal({
         AlternativeGarbling: false,
         CraftingCache: "",
@@ -332,6 +332,7 @@ export function clearMBSSettings(): void {
         ShowChangelog: true,
         Version: MBS_VERSION,
     });
+    deleteDB(Player.MemberNumber);
 
     ServerAccountUpdate.QueueData({
         ExtensionSettings: Player.ExtensionSettings,
