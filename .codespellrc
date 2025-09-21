@@ -1,2 +1,2 @@
 [codespell]
-skip = ./node_modules,./dist,**/*.scss.d.ts,./package-lock.json,./static/vendor
+skip = ./node_modules,./dist,**/*.scss.d.ts,./package-lock.json,./static/vendor,./src/dexie/**

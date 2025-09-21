@@ -80,7 +80,8 @@ export default [
     {
         ignores: [
             "**/*.config.mjs",
-            "**/*.user.js"
+            "**/*.user.js",
+            "src/dexie/**",
         ],
     },
 ];
