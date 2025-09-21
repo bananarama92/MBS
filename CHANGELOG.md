@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.2
+* Vendor the ES module version of Dexie in order to circumvent its version check
+    - Prevents Dexie's "Two different versions of Dexie loaded in the same" error from popping up if addons happen to be using mismatched versions
+
 ## v1.10.1
 * Fix MBS server-stored crafts failing to load
 

@@ -1,7 +1,7 @@
 /** Main module for managing all crafting-related additions */
 
 import { inRange } from "lodash";
-import { Dexie } from "dexie";
+import { Dexie } from "../dexie";
 
 import { MBS_MOD_API, padArray, logger } from "../common";
 import { waitForBC } from "../common_bc";

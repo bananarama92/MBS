@@ -1,5 +1,5 @@
 import { clamp, range } from "lodash";
-import { Dexie, Table, PromiseExtended } from "dexie";
+import { Dexie, Table, PromiseExtended } from "../dexie";
 
 import { Version, logger } from "../common";
 
