@@ -7,10 +7,10 @@ import { MBS_MOD_API, padArray, logger } from "../common";
 import { waitForBC } from "../common_bc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
-import { openDB, saveCraft, loadAllCraft, saveAllCraft, deleteDB, BC_SLOT_MAX_ORIGINAL, MBS_SLOT_MAX_LOCAL, MBS_SLOT_MAX_SERVER } from "./dexie";
+import { openDB, saveCraft, loadAllCraft, saveAllCraft, deleteDB, getSegmentSizes } from "./dexie";
 import styles from "./craft.scss";
 
-export { deleteDB, BC_SLOT_MAX_ORIGINAL, MBS_SLOT_MAX_LOCAL, MBS_SLOT_MAX_SERVER };
+export { deleteDB };
 
 /** Serialize the passed crafting items. */
 function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
@@ -26,8 +26,9 @@ function craftingSerialize(items: null | readonly (null | CraftingItem)[]): stri
  * @param craftingCache The crafting cache
  */
 function loadCraftingCache(character: Character, craftingCache: string): void {
+    const { maxBC } = getSegmentSizes();
     character.Crafting ??= [];
-    padArray(character.Crafting, BC_SLOT_MAX_ORIGINAL, null);
+    padArray(character.Crafting, maxBC, null);
     if (!craftingCache) {
         return;
     }
@@ -39,7 +40,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
         if (item == null) {
             character.Crafting.push(null);
             continue;
-        } else if (i >= BC_SLOT_MAX_ORIGINAL) {
+        } else if (i >= maxBC) {
             break;
         }
 
@@ -53,7 +54,7 @@ function loadCraftingCache(character: Character, craftingCache: string): void {
                 character.Crafting.push(item);
                 break validate;
             case CraftingStatusType.CRITICAL_ERROR:
-                logger.error(`Removing corrupt crafting item ${BC_SLOT_MAX_ORIGINAL + i}: "${item?.Name} (${item?.Item})"`);
+                logger.error(`Removing corrupt crafting item ${maxBC + i}: "${item?.Name} (${item?.Item})"`);
                 character.Crafting.push(null);
                 break validate;
         }
@@ -120,10 +121,11 @@ async function loadCraftingNameDOM() {
         }
     }
 
-    if (CraftingSlot < BC_SLOT_MAX_ORIGINAL) {
+    const { maxBC, maxMBSServer } = getSegmentSizes();
+    if (CraftingSlot < maxBC) {
         headingPrefix.replaceChildren();
         infoButton.hidden = true;
-    } else if (CraftingSlot < MBS_SLOT_MAX_SERVER) {
+    } else if (CraftingSlot < (maxBC + maxMBSServer)) {
         headingPrefix.replaceChildren("MBS (Account): ");
         infoButton.hidden = false;
         infoButton.setAttribute("data-type", "account");
@@ -138,30 +140,32 @@ waitForBC("crafting", {
     async afterLoad() {
         logger.log("Initializing crafting hooks");
 
+        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+
         MBS_MOD_API.patchFunction("CraftingClick", {
-            "if (CraftingOffset < 0) CraftingOffset = 80 - 20;":
-                `if (CraftingOffset < 0) CraftingOffset = ${MBS_SLOT_MAX_LOCAL} - 20;`,
-            "if (CraftingOffset >= 80) CraftingOffset = 0;":
-                `if (CraftingOffset >= ${MBS_SLOT_MAX_LOCAL}) CraftingOffset = 0;`,
+            [`if (CraftingOffset < 0) CraftingOffset = ${maxBC} - 20;`]:
+                `if (CraftingOffset < 0) CraftingOffset = ${maxBC + maxMBSServer + maxMBSLocal} - 20;`,
+            [`if (CraftingOffset >= ${maxBC}) CraftingOffset = 0;`]:
+                `if (CraftingOffset >= ${maxBC + maxMBSServer + maxMBSLocal}) CraftingOffset = 0;`,
         });
 
         MBS_MOD_API.patchFunction("CraftingRun", {
-            "/ ${80 / 20}.":
-                `/ ${MBS_SLOT_MAX_LOCAL / 20}.`,
+            ["/ ${" + maxBC.toString() + " / 20}."]:
+                `/ ${(maxBC + maxMBSServer + maxMBSLocal) / 20}.`,
             'TextGet("SelectDestroy")':
-                `(CraftingOffset >= ${BC_SLOT_MAX_ORIGINAL} ? (CraftingOffset >= ${MBS_SLOT_MAX_SERVER} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
+                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC + maxMBSServer} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
             'TextGet("SelectSlot")':
-                `(CraftingOffset >= ${BC_SLOT_MAX_ORIGINAL} ? (CraftingOffset >= ${MBS_SLOT_MAX_SERVER} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
+                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC + maxMBSServer} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
         });
 
         MBS_MOD_API.patchFunction("CraftingJSON.encode", {
-            "const max = Math.max(80, crafts.length);":
-                `const max = Math.max(${MBS_SLOT_MAX_LOCAL}, crafts.length);`,
+            [`const max = Math.max(${maxBC}, crafts.length);`]:
+                `const max = Math.max(${maxBC + maxMBSServer + maxMBSLocal}, crafts.length);`,
         });
 
         MBS_MOD_API.patchFunction("CraftingJSON.eventListeners.changeFile", {
-            "}).slice(0, 80);":
-                `}).slice(0, ${MBS_SLOT_MAX_LOCAL});`,
+            [`}).slice(0, ${maxBC});`]:
+                `}).slice(0, ${maxBC + maxMBSServer + maxMBSLocal});`,
         });
 
         MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
@@ -175,6 +179,7 @@ waitForBC("crafting", {
     async afterMBS() {
         logger.log("Initializing crafting cache");
 
+        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
         let db: Dexie;
 
         async function loadHook() {
@@ -183,9 +188,9 @@ waitForBC("crafting", {
             }
 
             db = openDB(Player.MemberNumber);
-            padArray(Player.Crafting, MBS_SLOT_MAX_LOCAL, null);
+            padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
             for (const [i, craft] of (await loadAllCraft(db)).entries()) {
-                Player.Crafting[i + MBS_SLOT_MAX_SERVER] = craft;
+                Player.Crafting[i + maxBC + maxMBSServer] = craft;
             }
         }
 
@@ -197,19 +202,19 @@ waitForBC("crafting", {
         // Mirror the extra MBS-specific crafted items to the MBS settings
         MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
             // Only push a single craft to the local storage when it's certain that one is editing a local craft
-            if (inRange(CraftingSlot, MBS_SLOT_MAX_SERVER, MBS_SLOT_MAX_LOCAL)) {
-                const index = CraftingSlot - MBS_SLOT_MAX_SERVER;
+            if (inRange(CraftingSlot, maxBC + maxMBSServer, maxBC + maxMBSServer + maxMBSLocal)) {
+                const index = CraftingSlot - maxBC - maxMBSServer;
                 const craft = Player.Crafting[CraftingSlot];
                 saveCraft(db, index, craft);
                 return;
             }
 
             const craftingBackup = Player.Crafting;
-            Player.Crafting = craftingBackup?.slice(0, BC_SLOT_MAX_ORIGINAL);
+            Player.Crafting = craftingBackup?.slice(0, maxBC);
             next(args);
             Player.Crafting = craftingBackup;
 
-            const cache = craftingSerialize(Player.Crafting.slice(BC_SLOT_MAX_ORIGINAL, MBS_SLOT_MAX_SERVER));
+            const cache = craftingSerialize(Player.Crafting.slice(maxBC, maxBC + maxMBSServer));
             if (cache != Player.MBSSettings.CraftingCache) {
                 Player.MBSSettings.CraftingCache = cache;
                 pushMBSSettings([SettingsType.SETTINGS]);
@@ -217,7 +222,7 @@ waitForBC("crafting", {
 
             // Crafts are synced from within a place of unknown origin; sync the local crafts just in case
             if (CraftingSlot === 0 && CraftingMode !== "Name") {
-                saveAllCraft(db, Player.Crafting.slice(MBS_SLOT_MAX_SERVER, MBS_SLOT_MAX_LOCAL));
+                saveAllCraft(db, Player.Crafting.slice(maxBC + maxMBSServer, maxBC + maxMBSServer + maxMBSLocal));
             }
         });
 
