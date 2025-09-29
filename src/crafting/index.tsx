@@ -323,6 +323,32 @@ waitForBC("crafting", {
             loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
         }
 
+        if (version.major === 121 && version.beta) {
+            const nCrafts = Player.Crafting.slice(maxBC, maxBC + maxMBSServer).filter(i => i != null);
+            const psa = <div class="chat-room-changelog" id="mbs-craft-psa-r121">
+                Starting from the full BC R121 release all <code>{nCrafts.length}</code> <q>MBS (Account)</q> crafted items will be moved to base BC, utilizing its increase in crafting slot (from 80 to 200).
+                <br/>
+                As a reminder: ensure that enough empty slots remain available for the migration.
+            </div> as HTMLDivElement;
+            psa.setAttribute("data-sender", Player.MemberNumber.toString());
+            psa.setAttribute("data-time", ChatRoomCurrentTime());
+            psa.classList.add("ChatMessage");
+
+            if (CurrentScreen === "ChatRoom") {
+                ChatRoomAppendChat(psa);
+            } else {
+                let published = false;
+                MBS_MOD_API.hookFunction("ChatRoomCreateElement", 0, (args, next) => {
+                    const ret = next(args);
+                    if (!published) {
+                        published = true;
+                        ChatRoomAppendChat(psa);
+                    }
+                    return ret;
+                });
+            }
+        }
+
         if (CurrentScreen === "Crafting") {
             loadHook();
         }
