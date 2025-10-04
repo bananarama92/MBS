@@ -66,7 +66,7 @@ export function saveCraft(db: Dexie, index: number, craft: null | CraftingItem):
     const table: Table<CraftingDBData, number, CraftingDBData> = db.table("crafting");
     if (craft) {
         logger.debug(`Saving craft ${index + maxBC + maxMBSServer} to indexedDB: ${craft.Name} (${craft.Item})`);
-        return table.put({ id: index, data: craft }, index);
+        return table.put({ id: index, data: craft });
     } else {
         logger.debug(`Deleting craft ${index + maxBC + maxMBSServer} from indexedDB`);
         return table.delete(index);
@@ -87,9 +87,8 @@ export async function saveAllCraft(db: Dexie, crafts: readonly (null | CraftingI
     logger.debug(`Saving all ${putIndices.length} crafts to indexedDB`);
 
     const table: Table<CraftingDBData, number, CraftingDBData> = db.table("crafting");
-    table.bulkPut(craftStrings.filter(i => i != null), putIndices);
     return Promise.all([
-        table.bulkPut(craftStrings.filter(i => i != null), putIndices),
+        table.bulkPut(craftStrings.filter(i => i != null)),
         table.bulkDelete(deleteIndices),
     ]);
 }
