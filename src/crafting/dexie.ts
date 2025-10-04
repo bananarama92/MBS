@@ -40,7 +40,7 @@ export function encodeVersion(version: Version): number {
  * @param version
  */
 export function decodeVersion(version: number): Version {
-    const view = new DataView(new ArrayBuffer(8), 0);
+    const view = new DataView(new ArrayBuffer(4), 0);
     view.setUint32(0, version);
     return new Version(view.getUint8(0), view.getUint8(1), view.getUint16(2));
 }
