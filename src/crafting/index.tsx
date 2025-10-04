@@ -261,14 +261,14 @@ waitForBC("crafting", {
 
         const version = Version.fromBCVersion(GameVersion);
         const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
-        let db: Dexie;
+        const db: Dexie = openDB(Player.MemberNumber);
+        db.close({ disableAutoOpen: false });
 
         async function loadHook() {
             if (!document.getElementById(IDs.style)) {
                 document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
             }
 
-            db = openDB(Player.MemberNumber);
             padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
             for (const [i, craft] of (await loadAllCraft(db)).entries()) {
                 Player.Crafting[i + maxBC + maxMBSServer] = craft;
@@ -312,7 +312,7 @@ waitForBC("crafting", {
 
         MBS_MOD_API.hookFunction("CraftingExit", 0, (args, next) => {
             if (CraftingMode === "Slot") {
-                db.close();
+                db.close({ disableAutoOpen: false });
             }
             return next(args);
         });
