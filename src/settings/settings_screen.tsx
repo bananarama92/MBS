@@ -22,12 +22,7 @@ export class PreferenceScreenProxy extends ScreenProxy {
     constructor() {
         const load = async () => {
             await CommonSetScreen("Character", "Preference");
-            PreferencePageCurrent = 1;
-            const screen = PreferenceSubscreens.find(e => e.name === "Extensions");
-            if (screen) {
-                screen.load?.();
-                PreferenceSubscreen = screen;
-            }
+            PreferenceOpenSubscreen("Extensions");
         };
 
         super(

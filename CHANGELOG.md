@@ -1,5 +1,14 @@
 # MBS Changelog
 
+## v1.10.3
+* Move all MBS server crafts to BC starting from the full C R121 (non-beta) release
+    - Starting from the full BC R121 release all "MBS (Account)" crafted items will be moved to base BC, utilizing its increase in crafting slot (from 80 to 200).
+      As a reminder: ensure that enough empty slots remain available for the migration.
+* Increase the max number of local MBS crafting slots from 160 to 600
+* Add support for BC R121Beta1
+* Fix an issue wherein registering MBS wheel of fortune listeners could crash if BC is insufficiently loaded at that point
+* Ensure that the extensions preference subscreen is re-opened via `PreferenceOpenSubscreen()`
+
 ## v1.10.2
 * Vendor the ES module version of Dexie in order to circumvent its version check
     - Prevents Dexie's "Two different versions of Dexie loaded in the same" error from popping up if addons happen to be using mismatched versions

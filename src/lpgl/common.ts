@@ -392,11 +392,11 @@ async function contentLoadedListener() {
 export function waitForBC(
     name: BCListenerNames,
     listeners: {
-        /** To be executed after the documents `DOMContentLoaded` event */
+        /** To be executed after the documents `load` event */
         afterLoad?: () => Promise<void>,
         /** To be executed after logging in and running `afterLoad` */
         afterLogin?: () => Promise<void>,
-        /** To be executed after the documents `DOMContentLoaded` event */
+        /** To be executed after logging in and setting up the player's MBS settings */
         afterMBS?: () => Promise<void>,
     },
 ) {
@@ -422,9 +422,10 @@ export function waitForBC(
         return false;
     }
 
-    document.addEventListener("DOMContentLoaded", contentLoadedListener);
     if (document.readyState === "complete") {
         contentLoadedListener();
+    } else {
+        document.addEventListener("load", contentLoadedListener);
     }
     return true;
 }
