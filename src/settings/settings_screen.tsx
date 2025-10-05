@@ -350,7 +350,6 @@ waitForBC("settings_screen", {
         PreferenceRegisterExtensionSetting({
             Identifier: "MBS",
             load() {
-                PreferenceExit();
                 preferenceState.loadChild(MBSPreferenceScreen);
             },
             run() {},
