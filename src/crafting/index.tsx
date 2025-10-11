@@ -1,7 +1,6 @@
 /** Main module for managing all crafting-related additions */
 
 import { inRange } from "lodash";
-import { Dexie } from "../dexie";
 
 import { MBS_MOD_API, padArray, logger, Version } from "../common";
 import { waitForBC } from "../common_bc";
@@ -258,27 +257,19 @@ waitForBC("crafting", {
     },
     async afterMBS() {
         logger.log("Initializing crafting cache");
-
-        const version = Version.fromBCVersion(GameVersion);
-        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
-        const db: Dexie = openDB(Player.MemberNumber);
-        db.close({ disableAutoOpen: false });
-
-        async function loadHook() {
-            if (!document.getElementById(IDs.style)) {
-                document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
-            }
-
-            padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
-            for (const [i, craft] of (await loadAllCraft(db)).entries()) {
-                Player.Crafting[i + maxBC + maxMBSServer] = craft;
-            }
+        if (!document.getElementById(IDs.style)) {
+            document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
         }
 
-        MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
-            loadHook();
-            return next(args);
-        });
+        // Load the extra MBS crafts
+        const version = Version.fromBCVersion(GameVersion);
+        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+        const db = openDB(Player.MemberNumber);
+        padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
+        for (const [i, craft] of (await loadAllCraft(db)).entries()) {
+            Player.Crafting[i + maxBC + maxMBSServer] = craft;
+        }
+        db.close({ disableAutoOpen: false });
 
         // Mirror the extra MBS-specific crafted items to the MBS settings
         MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
@@ -347,10 +338,6 @@ waitForBC("crafting", {
                     return ret;
                 });
             }
-        }
-
-        if (CurrentScreen === "Crafting") {
-            loadHook();
         }
     },
 });
