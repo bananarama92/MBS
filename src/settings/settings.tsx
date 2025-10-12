@@ -197,8 +197,6 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
     };
 
     const scalars = {
-        CraftingCache: "",
-
         AlternativeGarbling: false,
         DropTrailing: false,
         GarblePerSyllable: false,
@@ -219,7 +217,7 @@ function parseProtoSettings(s: MBSProtoSettings): SettingsStatus.Base {
 
     const settings: MBSSettings = {
         AlternativeGarbling: scalars.AlternativeGarbling,
-        CraftingCache: scalars.CraftingCache,
+        CraftingCache: typeof s.CraftingCache === "string" ? s.CraftingCache : undefined,
         DropTrailing: scalars.DropTrailing,
         FortuneWheelCommands: parseFWObjects(FWCommand.fromObject, s.FortuneWheelCommands ?? [], err.FortuneWheelCommands),
         FortuneWheelItemSets: parseFWObjects(FWItemSet.fromObject, s.FortuneWheelSets ?? s.FortuneWheelItemSets ?? [], err.FortuneWheelItemSets),

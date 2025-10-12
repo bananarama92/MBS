@@ -308,10 +308,10 @@ waitForBC("crafting", {
             return next(args);
         });
 
-        if (version.major > 121 || (version.major === 121 && !version.beta)) {
+        if (Player.MBSSettings.CraftingCache != null) {
             migrateCraftingCache(Player, Player.MBSSettings.CraftingCache);
-        } else {
-            loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
+            Player.MBSSettings.CraftingCache = undefined;
+            pushMBSSettings([SettingsType.SETTINGS]);
         }
 
         if (version.major === 121 && version.beta) {
