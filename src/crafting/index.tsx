@@ -1,9 +1,8 @@
 /** Main module for managing all crafting-related additions */
 
 import { inRange } from "lodash";
-import { Dexie } from "../dexie";
 
-import { MBS_MOD_API, padArray, logger, Version } from "../common";
+import { MBS_MOD_API, padArray, logger } from "../common";
 import { waitForBC } from "../common_bc";
 import { pushMBSSettings, SettingsType } from "../settings";
 
@@ -11,14 +10,6 @@ import { openDB, saveCraft, loadAllCraft, saveAllCraft, deleteDB, getSegmentSize
 import styles from "./craft.scss";
 
 export { deleteDB };
-
-/** Serialize the passed crafting items. */
-function craftingSerialize(items: null | readonly (null | CraftingItem)[]): string {
-    if (items == null) {
-        return "";
-    }
-    return items.map(C => C?.Item ? CraftingSerialize(C) : "").join(CraftingSerializeItemSep);
-}
 
 function migrateCraftingCache(character: Character, craftingCache: string): void {
     const { maxBC } = getSegmentSizes();
@@ -96,55 +87,6 @@ function migrateCraftingCache(character: Character, craftingCache: string): void
     }
 
     if (character.IsPlayer()) {
-        CraftingSaveServer();
-    }
-}
-
-/**
- * Load crafting items from the MBS cache.
- * @param character The character in question
- * @param craftingCache The crafting cache
- */
-function loadCraftingCache(character: Character, craftingCache: string): void {
-    const { maxBC } = getSegmentSizes();
-    character.Crafting ??= [];
-    padArray(character.Crafting, maxBC, null);
-    if (!craftingCache) {
-        return;
-    }
-
-    const packet = LZString.compressToUTF16(craftingCache);
-    const data: (null | CraftingItem)[] = CraftingDecompressServerData(packet);
-    let refresh = false;
-    for (const [i, item] of data.entries()) {
-        if (item == null) {
-            character.Crafting.push(null);
-            continue;
-        } else if (i >= maxBC) {
-            break;
-        }
-
-        // Make sure that the item is a valid craft
-        validate: switch (CraftingValidate(item)) {
-            case CraftingStatusType.OK:
-                character.Crafting.push(item);
-                break validate;
-            case CraftingStatusType.ERROR:
-                refresh = true;
-                character.Crafting.push(item);
-                break validate;
-            case CraftingStatusType.CRITICAL_ERROR:
-                logger.error(`Removing corrupt crafting item ${maxBC + i}: "${item?.Name} (${item?.Item})"`);
-                character.Crafting.push(null);
-                break validate;
-        }
-    }
-
-    /**
-     * One or more validation errors were encountered that were successfully resolved;
-     * push the fixed items back to the server
-     */
-    if (refresh && character.IsPlayer()) {
         CraftingSaveServer();
     }
 }
@@ -258,27 +200,18 @@ waitForBC("crafting", {
     },
     async afterMBS() {
         logger.log("Initializing crafting cache");
-
-        const version = Version.fromBCVersion(GameVersion);
-        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
-        const db: Dexie = openDB(Player.MemberNumber);
-        db.close({ disableAutoOpen: false });
-
-        async function loadHook() {
-            if (!document.getElementById(IDs.style)) {
-                document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
-            }
-
-            padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
-            for (const [i, craft] of (await loadAllCraft(db)).entries()) {
-                Player.Crafting[i + maxBC + maxMBSServer] = craft;
-            }
+        if (!document.getElementById(IDs.style)) {
+            document.body.append(<style id={IDs.style}>{styles.toString()}</style>);
         }
 
-        MBS_MOD_API.hookFunction("CraftingLoad", 0, (args, next) => {
-            loadHook();
-            return next(args);
-        });
+        // Load the extra MBS crafts
+        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+        const db = openDB(Player.MemberNumber);
+        padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
+        for (const [i, craft] of (await loadAllCraft(db)).entries()) {
+            Player.Crafting[i + maxBC + maxMBSServer] = craft;
+        }
+        db.close({ disableAutoOpen: false });
 
         // Mirror the extra MBS-specific crafted items to the MBS settings
         MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
@@ -295,15 +228,6 @@ waitForBC("crafting", {
             next(args);
             Player.Crafting = craftingBackup;
 
-
-            if (version.major === 120 || (version.major === 121 && version.beta)) {
-                const cache = craftingSerialize(Player.Crafting.slice(maxBC, maxBC + maxMBSServer));
-                if (cache != Player.MBSSettings.CraftingCache) {
-                    Player.MBSSettings.CraftingCache = cache;
-                    pushMBSSettings([SettingsType.SETTINGS]);
-                }
-            }
-
             // Crafts are synced from within a place of unknown origin; sync the local crafts just in case
             if (CraftingSlot === 0 && CraftingMode !== "Name") {
                 saveAllCraft(db, Player.Crafting.slice(maxBC + maxMBSServer, maxBC + maxMBSServer + maxMBSLocal));
@@ -317,40 +241,10 @@ waitForBC("crafting", {
             return next(args);
         });
 
-        if (version.major > 121 || (version.major === 121 && !version.beta)) {
+        if (Player.MBSSettings.CraftingCache != null) {
             migrateCraftingCache(Player, Player.MBSSettings.CraftingCache);
-        } else {
-            loadCraftingCache(Player, Player.MBSSettings.CraftingCache);
-        }
-
-        if (version.major === 121 && version.beta) {
-            const nCrafts = Player.Crafting.slice(maxBC, maxBC + maxMBSServer).filter(i => i != null);
-            const psa = <div class="chat-room-changelog" id="mbs-craft-psa-r121">
-                Starting from the full BC R121 release all <code>{nCrafts.length}</code> <q>MBS (Account)</q> crafted items will be moved to base BC, utilizing its increase in crafting slot (from 80 to 200).
-                <br/>
-                As a reminder: ensure that enough empty slots remain available for the migration.
-            </div> as HTMLDivElement;
-            psa.setAttribute("data-sender", Player.MemberNumber.toString());
-            psa.setAttribute("data-time", ChatRoomCurrentTime());
-            psa.classList.add("ChatMessage");
-
-            if (CurrentScreen === "ChatRoom") {
-                ChatRoomAppendChat(psa);
-            } else {
-                let published = false;
-                MBS_MOD_API.hookFunction("ChatRoomCreateElement", 0, (args, next) => {
-                    const ret = next(args);
-                    if (!published) {
-                        published = true;
-                        ChatRoomAppendChat(psa);
-                    }
-                    return ret;
-                });
-            }
-        }
-
-        if (CurrentScreen === "Crafting") {
-            loadHook();
+            Player.MBSSettings.CraftingCache = undefined;
+            pushMBSSettings([SettingsType.SETTINGS]);
         }
     },
 });

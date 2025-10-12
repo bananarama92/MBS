@@ -101,17 +101,6 @@ class MBSLog extends Array<LogEntry> {
 export const logger = new MBSLog();
 
 /**
- * Wait for the passed predicate to evaluate to `true`.
- * @param predicate A predicate
- * @param timeout The timeout in milliseconds for when the predicate fails
- */
-async function waitFor(predicate: () => boolean, timeout: number = 100) {
-    while (!predicate()) {
-        await new Promise(resolve => setTimeout(resolve, timeout));
-    }
-}
-
-/**
  * Check whether an integer falls within the specified range and raise otherwise.
  * @param int The to-be validate integer
  * @param varName The name of the variable
@@ -280,7 +269,7 @@ export class Version {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 120 satisfies number;
+export const BC_MIN_VERSION = 121 satisfies number;
 
 const bcListenerNames = [
     "api",
@@ -334,14 +323,8 @@ class BCListeners {
 
 const bcListeners = new BCListeners;
 
-let mbsLoadingStarted = false;
-
 async function contentLoadedListener() {
-    if (mbsLoadingStarted) {
-        return;
-    } else {
-        mbsLoadingStarted = true;
-    }
+    await GameReadyState.load;
 
     const gameVersion = globalThis.GameVersion;
     if (typeof gameVersion !== "string" || !GameVersionFormat.test(gameVersion)) {
@@ -369,11 +352,10 @@ async function contentLoadedListener() {
     logger.debug("Executing afterLoad hooks", Object.keys(bcListeners.afterLoad).sort());
     await Promise.all(Object.values(bcListeners.afterLoad).map(func => func()));
 
-    await waitFor(() => Player.OnlineSharedSettings !== undefined && Player.ExtensionSettings !== undefined);
+    await ServerIsLoggedInAsync();
     logger.debug("Executing afterLogin hooks", Object.keys(bcListeners.afterLogin).sort());
     await Promise.all(Object.values(bcListeners.afterLogin).map(func => func()));
 
-    await waitFor(() => Player.MBSSettings !== undefined);
     logger.debug("Executing afterMBS hooks", Object.keys(bcListeners.afterMBS).sort());
     await Promise.all(Object.values(bcListeners.afterMBS).map(func => func()));
 };
@@ -422,7 +404,7 @@ export function waitForBC(
         return false;
     }
 
-    if (document.readyState === "complete") {
+    if (document.readyState !== "loading") {
         contentLoadedListener();
     } else {
         document.addEventListener("load", contentLoadedListener);

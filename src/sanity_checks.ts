@@ -31,16 +31,16 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["5E7225EA"]],
-        ["CraftingRun", ["4CD7AB08", "BF33E4B6"]],
+        ["CraftingClick", ["518ADD1E"]],
+        ["CraftingRun", ["2FDBFF13"]],
         ["SpeechTransformProcess", ["666DDA2F"]],
         ["SpeechTransformGagGarble", ["691A05BF"]],
-        ["WheelFortuneLoad", ["EA252C35"]],
+        ["WheelFortuneLoad", ["58E058DD"]],
         ["WheelFortuneClick", ["D368BBF2"]],
         ["WheelFortuneRun", ["D4DF7BB8"]],
         ["WheelFortuneMouseUp", ["887E5D09"]],
         ["WheelFortuneMouseDown", ["78354D35"]],
-        ["WheelFortuneCustomizeLoad", ["97F0A81E"]],
+        ["WheelFortuneCustomizeLoad", ["7A8DD30D"]],
         ["WheelFortuneDrawWheel", ["B21DAEA9"]],
     ];
     return Object.freeze(Object.fromEntries(hashes.map(item => {

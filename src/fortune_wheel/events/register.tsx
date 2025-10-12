@@ -253,8 +253,10 @@ export class WheelHookRegister implements _WheelHookRegister {
         registrationData: import ("bondage-club-mod-sdk").ModSDKModInfo,
         options: ExtendedWheelEvents.Options<T>,
     ) {
-        if (document.readyState !== "complete") {
-            await new Promise(resolve => document.addEventListener("load", resolve));
+        if (document.readyState !== "loading") {
+            await GameReadyState.load;
+        } else {
+            await new Promise(resolve => document.addEventListener("load", async () => resolve(await GameReadyState.load)));
         }
 
         if (this[hookType].some(i => i.registrationData.name === registrationData.name && i.hookName === options.hookName)) {

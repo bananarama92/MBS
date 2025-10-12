@@ -16,9 +16,8 @@ interface CraftingDBData {
 }
 
 export function getSegmentSizes() {
-    const version = Version.fromBCVersion(GameVersion);
     const maxBC = GameVersion === "R120" ? 80 : 200;
-    const maxMBSServer = (version.major === 120 || (version.major === 121 && version.beta)) ? 80 : 0;
+    const maxMBSServer = 0;
     const maxMBSLocal = 600;
     return { maxBC, maxMBSServer, maxMBSLocal };
 }

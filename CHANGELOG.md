@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.10.4
+* Drop BC R120 support
+* Fix MBS local crafts only populating the player's crafting list after opening the crafting screen
+* Remove a redundant `PreferenceExit()` call
+* Prevent to MBS server crafts from migrating multiple times to base BC
+* Backport one BC R121 hotfix:
+    - [BondageProjects/Bondage-College#5918](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/5918): Fix crafting data failing to properly sync between players
+
 ## v1.10.3
 * Move all MBS server crafts to BC starting from the full C R121 (non-beta) release
     - Starting from the full BC R121 release all "MBS (Account)" crafted items will be moved to base BC, utilizing its increase in crafting slot (from 80 to 200).

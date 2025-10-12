@@ -19,7 +19,14 @@ export const backportIDs: Set<number> = new Set();
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R120": {
+            case "R121": {
+                if (MBS_MOD_API.getOriginalHash("ChatRoomSyncItem") === "0500E6D4") {
+                    backportIDs.add(5918);
+                    MBS_MOD_API.patchFunction("ChatRoomSyncItem", {
+                        "wornItem.Property = item.Property;":
+                            "wornItem.Property = item.Property; wornItem.Craft = item.Craft;",
+                    });
+                }
                 break;
             }
         }
