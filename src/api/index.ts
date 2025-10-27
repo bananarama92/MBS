@@ -58,7 +58,11 @@ export const getDebug: typeof mbs.getDebug = function getDebug() {
 waitForBC("api", {
     async afterLogin() {
         if (typeof FUSAM !== "undefined" && typeof FUSAM.registerDebugMethod === "function") {
-            FUSAM.registerDebugMethod("mbs", getDebug);
+            try {
+                FUSAM.registerDebugMethod("mbs", getDebug);
+            } catch (error) {
+                logger.error("Failed to register FUSAM debug method", error);
+            }
         }
     },
 });
