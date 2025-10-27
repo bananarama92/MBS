@@ -11,6 +11,7 @@ import {
     MAX_DATA,
     measureDataSize,
     byteToKB,
+    mbsSettings,
 } from "../settings";
 
 import { FWCommandScreen } from "./fortune_wheel_command";
@@ -44,7 +45,7 @@ export function loadFortuneWheelObjects<T extends "FortuneWheelItemSets" | "Fort
 
     let wheelList: MBSSettings[T];
     if (character.IsPlayer()) {
-        wheelList = Player.MBSSettings[fieldName];
+        wheelList = mbsSettings[fieldName];
     } else {
         const constructor = fieldName === "FortuneWheelItemSets" ? FWItemSet.fromObject : FWCommand.fromObject;
         const errList: [msg: string, ...rest: unknown[]][] = [];

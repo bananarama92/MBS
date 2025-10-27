@@ -39,6 +39,16 @@ export function includes<T>(arg: readonly T[], value: unknown): value is T {
 }
 
 /**
+ * A version of {@link Set.has}/{@link Map.has} that serves as a type guard.
+ * @param arg An array
+ * @param value The element to search for
+ * @returns Whether the passed array includes the passed value
+ */
+export function has<T>(arg: { readonly has: (value: T) => boolean }, value: unknown): value is T {
+    return arg.has(value as T);
+}
+
+/**
  * A version of {@link Number.isInteger} that serves as a type guard.
  * @param arg A numeric value
  * @returns Whether the passed numeric value is an integer

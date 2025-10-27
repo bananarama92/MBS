@@ -105,11 +105,6 @@ export function sanitizeWheelFortuneIDs(IDs: string): string {
     return ret;
 }
 
-/** Return whether all online settings (including MBS ones) are loaded. */
-export function settingsMBSLoaded(): boolean {
-    return typeof Player !== "undefined" && Player.MBSSettings !== undefined;
-}
-
 /** Indices of the default MBS wheel of fortune item sets */
 const DEFAULT_ITEM_SET_INDEX: Record<string, number> = Object.freeze({
     "PSO Bondage": 0,

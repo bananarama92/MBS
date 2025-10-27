@@ -1,5 +1,6 @@
 import { MBS_MOD_API, logger } from "../common";
 import { waitForBC } from "../common_bc";
+import { mbsSettings } from "../settings";
 
 import { convertToGagSpeak, GarbleOptions } from "./gag_speak";
 import { json as garblingJSON } from "./json";
@@ -18,12 +19,12 @@ waitForBC("garbling", {
 
         MBS_MOD_API.hookFunction("SpeechTransformGagGarble", 0, ([words, gagLevel, ignoreOOC, ...args], next) => {
             const character = (args as [C?: Character, ...args: unknown[]])[0];
-            if (!gagLevel || !words || !Player.MBSSettings.AlternativeGarbling) {
+            if (!gagLevel || !words || !mbsSettings.AlternativeGarbling) {
                 return next([words, gagLevel, ignoreOOC, ...args]);
             } else {
                 const options: GarbleOptions.Base = {
-                    dropChars: Player.MBSSettings.DropTrailing ? {} : undefined,
-                    perSyllable: Player.MBSSettings.GarblePerSyllable,
+                    dropChars: mbsSettings.DropTrailing ? {} : undefined,
+                    perSyllable: mbsSettings.GarblePerSyllable,
                     fallback: next,
                     ignoreOOC,
                     character,

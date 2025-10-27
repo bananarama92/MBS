@@ -3,9 +3,9 @@
 import { range, sample } from "lodash-es";
 import bcModSdk from "bondage-club-mod-sdk";
 
-import { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate } from "./lpgl/common";
+import { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate, has } from "./lpgl/common";
 
-export { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate };
+export { isArray, includes, keys, entries, fromEntries, logger, isInteger, Version, validateInt, toStringTemplate, has };
 
 /** An array with all alpha-numerical characters. */
 const ALPHABET = Object.freeze([

@@ -4,7 +4,7 @@ import { inRange } from "lodash";
 
 import { MBS_MOD_API, padArray, logger } from "../common";
 import { waitForBC } from "../common_bc";
-import { pushMBSSettings, SettingsType } from "../settings";
+import { pushMBSSettings, SettingsType, mbsSettings } from "../settings";
 
 import { openDB, saveCraft, loadAllCraft, saveAllCraft, deleteDB, getSegmentSizes } from "./dexie";
 import styles from "./craft.scss";
@@ -241,9 +241,9 @@ waitForBC("crafting", {
             return next(args);
         });
 
-        if (Player.MBSSettings.CraftingCache != null) {
-            migrateCraftingCache(Player, Player.MBSSettings.CraftingCache);
-            Player.MBSSettings.CraftingCache = undefined;
+        if (mbsSettings.CraftingCache != null) {
+            migrateCraftingCache(Player, mbsSettings.CraftingCache);
+            mbsSettings.CraftingCache = undefined;
             pushMBSSettings([SettingsType.SETTINGS]);
         }
     },

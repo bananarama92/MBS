@@ -1,5 +1,6 @@
 import { logger } from "../common";
-import { waitForBC, settingsMBSLoaded } from "../common_bc";
+import { waitForBC } from "../common_bc";
+import { mbsSettings } from "../settings";
 
 import * as wheelOutfits from "./wheel_outfits";
 import * as css from "./css";
@@ -41,17 +42,10 @@ function jsonStringifier(key: string, value: any) {
  * @returns The MBS debug output in stringified form
  */
 export const getDebug: typeof mbs.getDebug = function getDebug() {
-    if (settingsMBSLoaded()) {
-        return JSON.stringify({
-            log: logger,
-            settings: Player.MBSSettings,
-        }, jsonStringifier, 4);
-    } else {
-        return JSON.stringify({
-            log: logger,
-            settings: "ERROR: MBS not fully loaded yet",
-        }, undefined, 4);
-    }
+    return JSON.stringify({
+        log: logger,
+        settings: mbsSettings,
+    }, jsonStringifier, 4);
 };
 
 // Register the debugger to FUSAM

@@ -3,7 +3,7 @@ import { cloneDeep, range } from "lodash-es";
 import { validateInt } from "../common";
 import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, waitForBC, FWCommand } from "../common_bc";
 import { MBSScreen, ScreenParams } from "../screen_abc";
-import { pushMBSSettings, SettingsType } from "../settings";
+import { pushMBSSettings, SettingsType, mbsSettings } from "../settings";
 
 import { getFlagDescription } from "./lock_flags";
 import { FORTUNE_WHEEL_ITEM_SETS } from "./fortune_wheel";
@@ -250,8 +250,8 @@ export class WheelPresetScreen extends MBSScreen {
 
     #loadIDMapping() {
         const lists = [
-            ...Player.MBSSettings.FortuneWheelItemSets,
-            ...Player.MBSSettings.FortuneWheelCommands,
+            ...mbsSettings.FortuneWheelItemSets,
+            ...mbsSettings.FortuneWheelCommands,
         ];
         for (const [i, fwOption] of lists.entries()) {
             let idStart = 2 * 2**8;
@@ -289,10 +289,10 @@ export class WheelPresetScreen extends MBSScreen {
     ): HTMLButtonElement {
         const i = index.toString();
         return ElementButton.Create(
-            `${ids.root}${i}`, 
+            `${ids.root}${i}`,
             function () { this.focus(); },
-            { 
-                noStyling: true, 
+            {
+                noStyling: true,
                 tooltipPosition,
                 tooltip: [
                     <h2 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />,
@@ -319,8 +319,8 @@ export class WheelPresetScreen extends MBSScreen {
                 break;
             case OptionType.customMBS:
                 objects = [
-                    ...Player.MBSSettings.FortuneWheelItemSets,
-                    ...Player.MBSSettings.FortuneWheelCommands,
+                    ...mbsSettings.FortuneWheelItemSets,
+                    ...mbsSettings.FortuneWheelCommands,
                 ];
                 tooltipPosition = "left";
                 getPrefix = (_, i) => i >= MBS_MAX_SETS ? `Command Set ${i - 32}: ` : `Item Set ${i}: `;

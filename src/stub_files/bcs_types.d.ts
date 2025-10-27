@@ -192,7 +192,7 @@ interface MBSSettings extends Record<Exclude<keyof MBSProtoSettings, MBSSettings
     /** A sealed array with all custom user-created wheel of fortune command sets */
     readonly FortuneWheelCommands: (null | import("../common_bc").FWCommand)[],
     /** A sealed array with various ID-string presets */
-    FortuneWheelPresets: (null | WheelPreset)[],
+    readonly FortuneWheelPresets: (null | WheelPreset)[],
     /** Whether or not one can roll the wheel of fortune when restrained */
     RollWhenRestrained: boolean;
     /**

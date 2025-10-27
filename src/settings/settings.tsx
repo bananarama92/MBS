@@ -1,6 +1,6 @@
 /** Function for managing all MBS related settings. */
 
-import { omit, sumBy } from "lodash-es";
+import { omit, sumBy, pick } from "lodash-es";
 
 import {
     Version,
@@ -9,6 +9,7 @@ import {
     isArray,
     entries,
     fromEntries,
+    has,
 } from "../common";
 import {
     FWItemSet,
@@ -36,6 +37,142 @@ export const SettingsType = Object.freeze({
     SHARED: 1,
 });
 
+class MBSSettingsCls implements MBSSettings {
+    readonly Version: typeof mbs.MBS_VERSION = MBS_VERSION;
+    readonly FortuneWheelItemSets: (null | import("../common_bc").FWItemSet)[];
+    readonly FortuneWheelCommands: (null | import("../common_bc").FWCommand)[];
+    readonly FortuneWheelPresets: (null | WheelPreset)[];
+    RollWhenRestrained: boolean = true;
+    LockedWhenRestrained: boolean = false;
+    AlternativeGarbling: boolean = false;
+    DropTrailing: boolean = false;
+    GarblePerSyllable: boolean = false;
+    ShowChangelog: boolean = false;
+    /** @deprecated */
+    CraftingCache?: string = undefined;
+    SettingsLoaded: boolean = false;
+
+    constructor() {
+        this.FortuneWheelItemSets = Object.seal(Array(MBS_MAX_SETS).fill(null));
+        this.FortuneWheelCommands = Object.seal(Array(MBS_MAX_SETS).fill(null));
+        this.FortuneWheelPresets = Object.seal(Array(MBS_MAX_ID_SETS).fill(null));
+        Object.seal(this);
+    }
+
+    static getProxyHandlers(): ProxyHandler<MBSSettingsCls> {
+        const props = new Set(MBSSettingsCls.keys());
+        const readonlyProps = new Set([
+            "FortuneWheelItemSets",
+            "FortuneWheelCommands",
+            "FortuneWheelPresets",
+        ] as const) satisfies Set<keyof MBSSettings>;
+        return {
+            ownKeys() {
+                return MBSSettingsCls.keys();
+            },
+            set(target, property, ...args) {
+                if (has(readonlyProps, property)) {
+                    throw new TypeError(`"${String(property)}" is read-only`);
+                } else {
+                    return Reflect.set(target, property, ...args);
+                }
+            },
+            get(target, property, ...args) {
+                if (!target.SettingsLoaded && has(props, property)) {
+                    logger.error(`Trying to access "${String(property)}" property prior to MBS settings initialization`);
+                }
+                return Reflect.get(target, property, ...args);
+            },
+        };
+    }
+
+    static keys() {
+        const keys: (keyof MBSSettings | "SettingsLoaded")[] = [
+            "Version",
+            "FortuneWheelItemSets",
+            "FortuneWheelCommands",
+            "FortuneWheelPresets",
+            "RollWhenRestrained",
+            "LockedWhenRestrained",
+            "AlternativeGarbling",
+            "DropTrailing",
+            "GarblePerSyllable",
+            "ShowChangelog",
+            "CraftingCache",
+            "SettingsLoaded",
+        ];
+        return keys.sort();
+    }
+
+    update(obj: Partial<MBSSettings>) {
+        if (obj.FortuneWheelItemSets != null) {
+            for (const [i, item] of obj.FortuneWheelItemSets.entries()) {
+                if (i >= this.FortuneWheelItemSets.length) {
+                    break;
+                }
+                this.FortuneWheelItemSets[i] = item;
+            }
+        }
+        if (obj.FortuneWheelCommands != null) {
+            for (const [i, item] of obj.FortuneWheelCommands.entries()) {
+                if (i >= this.FortuneWheelCommands.length) {
+                    break;
+                }
+                this.FortuneWheelCommands[i] = item;
+            }
+        }
+        if (obj.FortuneWheelPresets != null) {
+            for (const [i, item] of obj.FortuneWheelPresets.entries()) {
+                if (i >= this.FortuneWheelPresets.length) {
+                    break;
+                }
+                this.FortuneWheelPresets[i] = item;
+            }
+        }
+        if (obj.RollWhenRestrained != null) {
+            this.RollWhenRestrained = obj.RollWhenRestrained;
+        }
+        if (obj.LockedWhenRestrained != null) {
+            this.LockedWhenRestrained = obj.LockedWhenRestrained;
+        }
+        if (obj.AlternativeGarbling != null) {
+            this.AlternativeGarbling = obj.AlternativeGarbling;
+        }
+        if (obj.DropTrailing != null) {
+            this.DropTrailing = obj.DropTrailing;
+        }
+        if (obj.GarblePerSyllable != null) {
+            this.GarblePerSyllable = obj.GarblePerSyllable;
+        }
+        if (obj.ShowChangelog != null) {
+            this.ShowChangelog = obj.ShowChangelog;
+        }
+        if (obj.CraftingCache != null) {
+            this.CraftingCache = obj.CraftingCache;
+        }
+        this.SettingsLoaded = true;
+    }
+
+    clear() {
+        this.FortuneWheelItemSets.fill(null);
+        this.FortuneWheelCommands.fill(null);
+        this.FortuneWheelPresets.fill(null);
+        this.RollWhenRestrained = true;
+        this.LockedWhenRestrained = false;
+        this.AlternativeGarbling = false;
+        this.DropTrailing = false;
+        this.GarblePerSyllable = false;
+        this.ShowChangelog = false;
+        this.CraftingCache = undefined;
+    }
+
+    toJSON() {
+        return pick(this, ...MBSSettingsCls.keys());
+    }
+}
+
+export const mbsSettings = new Proxy(new MBSSettingsCls(), MBSSettingsCls.getProxyHandlers());
+
 /** Check whether MBS has just been upgraded for the user in question. */
 function detectUpgrade(versionString?: string): boolean {
     if (versionString === undefined) {
@@ -62,7 +199,6 @@ function detectUpgrade(versionString?: string): boolean {
         return false;
     }
 }
-
 
 /** Show any errors encountered during settings parsing to the player via a beep. */
 function showSettingsError(err: SettingsStatus.Base["err"]): void {
@@ -281,8 +417,8 @@ function initMBSSettings(
 
     const settingsStatus = parseProtoSettings(settings);
     if (settingsStatus.ok || allowFailure) {
-        Player.MBSSettings = settingsStatus.settings;
-        if (Player.MBSSettings.ShowChangelog && newVersion) {
+        mbsSettings.update(settingsStatus.settings);
+        if (mbsSettings.ShowChangelog && newVersion) {
             const version = Version.fromVersion(MBS_VERSION);
             showChangelog(`v${version.major}${version.minor}${version.micro}`);
         }
@@ -317,19 +453,7 @@ export function clearMBSSettings(): void {
     WheelFortuneOption = WheelFortuneOption.filter(o => o.Custom !== true);
     WheelFortuneDefault = FORTUNE_WHEEL_DEFAULT_BASE;
     Player.Crafting = Player.Crafting.slice(0, GameVersion === "R120" ? 80 : 200);
-    Player.MBSSettings = Object.seal({
-        AlternativeGarbling: false,
-        CraftingCache: "",
-        DropTrailing: false,
-        FortuneWheelCommands: Object.seal(Array(MBS_MAX_SETS).fill(null)),
-        FortuneWheelItemSets: Object.seal(Array(MBS_MAX_SETS).fill(null)),
-        FortuneWheelPresets: Object.seal(Array(MBS_MAX_ID_SETS).fill(null)),
-        GarblePerSyllable: false,
-        LockedWhenRestrained: false,
-        RollWhenRestrained: true,
-        ShowChangelog: true,
-        Version: MBS_VERSION,
-    });
+    mbsSettings.clear();
     deleteDB(Player.MemberNumber);
 
     ServerAccountUpdate.QueueData({
@@ -354,7 +478,7 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
     const data: Record<string, any> = {};
 
     if (settingsType.includes(SettingsType.SETTINGS)) {
-        const settings = omit(Player.MBSSettings, "FortuneWheelItemSets", "FortuneWheelCommands");
+        const settings = omit(mbsSettings, "FortuneWheelItemSets", "FortuneWheelCommands");
         Player.ExtensionSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
         if (push) {
             data["ExtensionSettings.MBS"] = Player.ExtensionSettings.MBS;
@@ -363,8 +487,8 @@ export function pushMBSSettings(settingsType: readonly SettingsType[], push: boo
 
     if (settingsType.includes(SettingsType.SHARED)) {
         const settings = Object.freeze({
-            FortuneWheelItemSets: Player.MBSSettings.FortuneWheelItemSets,
-            FortuneWheelCommands: Player.MBSSettings.FortuneWheelCommands,
+            FortuneWheelItemSets: mbsSettings.FortuneWheelItemSets,
+            FortuneWheelCommands: mbsSettings.FortuneWheelCommands,
         });
         Player.OnlineSharedSettings.MBS = LZString.compressToUTF16(JSON.stringify(settings));
         Player.OnlineSharedSettings.MBSVersion = MBS_VERSION;
@@ -399,7 +523,7 @@ export function logSettingsSize() {
  * @returns The Base64-compressed MBS settings
  */
 export function exportSettings() {
-    return LZString.compressToBase64(JSON.stringify(Player.MBSSettings));
+    return LZString.compressToBase64(JSON.stringify(mbsSettings));
 }
 
 export const SettingsStatus = Object.freeze({

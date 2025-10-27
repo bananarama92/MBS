@@ -12,6 +12,7 @@ import {
     logSettingsSize,
     SettingsStatus,
     clearMBSSettings,
+    mbsSettings,
 } from "./settings";
 import { garblingJSON } from "../garbling";
 
@@ -218,12 +219,12 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     #boolSwitch(event: MouseEvent) {
         const field = (event.target as HTMLInputElement).name as BoolSettings;
-        if (field in Player.MBSSettings) {
-            Player.MBSSettings[field] = !Player.MBSSettings[field];
+        if (field in mbsSettings) {
+            mbsSettings[field] = !mbsSettings[field];
             pushMBSSettings([SettingsType.SETTINGS]);
             switch (field) {
                 case "AlternativeGarbling":
-                    if (Player.MBSSettings[field]) garblingJSON.init();
+                    if (mbsSettings[field]) garblingJSON.init();
                     break;
                 case "LockedWhenRestrained":
                     this.#lockInputs();
@@ -256,7 +257,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                     + "\nAre you sure you want to continue?",
                 );
                 if (isConfirm) {
-                    Player.MBSSettings = status.settings;
+                    mbsSettings.update(status.settings);
                     pushMBSSettings([SettingsType.SETTINGS, SettingsType.SHARED], true);
                     logSettingsSize();
                     logger.log("Settings successfully updated");
@@ -312,10 +313,10 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     #lockInputs() {
-        const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
+        const disabled = Player.IsRestrained() && mbsSettings.LockedWhenRestrained;
         for (const inp of document.querySelectorAll(`#${ID.settingsGrid} input[type="checkbox"]`) as NodeListOf<HTMLInputElement>) {
-            if (inp.name in Player.MBSSettings) {
-                inp.checked = Player.MBSSettings[inp.name as BoolSettings];
+            if (inp.name in mbsSettings) {
+                inp.checked = mbsSettings[inp.name as BoolSettings];
                 inp.disabled = disabled;
             }
         }

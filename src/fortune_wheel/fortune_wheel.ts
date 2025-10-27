@@ -19,7 +19,7 @@ import {
 } from "../common_bc";
 import { validateBuiltinWheelIDs } from "../sanity_checks";
 import { ScreenProxy } from "../screen_abc";
-import { pushMBSSettings, SettingsType } from "../settings";
+import { pushMBSSettings, SettingsType, mbsSettings } from "../settings";
 
 import { DEFAULT_FLAGS, enableFlags } from "./lock_flags";
 import { StripLevel } from "./equipper";
@@ -867,7 +867,7 @@ waitForBC("fortune_wheel", {
         });
 
         MBS_MOD_API.hookFunction("WheelFortuneRun", 0, (args, next) => {
-            const canSpin = (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained());
+            const canSpin = (mbsSettings.RollWhenRestrained || !Player.IsRestrained());
             if (!canSpin) {
                 WheelFortuneForced = false;
             }
@@ -909,7 +909,7 @@ waitForBC("fortune_wheel", {
         });
 
         MBS_MOD_API.hookFunction("WheelFortuneClick", 0, (args, next) => {
-            if (!Player.MBSSettings.RollWhenRestrained && Player.IsRestrained()) {
+            if (!mbsSettings.RollWhenRestrained && Player.IsRestrained()) {
                 WheelFortuneForced = false;
                 if (MouseIn(...COORDS.roll)) {
                     return;
@@ -923,19 +923,19 @@ waitForBC("fortune_wheel", {
                 };
                 fortuneWheelState.loadChild(FWSelectScreen, struct, fortuneWheelState.character);
             } else if (WheelFortuneVelocity === 0 && MouseIn(...COORDS.preset) && WheelFortuneCharacter?.IsPlayer()) {
-                fortuneWheelState.loadChild(WheelPresetScreen, WheelFortuneCharacter.MBSSettings.FortuneWheelPresets);
+                fortuneWheelState.loadChild(WheelPresetScreen, mbsSettings.FortuneWheelPresets);
             }
             return next(args);
         });
 
         MBS_MOD_API.hookFunction("WheelFortuneMouseUp", 11, (args, next) => {
-            if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+            if (mbsSettings.RollWhenRestrained || !Player.IsRestrained()) {
                 next(args);
             }
         });
 
         MBS_MOD_API.hookFunction("WheelFortuneMouseDown", 11, (args, next) => {
-            if (Player.MBSSettings.RollWhenRestrained || !Player.IsRestrained()) {
+            if (mbsSettings.RollWhenRestrained || !Player.IsRestrained()) {
                 next(args);
             }
         });
@@ -962,7 +962,7 @@ waitForBC("fortune_wheel", {
             new FWItemSet(
                 "PSO Bondage",
                 FORTUNE_WHEEL_ITEMS.leash_candy,
-                Player.MBSSettings.FortuneWheelItemSets,
+                mbsSettings.FortuneWheelItemSets,
                 StripLevel.UNDERWEAR,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3, 4, 5]),
@@ -985,7 +985,7 @@ waitForBC("fortune_wheel", {
             new FWItemSet(
                 "Mummification",
                 FORTUNE_WHEEL_ITEMS.mummy,
-                Player.MBSSettings.FortuneWheelItemSets,
+                mbsSettings.FortuneWheelItemSets,
                 StripLevel.CLOTHES,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [3]),
@@ -1026,7 +1026,7 @@ waitForBC("fortune_wheel", {
             new FWItemSet(
                 "Bondage Maid",
                 FORTUNE_WHEEL_ITEMS.maid,
-                Player.MBSSettings.FortuneWheelItemSets,
+                mbsSettings.FortuneWheelItemSets,
                 StripLevel.UNDERWEAR,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),
@@ -1035,7 +1035,7 @@ waitForBC("fortune_wheel", {
             new FWItemSet(
                 "Petrification",
                 FORTUNE_WHEEL_ITEMS.statue,
-                Player.MBSSettings.FortuneWheelItemSets,
+                mbsSettings.FortuneWheelItemSets,
                 StripLevel.UNDERWEAR,
                 StripLevel.UNDERWEAR,
                 enableFlags(DEFAULT_FLAGS.map(clone), [0, 1, 2, 3]),

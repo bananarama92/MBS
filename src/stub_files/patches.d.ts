@@ -5,11 +5,6 @@ interface CharacterOnlineSharedSettings {
     MBSVersion: string,
 }
 
-interface PlayerCharacter {
-    /** MBS settings */
-    MBSSettings: MBSSettings,
-}
-
 interface PlayerOnlineSettings {
     /** @deprecated moved to {@link ExtensionSettings.MBS} as of v1.1.0 */
     MBS?: string,
