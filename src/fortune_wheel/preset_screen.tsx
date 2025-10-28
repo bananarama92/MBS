@@ -20,7 +20,7 @@ const OptionType = Object.freeze({
 }) satisfies Record<string, OptionType>;
 
 type IDData = {
-    header: string,
+    header: string | Element,
     description?: string,
     readonly index: number,
     readonly type: OptionType,
@@ -163,7 +163,7 @@ export class WheelPresetScreen extends MBSScreen {
     static readonly ids = ID;
     static readonly screenParamsDefault = {
         [root]: Object.freeze({
-            shape: [80, 60, 1840, 880] as RectTuple,
+            shape: [60, 40, 1880, 920] as RectTuple,
             visibility: "visible",
         }),
     };
@@ -208,44 +208,80 @@ export class WheelPresetScreen extends MBSScreen {
             ...cloneDeep(CUSTOM_MBS_OPTIONS),
         };
 
-        const screen = this;
-        document.body.appendChild(
-            <div id={ID.root} class="mbs-screen">
-                <style id={ID.styles}>{styles.toString()}</style>
+        const mbsScreen = this;
+        const screen = ElementDOMScreen.getTemplate(
+            ID.root,
+            {
+                parent: document.body,
+                header: `Wheel of Fortune preset ${this.index}`,
+                menubarButtons: [
+                    ElementButton.Create(
+                        ID.exit,
+                        () => this.exit(false),
+                        { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
+                    ),
+                    ElementButton.Create(
+                        ID.save,
+                        () => this.savePreset(),
+                        { image: "./Icons/Save.png", tooltip: "Save the current preset", tooltipPosition: "left" },
+                    ),
+                    ElementButton.Create(
+                        ID.accept,
+                        () => this.equipPreset(),
+                        { disabled: true, image: "./Icons/Accept.png", tooltip: "Equip the current preset", tooltipPosition: "left" },
+                    ),
+                ],
+                mainContent: [
+                    <fieldset name="main">
+                        <p id={ID.nameHeader}>Preset Name</p>
+                        <p id={ID.builtinBCHeader}>Builtin BC Options</p>
+                        <p id={ID.builtinMBSHeader}>Builtin MBS Options</p>
+                        <p id={ID.customMBSHeader}>Custom MBS Options</p>
 
-                <h1 id={ID.header}>Wheel of Fortune preset {this.index}</h1>
-                {ElementButton.Create(ID.delete, () => this.deletePreset(), { disabled: true, image: "./Icons/Trash.png", tooltip: "Delete the current preset", tooltipPosition: "right" })}
-                {ElementButton.Create(ID.accept, () => this.equipPreset(), { disabled: true, image: "./Icons/Accept.png", tooltip: "Equip the current preset", tooltipPosition: "left" })}
-                {ElementButton.Create(ID.save, () => this.savePreset(), { image: "./Icons/Save.png", tooltip: "Save the current preset", tooltipPosition: "left" })}
-                {ElementButton.Create(ID.exit, () => this.exit(false), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" })}
+                        <div id={ID.nameDiv} role="group" aria-labelledby={ID.nameHeader}>
+                            <input
+                                type="text"
+                                id={ID.nameInput}
+                                maxLength={20}
+                                onFocus={function () { this.select(); }}
+                                onInput={function () { mbsScreen.activePreset.name = this.value; }}
+                            />
+                            {ElementCreateDropdown(
+                                ID.nameDropdown,
+                                Object.values(this.presets).map((preset, i) => { return { attributes: { value: i, label: `${i}: ${preset?.name ?? "<Empty>"}` }};}),
+                                function () { mbsScreen.index = this.selectedIndex; },
+                            )}
+                        </div>
 
-                <div id={ID.midDiv}>
-                    <p id={ID.nameHeader}>Preset Name</p>
-                    <p id={ID.builtinBCHeader}>Builtin BC Options</p>
-                    <p id={ID.builtinMBSHeader}>Builtin MBS Options</p>
-                    <p id={ID.customMBSHeader}>Custom MBS Options</p>
-
-                    <div id={ID.nameDiv}>
-                        <input
-                            type="text"
-                            id={ID.nameInput}
-                            maxLength={20}
-                            onFocus={(e) => (e.target as HTMLInputElement).select()}
-                            onInput={(e) => this.activePreset.name = (e.target as HTMLInputElement).value}
-                        />
-                        {ElementCreateDropdown(
-                            ID.nameDropdown,
-                            Object.values(this.presets).map((preset, i) => { return { attributes: { value: i, label: `${i}: ${preset?.name ?? "<Empty>"}` }};}),
-                            function () { screen.index = this.selectedIndex; },
-                        )}
-                    </div>
-
-                    <div id={ID.builtinBCDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.builtinBC)}</div>
-                    <div id={ID.builtinMBSDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.builtinMBS)}</div>
-                    <div id={ID.customMBSDiv} class="mbs-fwpreset-grid">{this.#loadPresetElements(OptionType.customMBS)}</div>
-                </div>
-            </div>,
+                        <div id={ID.builtinBCDiv} class="mbs-fwpreset-grid" role="group" aria-labelledby={ID.builtinBCHeader}>
+                            {this.#loadPresetElements(OptionType.builtinBC)}
+                        </div>
+                        <div id={ID.builtinMBSDiv} class="mbs-fwpreset-grid" role="group" aria-labelledby={ID.builtinMBSHeader}>
+                            {this.#loadPresetElements(OptionType.builtinMBS)}
+                        </div>
+                        <div id={ID.customMBSDiv} class="mbs-fwpreset-grid" role="group" aria-labelledby={ID.customMBSHeader}>
+                            {this.#loadPresetElements(OptionType.customMBS)}
+                        </div>
+                    </fieldset>,
+                ],
+            },
         );
+        screen.classList.add("mbs-screen");
+        screen.append(<style id={ID.styles}>{styles.toString()}</style>);
+
+        const hgroup = screen.querySelector(".screen-hgroup");
+        const header = screen.querySelector(".screen-header");
+        if (hgroup && header) {
+            screen.querySelector("fieldset[name='main']")?.setAttribute("aria-labelledby", hgroup.querySelector("h1")?.id ?? "");
+            header.append(
+                hgroup,
+                ElementButton.Create(
+                    ID.delete,
+                    () => this.deletePreset(),
+                    { disabled: true, image: "./Icons/Trash.png", tooltip: "Delete the current preset", tooltipPosition: "right" },
+                ),
+            );
+        }
     }
 
     #loadIDMapping() {
@@ -274,7 +310,7 @@ export class WheelPresetScreen extends MBSScreen {
             } else {
                 for (const j of range(16)) {
                     const id = String.fromCharCode(idStart + j);
-                    this.idMapping[id].header = "<Empty>";
+                    this.idMapping[id].header = <i>{"<Empty>"}</i>;
                     delete this.idMapping[id].description;
                 }
             }
@@ -289,10 +325,10 @@ export class WheelPresetScreen extends MBSScreen {
     ): HTMLButtonElement {
         const i = index.toString();
         return ElementButton.Create(
-            `${ids.root}${i}`, 
+            `${ids.root}${i}`,
             function () { this.focus(); },
-            { 
-                noStyling: true, 
+            {
+                noStyling: true,
                 tooltipPosition,
                 tooltip: [
                     <h2 id={ids.tooltipHeader + i} data-prefix={prefix ?? ""} />,
@@ -375,21 +411,21 @@ export class WheelPresetScreen extends MBSScreen {
         const deleteTooltip = deleteButton?.querySelector(".button-tooltip");
         const equipButtonm = document.getElementById(ID.accept) as HTMLButtonElement;
         const equipTooltip = equipButtonm?.querySelector(".button-tooltip");
-        const header = document.getElementById(ID.header) as HTMLDivElement;
+        const header = document.querySelector(`#${ID.header} h1`) as HTMLElement;
         if (state === null) {
             inputField.value = "";
             deleteButton.disabled = true;
-            equipButtonm.disabled = true;
+            equipButtonm.ariaDisabled = "true";
             deleteTooltip?.replaceChildren("Delete the current preset:", <br />, "unsaved preset");
             equipTooltip?.replaceChildren("Equip the current preset:", <br />, "unsaved preset");
-            header.innerText = `Wheel of Fortune preset ${this.index} (unsaved)`;
+            header.replaceChildren(`Wheel of Fortune preset ${this.index} (unsaved)`);
         } else {
             inputField.value = state.name;
             deleteButton.disabled = false;
-            equipButtonm.disabled = false;
+            equipButtonm.ariaDisabled = "false";
             deleteTooltip?.replaceChildren("Delete the current preset");
             equipTooltip?.replaceChildren("Equip the current preset");
-            header.innerText = `Wheel of Fortune preset ${this.index}`;
+            header.replaceChildren(`Wheel of Fortune preset ${this.index}`);
         }
     }
 
@@ -402,7 +438,7 @@ export class WheelPresetScreen extends MBSScreen {
 
         this.#reloadButtons();
 
-        const dataGrouped: Record<OptionType, Record<number, { header: string, description: string[], enabled: boolean }>> = {
+        const dataGrouped: Record<OptionType, Record<number, { header: Element | string, description: string[], enabled: boolean }>> = {
             [OptionType.builtinBC]: {},
             [OptionType.builtinMBS]: {},
             [OptionType.customMBS]: {},
@@ -440,6 +476,11 @@ export class WheelPresetScreen extends MBSScreen {
             name: this.activePreset.name,
             ids: sanitizeWheelFortuneIDs(Array.from(this.activePreset.ids).sort().join("")),
         };
+
+        const select = document.querySelector(ID.nameDropdown) as null | HTMLSelectElement;
+        if (select) {
+            select.options[this.index].label = `${this.index}: ${newState.name}`;
+        }
 
         if (newState.name !== prevState?.name || newState.ids !== prevState?.ids) {
             this.presets[this.index] = newState;

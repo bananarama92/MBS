@@ -1,49 +1,74 @@
 #mbs-fwpreset {
+	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
+	--height: min(7dvh, 3.5dvw);
+	--menu-button-size: min(9dvh, 4.5dvw);
+
+	gap: var(--gap);
 	grid-template:
-		"delete header accept save exit" min(9dvh, 4.5dvw)
-		"mid mid mid mid mid" auto
-		/ min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
+		"header" min-content
+		"main" auto / auto;
+
+	.screen-header {
+		direction: rtl;
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-columns: min-content auto min-content;
+
+		button {
+			direction: ltr;
+			height: var(--menu-button-size);
+			width: var(--menu-button-size);
+		}
+
+		h1 {
+			font-size: var(--mbs-font-large);
+			font-weight: bold;
+		}
+	}
+
+	.screen-hgroup {
+		color: black;
+		grid-area: unset;
+	}
 
 	.button-tooltip {
-		--tooltip-gap: min(2dvh, 1dvw);
+		--tooltip-gap: var(--gap);
 	}
-}
 
-#mbs-fwpreset-delete {
-	grid-area: delete;
-}
+	.screen-main {
+		& > fieldset {
+			border: unset;
+			margin: unset;
+			padding: unset;
+		}
 
-#mbs-fwpreset-header {
-	grid-area: header;
-	margin-left: min(20dvh, 10dvw);
-}
+		h2 {
+			font-size: 1em;
+			font-weight: normal;
+			margin: unset;
+			padding: unset;
+		}
 
-#mbs-fwpreset-accept {
-	grid-area: accept;
-}
+		ul {
+			margin-block: 0.15em;
+		}
 
-#mbs-fwpreset-save {
-	grid-area: save;
-}
+		fieldset[name="main"] {
+			display: grid;
+			text-align: center;
+			grid-gap: var(--gap);
+			grid-template:
+				"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" var(--menu-button-size)
+				"name builtin-bc builtin-mbs custom-mbs" auto / auto min-content min-content min-content;
+			justify-items: center;
+			justify-self: center;
+			width: 100%;
 
-#mbs-fwpreset-exit {
-	grid-area: exit;
-}
-
-#mbs-fwpreset-mid-div {
-	display: grid;
-	grid-area: mid;
-	text-align: center;
-	grid-gap: min(2dvh, 1dvw);
-	grid-template:
-		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9dvh, 4.5dvw)
-		"name builtin-bc builtin-mbs custom-mbs" auto / auto min-content min-content min-content;
-	justify-items: center;
-	justify-self: center;
-	width: 100%;
-
-	> p {
-		text-wrap: nowrap;
+			> p {
+				text-wrap: nowrap;
+			}
+		}
 	}
 }
 
@@ -67,7 +92,7 @@
 	display: grid;
 	grid-gap: min(1.2dvh, 0.6dvw);
 	grid-auto-flow: column;
-	grid-template-rows: repeat(8, min(7dvh, 3.5dvw));
+	grid-template-rows: repeat(8, var(--height));
 	width: fit-content;
 }
 
@@ -76,29 +101,29 @@
 }
 
 #mbs-fwpreset-name-input {
-	height: min(7dvh, 3.5dvw);
-	width: min(35dvh, 17.5dvw);
+	height: var(--height);
+	width: 100%;
 }
 
 #mbs-fwpreset-name-dropdown {
-	height: min(7dvh, 3.5dvw);
-	margin-top: min(2dvh, 1dvw);
-	width: min(36dvh, 18dvw);
+	height: var(--height);
+	margin-top: var(--gap);
+	width: 100%;
 }
 
 #mbs-fwpreset-builtin-bc-div {
 	grid-area: builtin-bc;
-	grid-template-columns: repeat(4, min(7dvh, 3.5dvw));
+	grid-template-columns: repeat(4, var(--height));
 }
 
 #mbs-fwpreset-builtin-mbs-div {
 	grid-area: builtin-mbs;
-	grid-template-columns: min(7dvh, 3.5dvw);
+	grid-template-columns: var(--height);
 }
 
 #mbs-fwpreset-custom-mbs-div {
 	grid-area: custom-mbs;
-	grid-template-columns: repeat(8, min(7dvh, 3.5dvw));
+	grid-template-columns: repeat(8, var(--height));
 }
 
 .mbs-fwpreset {
