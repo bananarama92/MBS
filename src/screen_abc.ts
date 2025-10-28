@@ -65,6 +65,15 @@ export abstract class MBSScreen {
         }
     }
 
+    keydown(ev: KeyboardEvent) {
+        const screen = document.getElementById(this.ids.root);
+        const main = screen?.querySelector(".screen-main") as null | HTMLElement;
+        if (screen && !screen.hasAttribute("hidden") && main) {
+            return CommonKey.NavigationKeyDown(main, ev, () => main.clientHeight / 10);
+        }
+        return false;
+    }
+
     /** Called when this screen is being replaced */
     unload() {
         document.activeElement?.dispatchEvent(new FocusEvent("blur"));
@@ -157,6 +166,7 @@ export abstract class MBSScreen {
             Unload: this.unload?.bind(this),
             Resize: this.resize?.bind(this),
             Exit: this.exit.bind(this),
+            KeyDown: this.keydown?.bind(this),
         };
     }
 }
