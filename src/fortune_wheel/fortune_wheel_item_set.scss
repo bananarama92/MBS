@@ -1,76 +1,72 @@
 #mbs-fwitemset {
 	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
 	--height: min(7dvh, 3.5dvw);
+	--menu-button-size: min(9dvh, 4.5dvw);
 
-	background: unset;
+	gap: var(--gap);
 	grid-template:
-		"menubar menubar menubar menubar menubar menubar menubar" min(9dvh, 4.5dvw)
-		". . name-input name-input . . ." var(--height)
-		". . outfit-input outfit-input outfit-button outfit-button outfit-button" var(--height)
-		". . strip-header lock-header lock-header lock-header lock-header" var(--height)
-		". . strip-input lock-grid lock-grid lock-grid lock-grid" var(--height)
-		". . equip-header lock-grid lock-grid lock-grid lock-grid" var(--height)
-		". . equip-input lock-grid lock-grid lock-grid lock-grid" var(--height)
-		". . weight-header lock-grid lock-grid lock-grid lock-grid" var(--height)
-		". . weight-input lock-grid lock-grid lock-grid lock-grid" var(--height)
-		". . event-header event-header event-header event-header event-header" var(--height)
-		". . event-menu event-menu event-menu event-menu event-menu" min-content / min(9dvh, 4.5dvw) min(40dvh, 20dvw) auto min(38dvh, 19dvw) min(16dvh, 8dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
-	overflow-y: scroll;
+		"header" min-content
+		"main" auto / auto;
 
 	.button-tooltip {
 		--tooltip-gap: var(--gap);
 	}
-}
 
-#mbs-fwitemset-menubar {
-	display: grid;
-	gap: var(--gap);
-	grid-area: menubar;
-	grid-template-columns: subgrid;
-	grid-template-rows: subgrid;
-	padding: 3px;
+	.screen-header {
+		direction: rtl;
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-columns: min-content auto min-content;
 
-	#mbs-fwitemset-delete {
-		grid-column: 1;
+		button {
+			direction: ltr;
+			height: var(--menu-button-size);
+			width: var(--menu-button-size);
+		}
+
+		h1 {
+			font-size: var(--mbs-font-large);
+			font-weight: bold;
+		}
 	}
 
-	#mbs-fwitemset-header {
-		grid-column: 2 / 5;
-		margin-left: min(20dvh, 10dvw);
+	.screen-hgroup {
+		color: black;
+		grid-area: unset;
 	}
 
-	#mbs-fwitemset-accept {
-		grid-column: 5;
-		justify-self: end;
-	}
+	.screen-main {
+		padding-left: min(40dvh, 20dvw);
 
-	#mbs-fwitemset-cancel {
-		grid-column: 6;
-	}
+		& > fieldset {
+			border: unset;
+			margin: unset;
+			padding: unset;
 
-	#mbs-fwitemset-exit {
-		grid-column: 7;
-	}
+			&:not(:last-child) {
+				padding-bottom: var(--gap);
+			}
+		}
 
-	.button {
-		height: min(9dvh, 4.5dvw);
-		width: min(9dvh, 4.5dvw);
-	}
-}
+		& > fieldset[name="main"] {
+			display: grid;
+			gap: var(--gap);
+			grid-template:
+				"name-input name-input . . ." var(--height)
+				"outfit-input outfit-input outfit-button outfit-button outfit-button" var(--height)
+				"strip-header lock-header lock-header lock-header lock-header" var(--height)
+				"strip-input lock-grid lock-grid lock-grid lock-grid" var(--height)
+				"equip-header lock-grid lock-grid lock-grid lock-grid" var(--height)
+				"equip-input lock-grid lock-grid lock-grid lock-grid" var(--height)
+				"weight-header lock-grid lock-grid lock-grid lock-grid" var(--height)
+				"weight-input lock-grid lock-grid lock-grid lock-grid" var(--height) / auto calc(3 * var(--menu-button-size) + var(--half-gap) + var(--height) + 2 * var(--gap)) calc(var(--menu-button-size) + var(--half-gap) + var(--height)) var(--menu-button-size) var(--menu-button-size);
 
-#mbs-fwitemset-form {
-	background-color: unset;
-	display: grid;
-	grid-column: 1 / 8;
-	grid-row: 2 / 12;
-	grid-template-columns: subgrid;
-	grid-template-rows: subgrid;
-	height: calc(8.5 * (var(--height) + var(--gap)));
-	padding: 3px;
-
-	& > label,
-	& > span {
-		place-self: end start;
+			& > label,
+			& > span {
+				place-self: end start;
+			}
+		}
 	}
 }
 
@@ -94,7 +90,7 @@
 
 #mbs-fwitemset-strip-dropdown {
 	grid-area: strip-input;
-	width: min(40dvh, 20dvw);
+	width: min(50dvh, 25dvw);
 }
 
 #mbs-fwitemset-equip-header {
@@ -103,7 +99,7 @@
 
 #mbs-fwitemset-equip-dropdown {
 	grid-area: equip-input;
-	width: min(40dvh, 20dvw);
+	width: min(50dvh, 25dvw);
 }
 
 #mbs-fwitemset-weight-header {
@@ -135,18 +131,24 @@
 	align-items: center;
 	display: grid;
 	word-wrap: break-word;
-	gap: var(--gap);
+	gap: var(--half-gap);
 	grid-template-columns: var(--height) auto;
 	list-style-type: none;
 	margin: unset;
 	padding: unset;
+
+	input[type="checkbox"] {
+		height: var(--height);
+		width: var(--height);
+	}
+
+	.mbs-timer {
+		height: 100%;
+		text-align: center;
+		width: 100%;
+	}
 }
 
-.mbs-timer {
-	height: 100%;
-	text-align: center;
-	width: 100%;
-}
 
 #mbs-fwitemset-strip-dropdown-content, #mbs-fwitemset-equip-dropdown-content {
 	width: min-content;
@@ -154,6 +156,7 @@
 
 #mbs-fwitemset-events-label {
 	grid-area: event-header;
+	min-height: var(--height);
 }
 
 #mbs-fwitemset-events {

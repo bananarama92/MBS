@@ -296,7 +296,7 @@ function _parseSelect(
             disabled: true,
             id: `${idPrefix}-select`,
         },
-        classList: ["mbs-fwitemset-event-kwarg-config"],
+        classList: ["custom-select", "mbs-fwitemset-event-kwarg-config"],
         eventListeners: {
             change: options.type === "select" ? _getChangeSelect(settings) : _getChangeSelectMultiple(settings),
             focus() {

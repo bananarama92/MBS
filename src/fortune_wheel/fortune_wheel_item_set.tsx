@@ -58,6 +58,7 @@ function createDropdown(fields: FieldsType, settings: FWSelectedItemSet, disable
                 StripLevel.COSPLAY,
             ) as StripLevel;
         }}
+        class="custom-select"
         onFocus={function() {
             try {
                 this.showPicker?.();
@@ -194,7 +195,7 @@ function createHookMenu(screen: FWItemSetScreen): [HTMLSpanElement, HTMLMenuElem
     }
 
     return [
-        <span id={ID.eventsLabel}>Addon-specific options:</span> as HTMLSpanElement,
+        <legend id={ID.eventsLabel}>Addon-specific options:</legend> as HTMLElement,
         <menu id={ID.events} aria-labelledby="mbs-fwitemset-events-label">
             {wheelHookRegister.values().sort((data1, data2) => {
                 return (
@@ -351,7 +352,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     readonly preview: Character;
     static readonly screenParamsDefault = {
         [root]: Object.freeze({
-            shape: [80, 60, 1840, 880] as RectTuple,
+            shape: [60, 40, 1880, 920] as RectTuple,
             visibility: "visible",
         }),
     };
@@ -383,167 +384,173 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             }
         });
 
-        document.body.appendChild(
-            <div id={ID.root} class="mbs-screen">
-                <style id={ID.styles}>{styles.toString()}</style>
+        const screen = ElementDOMScreen.getTemplate(
+            ID.root,
+            {
+                parent: document.body,
+                header: `Customize wheel of fortune item set ${this.index}`,
+                menubarButtons: [
+                    ElementButton.Create(
+                        ID.exit,
+                        () => this.exit(true, ExitAction.NONE),
+                        { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
+                        { button: { attributes: { "screen-generated": undefined } } },
+                    ),
+                    ElementButton.Create(
+                        ID.cancel,
+                        () => this.exit(false, ExitAction.NONE),
+                        { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left" },
+                        { button: { attributes: { "screen-generated": undefined } } },
+                    ),
+                    ElementButton.Create(
+                        ID.accept,
+                        () => this.exit(false, ExitAction.SAVE),
+                        { image: "./Icons/Accept.png", tooltip: "Save item set:\nMissing outfit", tooltipPosition: "left", disabled },
+                        { button: { attributes: { form: "mbs-fwitemset-form", type: "submit", "screen-generated": undefined } } },
+                    ),
+                ],
+                mainContent: [
+                    <fieldset name="main">
+                        <input
+                            type="text"
+                            id={ID.outfitName}
+                            placeholder="Outfit name"
+                            aria-label="Outfit name"
+                            disabled={disabled}
+                            maxLength={70}
+                            onInput={(e) => {
+                                this.settings.name = (e.target as HTMLInputElement).value;
+                                this.#updateButton(ID.accept);
+                            }}
+                            onFocus={(e) => (e.target as HTMLInputElement).select()}
+                        />
+                        <input
+                            type="text"
+                            id={ID.outfitInput}
+                            placeholder="Outfit code"
+                            aria-label="Outfit code"
+                            disabled={disabled}
+                            onInput={(e) => {
+                                this.settings.outfitCache = (e.target as HTMLInputElement).value;
+                                this.#updateButton(ID.outfitButton);
+                            }}
+                            onFocus={(e) => (e.target as HTMLInputElement).select()}
+                        />
+                        {ElementButton.Create(
+                            ID.outfitButton,
+                            () => this.#updateButton(ID.accept, true),
+                            {
+                                tooltip: "Parse the outfit code",
+                                label: "Parse",
+                                labelPosition: "center",
+                                disabled: true,
+                                tooltipPosition: "bottom",
+                                tooltipRole: "label",
+                            },
+                            {
+                                label: { attributes: { "aria-hidden": "true" } },
+                            },
+                        )}
 
-                {
-                    ElementMenu.Create(
-                        "mbs-fwitemset-menubar",
-                        [
-                            <h1 id={ID.header}>{`Customize wheel of fortune item set ${this.index}`}</h1>,
-                            ElementButton.Create(
-                                ID.delete,
-                                () => this.exit(false, ExitAction.DELETE),
-                                { image: "./Icons/Trash.png", tooltip: "Delete item set", tooltipPosition: "right", disabled },
-                                { button: { attributes: { "screen-generated": undefined } } },
-                            ),
-                            ElementButton.Create(
-                                ID.accept,
-                                () => this.exit(false, ExitAction.SAVE),
-                                { image: "./Icons/Accept.png", tooltip: "Save item set:\nMissing outfit", tooltipPosition: "left", disabled },
-                                { button: { attributes: { form: "mbs-fwitemset-form", type: "submit", "screen-generated": undefined } } },
-                            ),
-                            ElementButton.Create(
-                                ID.cancel,
-                                () => this.exit(false, ExitAction.NONE),
-                                { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left" },
-                                { button: { attributes: { "screen-generated": undefined } } },
-                            ),
-                            ElementButton.Create(
-                                ID.exit,
-                                () => this.exit(true, ExitAction.NONE),
-                                { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
-                                { button: { attributes: { "screen-generated": undefined } } },
-                            ),
-                        ],
-                        { direction: "ltr" },
-                    )
-                }
+                        <label id={ID.stripHeader} for={ID.stripSelect}>Clothing strip level:</label>
+                        <label id={ID.equipHeader} for={ID.equipSelect}>Clothing equip level:</label>
+                        <label id={ID.weightHeader} for={ID.weightInput}>Wheel option weight:</label>
+                        <span id={ID.lockHeader}>Enabled lock types:</span>
+                        <input
+                            type="number"
+                            id={ID.weightInput}
+                            min={1}
+                            max={9}
+                            value={1}
+                            disabled={disabled}
+                            onInput={(e) => {
+                                const target = e.target as HTMLInputElement;
+                                this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
+                            }}
+                            onWheel={(e) => {
+                                const target = e.target as HTMLInputElement;
+                                if (target.disabled) {
+                                    return;
+                                }
 
-                <div id="mbs-fwitemset-form" role="form" class="scroll-box" aria-labelledby={ID.header}>
-                    <input
-                        type="text"
-                        id={ID.outfitName}
-                        placeholder="Outfit name"
-                        aria-label="Outfit name"
-                        disabled={disabled}
-                        maxLength={70}
-                        onInput={(e) => {
-                            this.settings.name = (e.target as HTMLInputElement).value;
-                            this.#updateButton(ID.accept);
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                    <input
-                        type="text"
-                        id={ID.outfitInput}
-                        placeholder="Outfit code"
-                        aria-label="Outfit code"
-                        disabled={disabled}
-                        onInput={(e) => {
-                            this.settings.outfitCache = (e.target as HTMLInputElement).value;
-                            this.#updateButton(ID.outfitButton);
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
-                    {ElementButton.Create(
-                        ID.outfitButton,
-                        () => this.#updateButton(ID.accept, true),
-                        {
-                            tooltip: "Parse the outfit code",
-                            label: "Parse",
-                            labelPosition: "center",
-                            disabled: true,
-                            tooltipPosition: "bottom",
-                            tooltipRole: "label",
-                        },
-                        {
-                            label: { attributes: { "aria-hidden": "true" } },
-                        },
-                    )}
+                                e.preventDefault();
+                                if (e.deltaY < 0) {
+                                    target.stepUp(1);
+                                } else if (e.deltaY > 0) {
+                                    target.stepDown(1);
+                                } else {
+                                    return;
+                                }
+                                target.dispatchEvent(new InputEvent("input"));
+                            }}
+                            onFocus={(e) => (e.target as HTMLInputElement).select()}
+                        />
 
-                    <label id={ID.stripHeader} for={ID.stripSelect}>Clothing strip level:</label>
-                    <label id={ID.equipHeader} for={ID.equipSelect}>Clothing equip level:</label>
-                    <label id={ID.weightHeader} for={ID.weightInput}>Wheel option weight:</label>
-                    <span id={ID.lockHeader}>Enabled lock types:</span>
-                    <input
-                        type="number"
-                        id={ID.weightInput}
-                        min={1}
-                        max={9}
-                        value={1}
-                        disabled={disabled}
-                        onInput={(e) => {
-                            const target = e.target as HTMLInputElement;
-                            this.settings.weight = clamp(Number.parseInt(target.value, 10), 1, 9);
-                        }}
-                        onWheel={(e) => {
-                            const target = e.target as HTMLInputElement;
-                            if (target.disabled) {
-                                return;
-                            }
+                        {createDropdown(
+                            { id: ID.stripSelect, level: "stripLevel" },
+                            this.settings,
+                            disabled,
+                        )}
+                        {createDropdown(
+                            { id: ID.equipSelect, level: "equipLevel" },
+                            this.settings,
+                            disabled,
+                        )}
 
-                            e.preventDefault();
-                            if (e.deltaY < 0) {
-                                target.stepUp(1);
-                            } else if (e.deltaY > 0) {
-                                target.stepDown(1);
-                            } else {
-                                return;
-                            }
-                            target.dispatchEvent(new InputEvent("input"));
-                        }}
-                        onFocus={(e) => (e.target as HTMLInputElement).select()}
-                    />
-
-                    {createDropdown(
-                        { id: ID.stripSelect, level: "stripLevel" },
-                        this.settings,
-                        disabled,
-                    )}
-                    {createDropdown(
-                        { id: ID.equipSelect, level: "equipLevel" },
-                        this.settings,
-                        disabled,
-                    )}
-
-                    <menu id={ID.lockGrid} aria-labelledby={ID.lockHeader}> {
-                        this.settings.flags.map((flag, i) => {
-                            let companion: HTMLElement;
-                            let label: string | undefined = undefined;
-                            switch (flag.type) {
-                                case "TimerPasswordPadlock":
-                                    companion = createTimerInput(flag, i, disabled);
-                                    label = "Timer lock";
-                                    break;
-                                default:
-                                    companion = <label for={ID.lockCheckbox + i.toString()}>{flag.description}</label> as HTMLLabelElement;
-                            }
-                            return (
-                                <li class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
-                                    <input
-                                        type="checkbox"
-                                        class={`checkbox ${ID.lockCheckbox}`}
-                                        id={ID.lockCheckbox + i.toString()}
-                                        disabled={disabled}
-                                        checked={flag.enabled}
-                                        onClick={() => {
-                                            flag.enabled = !flag.enabled;
-                                            this.#updateButton(ID.accept);
-                                        }}
-                                        aria-label={label}
-                                    />
-                                    {companion}
-                                </li>
-                            );
-                        })
-                    } </menu>
-
-                    {createHookMenu(this)}
-                </div>
-            </div>,
+                        <menu id={ID.lockGrid} aria-labelledby={ID.lockHeader}> {
+                            this.settings.flags.map((flag, i) => {
+                                let companion: HTMLElement;
+                                let label: string | undefined = undefined;
+                                switch (flag.type) {
+                                    case "TimerPasswordPadlock":
+                                        companion = createTimerInput(flag, i, disabled);
+                                        label = "Timer lock";
+                                        break;
+                                    default:
+                                        companion = <label for={ID.lockCheckbox + i.toString()}>{flag.description}</label> as HTMLLabelElement;
+                                }
+                                return (
+                                    <li class={ID.lockContainer} id={ID.lockContainer + i.toString()}>
+                                        <input
+                                            type="checkbox"
+                                            class={`checkbox ${ID.lockCheckbox}`}
+                                            id={ID.lockCheckbox + i.toString()}
+                                            disabled={disabled}
+                                            checked={flag.enabled}
+                                            onClick={() => {
+                                                flag.enabled = !flag.enabled;
+                                                this.#updateButton(ID.accept);
+                                            }}
+                                            aria-label={label}
+                                        />
+                                        {companion}
+                                    </li>
+                                );
+                            })
+                        } </menu>
+                    </fieldset>,
+                    <fieldset name="addon">
+                        {createHookMenu(this)}
+                    </fieldset>,
+                ],
+            },
         );
+        screen.append(<style id={ID.styles}>{styles.toString()}</style>);
+        screen.classList.add("mbs-screen");
+
+        const hgroup = screen.querySelector(".screen-hgroup");
+        const header = screen.querySelector(".screen-header");
+        if (hgroup && header) {
+            header.append(
+                hgroup,
+                ElementButton.Create(
+                    ID.delete,
+                    () => this.exit(false, ExitAction.DELETE),
+                    { image: "./Icons/Trash.png", tooltip: "Delete item set", tooltipPosition: "right", disabled },
+                    { button: { attributes: { "screen-generated": undefined } } },
+                ),
+            );
+        }
     }
 
     #canSave() {
@@ -740,7 +747,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
     }
 
     draw() {
-        DrawCharacter(this.preview, 200, 175, 0.78, false);
+        DrawCharacter(this.preview, 50, 175, 0.78, false);
     }
 
     exit(fullExit?: boolean, action?: ExitAction): void {
