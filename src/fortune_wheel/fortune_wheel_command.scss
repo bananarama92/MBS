@@ -1,51 +1,77 @@
 #mbs-fwcommand {
+	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
+	--height: min(7dvh, 3.5dvw);
+	--menu-button-size: min(9dvh, 4.5dvw);
+
+	gap: var(--gap);
 	grid-template:
-		"delete header accept cancel exit" min(9dvh, 4.5dvw)
-		"commandInput commandInput commandInput commandInput commandInput" min(7dvh, 3.5dvw)
-		"weightHeader weightHeader weightHeader weightHeader weightHeader" min(7dvh, 3.5dvw)
-        "weightInput weightInput weightInput weightInput weightInput" min(7dvh, 3.5dvw) / min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) min(9dvh, 4.5dvw) min(9dvh, 4.5dvw);
-	
+		"header" min-content
+		"main" auto / auto;
+
 	.button-tooltip {
-		--tooltip-gap: min(2dvh, 1dvw);
+		--tooltip-gap: var(--gap);
 	}
-}
 
-#mbs-fwcommand-delete {
-	grid-area: delete;
-}
+	.screen-header {
+		direction: rtl;
+		display: grid;
+		grid-auto-flow: column;
+		grid-template-columns: min-content auto min-content;
 
-#mbs-fwcommand-header {
-	grid-area: header;
-	margin-left: min(20dvh, 10dvw);
-}
+		button {
+			direction: ltr;
+			height: var(--menu-button-size);
+			width: var(--menu-button-size);
+		}
 
-#mbs-fwcommand-accept {
-	grid-area: accept;
-}
+		h1 {
+			font-size: var(--mbs-font-large);
+			font-weight: bold;
+		}
+	}
 
-#mbs-fwcommand-cancel {
-	grid-area: cancel;
-}
+	.screen-hgroup {
+		color: black;
+		grid-area: unset;
+	}
 
-#mbs-fwcommand-exit {
-	grid-area: exit;
+	.screen-main {
+		& > fieldset {
+			border: unset;
+			margin: unset;
+			padding: unset;
+
+			&:not(:last-child) {
+				padding-bottom: var(--gap);
+			}
+		}
+
+		& > fieldset[name="main"] {
+			display: grid;
+			gap: var(--gap);
+			grid-template:
+				"commandInput" min(7dvh, 3.5dvw)
+				"weightHeader" min(7dvh, 3.5dvw)
+				"weightInput" min(7dvh, 3.5dvw) / auto;
+			justify-items: center;
+		}
+	}
 }
 
 #mbs-fwcommand-command-input {
 	grid-area: commandInput;
 	height: min(7dvh, 3.5dvw);
-	place-self: self-end center;
 	width: 50%;
 }
 
 #mbs-fwcommand-weight-header {
-	align-self: self-end;
+	align-self: end;
 	grid-area: weightHeader;
 }
 
 #mbs-fwcommand-weight-input {
 	grid-area: weightInput;
 	height: 100%;
-    place-self: start center;
 	width: calc(min(7dvh, 3.5dvw) + 16px);
 }
