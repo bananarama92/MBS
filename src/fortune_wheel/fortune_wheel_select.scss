@@ -1,33 +1,76 @@
 #mbs-fwselect {
+	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
+	--menu-button-size: min(9dvh, 4.5dvw);
+
+	gap: var(--gap);
 	grid-template:
-		". buttonOuterGrid exit" min(9dvh, 4.5dvw)
-		"storage buttonOuterGrid ." auto
-		"storageFooter buttonOuterGrid ." min(14dvh, 7dvw) / min(30dvh, 15dvw) auto min(20dvh, 10dvw);
+		". main header" var(--menu-button-size)
+		"aside main header" auto / min-content auto min-content;
+	padding-right: var(--scrollbar-gutter);
 
 	.button-tooltip {
-		--tooltip-gap: min(2dvh, 1dvw);
+		--tooltip-gap: var(--gap);
 	}
-}
 
-#mbs-fwselect-exit {
-	grid-area: exit;
-	height: min(9dvh, 4.5dvw);
-	justify-self: end;
-	width: min(9dvh, 4.5dvw);
+	& > aside {
+		display: grid;
+		gap: var(--gap);
+		grid-area: aside;
+		grid-template-rows: auto min-content;
+		justify-items: center;
+		padding-right: unset;
+		width: calc(3 * var(--menu-button-size) + 2 * var(--gap));
+	}
+
+	& > .screen-hgroup {
+		display: none;
+	}
+
+	h1 {
+		font-size: var(--mbs-font-large);
+		font-weight: bold;
+	}
+
+	.screen-hgroup {
+		background: white;
+		color: black;
+		grid-area: unset;
+		position: sticky;
+		top: 0%;
+		z-index: 1;
+	}
+
+	.screen-header {
+		padding-right: unset;
+
+		[role="tooltip"] {
+			z-index: 2;
+		}
+	}
+
+	.screen-main {
+		display: grid;
+		grid-template-rows: min-content auto min-content auto;
+		padding-top: unset;
+
+		.button {
+			height: min(7dvh, 3.5dvw);
+		}
+	}
 }
 
 #mbs-fwselect-storage {
 	background-image: linear-gradient(180deg, #d80000, #d80000 10%, #00d800 60%, #00d800) !important;
-	border: min(0.3dvh, 0.15dvw) solid var(--mbs-border-color);
+	border: min(0.2dvh, 0.1dvw) solid var(--mbs-border-color);
 	display: grid;
-	grid-area: storage;
 	height: 100%;
-	justify-self: center;
-	width: 35%;
+	position: relative;
+	width: var(--menu-button-size);
 
 	#mbs-fwselect-storage-tooltip {
 		bottom: unset;
-		left: 15%;
+		left: calc(100% + var(--gap));
 		position: absolute;
 		visibility: hidden;
 	}
@@ -35,47 +78,29 @@
 	&:hover #mbs-fwselect-storage-tooltip {
 		visibility: visible;
 	}
-}
 
-#mbs-fwselect-storage-cover {
-	width: 100%;
-}
+	#mbs-fwselect-storage-cover {
+		width: 100%;
+	}
 
-#mbs-fwselect-storage-footer {
-	grid-area: storageFooter;
-	height: min(7dvh, 3.5dvw);
-	padding-top: min(1dvh, 0.5dvw);
-}
+	h2 {
+		font-size: 1.15em;
+		font-weight: normal;
+		margin: unset;
+		padding: unset;
+	}
 
-#mbs-fwselect-button-grid-outer {
-	background-color: var(--mbs-background-color);
-	display: grid;
-	grid-area: buttonOuterGrid;
-	grid-template-rows: min(9dvh, 4.5dvw) auto min(9dvh, 4.5dvw) auto;
-	height: 94%;
-	overflow-y: scroll;
-	padding-left: min(2dvh, 1dvw);
-	padding-right: min(2dvh, 1dvw);
-
-	.button {
-		height: min(7dvh, 3.5dvw); 
+	ul {
+		margin-block: 0.15em;
 	}
 }
 
-#mbs-fwselect-button-grid-inner0, #mbs-fwselect-button-grid-inner1 {
+
+#mbs-fwselect-button-grid-inner0,
+#mbs-fwselect-button-grid-inner1 {
 	display: grid;
 	grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
-	grid-gap: min(2dvh, 1dvw);
-	padding-bottom: min(2dvh, 1dvw);
-	padding-top: min(2dvh, 1dvw);
-}
-
-#mbs-fwselect-header0, #mbs-fwselect-header1 {
-	background-color: var(--mbs-background-color);
-	display: flex;
-	height: 100%;
-	justify-content: center;
-	position: sticky;
-	top: 0%;
-	z-index: 1;
+	grid-gap: var(--gap);
+	padding-bottom: var(--gap);
+	padding-top: var(--gap);
 }

@@ -99,7 +99,7 @@ export class FWSelectScreen extends MBSScreen {
     readonly dataSize: DataSize;
     static readonly screenParamsDefault = {
         [root]: Object.freeze({
-            shape: [80, 60, 1840, 880] as RectTuple,
+            shape: [60, 40, 1880, 920] as RectTuple,
             visibility: "visible",
         }),
     };
@@ -123,37 +123,47 @@ export class FWSelectScreen extends MBSScreen {
         this.dataSize = Object.seal({ value: 0, valueRecord: {}, max: MAX_DATA, marigin: 0.9 });
         const isPlayer = this.character.IsPlayer();
 
-        document.body.appendChild(
-            <div id={ID.root} class="mbs-screen">
-                <style id={ID.styles}>{styles.toString()}</style>
-
-                <div id={ID.buttonOuterGrid}>
-                    <h1 id={ID.itemSets}>
-                        {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
-                    </h1>
-                    <div id={ID.buttonInnerGrid0}>
+        const screen = ElementDOMScreen.getTemplate(
+            ID.root,
+            {
+                parent: document.body,
+                menubarButtons: [
+                    ElementButton.Create(ID.exit, () => this.exit(), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" }),
+                ],
+                mainContent: [
+                    <hgroup class="screen-hgroup">
+                        <h1 id={ID.itemSets}>
+                            {isPlayer ? "Fortune wheel item sets" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel item sets`}
+                        </h1>
+                    </hgroup>,
+                    <div id={ID.buttonInnerGrid0} role="group">
                         {range(0, MBS_MAX_SETS).map(i => createButton(this, i))}
-                    </div>
-                    <h1 id={ID.commandSets}>
-                        {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
-                    </h1>
-                    <div id={ID.buttonInnerGrid1}>
+                    </div>,
+                    <hgroup class="screen-hgroup">
+                        <h1 id={ID.itemSets}>
+                            {isPlayer ? "Fortune wheel commands" : `${this.character.Nickname ?? this.character.Name}'s fortune wheel commands`}
+                        </h1>
+                    </hgroup>,
+                    <div id={ID.buttonInnerGrid1} role="group">
                         {range(MBS_MAX_SETS, 2 * MBS_MAX_SETS).map(i => createButton(this, i))}
-                    </div>
-                </div>
-
-                {ElementButton.Create(ID.exit, () => this.exit(), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" })}
-
-                <div id={ID.storage}>
-                    <div id={ID.storageInner} role="meter"/>
+                    </div>,
+                ],
+            },
+        );
+        screen.append(
+            <style id={ID.styles}>{styles.toString()}</style>,
+            <aside>
+                <div id={ID.storage} role="meter" aria-valuemin="0" aria-valuemax={MAX_DATA} aria-describedby={ID.storageTooltip} aria-labeledby={ID.storageTooltip + "-header"}>
+                    <div id={ID.storageInner} role="meter" aria-hidden="true"/>
                     <div id={ID.storageTooltip} class="button-tooltip" role="tooltip">
                         <h2 id={ID.storageTooltip + "-header"}>OnlineSharedSettings Data Usage</h2>
                         <ul id={ID.storageTooltip + "-list"} />
                     </div>
                 </div>
-                <div id={ID.storageFooter}/>
-            </div>,
+                <output id={ID.storageFooter} for={ID.storage} />
+            </aside>,
         );
+        screen.classList.add("mbs-screen");
     }
 
     #updateElements() {
@@ -171,6 +181,7 @@ export class FWSelectScreen extends MBSScreen {
 
         const storageFooter = document.getElementById(ID.storageFooter) as HTMLElement;
         if (isPlayer) {
+            storageOuter.ariaValueNow = this.dataSize.value.toString();
             const nKBTotal = clamp(byteToKB(this.dataSize.value), 0, 9999);
             const percentage = 100 * nKBTotal / (MAX_DATA / 1000);
             storageFooter.innerText = `${nKBTotal} / ${MAX_DATA / 1000} KB`;
@@ -203,6 +214,7 @@ export class FWSelectScreen extends MBSScreen {
                 );
             }
         } else {
+            storageOuter.ariaValueNow = "0";
             const storageTooltip = document.getElementById(ID.storageTooltip) as HTMLElement;
             storageFooter.innerText = `- / ${MAX_DATA / 1000} KB`;
             storageInner.style.height = "100%";
