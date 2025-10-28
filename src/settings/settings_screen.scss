@@ -1,67 +1,77 @@
-.mbs-preference-settings-pair {
-	grid-column-gap: min(3dvh, 1.5dvw);
-	display: grid;
-	grid-template-columns: min(9dvh, 4.5dvw) auto;
-	padding-right: min(6dvh, 3dvw);
-	text-align: justify;
-
-	button {
-		height: min(9dvh, 4.5dvw);
-		width: min(9dvh, 4.5dvw);
-	}
-
-	& > p {
-		margin: 0;
-	}
-}
-
 #mbs-preference {
-	grid-template:
-		"header header menubar" min(9dvh, 4.5dvw)
-		"settings misc misc" auto
-		/ auto min(29dvh, 14.5dvw) min(9dvh, 4.5dvw);
+	--gap: min(2dvh, 1dvw);
+	--half-gap: calc(var(--gap) / 2);
+	--height: min(7dvh, 3.5dvw);
+	--menu-button-size: min(9dvh, 4.5dvw);
 
-	& p {
-		margin-bottom: 0.5em;
-		margin-top: 0.5em;
+	column-gap: var(--gap);
+	grid-template:
+		"header header" min-content
+		"main aside" auto / auto min-content;
+
+	p {
+		margin-block: 0.5em;
 	}
 
 	.button-tooltip {
 		--tooltip-gap: min(2dvh, 1dvw);
 	}
-}
 
-#mbs-preference-header {
-	grid-area: header;
-}
+	& > aside {
+		display: grid;
+		grid-area: aside;
+	}
 
+	.screen-header {
+		direction: rtl;
+		display: grid;
+		gap: var(--gap);
+		grid-template-columns: min-content auto;
+	}
 
-#mbs-preference-menubar {
-	direction: ltr;
-	display: grid;
-	grid-area: menubar;
+	.screen-hgroup {
+		color: black;
+		grid-area: unset;
 
-	button {
-		height: min(9dvh, 4.5dvw);
-		width: min(9dvh, 4.5dvw);
+		h1 {
+			font-size: var(--mbs-font-large);
+			font-weight: bold;
+		}
+	}
+
+	h2 {
+		font-size: var(--mbs-font-large);
+		font-weight: bold;
+		margin-bottom: unset;
+		padding-left: var(--menu-button-size);
+		text-align: center;
+	}
+
+	.screen-main {
+		padding-left: min(40dvh, 20dvw);
+
+		& > section:first-child h2 {
+			margin-top: unset;
+		}
 	}
 }
 
-#mbs-preference-exit {
-	grid-area: exit;
-}
-
-#mbs-preference-settings {
+.mbs-preference-settings-pair {
+	align-items: center;
+	column-gap: var(--gap);
 	display: grid;
-	grid-area: settings;
-	height: 100%;
-	overflow: hidden scroll;
-	grid-gap: min(2dvh, 1dvw);
+	grid-template-columns: var(--menu-button-size) auto;
+	padding-right: 0.15em;
+	text-align: justify;
+
+	button {
+		height: var(--menu-button-size);
+		width: var(--menu-button-size);
+	}
 }
 
 #mbs-preference-misc {
 	align-self: self-end;
-	grid-area: misc;
 	margin: unset;
 	padding: unset;
 
@@ -74,8 +84,8 @@
 	}
 
 	button {
-		height: min(9dvh, 4.5dvw);
-		width: 100%;
+		height: var(--menu-button-size);
+		width: calc(2 * var(--gap) + 3 * var(--menu-button-size));
 	}
 
 	.button-label {
@@ -102,25 +112,8 @@
 	}
 }
 
-#mbs-preference-import {
-	grid-area: import;
-	grid-template-columns: min(19dvh, 9.5dvw);
-}
-
-#mbs-preference-export {
-	grid-area: export;
-	grid-template-columns: min(19dvh, 9.5dvw);
-}
-
-#mbs-preference-changelog {
-	grid-area: changelog;
-	grid-template-columns: min(40dvh, 20dvw);
-}
-
 #mbs-preference-reset-screen {
-	align-items: center;
-	background-color: rgb(0 0 0 / 70%);
-	z-index: 2;
+	background: rgb(0 0 0 / 30%);
 }
 
 #mbs-preference-reset-background {
@@ -132,6 +125,7 @@
 	box-sizing: border-box;
 	height: 80%;
 	justify-self: center;
+	left: 10%;
 	mask-image: url("https://bananarama92.github.io/MBS/main/images/SheetMBS.png");
 	mask-position: center;
 	mask-repeat: no-repeat;
@@ -139,6 +133,8 @@
 	padding: min(6dvh, 3dvw);
 	padding-top: min(3dvh, 1.5dvw);
 	position: relative;
+	text-align: center;
+	top: 10%;
 	width: 80%;
 	word-break: break-word;
 }
@@ -147,10 +143,9 @@
 	display: grid;
 	grid-template-columns: auto auto;
 	justify-items: center;
-	padding-top: min(10dvh, 5dvw);
 
 	.button {
-		height: min(9dvh, 4.5dvw);
-		width: min(27dvh, 13.5dvw);
+		height: var(--menu-button-size);
+		width: calc(3 * var(--gap) + 4 * var(--menu-button-size));
 	}
 }

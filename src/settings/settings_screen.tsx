@@ -87,37 +87,31 @@ export class MBSPreferenceScreen extends MBSScreen {
     static readonly ids = ID;
     static readonly screenParamsDefault = {
         [root]: Object.freeze({
-            shape: [525, 75, 1380, 850] as RectTuple,
+            shape: [60, 40, 1880, 920] as RectTuple,
             visibility: "visible",
         }),
         [ID.resetScreen]: Object.freeze({
             shape: [0, 0, 2000, 1000] as RectTuple,
-            visibility: "hidden",
+            visibility: "visible",
         }),
     };
 
     constructor(parent: null | MBSScreen, params: null | ScreenParams.Partial = null) {
         super(parent, MBSPreferenceScreen.screenParamsDefault, params);
 
-        document.body.appendChild(
-            <div id={ID.root} class="mbs-screen" aria-labelledby={ID.header}>
-                <style id={ID.styles}>{styles.toString()}</style>
-
-                <h1 id={ID.header}>{`Maid's Bondage Scripts ${MBS_VERSION}`}</h1>
-
-                {ElementMenu.Create(
-                    ID.menubar,
-                    [
-                        ElementButton.Create(
-                            ID.exit,
-                            this.exit.bind(this),
-                            { image: "Icons/Exit.png", tooltip: "Exit" },
-                        ),
-                    ],
-                    { direction: "rtl" },
-                )}
-
-                <main id={ID.settingsGrid} role="form" aria-label="Configure MBS">
+        const screen = ElementDOMScreen.getTemplate(
+            ID.root,
+            {
+                parent: document.body,
+                header: `Maid's Bondage Scripts ${MBS_VERSION}`,
+                menubarButtons: [
+                    ElementButton.Create(
+                        ID.exit,
+                        this.exit.bind(this),
+                        { image: "Icons/Exit.png", tooltip: "Exit" },
+                    ),
+                ],
+                mainContent: [
                     <section aria-labelledby={ID.wheelHeader}>
                         <h2 id={ID.wheelHeader}>Wheel of fortune settings</h2>
                         <p class="mbs-preference-settings-pair">
@@ -132,8 +126,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                             <input type="checkbox" class="checkbox" name="LockedWhenRestrained" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.lockSettingsLabel}/>
                             <span id={ID.lockSettingsLabel}>Lock MBS settings while restrained</span>
                         </p>
-                    </section>
-
+                    </section>,
                     <section aria-labelledby={ID.garbleHeader}>
                         <h2 id={ID.garbleHeader}>Garbling settings</h2>
                         <p class="mbs-preference-settings-pair">
@@ -141,10 +134,10 @@ export class MBSPreferenceScreen extends MBSScreen {
                             <span id={ID.garbleLabel}>
                                 <p>
                                     <strong>Experimental</strong>: whether gags will use an alternative form of, more phonetically accurate, speech garbling
-                                    based on <a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a>
+                                    based on <cite><a href="https://github.com/CordeliaMist/Dalamud-GagSpeak" target="_blank">Dalamud-GagSpeak</a></cite>
                                 </p>
                                 <p>
-                                    Incompatible-ish with <a href="https://wce-docs.vercel.app/docs/intro" target="_blank">WCE/FBC</a>'s
+                                    Incompatible-ish with <cite><a href="https://wce-docs.vercel.app/docs/intro" target="_blank">WCE</a>'s</cite>
                                     garbling anti-cheat as of the moment
                                 </p>
                             </span>
@@ -152,7 +145,7 @@ export class MBSPreferenceScreen extends MBSScreen {
                         <p class="mbs-preference-settings-pair">
                             <input type="checkbox" class="checkbox" name="DropTrailing" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.garbleTrailingLabel}/>
                             <span id={ID.garbleTrailingLabel}>
-                                Whether to heaviest gags will drop up to half of all trailing characters
+                                Whether the heaviest gags will drop up to half of all trailing characters
                                 when alternate garbling is enabled
                             </span>
                         </p>
@@ -163,17 +156,20 @@ export class MBSPreferenceScreen extends MBSScreen {
                                 in garbling strength (on a syllable by syllable basis) as the gag level increases
                             </span>
                         </p>
-                    </section>
-
+                    </section>,
                     <section aria-labelledby={ID.miscHeader}>
                         <h2 id={ID.miscHeader}>Misc settings</h2>
-                        <div class="mbs-preference-settings-pair">
+                        <p class="mbs-preference-settings-pair">
                             <input type="checkbox" class="checkbox" name="ShowChangelog" onClick={this.#boolSwitch.bind(this)} aria-labelledby={ID.changelogLabel}/>
                             <span id={ID.changelogLabel}>Show the MBS changelog in chat whenever a new MBS version is released</span>
-                        </div>
-                    </section>
-                </main>
-
+                        </p>
+                    </section>,
+                ],
+            },
+        );
+        screen.append(
+            <style id={ID.styles}>{styles.toString()}</style>,
+            <aside>
                 <menu id={ID.miscGrid}>
                     <li>{ElementButton.Create(
                         ID.resetButton,
@@ -193,26 +189,42 @@ export class MBSPreferenceScreen extends MBSScreen {
                     <li>{ElementButton.Create(
                         ID.changelog,
                         () => open(getChangeLogURL(), "_blank"),
-                        { image: "Icons/Changelog.png", label: "Latest Changes", tooltip: "Open the MBS changelog", labelPosition: "center" },
+                        { image: "Icons/Changelog.png", label: "Changelog", tooltip: "Open the MBS changelog", labelPosition: "center" },
                     )}</li>
                 </menu>
-            </div>,
+            </aside>,
         );
+        screen.classList.add("mbs-screen");
+
+        const hgroup = screen.querySelector(".screen-hgroup");
+        const header = screen.querySelector(".screen-header");
+        if (hgroup && header) {
+            header.append(hgroup);
+        }
 
         document.body.appendChild(
-            <div id={ID.resetScreen} class="mbs-screen" screen-generated={MBSPreferenceScreen.screen}>
+            <dialog id={ID.resetScreen} class="mbs-screen" screen-generated={MBSPreferenceScreen.screen}>
                 <div id={ID.resetBackground}>
                     <h1>MBS data reset</h1>
                     <p><strong>- Warning -</strong></p>
                     <p>If you confirm, <i>all</i> MBS data (including settings, overrides, and current states) will be permanently reset!</p>
                     <p>You will be able to continue using MBS, but all of your configuration will be reset to default!</p>
                     <p><strong>This action cannot be undone!</strong></p>
-                    <div id={ID.resetGrid}>
-                        {ElementButton.Create(ID.resetAccept, () => this.#resetConfirm(), { disabled: true, label: "Confirm (10)" })}
-                        {ElementButton.Create(ID.resetCancel, () => this.exit(), { label: "Cancel" })}
+                    <div id={ID.resetGrid} role="group">
+                        {ElementButton.Create(
+                            ID.resetAccept,
+                            () => this.#resetConfirm(),
+                            { disabled: true, label: "Confirm (10)" },
+                        )}
+                        {ElementButton.Create(
+                            ID.resetCancel,
+                            () => this.exit(),
+                            { label: "Cancel" },
+                            { button: { attributes: { autofocus: true } } },
+                        )}
                     </div>
                 </div>
-            </div>,
+            </dialog>,
         );
     }
 
@@ -276,9 +288,9 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     #settingsReset() {
-        const screen = document.getElementById(ID.resetScreen) as HTMLDivElement;
+        const screen = document.getElementById(ID.resetScreen) as HTMLDialogElement;
         const button = document.getElementById(ID.resetAccept) as HTMLButtonElement;
-        screen.hidden = false;
+        screen.show();
         button.disabled = true;
         this.#startTimer(button);
     }
@@ -327,13 +339,13 @@ export class MBSPreferenceScreen extends MBSScreen {
     }
 
     draw() {
-        DrawCharacter(Player, 50, 50, 0.9);
+        DrawCharacter(Player, 50, 175, 0.78, false);
     }
 
     exit() {
-        const resetScreen = document.getElementById(ID.resetScreen) as HTMLDivElement;
-        if (!resetScreen.hidden) {
-            resetScreen.hidden = true;
+        const resetScreen = document.getElementById(ID.resetScreen) as HTMLDialogElement;
+        if (resetScreen.open) {
+            resetScreen.close();
         } else {
             super.exit();
             this.exitScreens(false);
