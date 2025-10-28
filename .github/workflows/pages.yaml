@@ -66,7 +66,7 @@ jobs:
           path: MBS-Artifacts
           token: ${{ secrets.MBS_ARTIFACTS_TOKEN }}
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           path: MBS-Artifacts/artifacts
 
