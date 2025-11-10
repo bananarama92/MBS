@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.5
+* Add BC R122Beta1 support
+* Explicitly mark the "filter by BC version" dropdown in the shop as originating from MBS
+
 ## v1.10.4
 * Drop BC R120 support
 * Fix MBS local crafts only populating the player's crafting list after opening the crafting screen
