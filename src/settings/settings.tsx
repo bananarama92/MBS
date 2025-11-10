@@ -319,7 +319,7 @@ export function clearMBSSettings(): void {
     Player.Crafting = Player.Crafting.slice(0, GameVersion === "R120" ? 80 : 200);
     Player.MBSSettings = Object.seal({
         AlternativeGarbling: false,
-        CraftingCache: "",
+        CraftingCache: undefined,
         DropTrailing: false,
         FortuneWheelCommands: Object.seal(Array(MBS_MAX_SETS).fill(null)),
         FortuneWheelItemSets: Object.seal(Array(MBS_MAX_SETS).fill(null)),

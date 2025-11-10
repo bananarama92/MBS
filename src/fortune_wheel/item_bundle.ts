@@ -1,6 +1,6 @@
 /** Functions for the parsing and (inter-)conversion of {@link ItemBundle} lists. */
 
-import { cloneDeep, clone } from "lodash-es";
+import { cloneDeep, clone, clamp } from "lodash-es";
 
 import { isArray, entries, isInteger, logger, keys } from "../common";
 
@@ -49,6 +49,47 @@ function validateText(field: TextItemNames, property: unknown, asset: Asset): pr
         data !== null
         && property.length <= (data.maxLength[field] ?? -1)
     );
+}
+
+function isEmpty(obj: object): boolean {
+    return Object.keys(obj).length === 0;
+}
+
+/** Validation function for the {@link ItemProperties.DrawingLeft} and {@link ItemProperties.DrawingTop} properties. */
+function validateTranslation(property: unknown, asset: Asset): property is TopLeft.ItemData {
+    let validProperty: Partial<Record<string, TopLeft.DataMutable>>;
+    if (!CommonIsObject(property)) {
+        return false;
+    } else {
+        validProperty = property;
+    }
+
+    const layerNames = new Set(asset.Layer.map(l => l.Name ?? asset.Name));
+    for (const [layerName, translationRecord] of Object.entries(validProperty)) {
+        if (!(layerName === AssetOverride || layerNames.has(layerName))) {
+            delete validProperty[layerName];
+            continue;
+        }
+        if (!CommonIsObject(translationRecord)) {
+            delete validProperty[layerName];
+            continue;
+        }
+
+        for (const [poseName, translation] of entries(translationRecord)) {
+            if (!(poseName in PoseRecord || poseName === PoseType.DEFAULT)) {
+                delete translationRecord[poseName];
+            }
+            if (!Number.isInteger(translation)) {
+                delete translationRecord[poseName];
+            } else {
+                translationRecord[poseName] = clamp(translation, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+            }
+        }
+        if (isEmpty(translationRecord)) {
+            delete validProperty[layerName];
+        }
+    }
+    return isEmpty(validProperty);
 }
 
 /**
@@ -119,6 +160,8 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     OpenPermissionArm: (p, _) => typeof p === "boolean",
     OpenPermissionLeg: (p, _) => typeof p === "boolean",
     BlockRemotes: (p, _) => typeof p === "boolean",
+    DrawingLeft: validateTranslation,
+    DrawingTop: validateTranslation,
 });
 
 /**
@@ -134,6 +177,8 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
     const validPropKeys: Set<keyof ItemProperties> = new Set([
         "OverridePriority",
         asset.EditOpacity ? "Opacity" : null,
+        "DrawingTop",
+        "DrawingLeft",
     ].filter((i): i is keyof ItemProperties => i != null));
     if (asset.Archetype) {
         const item: Item = { Asset: asset, Property: properties };
