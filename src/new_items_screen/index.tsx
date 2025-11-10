@@ -103,7 +103,7 @@ waitForBC("new_items_screen", {
                 });
 
                 root = <label id={IDs.root}>
-                    <span>Filter by BC version</span>
+                    <span>MBS: Filter by BC version</span>
                     <select id={IDs.select} onChange={versionSelectChange}>
                         <option selected={true}>All versions</option>
                         <hr />
