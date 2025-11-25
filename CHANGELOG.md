@@ -1,5 +1,12 @@
 # MBS Changelog
 
+## v1.10.6
+* Drop BC R121 support
+* Backport three R123 bug fixes:
+    - [BondageProjects/Bondage-College#6033](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6033): Fix the color spin buttons in the item color menu failing to switch to the next color
+    - [BondageProjects/Bondage-College#6035](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6035): Fix the missing entries for the minigame's administration screens
+    - [BondageProjects/Bondage-College#6036](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6036): Fix opening the color picker resetting layer opacities if the layers have distinct values
+
 ## v1.10.5
 * Add BC R122Beta1 support
 * Explicitly mark the "filter by BC version" dropdown in the shop as originating from MBS
