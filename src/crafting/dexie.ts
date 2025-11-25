@@ -3,10 +3,6 @@ import { Dexie, Table, PromiseExtended } from "../dexie";
 
 import { Version, logger } from "../common";
 
-// TODO: Update once R121 has been released
-export const BC_SLOT_MAX_ORIGINAL = 80;
-export const MBS_SLOT_MAX_SERVER = 160;
-export const MBS_SLOT_MAX_LOCAL = 320;
 const BYTE_CLAMP = 2**8 - 1;
 const SHORT_CLAMP = 2**16 - 1;
 
