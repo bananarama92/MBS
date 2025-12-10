@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.10.7
+* Add BC R123Beta1 support
+
 ## v1.10.6
 * Drop BC R121 support
 * Backport three R123 bug fixes:
