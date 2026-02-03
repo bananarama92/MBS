@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.10.9
+* Drop BC R123 support
+* Fix checking for the `complete` readystate rather than `interactive`
+* Fix Listening for the `load` event on the window rather than document
+* Fix a few BC asset group look ups potentially firing before BC is fully loaded
+
 ## v1.10.8
 * Drop BC R122 support
 * Add BC R124Beta1 support

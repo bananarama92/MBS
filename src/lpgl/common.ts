@@ -269,7 +269,7 @@ export class Version {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 123 satisfies number;
+export const BC_MIN_VERSION = 124 satisfies number;
 
 const bcListenerNames = [
     "api",
@@ -404,10 +404,10 @@ export function waitForBC(
         return false;
     }
 
-    if (document.readyState !== "loading") {
+    if (document.readyState === "complete") {
         contentLoadedListener();
     } else {
-        document.addEventListener("load", contentLoadedListener);
+        globalThis.addEventListener("load", contentLoadedListener);
     }
     return true;
 }
