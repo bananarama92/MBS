@@ -142,83 +142,6 @@ wheelHookRegister.addEventListener("beforeOutfitEquip", MBS_MOD_INFO, {
     showConfig: false,
 });
 
-wheelHookRegister.addEventListener("color", MBS_MOD_INFO, {
-    listener: ({ character, newAsset }, kwargs) => {
-        const sourceGroup = kwargs.sourceGroup?.type === "select" && kwargs.sourceGroup.value;
-        const sourceItem = sourceGroup ? InventoryGet(character, sourceGroup as AssetGroupName) : null;
-        if (!sourceItem) {
-            return;
-        }
-
-        let color: undefined | string;
-        if (typeof sourceItem.Color === "string") {
-            color = sourceItem.Color;
-        } else if (isArray(sourceItem.Color) && typeof sourceItem.Color[0] === "string") {
-            color = sourceItem.Color[0];
-        } else {
-            color = sourceItem.Asset.DefaultColor[0];
-        }
-        if (!color) {
-            return;
-        }
-
-        const indices = ASSET_COLORABLE_INDICES[newAsset.Group.Name]?.[newAsset.Name];
-        if (indices) {
-            const ret: (undefined | string)[] = Array(newAsset.ColorableLayerCount).fill(undefined);
-            indices.slice(0, newAsset.ColorableLayerCount).forEach(i => ret[i] = color);
-            return ret;
-        } else {
-            return Array(newAsset.ColorableLayerCount).fill(color);
-        }
-    },
-    hookName: "copyItemColor",
-    label: "Copy the color from one item and apply it to others.",
-    conditional: true,
-    kwargs: {
-        sourceGroup: {
-            type: "select",
-            label: "The item group from which the color will be copied",
-            required: true,
-            options: getGroupNameKwargs((g) => g.Name === "HairFront", (g) => g.AllowColorize).options,
-        },
-        targetGroups: {
-            ...getGroupNameKwargs((g) => g.IsRestraint, (g) => g.AllowNone && g.AllowColorize),
-            label: "The item group(s) to which the color will be copied",
-        },
-    },
-});
-
-wheelHookRegister.addEventListener("typeRecord", MBS_MOD_INFO, {
-    listener: ({ newAsset }) => {
-        switch (newAsset.Archetype) {
-            case ExtendedArchetype.TYPED:
-            case ExtendedArchetype.VIBRATING: {
-                const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
-                const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
-                return sample(allowType);
-            }
-            case ExtendedArchetype.MODULAR: {
-                const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
-                let typeRecord: undefined | TypeRecord = undefined;
-                for (const module of data?.modules ?? []) {
-                    const allowType = module.Options.map(o => o.Property.TypeRecord);
-                    const type = sample(allowType);
-                    if (type) {
-                        typeRecord = Object.assign(typeRecord ?? {}, type);
-                    }
-                }
-                return typeRecord;
-            }
-            default:
-                return null;
-        }
-    },
-    hookName: "randomizeType",
-    label: "Randomize the (extended item) type of specified items.",
-    conditional: true,
-    kwargs: { targetGroups: getGroupNameKwargs("none", (g) => g.AllowNone) },
-});
-
 /** Return a record with all new MBS fortune wheel item sets. */
 function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>> {
     const protoRecord: Record<FortuneWheelNames, FWItemBase[]> = {
@@ -945,6 +868,83 @@ waitForBC("fortune_wheel", {
         });
 
         fortuneWheelState = new FWScreenProxy();
+
+        wheelHookRegister.addEventListener("color", MBS_MOD_INFO, {
+            listener: ({ character, newAsset }, kwargs) => {
+                const sourceGroup = kwargs.sourceGroup?.type === "select" && kwargs.sourceGroup.value;
+                const sourceItem = sourceGroup ? InventoryGet(character, sourceGroup as AssetGroupName) : null;
+                if (!sourceItem) {
+                    return;
+                }
+
+                let color: undefined | string;
+                if (typeof sourceItem.Color === "string") {
+                    color = sourceItem.Color;
+                } else if (isArray(sourceItem.Color) && typeof sourceItem.Color[0] === "string") {
+                    color = sourceItem.Color[0];
+                } else {
+                    color = sourceItem.Asset.DefaultColor[0];
+                }
+                if (!color) {
+                    return;
+                }
+
+                const indices = ASSET_COLORABLE_INDICES[newAsset.Group.Name]?.[newAsset.Name];
+                if (indices) {
+                    const ret: (undefined | string)[] = Array(newAsset.ColorableLayerCount).fill(undefined);
+                    indices.slice(0, newAsset.ColorableLayerCount).forEach(i => ret[i] = color);
+                    return ret;
+                } else {
+                    return Array(newAsset.ColorableLayerCount).fill(color);
+                }
+            },
+            hookName: "copyItemColor",
+            label: "Copy the color from one item and apply it to others.",
+            conditional: true,
+            kwargs: {
+                sourceGroup: {
+                    type: "select",
+                    label: "The item group from which the color will be copied",
+                    required: true,
+                    options: getGroupNameKwargs((g) => g.Name === "HairFront", (g) => g.AllowColorize).options,
+                },
+                targetGroups: {
+                    ...getGroupNameKwargs((g) => g.IsRestraint, (g) => g.AllowNone && g.AllowColorize),
+                    label: "The item group(s) to which the color will be copied",
+                },
+            },
+        });
+
+        wheelHookRegister.addEventListener("typeRecord", MBS_MOD_INFO, {
+            listener: ({ newAsset }) => {
+                switch (newAsset.Archetype) {
+                    case ExtendedArchetype.TYPED:
+                    case ExtendedArchetype.VIBRATING: {
+                        const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
+                        const allowType = (data?.options ?? []).map(o => o.Property.TypeRecord);
+                        return sample(allowType);
+                    }
+                    case ExtendedArchetype.MODULAR: {
+                        const data = ExtendedItemGetData(newAsset, newAsset.Archetype);
+                        let typeRecord: undefined | TypeRecord = undefined;
+                        for (const module of data?.modules ?? []) {
+                            const allowType = module.Options.map(o => o.Property.TypeRecord);
+                            const type = sample(allowType);
+                            if (type) {
+                                typeRecord = Object.assign(typeRecord ?? {}, type);
+                            }
+                        }
+                        return typeRecord;
+                    }
+                    default:
+                        return null;
+                }
+            },
+            hookName: "randomizeType",
+            label: "Randomize the (extended item) type of specified items.",
+            conditional: true,
+            kwargs: { targetGroups: getGroupNameKwargs("none", (g) => g.AllowNone) },
+        });
 
         switch (CurrentScreen) {
             case "WheelFortune":
