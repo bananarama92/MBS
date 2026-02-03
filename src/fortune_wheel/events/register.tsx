@@ -256,7 +256,7 @@ export class WheelHookRegister implements _WheelHookRegister {
         if (document.readyState === "complete") {
             await GameReadyState.load;
         } else {
-            await new Promise(resolve => document.addEventListener("load", async () => resolve(await GameReadyState.load)));
+            await new Promise(resolve => globalThis.addEventListener("load", async () => resolve(await GameReadyState.load)));
         }
 
         if (this[hookType].some(i => i.registrationData.name === registrationData.name && i.hookName === options.hookName)) {
