@@ -344,7 +344,7 @@ export class MBSPreferenceScreen extends MBSScreen {
 let preferenceState: PreferenceScreenProxy;
 
 waitForBC("settings_screen", {
-    async afterLoad() {
+    async afterMBS() {
         preferenceState = new PreferenceScreenProxy();
 
         PreferenceRegisterExtensionSetting({
