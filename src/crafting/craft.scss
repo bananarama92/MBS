@@ -25,13 +25,11 @@
         width: min(100dvh, 50dvw);
     }
 
-    #mbs-crafting-info-browser,
-    #mbs-crafting-info-account {
+    #mbs-crafting-info-browser {
         display: none;
-    }
 
-    &[data-type="account"] #mbs-crafting-info-account,
-    &[data-type="browser"] #mbs-crafting-info-browser {
-        display: inline;
+        & > p {
+            margin-block: unset;
+        }
     }
 }

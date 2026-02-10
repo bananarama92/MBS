@@ -95,7 +95,6 @@ const IDs = Object.freeze({
     header: "mbs-crafting-header-prefix",
     button: "mbs-crafting-info",
     buttonBrowser: "mbs-crafting-info-browser",
-    buttonServer: "mbs-crafting-info-account",
     buttonMBS: "mbs-crafting-info-marker",
     style: "mbs-crafting-styles",
 });
@@ -117,15 +116,9 @@ async function loadCraftingNameDOM() {
                 image: "./Icons/Question.png",
                 tooltip: [
                     <span id={IDs.buttonBrowser}>
-                        Extra MBS crafting slot stored locally in your Browser.
-                        <br />
-                        These crafts are <em>exclusively</em> available for this specific combination of web browser, BC account and BC URL (<code>{window.location.href}</code>).
-                        As such, it will <em>not</em> be shared between the EU, US and Asia servers.
-                    </span>,
-                    <span id={IDs.buttonServer}>
-                        Extra MBS crafting slot stored on your BC account (the server).
-                        <br />
-                        These crafts are linked to your BC account and will, as such, persists across different web browsers and BC servers.
+                        <p style={{ marginBottom: "0.5em" }}>Extra MBS crafting slot stored locally in your Browser.</p>
+                        <p style={{ marginTop: "0.5em" }}>These crafts are <em>exclusively</em> available for this specific combination of web browser, BC account and BC URL (<code>{window.location.href}</code>).
+                        As such, it will <em>not</em> be shared between the EU, US and Asia servers.</p>
                     </span>,
                 ],
                 tooltipPosition: "left",
@@ -133,28 +126,19 @@ async function loadCraftingNameDOM() {
             },
             { button: {
                 attributes: { "aria-label": "Show MBS extra crafting slot description", "aria-disabled": "true" },
-                dataAttributes: { type: "account" },
                 children: [<span aria-hidden="true" id={IDs.buttonMBS}>MBS</span>],
             }},
         );
-        const menubar = document.getElementById(CraftingID.menuBar);
-        if (menubar) {
-            ElementMenu.AppendButton(menubar, infoButton);
-        }
+        document.getElementById(CraftingID.menuBar)?.append(infoButton);
     }
 
-    const { maxBC, maxMBSServer } = getSegmentSizes();
+    const { maxBC } = getSegmentSizes();
     if (CraftingSlot < maxBC) {
         headingPrefix.replaceChildren();
         infoButton.hidden = true;
-    } else if (CraftingSlot < (maxBC + maxMBSServer)) {
-        headingPrefix.replaceChildren("MBS (Account): ");
-        infoButton.hidden = false;
-        infoButton.setAttribute("data-type", "account");
     } else {
         headingPrefix.replaceChildren("MBS (Browser): ");
         infoButton.hidden = false;
-        infoButton.setAttribute("data-type", "browser");
     }
 }
 
@@ -162,32 +146,32 @@ waitForBC("crafting", {
     async afterLoad() {
         logger.log("Initializing crafting hooks");
 
-        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+        const { maxBC, maxMBSLocal } = getSegmentSizes();
 
         MBS_MOD_API.patchFunction("CraftingClick", {
             [`if (CraftingOffset < 0) CraftingOffset = ${maxBC} - 20;`]:
-                `if (CraftingOffset < 0) CraftingOffset = ${maxBC + maxMBSServer + maxMBSLocal} - 20;`,
+                `if (CraftingOffset < 0) CraftingOffset = ${maxBC + maxMBSLocal} - 20;`,
             [`if (CraftingOffset >= ${maxBC}) CraftingOffset = 0;`]:
-                `if (CraftingOffset >= ${maxBC + maxMBSServer + maxMBSLocal}) CraftingOffset = 0;`,
+                `if (CraftingOffset >= ${maxBC + maxMBSLocal}) CraftingOffset = 0;`,
         });
 
         MBS_MOD_API.patchFunction("CraftingRun", {
             ["/ ${" + maxBC.toString() + " / 20}."]:
-                `/ ${(maxBC + maxMBSServer + maxMBSLocal) / 20}.`,
+                `/ ${(maxBC + maxMBSLocal) / 20}.`,
             'TextGet("SelectDestroy")':
-                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC + maxMBSServer} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
+                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
             'TextGet("SelectSlot")':
-                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC + maxMBSServer} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
+                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
         });
 
         MBS_MOD_API.patchFunction("CraftingJSON.encode", {
             [`const max = Math.max(${maxBC}, crafts.length);`]:
-                `const max = Math.max(${maxBC + maxMBSServer + maxMBSLocal}, crafts.length);`,
+                `const max = Math.max(${maxBC + maxMBSLocal}, crafts.length);`,
         });
 
         MBS_MOD_API.patchFunction("CraftingJSON.eventListeners.changeFile", {
             [`}).slice(0, ${maxBC});`]:
-                `}).slice(0, ${maxBC + maxMBSServer + maxMBSLocal});`,
+                `}).slice(0, ${maxBC + maxMBSLocal});`,
         });
 
         MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
@@ -205,19 +189,19 @@ waitForBC("crafting", {
         }
 
         // Load the extra MBS crafts
-        const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+        const { maxBC, maxMBSLocal } = getSegmentSizes();
         const db = openDB(Player.MemberNumber);
-        padArray(Player.Crafting, maxBC + maxMBSServer + maxMBSLocal, null);
+        padArray(Player.Crafting, maxBC + maxMBSLocal, null);
         for (const [i, craft] of (await loadAllCraft(db)).entries()) {
-            Player.Crafting[i + maxBC + maxMBSServer] = craft;
+            Player.Crafting[i + maxBC] = craft;
         }
         db.close({ disableAutoOpen: false });
 
         // Mirror the extra MBS-specific crafted items to the MBS settings
         MBS_MOD_API.hookFunction("CraftingSaveServer", 0, (args, next) => {
             // Only push a single craft to the local storage when it's certain that one is editing a local craft
-            if (inRange(CraftingSlot, maxBC + maxMBSServer, maxBC + maxMBSServer + maxMBSLocal)) {
-                const index = CraftingSlot - maxBC - maxMBSServer;
+            if (inRange(CraftingSlot, maxBC, maxBC + maxMBSLocal)) {
+                const index = CraftingSlot - maxBC;
                 const craft = Player.Crafting[CraftingSlot];
                 saveCraft(db, index, craft);
                 return;
@@ -230,7 +214,7 @@ waitForBC("crafting", {
 
             // Crafts are synced from within a place of unknown origin; sync the local crafts just in case
             if (CraftingSlot === 0 && CraftingMode !== "Name") {
-                saveAllCraft(db, Player.Crafting.slice(maxBC + maxMBSServer, maxBC + maxMBSServer + maxMBSLocal));
+                saveAllCraft(db, Player.Crafting.slice(maxBC, maxBC + maxMBSLocal));
             }
         });
 

@@ -12,10 +12,9 @@ interface CraftingDBData {
 }
 
 export function getSegmentSizes() {
-    const maxBC = GameVersion === "R120" ? 80 : 200;
-    const maxMBSServer = 0;
+    const maxBC = 200;
     const maxMBSLocal = 600;
-    return { maxBC, maxMBSServer, maxMBSLocal };
+    return { maxBC, maxMBSLocal };
 }
 
 /**
@@ -57,13 +56,13 @@ export function saveCraft(db: Dexie, index: number, craft: null): PromiseExtende
 export function saveCraft(db: Dexie, index: number, craft: CraftingItem): PromiseExtended<number>;
 export function saveCraft(db: Dexie, index: number, craft: null | CraftingItem): PromiseExtended<void | number>;
 export function saveCraft(db: Dexie, index: number, craft: null | CraftingItem): PromiseExtended<void | number> {
-    const { maxBC, maxMBSServer } = getSegmentSizes();
+    const { maxBC } = getSegmentSizes();
     const table: Table<CraftingDBData, number, CraftingDBData> = db.table("crafting");
     if (craft) {
-        logger.debug(`Saving craft ${index + maxBC + maxMBSServer} to indexedDB: ${craft.Name} (${craft.Item})`);
+        logger.debug(`Saving craft ${index + maxBC} to indexedDB: ${craft.Name} (${craft.Item})`);
         return table.put({ id: index, data: craft });
     } else {
-        logger.debug(`Deleting craft ${index + maxBC + maxMBSServer} from indexedDB`);
+        logger.debug(`Deleting craft ${index + maxBC} from indexedDB`);
         return table.delete(index);
     }
 }
@@ -110,23 +109,23 @@ function craftingValidate(craft: unknown, index: number) {
 }
 
 export async function loadCraft(db: Dexie, index: number): Promise<null | CraftingItem> {
-    const { maxBC, maxMBSServer } = getSegmentSizes();
+    const { maxBC } = getSegmentSizes();
     const table: Table<CraftingDBData, number, CraftingDBData> = db.table("crafting");
     const craftObj = await table.get(index);
-    const craft = craftingValidate(craftObj?.data, maxBC + maxMBSServer + index);
+    const craft = craftingValidate(craftObj?.data, maxBC + index);
     if (craft) {
-        logger.debug(`Loading craft ${index + maxBC + maxMBSServer} from indexedDB: ${craft.Name} (${craft.Item})`);
+        logger.debug(`Loading craft ${index + maxBC} from indexedDB: ${craft.Name} (${craft.Item})`);
     } else {
-        logger.debug(`Loading empty craft ${index + maxBC + maxMBSServer} from indexedDB`);
+        logger.debug(`Loading empty craft ${index + maxBC} from indexedDB`);
     }
     return craft;
 }
 
 export async function loadAllCraft(db: Dexie): Promise<(null | CraftingItem)[]> {
-    const { maxBC, maxMBSServer, maxMBSLocal } = getSegmentSizes();
+    const { maxBC, maxMBSLocal } = getSegmentSizes();
     const table: Table<CraftingDBData, number, CraftingDBData> = db.table("crafting");
     const craftStructs = await table.bulkGet(range(0, maxMBSLocal));
-    const crafts = craftStructs.map((obj, i) => craftingValidate(obj?.data, maxBC + maxMBSServer + i));
+    const crafts = craftStructs.map((obj, i) => craftingValidate(obj?.data, maxBC + i));
     const nCrafts = crafts.filter(i => i != null).length;
     logger.debug(`Loading all ${nCrafts} crafts from indexedDB`);
     return crafts;
