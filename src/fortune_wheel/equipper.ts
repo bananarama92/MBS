@@ -385,6 +385,9 @@ wheelHookRegister.addEventListener(
     },
 );
 
+/**
+ * A `tsJSON()` helper function to-be attached to wheel event proxies.
+ */
 function eventToJSON(this: ExtendedWheelEvents.Events.Mapping[ExtendedWheelEvents.Events.Names]) {
     return {
         ...this,
@@ -396,6 +399,9 @@ function eventToJSON(this: ExtendedWheelEvents.Events.Mapping[ExtendedWheelEvent
     };
 }
 
+/**
+ * Construct a proxy object with a set of predefined readonly runtime-enforced keys.
+ */
 function getEventProxy<T extends object>(arg: T, readonlyKeys?: null | readonly (keyof T)[]): T {
     const readonlySet = new Set(readonlyKeys ?? []);
     return new Proxy(
