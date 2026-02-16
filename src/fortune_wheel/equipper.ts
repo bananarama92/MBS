@@ -220,7 +220,7 @@ function canUnlock(item: Item, character: Character): boolean {
     const lock = InventoryGetLock(item);
     if (!InventoryItemHasEffect(item, "Lock")) {
         return true;
-    } else if (item.Craft?.Property === "Decoy") {
+    } else if (item.Craft?.Effects.Decoy) {
         // Always disallow the removal of owner-/lovers exclusive items, even when decoy restraints are used
         if (lock == null) {
             return false;
@@ -683,8 +683,7 @@ export function fortuneWheelEquip(
                     craft = {
                         Name: asset.Description,
                         Description: "",
-                        Property: "Normal", // TODO: Remove/set to `undefined` in >= R125
-                        Effects: { Normal: 1 },
+                        Effects: {},
                         Color: "",
                         Lock: "",
                         Private: true,

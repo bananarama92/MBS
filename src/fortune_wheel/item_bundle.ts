@@ -339,7 +339,7 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
         Group: Group,
         Name: Name,
         Color: clone(<string[] | undefined>Color),
-        Craft: clone(Craft),
+        Craft: cloneDeep(Craft),
         Property: Object.assign(
             getBaselineProperty(asset, character, TypeRecord),
             cloneDeep(Property),

@@ -164,7 +164,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemHands",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Mittens",
                 },
             },
@@ -173,7 +173,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemHead",
                 TypeRecord: { b: 3, f: 3, g: 1 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Headset",
                 },
             },
@@ -181,7 +181,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "LargeDildo",
                 Group: "ItemMouth",
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Dildo",
                     Description: "Specially made to fill a PSOs mouth and throat",
                 },
@@ -190,7 +190,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "LatexBallMuzzleGag",
                 Group: "ItemMouth2",
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Muzzle",
                     Description: "Forcing the dildo in and keeping it secure",
                 },
@@ -200,7 +200,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth3",
                 TypeRecord: { n: 1, h: 0, s: 3 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Muzzle",
                     Description: "Keeping your cries muffled",
                 },
@@ -210,7 +210,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemVulva",
                 TypeRecord: { "vibrating": 9 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Vibe",
                     Description: "Specially made to fill a PSO",
                 },
@@ -220,7 +220,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemPelvis",
                 TypeRecord: { c: 3, i: 4, o: 1, s: 2 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Panties",
                     Description: "No escape and no Orgasms",
                 },
@@ -231,7 +231,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color: ["#222222", "#888888", "#AA2121", "#AA2121", "#888888"],
                 TypeRecord: { typed: 1 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Collar",
                 },
             },
@@ -239,7 +239,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "CollarChainShort",
                 Group: "ItemNeckRestraints",
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Chain",
                     Description: "To keep a PSO on their knees",
                 },
@@ -251,7 +251,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "StrictLeatherPetCrawler",
                 Group: "ItemArms",
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Suit",
                     Description: "Extra tight and unremovable",
                 },
@@ -261,7 +261,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemTorso",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Corset",
                     Description: "Extra tight and specially molded",
                 },
@@ -271,7 +271,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemTorso2",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Harness",
                     Description: "Special harness that constantly shrinks....",
                 },
@@ -284,7 +284,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemEars",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Earphones",
                 },
                 Color: ["#0F0F0F", "Default", "Default"],
@@ -294,7 +294,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemAddon",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Chain",
                     Description: "Never to escape",
                 },
@@ -304,7 +304,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemNipplesPiercings",
                 TypeRecord: { typed: 1 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Piercings",
                 },
                 Color: ["#000000", "Default", "Default"],
@@ -314,7 +314,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemNeckAccessories",
                 TypeRecord: { s: 2, y: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Shock Unit",
                 },
             },
@@ -322,7 +322,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "FrogtieStraps",
                 Group: "ItemLegs",
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Permanent PSO Straps",
                     Description: "To keep a PSO on their knees",
                 },
@@ -332,7 +332,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemHood",
                 TypeRecord: { m: 0, e: 0, p: 1, g: 0, s: 1, h: 2, j: 0 },
                 Craft: {
-                    Property: "Thin",
+                    Effects: { "Thin": 1 },
                     Name: "Permanent PSO Mask",
                 },
             },
@@ -343,7 +343,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemFeet",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -353,7 +353,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemLegs",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -363,7 +363,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemHands",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -373,7 +373,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemArms",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -382,7 +382,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Name: "LargeDildo",
                 Group: "ItemMouth",
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Rubber Mouth Sealant",
                     Description: "A rubber mass molded to shape of your mouth",
                 },
@@ -392,7 +392,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth2",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -402,7 +402,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth3",
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Mummy Wrappings",
                     Description: "A bundle of resilient cloth wrappings",
                 },
@@ -451,7 +451,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemNeck",
                 Color: ["#DCDCDC", "#1B1B1B", "Default"],
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Maid Collar",
                     Description: "A tight fitting yet comfortable collar",
                 },
@@ -462,7 +462,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["#FFFFFF", "#FFFFFF", "#2E2E2E", "#050505"],
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Maid Mittens",
                     Description: "For keeping a maid out of trouble",
                 },
@@ -473,7 +473,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["#101010", "#101010", "Default", "#F1FAFF", "#898989", "#898989", "#898989"],
                 TypeRecord: { typed: 1 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Maid Heels",
                     Description: "For keeping a maid on their toes",
                 },
@@ -484,7 +484,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["Default", "#141414"],
                 TypeRecord: { vibrating: 1 },
                 Craft: {
-                    Property: "Arousing",
+                    Effects: { "Arousing": 1 },
                     Name: "Maid Teaser",
                     Description: "A little reminder to keep a maid on edge",
                 },
@@ -498,7 +498,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["#FFFFFF", "#1A1A1A", "#FFFFFF"],
                 TypeRecord: { cl: 1, co: 1, np: 0, vp: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Maid Jacket",
                     Description: "For keeping a maid out of trouble",
                 },
@@ -509,7 +509,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["#969696", "#191919", "#969696"],
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Maid Cuffs",
                     Description: "For keeping a maid out of trouble",
                 },
@@ -519,7 +519,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth",
                 TypeRecord: { typed: 2 },
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Maid Silencer",
                     Description: "Silence is golden",
                 },
@@ -565,7 +565,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemNeck",
                 Color: ["#363636", "#717171"],
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Statue Neck",
                 },
             },
@@ -574,7 +574,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth",
                 Color: ["#333333"],
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Mouth Sealant",
                 },
                 Property: {
@@ -586,7 +586,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth2",
                 Color: ["Default"],
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Mouth Sealant",
                 },
                 Property: {
@@ -598,7 +598,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemMouth3",
                 Color: ["#A1A1A1"],
                 Craft: {
-                    Property: "Large",
+                    Effects: { "Large": 1 },
                     Name: "Mouth Sealant",
                 },
             },
@@ -608,7 +608,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color: ["#484747", "#484747", "#484747", "#484747"],
                 TypeRecord: { e: 0, m: 3, b: 0, br: 0, op: 0, ms: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Statue's Visage",
                 },
             },
@@ -618,7 +618,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color: ["#737070", "#737070", "#101010"],
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Statue Base",
                 },
             },
@@ -628,7 +628,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Color:  ["#767676", "#5F5F5F", "#3C3C3C", "#4F4F4F"],
                 TypeRecord: { typed: 0 },
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Statue Hands",
                 },
             },
@@ -637,7 +637,7 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                 Group: "ItemArms",
                 Color: ["#191919", "#3D3D3D", "#191919", "#191919", "#191919"],
                 Craft: {
-                    Property: "Secure",
+                    Effects: { "Secure": 1 },
                     Name: "Statue Arms",
                 },
             },
