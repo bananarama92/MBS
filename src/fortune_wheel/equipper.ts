@@ -385,6 +385,9 @@ wheelHookRegister.addEventListener(
     },
 );
 
+/**
+ * A `tsJSON()` helper function to-be attached to wheel event proxies.
+ */
 function eventToJSON(this: ExtendedWheelEvents.Events.Mapping[ExtendedWheelEvents.Events.Names]) {
     return {
         ...this,
@@ -396,6 +399,9 @@ function eventToJSON(this: ExtendedWheelEvents.Events.Mapping[ExtendedWheelEvent
     };
 }
 
+/**
+ * Construct a proxy object with a set of predefined readonly runtime-enforced keys.
+ */
 function getEventProxy<T extends object>(arg: T, readonlyKeys?: null | readonly (keyof T)[]): T {
     const readonlySet = new Set(readonlyKeys ?? []);
     return new Proxy(
@@ -579,7 +585,7 @@ export function fortuneWheelEquip(
                 properties: cloneDeep(Property),
                 difficultyModifier: 0,
                 typeRecord: TypeRecord ? cloneDeep(TypeRecord) : null,
-                craft: Craft ? Object.seal(pick(Craft, "Name", "Description", "Property")) : null,
+                craft: Craft ? Object.seal(pick(Craft, "Name", "Description", "Property", "Effects")) : null,
             },
             ["lock", "newAsset", "oldItem", "name", "character"],
         );
@@ -677,7 +683,8 @@ export function fortuneWheelEquip(
                     craft = {
                         Name: asset.Description,
                         Description: "",
-                        Property: "Normal",
+                        Property: "Normal", // TODO: Remove/set to `undefined` in >= R125
+                        Effects: { Normal: 1 },
                         Color: "",
                         Lock: "",
                         Private: true,
@@ -685,7 +692,7 @@ export function fortuneWheelEquip(
                         ItemProperty: null,
                     };
                 }
-                for (const prop of ["Name", "Description", "Property"] as const) {
+                for (const prop of ["Name", "Description", "Property", "Effects"] as const) {
                     const value = output[prop];
                     if (value != null) {
                         craft[prop] = value as any;

@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.10.10
+* Fix an issue wherein the MBS settings page could potentially be accessed before MBS had finished loading
+* Fix the size of the local crafting info button
+* Remove dead BC R120 code
+* Add BC R125Beta1 support
+
 ## v1.10.9
 * Drop BC R123 support
 * Fix checking for the `complete` readystate rather than `interactive`

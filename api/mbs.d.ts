@@ -132,7 +132,7 @@ declare namespace WheelEvents {
              * Crafted item info to-be attached to the item.
              * Note that only the `Name`, `Description` and `Property` fields are supported.
              */
-            craft: null | Pick<CraftingItem, "Name" | "Description" | "Property">;
+            craft: null | Pick<CraftingItem, "Name" | "Description" | "Property" | "Effects">;
         }
 
         /**
