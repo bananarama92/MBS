@@ -110,12 +110,15 @@ export function applyFlag(flag: FWFlag, item: Item, character: Character): void 
         case "ExclusivePadlock":
             equipLock(item, "ExclusivePadlock", character);
             break;
-        case "HighSecurityPadlock":
-            if (InventoryDoesItemAllowLock(item) && item.Craft) {
-                item.Craft.Property = "Puzzling";
+        case "HighSecurityPadlock": {
+            const nEffects = Object.values(item.Craft?.Effects ?? {}).reduce((sumValue, value) => !value ? sumValue : sumValue + 1, 0);
+            if (InventoryDoesItemAllowLock(item) && item.Craft && nEffects < CraftingEffectsDefaultMaximumEffects) {
+                item.Craft.Effects.Puzzling ||= 1;
+                delete item.Craft.Effects.Simple;
             }
             equipHighSecLock(item, character);
             break;
+        }
         case null:
             break;
         default:

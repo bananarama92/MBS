@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.10.11
+* Drop BC R124 support
+* Add BC R126Beta1 support
+* More adaptations to the R124 multiple crafting effect support
+
 ## v1.10.10
 * Fix an issue wherein the MBS settings page could potentially be accessed before MBS had finished loading
 * Fix the size of the local crafting info button

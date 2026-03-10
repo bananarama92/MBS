@@ -62,7 +62,7 @@ export namespace ExtendedWheelEvents {
         }
 
         export interface Color extends WheelEvents.Events.ItemBase {
-            readonly color: readonly string[];
+            readonly color: readonly BCColor[];
         }
 
         export interface TypeRecord extends WheelEvents.Events.ItemBase {
@@ -104,7 +104,7 @@ export namespace ExtendedWheelEvents {
     /** An interface with event-specific return types */
     export interface ListenerReturnType extends WheelEvents.ListenerReturnType {
         validateItemUnequip: null | string;
-        color: null | (undefined | string)[];
+        color: null | (undefined | BCColor)[];
         difficulty: null | number;
         craft: null | Partial<Pick<CraftingItem, "Name" | "Description" | "Property" | "Effects">>;
         typeRecord: null | Partial<TypeRecord>;

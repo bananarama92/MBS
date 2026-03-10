@@ -121,7 +121,7 @@ declare namespace WheelEvents {
             /** The to-be equipped lock (if any) */
             readonly lock: null | AssetLockType;
             /** The color of the to-be equipped item */
-            color: string[];
+            color: BCColor[];
             /** Extra item properties to be added to the item in addition to those determined by the {@link typeRecord} of extended items */
             properties: ItemProperties;
             /** A modifier to the item's difficulty */

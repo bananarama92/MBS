@@ -237,7 +237,7 @@ export function fromItemBundle(
         }
     }
 
-    let color: undefined | readonly string[] = undefined;
+    let color: undefined | readonly BCColor[] = undefined;
     if (typeof item.Color === "string") {
         color = [item.Color];
     } else if (Array.isArray(item.Color) && item.Color.every(i => typeof i === "string")) {
@@ -338,8 +338,8 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
     return {
         Group: Group,
         Name: Name,
-        Color: clone(<string[] | undefined>Color),
-        Craft: clone(Craft),
+        Color: clone(<BCColor[] | undefined>Color),
+        Craft: cloneDeep(Craft),
         Property: Object.assign(
             getBaselineProperty(asset, character, TypeRecord),
             cloneDeep(Property),

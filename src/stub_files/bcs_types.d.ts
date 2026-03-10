@@ -96,7 +96,7 @@ interface FWItemBase {
     /** The group of the item */
     Group: AssetGroupName,
     /** The optional color of the item */
-    Color?: readonly string[],
+    Color?: readonly BCColor[],
     /** An optional callback whose output denotes whether the item should be equipped */
     Equip?: (character: Character) => boolean,
     /** Optional crafted item data */
@@ -121,7 +121,7 @@ interface FWItem extends Readonly<FWItemBase> {
     /** @deprecated superseded by {@link FWItem.TypeRecord} */
     readonly Type?: never;
     readonly Property: Readonly<ItemProperties>,
-    readonly Color: undefined | readonly string[],
+    readonly Color: undefined | readonly BCColor[],
     /** @deprecated superseded by the MBS 1.8 `afterItemEquip` event */
     readonly ItemCallback?: never;
     readonly Equip: undefined | ((character: Character) => boolean),
