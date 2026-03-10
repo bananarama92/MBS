@@ -581,7 +581,7 @@ export function fortuneWheelEquip(
                 oldItem,
                 newAsset: asset,
                 lock: lockFlag?.type ?? null,
-                color: cloneDeep(Color ?? asset.DefaultColor) as string[],
+                color: cloneDeep(Color ?? asset.DefaultColor) as BCColor[],
                 properties: cloneDeep(Property),
                 difficultyModifier: 0,
                 typeRecord: TypeRecord ? cloneDeep(TypeRecord) : null,
