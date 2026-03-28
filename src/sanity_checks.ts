@@ -31,8 +31,8 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["518ADD1E"]],
-        ["CraftingRun", ["2FDBFF13"]],
+        ["CraftingClick", ["1CCF5AB4"]],
+        ["CraftingRun", ["6D72C9F0"]],
         ["SpeechTransformProcess", ["666DDA2F"]],
         ["SpeechTransformGagGarble", ["691A05BF"]],
         ["WheelFortuneLoad", ["58E058DD"]],
@@ -40,12 +40,12 @@ const HOOK_FUNC_HASHES = (() => {
         ["WheelFortuneRun", ["D4DF7BB8"]],
         ["WheelFortuneMouseUp", ["887E5D09"]],
         ["WheelFortuneMouseDown", ["78354D35"]],
-        ["WheelFortuneCustomizeLoad", ["7A8DD30D"]],
+        ["WheelFortuneCustomizeLoad", ["CCE1FC39"]],
         ["WheelFortuneDrawWheel", ["B21DAEA9"]],
     ];
     return Object.freeze(Object.fromEntries(hashes.map(item => {
         const [key, value] = item;
-        const valueSet = new Set(<string[]>value.filter(i => i != null));
+        const valueSet = new Set(value.filter(i => i != null));
         return [key, Object.freeze(valueSet)];
     })));
 })();
