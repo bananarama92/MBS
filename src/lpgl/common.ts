@@ -407,7 +407,7 @@ export function waitForBC(
     if (document.readyState === "complete") {
         contentLoadedListener();
     } else {
-        globalThis.addEventListener("load", contentLoadedListener);
+        globalThis.addEventListener("load", contentLoadedListener, { once: true });
     }
     return true;
 }
