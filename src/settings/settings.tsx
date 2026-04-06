@@ -170,7 +170,7 @@ export function unpackSettings(
                 // Try again with pre-v0.6.23 compression
                 stringData = LZString.decompressFromBase64(s);
             }
-            settings = JSON.parse(stringData || "null");
+            settings = JSON.parse(stringData || "null") as null | MBSProtoSettings;
         }
     } catch (error) {
         if (warn) {
@@ -420,7 +420,7 @@ export function importSettings(base64: string): SettingsStatus.Expanded {
     let protoSettings: null | MBSProtoSettings = null;
     let err: unknown = null;
     try {
-        protoSettings = JSON.parse(LZString.decompressFromBase64(base64.trim()) || "{}");
+        protoSettings = JSON.parse(LZString.decompressFromBase64(base64.trim()) || "{}") as null | MBSProtoSettings;
     } catch (error) {
         err = error;
     }

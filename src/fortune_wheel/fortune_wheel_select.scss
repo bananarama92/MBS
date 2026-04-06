@@ -64,8 +64,8 @@
 
 #mbs-fwselect-button-grid-inner0, #mbs-fwselect-button-grid-inner1 {
 	display: grid;
+	gap: min(2dvh, 1dvw);
 	grid-template-columns: minmax(0, 4fr) minmax(0, 4fr);
-	grid-gap: min(2dvh, 1dvw);
 	padding-bottom: min(2dvh, 1dvw);
 	padding-top: min(2dvh, 1dvw);
 }

@@ -17,14 +17,14 @@
 }
 
 .mbs-screen {
+	color: var(--mbs-text-color);
 	display: grid;
+	font-family: var(--mbs-font-family);
+	font-size: var(--mbs-font-small);
+	gap: min(2dvh, 1dvw);
 	position: fixed;
 	text-align: center;
 	user-select: none;
-	grid-gap: min(2dvh, 1dvw);
-	color: var(--mbs-text-color);
-	font-family: var(--mbs-font-family);
-	font-size: var(--mbs-font-small);
 
 	.button,
 	.custom-select {

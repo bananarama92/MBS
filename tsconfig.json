@@ -4,7 +4,7 @@
         "lib": ["ESNext", "dom", "DOM.Iterable"],
         "types": [],
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "sourceMap": true,
         "removeComments": false,
         "outDir": "./dist",
@@ -16,7 +16,8 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "tsx-dom"
+        "jsxImportSource": "tsx-dom",
+        "rootDir": "."
     },
     "include": [
         "node_modules/bc-stubs/bc/**/*.d.ts",

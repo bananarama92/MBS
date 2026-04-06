@@ -289,7 +289,7 @@ export class FWSelectedItemSet extends MBSSelectedObject<FWItemSet> {
         let items: ItemBundle | ItemBundle[];
         let itemList: FWItem[];
         try {
-            items = JSON.parse(<string>LZString.decompressFromBase64(this.outfitCache.trim()));
+            items = JSON.parse(LZString.decompressFromBase64(this.outfitCache.trim()) || "[]") as ItemBundle | ItemBundle[];
             itemList = fromItemBundles(items);
         } catch (ex) {
             logger.warn("Failed to parse outfit code:", ex);

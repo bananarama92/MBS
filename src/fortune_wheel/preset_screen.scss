@@ -32,14 +32,14 @@
 
 #mbs-fwpreset-mid-div {
 	display: grid;
+	gap: min(2dvh, 1dvw);
 	grid-area: mid;
-	text-align: center;
-	grid-gap: min(2dvh, 1dvw);
 	grid-template:
 		"name-header builtin-bc-header builtin-mbs-header custom-mbs-header" min(9dvh, 4.5dvw)
 		"name builtin-bc builtin-mbs custom-mbs" auto / auto min-content min-content min-content;
 	justify-items: center;
 	justify-self: center;
+	text-align: center;
 	width: 100%;
 
 	> p {
@@ -65,7 +65,7 @@
 
 .mbs-fwpreset-grid {
 	display: grid;
-	grid-gap: min(1.2dvh, 0.6dvw);
+	gap: min(1.2dvh, 0.6dvw);
 	grid-auto-flow: column;
 	grid-template-rows: repeat(8, min(7dvh, 3.5dvw));
 	width: fit-content;
