@@ -1,5 +1,5 @@
 .mbs-preference-settings-pair {
-	grid-column-gap: min(3dvh, 1.5dvw);
+	column-gap: min(3dvh, 1.5dvw);
 	display: grid;
 	grid-template-columns: min(9dvh, 4.5dvw) auto;
 	padding-right: min(6dvh, 3dvw);
@@ -53,10 +53,10 @@
 
 #mbs-preference-settings {
 	display: grid;
+	gap: min(2dvh, 1dvw);
 	grid-area: settings;
 	height: 100%;
 	overflow: hidden scroll;
-	grid-gap: min(2dvh, 1dvw);
 }
 
 #mbs-preference-misc {
@@ -136,11 +136,12 @@
 	mask-position: center;
 	mask-repeat: no-repeat;
 	mask-size: contain;
+	overflow-wrap: anywhere;
 	padding: min(6dvh, 3dvw);
 	padding-top: min(3dvh, 1.5dvw);
 	position: relative;
 	width: 80%;
-	word-break: break-word;
+	word-break: normal;
 }
 
 #mbs-preference-reset-grid {

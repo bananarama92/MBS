@@ -14,7 +14,7 @@ interface CraftingDBData {
 export function getSegmentSizes() {
     const maxBC = 200;
     const maxMBSLocal = 600;
-    return { maxBC, maxMBSLocal };
+    return { maxBC, maxMBSLocal } as const;
 }
 
 /**

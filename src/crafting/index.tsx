@@ -129,7 +129,7 @@ async function loadCraftingNameDOM() {
                 children: [<span aria-hidden="true" id={IDs.buttonMBS}>MBS</span>],
             }},
         );
-        document.getElementById(CraftingID.menuBar)?.append(infoButton);
+        document.querySelector(`#${CraftingID.root} [role="menubar"]`)?.append(infoButton);
     }
 
     const { maxBC } = getSegmentSizes();
@@ -137,7 +137,7 @@ async function loadCraftingNameDOM() {
         headingPrefix.replaceChildren();
         infoButton.hidden = true;
     } else {
-        headingPrefix.replaceChildren("MBS (Browser): ");
+        headingPrefix.replaceChildren("MBS (Local): ");
         infoButton.hidden = false;
     }
 }
@@ -148,21 +148,50 @@ waitForBC("crafting", {
 
         const { maxBC, maxMBSLocal } = getSegmentSizes();
 
-        MBS_MOD_API.patchFunction("CraftingClick", {
-            [`if (CraftingOffset < 0) CraftingOffset = ${maxBC} - 20;`]:
-                `if (CraftingOffset < 0) CraftingOffset = ${maxBC + maxMBSLocal} - 20;`,
-            [`if (CraftingOffset >= ${maxBC}) CraftingOffset = 0;`]:
-                `if (CraftingOffset >= ${maxBC + maxMBSLocal}) CraftingOffset = 0;`,
-        });
+        if (GameVersion === "R126") {
+            MBS_MOD_API.patchFunction("CraftingClick", {
+                [`if (CraftingOffset < 0) CraftingOffset = ${maxBC} - 20;`]:
+                    `if (CraftingOffset < 0) CraftingOffset = ${maxBC + maxMBSLocal} - 20;`,
+                [`if (CraftingOffset >= ${maxBC}) CraftingOffset = 0;`]:
+                    `if (CraftingOffset >= ${maxBC + maxMBSLocal}) CraftingOffset = 0;`,
+            });
 
-        MBS_MOD_API.patchFunction("CraftingRun", {
-            ["/ ${" + maxBC.toString() + " / 20}."]:
-                `/ ${(maxBC + maxMBSLocal) / 20}.`,
-            'TextGet("SelectDestroy")':
-                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
-            'TextGet("SelectSlot")':
-                `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
-        });
+            MBS_MOD_API.patchFunction("CraftingRun", {
+                ["/ ${" + maxBC.toString() + " / 20}."]:
+                    `/ ${(maxBC + maxMBSLocal) / 20}.`,
+                'TextGet("SelectDestroy")':
+                    `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectDestroy")`,
+                'TextGet("SelectSlot")':
+                    `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
+            });
+        } else {
+            function renamePages(root: null | HTMLElement) {
+                const sections = root?.querySelectorAll("fieldset[name='crafting-slot'] > section") ?? [];
+                const nMax = sections.length + 1;
+                let craftOffset = 0;
+                for (const [i, section] of sections.entries()) {
+                    if (inRange(craftOffset, maxBC, maxBC + maxMBSLocal)) {
+                        section.querySelector("h2")?.replaceChildren(`MBS local page ${i + 1} / ${nMax}`);
+                    }
+                    craftOffset += section.querySelector("ul")?.children.length ?? 0;
+                }
+            }
+
+            MBS_MOD_API.hookFunction("CraftingSlots.Load", 0, (args, next) => {
+                padArray(Player.Crafting, maxBC + maxMBSLocal, null);
+                const ret = next(args);
+                renamePages(document.getElementById(CraftingSlots.ids.root));
+                return ret;
+            });
+
+            MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
+                const ret = next([newMode, ...args]);
+                if (CommonHas(CraftingSlots.modeKeys, newMode)) {
+                    renamePages(document.getElementById(CraftingSlots.ids.root));
+                }
+                return ret;
+            });
+        }
 
         MBS_MOD_API.patchFunction("CraftingJSON.encode", {
             [`const max = Math.max(${maxBC}, crafts.length);`]:

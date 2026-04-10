@@ -134,11 +134,11 @@
 .mbs-fwitemset-lock-container {
 	align-items: center;
 	display: grid;
-	word-wrap: break-word;
 	gap: var(--gap);
 	grid-template-columns: var(--height) auto;
 	list-style-type: none;
 	margin: unset;
+	overflow-wrap: break-word;
 	padding: unset;
 }
 

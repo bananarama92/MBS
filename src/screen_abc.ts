@@ -128,7 +128,7 @@ export abstract class MBSScreen {
 
     run?(time: number): void;
     draw?(): void;
-    click?(event: MouseEvent | TouchEvent): void;
+    click?(event: PointerEvent): void;
 
     /**
      * Helper function for exiting all parents.
@@ -164,15 +164,22 @@ export abstract class MBSScreen {
     }
 
     /** Get an object with all {@link ScreenFunctions} and the screen background */
-    getFunctions(): ScreenFunctions {
+    getFunctions(): Required<ScreenFunctions> {
         return {
             Run: this.run?.bind(this) ?? CommonNoop,
-            Draw: this.draw?.bind(this),
+            Draw: this.draw?.bind(this) ?? CommonNoop,
             Click: this.click?.bind(this) ?? CommonNoop,
-            Load: this.load.bind(this),
-            Unload: this.unload?.bind(this),
-            Resize: this.resize?.bind(this),
-            Exit: this.exit.bind(this),
+            Load: this.load.bind(this) ?? CommonNoop,
+            Unload: this.unload?.bind(this) ?? CommonNoop,
+            Resize: this.resize?.bind(this) ?? CommonNoop,
+            Exit: this.exit.bind(this) ?? CommonNoop,
+            MouseDown: CommonNoop,
+            MouseUp: CommonNoop,
+            MouseMove: CommonNoop,
+            MouseWheel: CommonNoop,
+            KeyDown: () => false,
+            KeyUp: () => false,
+            Paste: CommonNoop,
         };
     }
 }
@@ -197,7 +204,7 @@ export class ScreenProxy extends MBSScreen {
 
     run(time: number) { return this.screenFunctions.Run(time); }
     draw() { return this.screenFunctions.Draw?.(); }
-    click(event: MouseEvent | TouchEvent) { return this.screenFunctions.Click(event); }
+    click(event: PointerEvent) { return this.screenFunctions.Click(event); }
     load() { return this.screenFunctions.Load?.() ?? Promise.resolve(undefined); }
     unload() { return this.screenFunctions.Unload?.(); }
     resize(load: boolean) { return this.screenFunctions.Resize?.(load); }
