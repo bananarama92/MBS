@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.10.12
+* Drop BC R125 support
+* Add BC R127Beta1 support
+* Update userscript URLs to include bondage-asia
+* Backport two R127 bugfixes:
+    - [BondageProjects/Bondage-College#6224](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6224): Fix buttons being unclickable on the Chrome 147 Beta
+    - [BondageProjects/Bondage-College#6232](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6232): Fix an iOS color picker tint input sizing issue
+
 ## v1.10.11
 * Drop BC R124 support
 * Add BC R126Beta1 support
