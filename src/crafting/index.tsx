@@ -165,9 +165,6 @@ waitForBC("crafting", {
                     `(CraftingOffset >= ${maxBC} ? (CraftingOffset >= ${maxBC} ? 'MBS (Browser): ' : 'MBS (Account): ') : '') + TextGet("SelectSlot")`,
             });
         } else {
-            // @ts-expect-error: Requires R127 types
-            const rootID: string = CraftingSlots.ids.root;
-
             function renamePages(root: null | HTMLElement) {
                 const sections = root?.querySelectorAll("fieldset[name='crafting-slot'] > section") ?? [];
                 const nMax = sections.length + 1;
@@ -183,15 +180,14 @@ waitForBC("crafting", {
             MBS_MOD_API.hookFunction("CraftingSlots.Load", 0, (args, next) => {
                 padArray(Player.Crafting, maxBC + maxMBSLocal, null);
                 const ret = next(args);
-                renamePages(document.getElementById(rootID));
+                renamePages(document.getElementById(CraftingSlots.ids.root));
                 return ret;
             });
 
             MBS_MOD_API.hookFunction("CraftingModeSet", 0, ([newMode, ...args], next) => {
                 const ret = next([newMode, ...args]);
-                // @ts-expect-error: Requires R127 types
                 if (CommonHas(CraftingSlots.modeKeys, newMode)) {
-                    renamePages(document.getElementById(rootID));
+                    renamePages(document.getElementById(CraftingSlots.ids.root));
                 }
                 return ret;
             });

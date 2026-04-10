@@ -31,17 +31,17 @@ type HashList = readonly [Rxx: string, ...Ryy: (null | string)[]];
 const HOOK_FUNC_HASHES = (() => {
     const hashes: [keyof typeof globalThis, HashList][] = [
         ["CraftingSaveServer", ["025B434F"]],
-        ["CraftingClick", ["1CCF5AB4"]],
-        ["CraftingRun", ["6D72C9F0"]],
+        ["CraftingClick", ["1CCF5AB4", "CC27AB54"]],
+        ["CraftingRun", ["6D72C9F0", "FA141B68"]],
         ["SpeechTransformProcess", ["666DDA2F"]],
         ["SpeechTransformGagGarble", ["691A05BF"]],
-        ["WheelFortuneLoad", ["58E058DD"]],
-        ["WheelFortuneClick", ["D368BBF2"]],
-        ["WheelFortuneRun", ["D4DF7BB8"]],
-        ["WheelFortuneMouseUp", ["887E5D09"]],
+        ["WheelFortuneLoad", ["58E058DD", "E57CDC9C"]],
+        ["WheelFortuneClick", ["D368BBF2", "403B5384"]],
+        ["WheelFortuneRun", ["D4DF7BB8", "E0667EF8"]],
+        ["WheelFortuneMouseUp", ["887E5D09", "F9D03816"]],
         ["WheelFortuneMouseDown", ["78354D35"]],
         ["WheelFortuneCustomizeLoad", ["CCE1FC39"]],
-        ["WheelFortuneDrawWheel", ["B21DAEA9"]],
+        ["WheelFortuneDrawWheel", ["B21DAEA9", "D7E767EC"]],
     ];
     return Object.freeze(Object.fromEntries(hashes.map(item => {
         const [key, value] = item;
