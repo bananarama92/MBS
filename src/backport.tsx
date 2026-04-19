@@ -19,23 +19,7 @@ export const backportIDs: Set<number> = new Set();
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R126": {
-                // See `#mbs-backport-style` style sheet
-                backportIDs.add(6224);
-
-                if (MBS_MOD_API.getOriginalHash("ColorPickerResize") === "8F439B67") {
-                    backportIDs.add(6232);
-                    MBS_MOD_API.hookFunction("ColorPickerResize", 0, (args, next) => {
-                        const ret = next(args);
-                        const picker: null | HTMLColorTintElement = document.querySelector(`#${ColorPicker.ids.root} bc-tint-input`);
-                        if (picker) {
-                            const shapeRect = picker.getBoundingClientRect();
-                            picker.style.setProperty("height", `${shapeRect.width}px`);
-                        }
-                        return ret;
-                    });
-                }
-
+            case "R127": {
                 if (!document.getElementById("mbs-backport-style")) {
                     document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
                 }
