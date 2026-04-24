@@ -56,29 +56,22 @@ export abstract class MBSScreen {
      * @param load - If the reason for call was load (`true`) or window resize (`false`)
      */
     resize(load: boolean) {
-        // Different positions based on the width/height ratio
-        const heightRatio = MainCanvas.canvas.clientHeight / 1000;
-        const widthRatio = MainCanvas.canvas.clientWidth / 2000;
         for (const [id, { shape, visibility }] of entries(this.screenParams)) {
-            const left = MainCanvas.canvas.offsetLeft + shape[0] * widthRatio;
-            const top = MainCanvas.canvas.offsetTop + shape[1] * heightRatio;
-            const width = shape[2] * widthRatio;
-            const height = shape[3] * heightRatio;
-
             const elem = document.getElementById(id) as HTMLElement;
-            const style: Partial<CSSStyleDeclaration> = {
-                left: `${left}px`,
-                top: `${top}px`,
-                width: `${width}px`,
-                height: `${height}px`,
-            };
+            ElementPositionFixed(elem, ...shape);
             if (load) {
-                style.fontFamily = CommonGetFontName();
                 elem.toggleAttribute("hidden", visibility === "hidden");
             }
-
-            Object.assign(elem.style, style);
         }
+    }
+
+    keydown(ev: KeyboardEvent) {
+        const screen = document.getElementById(this.ids.root);
+        const main = screen?.querySelector(".screen-main") as null | HTMLElement;
+        if (screen && !screen.hasAttribute("hidden") && main) {
+            return CommonKey.NavigationKeyDown(main, ev, () => main.clientHeight / 10);
+        }
+        return false;
     }
 
     /** Called when this screen is being replaced */
@@ -177,7 +170,7 @@ export abstract class MBSScreen {
             MouseUp: CommonNoop,
             MouseMove: CommonNoop,
             MouseWheel: CommonNoop,
-            KeyDown: () => false,
+            KeyDown: this.keydown?.bind(this) ?? (() => false),
             KeyUp: () => false,
             Paste: CommonNoop,
         };

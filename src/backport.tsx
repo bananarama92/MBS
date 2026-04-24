@@ -16,26 +16,47 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
+function canChangeClothesOn(this: Character, C: Character): boolean {
+    if (this.IsPlayer() && C.IsPlayer()) {
+        return (
+            !C.IsRestrained() &&
+            !ManagementIsClubSlave() &&
+            OnlineGameAllowChange() &&
+            AsylumGGTSAllowChange(this) &&
+            !LogQuery("BlockChange", "Rule") &&
+            (!LogQuery("BlockChange", "OwnerRule") || !Player.IsFullyOwned())
+        );
+    } else {
+        return (
+            this.CanInteract() &&
+            C.MemberNumber != null &&
+            C.AllowItem &&
+            !C.IsEnclose() &&
+            InventoryGet(C, "ItemNeck")?.Asset.Name !== "ClubSlaveCollar"
+        );
+    }
+}
+
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
-            case "R126": {
-                // See `#mbs-backport-style` style sheet
-                backportIDs.add(6224);
-
-                if (MBS_MOD_API.getOriginalHash("ColorPickerResize") === "8F439B67") {
-                    backportIDs.add(6232);
-                    MBS_MOD_API.hookFunction("ColorPickerResize", 0, (args, next) => {
+            case "R127": {
+                if (MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F") {
+                    backportIDs.add(6258);
+                    MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
                         const ret = next(args);
-                        const picker: null | HTMLColorTintElement = document.querySelector(`#${ColorPicker.ids.root} bc-tint-input`);
-                        if (picker) {
-                            const shapeRect = picker.getBoundingClientRect();
-                            picker.style.setProperty("height", `${shapeRect.width}px`);
-                        }
+                        ret.CanChangeClothesOn = canChangeClothesOn;
                         return ret;
                     });
+                    Character.forEach(C => C.CanChangeClothesOn = canChangeClothesOn);
                 }
-
+                if (MBS_MOD_API.getOriginalHash("InventoryRemove") === "1D6A6339") {
+                    backportIDs.add(6267);
+                    MBS_MOD_API.patchFunction("InventoryRemove", {
+                        "BlindFlashQueue = true;":
+                            "if (C.IsPlayer()) { BlindFlashQueue = true; }",
+                    });
+                }
                 if (!document.getElementById("mbs-backport-style")) {
                     document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
                 }

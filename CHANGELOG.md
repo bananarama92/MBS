@@ -1,5 +1,13 @@
 # MBS Changelog
 
+## v1.10.13
+* Drop BC R126 support
+* Minor standardization changes of the MBS screen layouts
+* Add basic navigation key support for all MBS screens
+* Backport two R128 bug fixes
+    - [BondageProjects/Bondage-College#6258](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6258): Fix a character variable in `Character.CanChangeClothesOn()`
+    - [BondageProjects/Bondage-College#6267](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6267): Ensure that the blindfold flashing queue is only initialized by player characters
+
 ## v1.10.12
 * Drop BC R125 support
 * Add BC R127Beta1 support
