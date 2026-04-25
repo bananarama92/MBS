@@ -1,5 +1,11 @@
 # MBS Changelog
 
+## v1.10.14
+* Use a patch rather than an override for player character `CanChangeClothesOn` patching
+* (Partially) backport two more R128 bug fixes
+    - [BondageProjects/Bondage-College#6271](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6271): Fix `ServerRoomSearch` same-request check being broken
+    - [BondageProjects/Bondage-College#6273](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6273): Fix Private NPC not being set to the "player in trial" state
+
 ## v1.10.13
 * Drop BC R126 support
 * Minor standardization changes of the MBS screen layouts

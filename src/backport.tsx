@@ -37,19 +37,37 @@ function canChangeClothesOn(this: Character, C: Character): boolean {
     }
 }
 
+function isOwner(this: Character): boolean {
+    return Player.IsOwnedByCharacter(this);
+}
+
 waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
             case "R127": {
-                if (MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F") {
+                if (
+                    MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F"
+                    && MBS_MOD_API.getOriginalHash("Player.CanChangeClothesOn") === "978C7F10"
+                ) {
                     backportIDs.add(6258);
                     MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
                         const ret = next(args);
                         ret.CanChangeClothesOn = canChangeClothesOn;
                         return ret;
                     });
-                    Character.forEach(C => C.CanChangeClothesOn = canChangeClothesOn);
+                    MBS_MOD_API.patchFunction("Player.CanChangeClothesOn", {
+                        ["InventoryGet(CurrentCharacter, \"ItemNeck\") !== null"]:
+                            "InventoryGet(C, \"ItemNeck\") !== null",
+                        ["InventoryGet(CurrentCharacter, \"ItemNeck\").Asset.Name"]:
+                            "InventoryGet(C, \"ItemNeck\").Asset.Name",
+                    });
+                    for (const char of Character) {
+                        if (!char.IsPlayer()) {
+                            char.CanChangeClothesOn = canChangeClothesOn;
+                        }
+                    }
                 }
+
                 if (MBS_MOD_API.getOriginalHash("InventoryRemove") === "1D6A6339") {
                     backportIDs.add(6267);
                     MBS_MOD_API.patchFunction("InventoryRemove", {
@@ -57,6 +75,43 @@ waitForBC("backport", {
                             "if (C.IsPlayer()) { BlindFlashQueue = true; }",
                     });
                 }
+
+                if (
+                    MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F"
+                    && MBS_MOD_API.getOriginalHash("Player.IsOwner") === "A57439A6"
+                ) {
+                    backportIDs.add(6273);
+                    MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
+                        const ret = next(args);
+                        ret.IsOwner = isOwner;
+                        return ret;
+                    });
+                    MBS_MOD_API.patchFunction("Player.IsOwner", {
+                        ["if (this.IsNpc() && !NPCEventGet(this, \"PlayerCollaring\")) return false;"]:
+                            ";",
+                    });
+                    for (const char of Character) {
+                        if (!char.IsPlayer()) {
+                            char.IsOwner = isOwner;
+                        }
+                    }
+                }
+
+                if (
+                    MBS_MOD_API.getOriginalHash("ServerRoomSearch") === "A765CB69"
+                    && MBS_MOD_API.getOriginalHash("ChatRoomSetLastChatRoom") === "1417FC0B"
+                ) {
+                    backportIDs.add(6271);
+                    MBS_MOD_API.patchFunction("ServerRoomSearch", {
+                        "CommonObjectEqual(ServerRoomSearchLastQuery, request)":
+                            "CommonDeepEqual(ServerRoomSearchLastQuery, request)",
+                    });
+                    MBS_MOD_API.patchFunction("ChatRoomSetLastChatRoom", {
+                        "} else {":
+                            "} else if (Player.LastChatRoom !== null || Player.LastMapData !== null) {",
+                    });
+                }
+
                 if (!document.getElementById("mbs-backport-style")) {
                     document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
                 }
