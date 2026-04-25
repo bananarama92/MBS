@@ -50,9 +50,11 @@ waitForBC("backport", {
                     && MBS_MOD_API.getOriginalHash("Player.CanChangeClothesOn") === "978C7F10"
                 ) {
                     backportIDs.add(6258);
-                    MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
-                        const ret = next(args);
-                        ret.CanChangeClothesOn = canChangeClothesOn;
+                    MBS_MOD_API.hookFunction("CharacterCreate", 0, ([assetFamily, type, ...args], next) => {
+                        const ret = next([assetFamily, type, ...args]);
+                        if (type !== CharacterType.PLAYER) {
+                            ret.CanChangeClothesOn = canChangeClothesOn;
+                        }
                         return ret;
                     });
                     MBS_MOD_API.patchFunction("Player.CanChangeClothesOn", {
@@ -62,7 +64,7 @@ waitForBC("backport", {
                             "InventoryGet(C, \"ItemNeck\").Asset.Name",
                     });
                     for (const char of Character) {
-                        if (!char.IsPlayer()) {
+                        if (char.ID !== 0) {
                             char.CanChangeClothesOn = canChangeClothesOn;
                         }
                     }
@@ -81,9 +83,11 @@ waitForBC("backport", {
                     && MBS_MOD_API.getOriginalHash("Player.IsOwner") === "A57439A6"
                 ) {
                     backportIDs.add(6273);
-                    MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
-                        const ret = next(args);
-                        ret.IsOwner = isOwner;
+                    MBS_MOD_API.hookFunction("CharacterCreate", 0, ([assetFamily, type, ...args], next) => {
+                        const ret = next([assetFamily, type, ...args]);
+                        if (type !== CharacterType.PLAYER) {
+                            ret.IsOwner = isOwner;
+                        }
                         return ret;
                     });
                     MBS_MOD_API.patchFunction("Player.IsOwner", {
@@ -91,7 +95,7 @@ waitForBC("backport", {
                             ";",
                     });
                     for (const char of Character) {
-                        if (!char.IsPlayer()) {
+                        if (char.ID !== 0) {
                             char.IsOwner = isOwner;
                         }
                     }
