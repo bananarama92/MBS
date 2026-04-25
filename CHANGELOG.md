@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.10.15
+* Fix the `CharacterCreate` hook triggering "Unknown mod not using ModSDK" warnings
+
 ## v1.10.14
 * Use a patch rather than an override for player character `CanChangeClothesOn` patching
 * (Partially) backport two more R128 bug fixes
