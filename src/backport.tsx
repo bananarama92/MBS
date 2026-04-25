@@ -41,15 +41,29 @@ waitForBC("backport", {
     async afterLoad() {
         switch (GameVersion) {
             case "R127": {
-                if (MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F") {
+                if (
+                    MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F"
+                    && MBS_MOD_API.getOriginalHash("Player.CanChangeClothesOn") === "978C7F10"
+                ) {
                     backportIDs.add(6258);
                     MBS_MOD_API.hookFunction("CharacterCreate", 0, (args, next) => {
                         const ret = next(args);
                         ret.CanChangeClothesOn = canChangeClothesOn;
                         return ret;
                     });
-                    Character.forEach(C => C.CanChangeClothesOn = canChangeClothesOn);
+                    MBS_MOD_API.patchFunction("Player.CanChangeClothesOn", {
+                        ["InventoryGet(CurrentCharacter, \"ItemNeck\") !== null"]:
+                            "InventoryGet(C, \"ItemNeck\") !== null",
+                        ["InventoryGet(CurrentCharacter, \"ItemNeck\").Asset.Name"]:
+                            "InventoryGet(C, \"ItemNeck\").Asset.Name",
+                    });
+                    for (const char of Character) {
+                        if (!char.IsPlayer()) {
+                            char.CanChangeClothesOn = canChangeClothesOn;
+                        }
+                    }
                 }
+
                 if (MBS_MOD_API.getOriginalHash("InventoryRemove") === "1D6A6339") {
                     backportIDs.add(6267);
                     MBS_MOD_API.patchFunction("InventoryRemove", {
