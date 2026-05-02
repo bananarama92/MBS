@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.10.16
+* Fix an issue wherein two backports would register too early, rendering them non-functional (xref [BondageProjects/Bondage-College#6273](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6273) and [BondageProjects/Bondage-College#6258](https://gitgud.io/BondageProjects/Bondage-College/-/merge_requests/6258))
+
 ## v1.10.15
 * Fix the `CharacterCreate` hook triggering "Unknown mod not using ModSDK" warnings
 
