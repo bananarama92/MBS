@@ -42,7 +42,8 @@ function isOwner(this: Character): boolean {
 }
 
 waitForBC("backport", {
-    async afterLoad() {
+    // TODO: Change back to `afterLoad` once R128 is live
+    async afterLogin() {
         switch (GameVersion) {
             case "R127": {
                 if (
