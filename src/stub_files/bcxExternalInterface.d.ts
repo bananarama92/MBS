@@ -807,7 +807,7 @@ type RuleCustomData = {
 		restore: boolean;
 	};
 	setting_sensdep: {
-		value: SettingsSensDepName;
+		value: ImmersionSensDepName;
 		disableExamine: boolean;
 		hideMessages: boolean;
 	};

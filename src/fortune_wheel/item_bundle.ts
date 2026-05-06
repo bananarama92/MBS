@@ -109,7 +109,7 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
     },
     Opacity: (p, a) => {
         if (typeof p === "number") {
-            return p <= a.MaxOpacity && p >= a.MinOpacity;
+            return p <= 1 && p >= 0;
         } else if (isArray(p)) {
             return p.every((opacity, i) => {
                 const layer = a.Layer[i];
