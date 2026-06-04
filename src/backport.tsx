@@ -16,112 +16,16 @@ const BC_NEXT = BC_MIN_VERSION + 1;
 /** A set with the pull request IDs of all applied bug fix backports */
 export const backportIDs: Set<number> = new Set();
 
-function canChangeClothesOn(this: Character, C: Character): boolean {
-    if (this.IsPlayer() && C.IsPlayer()) {
-        return (
-            !C.IsRestrained() &&
-            !ManagementIsClubSlave() &&
-            OnlineGameAllowChange() &&
-            AsylumGGTSAllowChange(this) &&
-            !LogQuery("BlockChange", "Rule") &&
-            (!LogQuery("BlockChange", "OwnerRule") || !Player.IsFullyOwned())
-        );
-    } else {
-        return (
-            this.CanInteract() &&
-            C.MemberNumber != null &&
-            C.AllowItem &&
-            !C.IsEnclose() &&
-            InventoryGet(C, "ItemNeck")?.Asset.Name !== "ClubSlaveCollar"
-        );
-    }
-}
-
-function isOwner(this: Character): boolean {
-    return Player.IsOwnedByCharacter(this);
-}
-
 waitForBC("backport", {
-    // TODO: Change back to `afterLoad` once R128 is live
-    async afterLogin() {
+    async afterLoad() {
         switch (GameVersion) {
-            case "R127": {
-                if (
-                    MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F"
-                    && MBS_MOD_API.getOriginalHash("Player.CanChangeClothesOn") === "978C7F10"
-                ) {
-                    backportIDs.add(6258);
-                    MBS_MOD_API.hookFunction("CharacterCreate", 0, ([assetFamily, type, ...args], next) => {
-                        const ret = next([assetFamily, type, ...args]);
-                        if (type !== CharacterType.PLAYER) {
-                            ret.CanChangeClothesOn = canChangeClothesOn;
-                        }
-                        return ret;
-                    });
-                    MBS_MOD_API.patchFunction("Player.CanChangeClothesOn", {
-                        ["InventoryGet(CurrentCharacter, \"ItemNeck\") !== null"]:
-                            "InventoryGet(C, \"ItemNeck\") !== null",
-                        ["InventoryGet(CurrentCharacter, \"ItemNeck\").Asset.Name"]:
-                            "InventoryGet(C, \"ItemNeck\").Asset.Name",
-                    });
-                    for (const char of Character) {
-                        if (char.ID !== 0) {
-                            char.CanChangeClothesOn = canChangeClothesOn;
-                        }
-                    }
-                }
-
-                if (MBS_MOD_API.getOriginalHash("InventoryRemove") === "1D6A6339") {
-                    backportIDs.add(6267);
-                    MBS_MOD_API.patchFunction("InventoryRemove", {
-                        "BlindFlashQueue = true;":
-                            "if (C.IsPlayer()) { BlindFlashQueue = true; }",
-                    });
-                }
-
-                if (
-                    MBS_MOD_API.getOriginalHash("CharacterCreate") === "3E75642F"
-                    && MBS_MOD_API.getOriginalHash("Player.IsOwner") === "A57439A6"
-                ) {
-                    backportIDs.add(6273);
-                    MBS_MOD_API.hookFunction("CharacterCreate", 0, ([assetFamily, type, ...args], next) => {
-                        const ret = next([assetFamily, type, ...args]);
-                        if (type !== CharacterType.PLAYER) {
-                            ret.IsOwner = isOwner;
-                        }
-                        return ret;
-                    });
-                    MBS_MOD_API.patchFunction("Player.IsOwner", {
-                        ["if (this.IsNpc() && !NPCEventGet(this, \"PlayerCollaring\")) return false;"]:
-                            ";",
-                    });
-                    for (const char of Character) {
-                        if (char.ID !== 0) {
-                            char.IsOwner = isOwner;
-                        }
-                    }
-                }
-
-                if (
-                    MBS_MOD_API.getOriginalHash("ServerRoomSearch") === "A765CB69"
-                    && MBS_MOD_API.getOriginalHash("ChatRoomSetLastChatRoom") === "1417FC0B"
-                ) {
-                    backportIDs.add(6271);
-                    MBS_MOD_API.patchFunction("ServerRoomSearch", {
-                        "CommonObjectEqual(ServerRoomSearchLastQuery, request)":
-                            "CommonDeepEqual(ServerRoomSearchLastQuery, request)",
-                    });
-                    MBS_MOD_API.patchFunction("ChatRoomSetLastChatRoom", {
-                        "} else {":
-                            "} else if (Player.LastChatRoom !== null || Player.LastMapData !== null) {",
-                    });
-                }
-
-                if (!document.getElementById("mbs-backport-style")) {
-                    document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
-                }
+            case "R128": {
                 break;
             }
+        }
+
+        if (!document.getElementById("mbs-backport-style")) {
+            document.body.append(<style id="mbs-backport-style">{styles.toString()}</style>);
         }
 
         if (backportIDs.size) {
