@@ -320,7 +320,7 @@ export class MBSPreferenceScreen extends MBSScreen {
 
     #lockInputs() {
         const disabled = Player.IsRestrained() && Player.MBSSettings.LockedWhenRestrained;
-        for (const inp of document.querySelectorAll(`#${ID.settingsGrid} input[type="checkbox"]`) as NodeListOf<HTMLInputElement>) {
+        for (const inp of document.querySelectorAll("#mbs-preference-main input[type=\"checkbox\"]") as NodeListOf<HTMLInputElement>) {
             if (inp.name in Player.MBSSettings) {
                 inp.checked = Player.MBSSettings[inp.name as BoolSettings];
                 inp.disabled = disabled;

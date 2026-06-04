@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.10.18
+* Add BC R129Beta1 support
+* Drop BC R127 support
+* Fix the checked state of MBS settings checkboxes failing to persist
+
 ## v1.10.17
 * Add preliminary BC R128Beta1 support
 
