@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.19
+* Drop BC R128 support
+* Add BC R130Beta1 support
+
 ## v1.10.18
 * Add BC R129Beta1 support
 * Drop BC R127 support
