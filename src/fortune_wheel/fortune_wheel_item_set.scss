@@ -3,6 +3,10 @@
 
 	gap: var(--gap);
 
+	.screen-hgroup {
+		color: black;
+	}
+
 	.button-tooltip {
 		--tooltip-gap: var(--gap);
 	}
