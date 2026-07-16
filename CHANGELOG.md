@@ -1,5 +1,10 @@
 # MBS Changelog
 
+## v1.10.20
+* Drop BC R129 support
+* Add full BC R130 support
+* Fix the header text being invisible in the wheel of fortune item set config
+
 ## v1.10.19
 * Drop BC R128 support
 * Add BC R130Beta1 support
