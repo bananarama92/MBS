@@ -109,7 +109,7 @@ export function test_equipTimerLock(): void {
         if (asset == null) {
             throw new Error();
         }
-        const item: Item = { Asset: asset };
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
 
         assertRaises(
             `${name}:${RAISES}:0`,
@@ -136,7 +136,7 @@ export function test_equipHighSecLock(): void {
         if (asset == null) {
             throw new Error();
         }
-        const item: Item = { Asset: asset };
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
 
         assertPasses(`${name}:${PASSES}:0`, () => equipHighSecLock(item, character));
         assertEqual(`${name}:${PASSES}:0`, item.Property?.MemberNumberListKeys, "");
@@ -160,7 +160,7 @@ export function test_equipLock(): void {
         if (asset == null || assetNoLock == null) {
             throw new Error();
         }
-        const item = { Asset: asset };
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
 
         const raiseList: RaiseStruct<[item?: any, lockName?: any, character?: any]>[] = [
             {
@@ -194,7 +194,11 @@ export function test_equipLock(): void {
                 output: false,
             },
             {
-                args: [{ Asset: assetNoLock }, "ExclusivePadlock", characters[3]],
+                args: [
+                    GameVersion === "R130" ? { Asset: assetNoLock } as Item : Item.fromAsset(assetNoLock),
+                    "ExclusivePadlock",
+                    characters[3],
+                ],
                 output: false,
             },
             {

@@ -28,7 +28,7 @@ export function itemSetType(
  * @param typeRecord The item's `TypeRecord`
  */
 export function getBaselineProperty(asset: Asset, character: Character, typeRecord?: TypeRecord): ItemProperties {
-    const item: Item = { Asset: asset };
+    const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
     ExtendedItemInit(character, item, false, false);
     if (typeRecord) itemSetType(item, character, typeRecord);
     return item.Property ?? {};

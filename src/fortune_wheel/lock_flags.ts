@@ -78,7 +78,13 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
     }
     validateCharacter(character);
 
-    const lock = AssetGet(character.AssetFamily, "ItemMisc", lockName);
+    let lock: Item | null;
+    if (GameVersion === "R130") {
+        const lockAsset = AssetGet(character.AssetFamily, "ItemMisc", lockName);
+        lock = lockAsset == null ? null : { Asset: lockAsset } as Item;
+    } else {
+        lock = Item.fromName("ItemMisc", lockName);
+    }
     if (lock == null) {
         throw new Error(`Invalid "lockName" value: ${lockName}`);
     }
@@ -87,11 +93,11 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
     if (
         InventoryGetLock(item) != null
         || !InventoryDoesItemAllowLock(item)
-        || InventoryBlockedOrLimited(character, { Asset: lock })
+        || InventoryBlockedOrLimited(character, lock)
     ) {
         return false;
     }
-    InventoryLock(character, item, { Asset: lock }, null, false);
+    InventoryLock(character, item, lock, null, false);
     return true;
 }
 

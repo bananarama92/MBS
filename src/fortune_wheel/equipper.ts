@@ -316,7 +316,11 @@ wheelHookRegister.addEventListener(
     MBS_MOD_INFO,
     {
         listener: ({ character, newAsset }) => {
-            return (newAsset && InventoryBlockedOrLimited(character, { Asset: newAsset })) ? "InventoryBlockedOrLimited" : null;
+            if (!newAsset) {
+                return null;
+            }
+            const item = GameVersion === "R130" ? { Asset: newAsset } as Item : Item.fromAsset(newAsset);
+            return InventoryBlockedOrLimited(character, item) ? "InventoryBlockedOrLimited" : null;
         },
         hookName: "InventoryBlockedOrLimited",
         label: "Check whether the new item is blocked or limited.",
