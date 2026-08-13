@@ -109,7 +109,7 @@ export function test_equipTimerLock(): void {
         if (asset == null) {
             throw new Error();
         }
-        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : AppearanceItem.fromAsset(asset);
 
         assertRaises(
             `${name}:${RAISES}:0`,
@@ -136,7 +136,7 @@ export function test_equipHighSecLock(): void {
         if (asset == null) {
             throw new Error();
         }
-        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : AppearanceItem.fromAsset(asset);
 
         assertPasses(`${name}:${PASSES}:0`, () => equipHighSecLock(item, character));
         assertEqual(`${name}:${PASSES}:0`, item.Property?.MemberNumberListKeys, "");
@@ -160,7 +160,7 @@ export function test_equipLock(): void {
         if (asset == null || assetNoLock == null) {
             throw new Error();
         }
-        const item = GameVersion === "R130" ? { Asset: asset } as Item : Item.fromAsset(asset);
+        const item = GameVersion === "R130" ? { Asset: asset } as Item : AppearanceItem.fromAsset(asset);
 
         const raiseList: RaiseStruct<[item?: any, lockName?: any, character?: any]>[] = [
             {
@@ -195,7 +195,7 @@ export function test_equipLock(): void {
             },
             {
                 args: [
-                    GameVersion === "R130" ? { Asset: assetNoLock } as Item : Item.fromAsset(assetNoLock),
+                    GameVersion === "R130" ? { Asset: assetNoLock } as Item : AppearanceItem.fromAsset(assetNoLock),
                     "ExclusivePadlock",
                     characters[3],
                 ],

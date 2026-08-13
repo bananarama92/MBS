@@ -181,7 +181,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
         "DrawingLeft",
     ].filter((i): i is keyof ItemProperties => i != null));
     if (asset.Archetype) {
-        const item = GameVersion === "R130" ? { Asset: asset, Property: properties } as Item : Item.fromAsset(asset, { property: properties });
+        const item = GameVersion === "R130" ? { Asset: asset, Property: properties } as Item : AppearanceItem.fromAsset(asset, { property: properties });
         const options = ExtendedItemGatherOptions(item);
         for (const option of options) {
             if (option.OptionType === "VariableHeightOption") {

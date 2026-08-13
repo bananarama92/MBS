@@ -345,6 +345,12 @@ async function contentLoadedListener() {
         MBS_MOD_API.unload();
         window.alert(`Aborting MBS initialization\nMBS ${MBS_VERSION} requires BC version "R${BC_MIN_VERSION}" or later\nDetected BC version: "${gameVersion}"`);
         return;
+    } else if (gameVersion === "R131Beta1") {
+        logger.error("MBS does not support R131Beta1; please upgrade to R131Beta2 or downgrade to R130");
+        logger.log("Unloading MBS from Mod SDK");
+        MBS_MOD_API.unload();
+        window.alert(`Aborting MBS initialization\nDetected BC version: "${gameVersion}\nPlease upgrade to R131Beta2 or downgrade to R130"`);
+        return;
     } else {
         logger.log(`Detected BC ${gameVersion}`);
     }
