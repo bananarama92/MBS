@@ -319,7 +319,7 @@ wheelHookRegister.addEventListener(
             if (!newAsset) {
                 return null;
             }
-            const item = GameVersion === "R130" ? { Asset: newAsset } as Item : Item.fromAsset(newAsset);
+            const item = GameVersion === "R130" ? { Asset: newAsset } as Item : AppearanceItem.fromAsset(newAsset);
             return InventoryBlockedOrLimited(character, item) ? "InventoryBlockedOrLimited" : null;
         },
         hookName: "InventoryBlockedOrLimited",

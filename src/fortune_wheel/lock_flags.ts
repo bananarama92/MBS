@@ -83,7 +83,7 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
         const lockAsset = AssetGet(character.AssetFamily, "ItemMisc", lockName);
         lock = lockAsset == null ? null : { Asset: lockAsset } as Item;
     } else {
-        lock = Item.fromName("ItemMisc", lockName);
+        lock = AppearanceItem.fromName("ItemMisc", lockName);
     }
     if (lock == null) {
         throw new Error(`Invalid "lockName" value: ${lockName}`);
