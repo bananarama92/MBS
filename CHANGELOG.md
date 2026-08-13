@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.22
+* Add BC R131Beta2 support
+* Drop support for BC R131Beta1. Please upgrade to BC R131Beta2 or downgrade to R130
+
 ## v1.10.21
 * Add BC R131Beta1 support
 
