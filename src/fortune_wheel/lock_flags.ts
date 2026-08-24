@@ -78,13 +78,7 @@ export function equipLock(item: Item, lockName: AssetLockType, character: Charac
     }
     validateCharacter(character);
 
-    let lock: Item | null;
-    if (GameVersion === "R130") {
-        const lockAsset = AssetGet(character.AssetFamily, "ItemMisc", lockName);
-        lock = lockAsset == null ? null : { Asset: lockAsset } as Item;
-    } else {
-        lock = AppearanceItem.fromName("ItemMisc", lockName);
-    }
+    const lock = AppearanceItem.fromName("ItemMisc", lockName);
     if (lock == null) {
         throw new Error(`Invalid "lockName" value: ${lockName}`);
     }
