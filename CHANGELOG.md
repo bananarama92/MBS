@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.10.24
+* Fix an ES2022-related crash
+
 ## v1.10.23
 * Drop BC R130 support
 * Add wheel of fortune support for the new R131 item positioning properties
