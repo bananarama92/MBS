@@ -1,13 +1,13 @@
 /** Functions for the parsing and (inter-)conversion of {@link ItemBundle} lists. */
 
-import { cloneDeep, clone, clamp } from "lodash-es";
+import { cloneDeep, clone } from "lodash-es";
 
 import { isArray, entries, isInteger, logger, keys } from "../common";
 
 import { getBaselineProperty } from "./type_setting";
 
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
-type PropMappingType = {[T in keyof ItemProperties]: PropValidator<T>};
+type PropMappingType = {[T in keyof ItemProperties]?: PropValidator<T>};
 
 /** Validation function for the {@link ItemProperties.OverrideHeight} property. */
 function validateOverrideHeight(property: unknown, asset: Asset): property is AssetOverrideHeight {
@@ -51,63 +51,24 @@ function validateText(field: TextItemNames, property: unknown, asset: Asset): pr
     );
 }
 
-function isEmpty(obj: object): boolean {
-    return Object.keys(obj).length === 0;
-}
-
-/** Validation function for the {@link ItemProperties.DrawingLeft} and {@link ItemProperties.DrawingTop} properties. */
-function validateTranslation(property: unknown, asset: Asset): property is TopLeft.ItemData {
-    let validProperty: Partial<Record<string, TopLeft.DataMutable>>;
-    if (!CommonIsObject(property)) {
-        return false;
-    } else {
-        validProperty = property;
-    }
-
-    const layerNames = new Set(asset.Layer.map(l => l.Name ?? asset.Name));
-    for (const [layerName, translationRecord] of Object.entries(validProperty)) {
-        if (!(layerName === AssetOverride || layerNames.has(layerName))) {
-            delete validProperty[layerName];
-            continue;
-        }
-        if (!CommonIsObject(translationRecord)) {
-            delete validProperty[layerName];
-            continue;
-        }
-
-        for (const [poseName, translation] of entries(translationRecord)) {
-            if (!(poseName in PoseRecord || poseName === PoseType.DEFAULT)) {
-                delete translationRecord[poseName];
-            }
-            if (!Number.isInteger(translation)) {
-                delete translationRecord[poseName];
-            } else {
-                translationRecord[poseName] = clamp(translation, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
-            }
-        }
-        if (isEmpty(translationRecord)) {
-            delete validProperty[layerName];
-        }
-    }
-    return isEmpty(validProperty);
-}
+type Prop = Required<ItemProperties>;
 
 /**
  * A record {@link ItemProperties} with validation functions.
  * Properties are limited to a subset that are not managed by the extended item type-setting machinery.
  */
-const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
-    OverridePriority: (p, a) => {
+const PROP_MAPPING: Readonly<PropMappingType> = Object.freeze({
+    OverridePriority: (p, a): p is Prop["OverridePriority"] => {
         if (isInteger(p)) {
             return true;
         } else if (CommonIsObject(p)) {
-            const layers = a.Layer.map(l => l.Name);
+            const layers = a.Layer.map(l => l.Name ?? a.Name);
             return entries(p).every(([k, v]) => layers.includes(k) && isInteger(v));
         } else {
             return false;
         }
     },
-    Opacity: (p, a) => {
+    Opacity: (p, a): p is Prop["Opacity"] => {
         if (typeof p === "number") {
             return p <= 1 && p >= 0;
         } else if (isArray(p)) {
@@ -124,15 +85,15 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
             return false;
         }
     },
-    Text: (p, a) => validateText("Text", p, a),
-    Text2: (p, a) => validateText("Text2", p, a),
-    Text3: (p, a) => validateText("Text3", p, a),
-    ShowText: (p, _) => typeof p === "boolean",
-    TriggerValues: (p, _) => typeof p === "string" && p.split(",").length === ItemVulvaFuturisticVibratorTriggers.length,
-    AccessMode: (p, _) => typeof p === "string" && ItemVulvaFuturisticVibratorAccessModes.includes(<"" | "ProhibitSelf" | "LockMember">p),
-    PunishOrgasm: (p, _) => typeof p === "boolean",
-    PunishStandup: (p, _) => typeof p === "boolean",
-    Texts: (p, _) => {
+    Text: (p, a): p is Prop["Text"] => validateText("Text", p, a),
+    Text2: (p, a): p is Prop["Text2"] => validateText("Text2", p, a),
+    Text3: (p, a): p is Prop["Text3"] => validateText("Text3", p, a),
+    ShowText: (p, _): p is Prop["ShowText"] => typeof p === "boolean",
+    TriggerValues: (p, _): p is Prop["TriggerValues"] => typeof p === "string" && p.split(",").length === ItemVulvaFuturisticVibratorTriggers.length,
+    AccessMode: (p, _): p is Prop["AccessMode"] => typeof p === "string" && ItemVulvaFuturisticVibratorAccessModes.includes(<"" | "ProhibitSelf" | "LockMember">p),
+    PunishOrgasm: (p, _): p is Prop["PunishOrgasm"] => typeof p === "boolean",
+    PunishStandup: (p, _): p is Prop["PunishStandup"] => typeof p === "boolean",
+    Texts: (p, _): p is Prop["Texts"] => {
         if (!Array.isArray(p)) {
             return false;
         }
@@ -141,27 +102,55 @@ const PROP_MAPPING = <Readonly<PropMappingType>>Object.freeze({
         }
         return p.every(i => typeof i === "string" && i.length <= ItemDevicesLuckyWheelMaxTextLength);
     },
-    TargetAngle: (p, _) => typeof p === "number" && p >= 0 && p <= 360,
+    TargetAngle: (p, _): p is Prop["TargetAngle"] => typeof p === "number" && p >= 0 && p <= 360,
     OverrideHeight: validateOverrideHeight,
-    PunishActivity: (p, _) => typeof p === "boolean",
-    PunishStruggle: (p, _) => typeof p === "boolean",
-    PunishStruggleOther: (p, _) => typeof p === "boolean",
-    PunishRequiredSpeechWord: (p, _) => typeof p === "string" && p.length <= 70,
-    PunishProhibitedSpeechWords: (p, _) => typeof p === "string" && p.length <= 70,
-    PunishSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
-    PunishRequiredSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
-    PunishProhibitedSpeech: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
-    PublicModeCurrent: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltModes.length,
-    PublicModePermission: (p, _) => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltPermissions.length,
-    ShockLevel: (p, _) => isInteger(p) && p >= 0 && p <= 2,
-    PortalLinkCode: (p, _) => typeof p === "string" && PortalLinkCodeRegex.test(p),
-    OpenPermission: (p, _) => typeof p === "boolean",
-    OpenPermissionChastity: (p, _) => typeof p === "boolean",
-    OpenPermissionArm: (p, _) => typeof p === "boolean",
-    OpenPermissionLeg: (p, _) => typeof p === "boolean",
-    BlockRemotes: (p, _) => typeof p === "boolean",
-    DrawingLeft: validateTranslation,
-    DrawingTop: validateTranslation,
+    PunishActivity: (p, _): p is Prop["PunishActivity"] => typeof p === "boolean",
+    PunishStruggle: (p, _): p is Prop["PunishStruggle"] => typeof p === "boolean",
+    PunishStruggleOther: (p, _): p is Prop["PunishStruggleOther"] => typeof p === "boolean",
+    PunishRequiredSpeechWord: (p, _): p is Prop["PunishRequiredSpeechWord"] => typeof p === "string" && p.length <= 70,
+    PunishProhibitedSpeechWords: (p, _): p is Prop["PunishProhibitedSpeechWords"] => typeof p === "string" && p.length <= 70,
+    PunishSpeech: (p, _): p is Prop["PunishSpeech"] => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PunishRequiredSpeech: (p, _): p is Prop["PunishRequiredSpeech"] => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PunishProhibitedSpeech: (p, _): p is Prop["PunishProhibitedSpeech"] => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltSpeechPunishments.length,
+    PublicModeCurrent: (p, _): p is Prop["PublicModeCurrent"] => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltModes.length,
+    PublicModePermission: (p, _): p is Prop["PublicModePermission"] => isInteger(p) && p >= 0 && p < FuturisticTrainingBeltPermissions.length,
+    ShockLevel: (p, _): p is Prop["ShockLevel"] => isInteger(p) && p >= 0 && p <= 2,
+    PortalLinkCode: (p, _): p is Prop["PortalLinkCode"] => typeof p === "string" && PortalLinkCodeRegex.test(p),
+    OpenPermission: (p, _): p is Prop["OpenPermission"] => typeof p === "boolean",
+    OpenPermissionChastity: (p, _): p is Prop["OpenPermissionChastity"] => typeof p === "boolean",
+    OpenPermissionArm: (p, _): p is Prop["OpenPermissionArm"] => typeof p === "boolean",
+    OpenPermissionLeg: (p, _): p is Prop["OpenPermissionLeg"] => typeof p === "boolean",
+    BlockRemotes: (p, _): p is Prop["BlockRemotes"] => typeof p === "boolean",
+    LayerTranslationX: (p, a): p is Prop["LayerTranslationX"] => {
+        const layers = new Set(a.Layer.map(l => l.Name ?? a.Name));
+        const [min, max] = a.Group.Name === "Pussy" ? [-180, 180] : [-500, 500];
+        return CommonIsObject(p) && layers.isSupersetOf(new Set(keys(p))) && Object.values(p).every(i => CommonIsInteger(i, min, max) || i === undefined);
+    },
+    LayerTranslationY: (p, a): p is Prop["LayerTranslationY"] => {
+        const layers = new Set(a.Layer.map(l => l.Name ?? a.Name));
+        const [min, max] = a.Group.Name === "Pussy" ? [-180, 180] : [-500, 500];
+        return CommonIsObject(p) && layers.isSupersetOf(new Set(keys(p))) && Object.values(p).every(i => CommonIsInteger(i, min, max) || i === undefined);
+    },
+    LayerScaleX: (p, a): p is Prop["LayerScaleX"] => {
+        const layers = new Set(a.Layer.map(l => l.Name ?? a.Name));
+        const [min, max] = a.Group.Name === "Pussy" ? [0.5, 1.5] : [0.01, 3.0];
+        return CommonIsObject(p) && layers.isSupersetOf(new Set(keys(p))) && Object.values(p).every(i => CommonIsFinite(i, min, max) || i === undefined);
+    },
+    LayerScaleY: (p, a): p is Prop["LayerScaleY"] => {
+        const layers = new Set(a.Layer.map(l => l.Name ?? a.Name));
+        const [min, max] = a.Group.Name === "Pussy" ? [0.5, 1.5] : [0.01, 3.0];
+        return CommonIsObject(p) && layers.isSupersetOf(new Set(keys(p))) && Object.values(p).every(i => CommonIsFinite(i, min, max) || i === undefined);
+    },
+    LayerRotation: (p, a): p is Prop["LayerRotation"] => {
+        const layers = new Set(a.Layer.map(l => l.Name ?? a.Name));
+        const [min, max] = [-180, 180];
+        return CommonIsObject(p) && layers.isSupersetOf(new Set(keys(p))) && Object.values(p).every(i => CommonIsInteger(i, min, max) || i === undefined);
+    },
+    TranslationX: (p, _): p is Prop["TranslationX"] => CommonIsInteger(p, -500, 500),
+    TranslationY: (p, _): p is Prop["TranslationY"] => CommonIsInteger(p, -500, 500),
+    ScaleX: (p, _): p is Prop["ScaleX"] => CommonIsFinite(p, 0.01, 3.0),
+    ScaleY: (p, _): p is Prop["ScaleY"] => CommonIsFinite(p, 0.01, 3.0),
+    Rotation: (p, _): p is Prop["Rotation"] => CommonIsInteger(p, -180, 180),
 });
 
 /**
@@ -181,7 +170,7 @@ function sanitizeProperties(asset: Asset, properties?: ItemProperties): ItemProp
         "DrawingLeft",
     ].filter((i): i is keyof ItemProperties => i != null));
     if (asset.Archetype) {
-        const item = GameVersion === "R130" ? { Asset: asset, Property: properties } as Item : AppearanceItem.fromAsset(asset, { property: properties });
+        const item = AppearanceItem.fromAsset(asset, { property: properties });
         const options = ExtendedItemGatherOptions(item);
         for (const option of options) {
             if (option.OptionType === "VariableHeightOption") {

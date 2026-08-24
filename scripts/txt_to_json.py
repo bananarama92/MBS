@@ -7,7 +7,7 @@ import argparse
 import json
 
 
-def main(path_inp: str | os.Pathlike[str], path_out: str | os.Pathlike[str]) -> None:
+def main(path_inp: str | os.PathLike[str], path_out: str | os.PathLike[str]) -> None:
     dct: dict[str, list[str]] = {}
     with open(path_inp, "r", encoding="utf8") as f_inp:
         for line in f_inp:
