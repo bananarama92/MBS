@@ -8,6 +8,7 @@
 // @match        https://*.bondage-europe.com/R*/*
 // @match        https://*.bondageprojects.com/R*/*
 // @match        https://*.bondage-asia.com/club/R*
+// @match        https://*.bondageeurope.com/R*/*
 // @homepage     https://github.com/bananarama92/MBS.git#readme
 // @source       https://github.com/bananarama92/MBS.git
 // @downloadURL  https://github.com/bananarama92/MBS/raw/main/loader.user.js
