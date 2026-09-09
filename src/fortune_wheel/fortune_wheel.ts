@@ -646,24 +646,34 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
 
     const ret = fromEntries(entries(protoRecord).map(([setName, itemList]) => {
         const itemListNew: readonly FWItem[] = Object.freeze(itemList.map(protoItem => {
-            let craft: undefined | CraftingItem = undefined;
+            let craft: undefined | CraftingPartialItem = undefined;
             if (protoItem.Craft !== null && typeof protoItem.Craft === "object") {
                 const asset = AssetGet(Player.AssetFamily, protoItem.Group, protoItem.Name);
                 if (asset == null) {
                     throw new Error(`Invalid ${setName} item: ${protoItem.Group}${protoItem.Name}`);
                 }
 
-                craft = <CraftingItem>{
-                    ...protoItem.Craft,
-                    Item: protoItem.Name,
-                    Private: true,
-                    Lock: "",
-                    TypeRecord: undefined,
-                    Name: protoItem.Craft.Name || asset.Description,
-                    MemberNumber: undefined,
-                    MemberName: "",
-                };
-                CraftingValidate(craft, asset, false);
+                if (GameVersion === "R131") {
+                    craft = {
+                        ...protoItem.Craft,
+                        Item: protoItem.Name,
+                        Private: true,
+                        Lock: "",
+                        TypeRecord: undefined,
+                        Name: protoItem.Craft.Name || asset.Description,
+                        MemberNumber: undefined,
+                        MemberName: "",
+                    } as CraftingPartialItem;
+                } else {
+                    craft = {
+                        ...protoItem.Craft,
+                        Private: true,
+                        Name: protoItem.Craft.Name ?? asset.Description,
+                        Description: protoItem.Craft.Description ?? "",
+                        Effects: protoItem.Craft.Effects ?? {},
+                    };
+                }
+                CraftingValidate(craft, asset, false, false, true);
             }
 
             return Object.freeze({

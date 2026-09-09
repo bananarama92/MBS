@@ -74,7 +74,7 @@ export namespace ExtendedWheelEvents {
         }
 
         export interface Craft extends WheelEvents.Events.ItemBase {
-            readonly craft: null | Readonly<Pick<CraftingItem, "Name" | "Description" | "Property" | "Effects">>;
+            readonly craft: null | Readonly<Pick<CraftingPartialItem, "Name" | "Description" | "Property" | "Effects">>;
         }
 
         export interface Property extends WheelEvents.Events.ItemBase {
@@ -106,7 +106,7 @@ export namespace ExtendedWheelEvents {
         validateItemUnequip: null | string;
         color: null | (undefined | BCColor)[];
         difficulty: null | number;
-        craft: null | Partial<Pick<CraftingItem, "Name" | "Description" | "Property" | "Effects">>;
+        craft: null | Partial<Pick<CraftingPartialItem, "Name" | "Description" | "Property" | "Effects">>;
         typeRecord: null | Partial<TypeRecord>;
         property: null | Partial<ItemProperties>;
         preProcess: null;

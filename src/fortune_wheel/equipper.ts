@@ -670,7 +670,7 @@ export function fortuneWheelEquip(
 
         // Handle crafting events
         if (asset.Group.IsItem() && !asset.IsLock && asset.Wear && asset.Enable) {
-            let craft: CraftingItem | undefined = cloneDeep(Craft);
+            let craft: CraftingPartialItem | undefined = cloneDeep(Craft);
             const craftingEvent: ExtendedWheelEvents.Events.Craft = getEventProxy(
                 {
                     character: charTarget,
@@ -684,16 +684,25 @@ export function fortuneWheelEquip(
             const craftingOutput = wheelHookRegister.run("craft", craftingEvent, hookKwargs, eventLog);
             craftingOutput.forEach((output) => {
                 if (!craft) {
-                    craft = {
-                        Name: asset.Description,
-                        Description: "",
-                        Effects: {},
-                        Color: "",
-                        Lock: "",
-                        Private: true,
-                        Item: asset.Name,
-                        ItemProperty: null,
-                    };
+                    if (GameVersion === "R131") {
+                        craft = {
+                            Name: asset.Description,
+                            Description: "",
+                            Effects: {},
+                            Color: "",
+                            Lock: "",
+                            Private: true,
+                            Item: asset.Name,
+                            ItemProperty: null,
+                        } as CraftingPartialItem;
+                    } else {
+                        craft = {
+                            Name: asset.Description,
+                            Description: "",
+                            Effects: {},
+                            Private: true,
+                        };
+                    }
                 }
                 for (const prop of ["Name", "Description", "Property", "Effects"] as const) {
                     const value = output[prop];
@@ -703,8 +712,14 @@ export function fortuneWheelEquip(
                 }
             });
             if (craft != undefined) {
+                craft.MemberNumber ??= charSource?.MemberNumber;
+                craft.MemberName ??= charSource ? CharacterNickname(charSource) : undefined;
                 newItem.Craft = craft;
-                InventoryCraft(charSource, charTarget, Group as AssetGroupItemName, newItem.Craft, false, false);
+                if (craft.Effects?.Decoy) {
+                    newItem.Difficulty = -50;
+                }
+                newItem.Difficulty += 4 * (craft.Effects?.Secure ?? 0);
+                newItem.Difficulty -= 4 * (craft.Effects?.Loose ?? 0);
             }
         }
 

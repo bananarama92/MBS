@@ -232,7 +232,7 @@ export function fromItemBundle(
         color = [...item.Color];
     }
 
-    let craft: undefined | CraftingItem = undefined;
+    let craft: undefined | CraftingPartialItem = undefined;
     if (item.Craft !== null && typeof item.Craft === "object") {
         craft = Object.assign(
             cloneDeep(item.Craft),
@@ -242,7 +242,7 @@ export function fromItemBundle(
                 Lock: "",
             },
         );
-        CraftingValidate(craft, asset, false);
+        CraftingValidate(craft, asset, false, false, true);
     }
 
     const property = item.Property ?? {};
