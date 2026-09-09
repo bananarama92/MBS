@@ -100,7 +100,7 @@ interface FWItemBase {
     /** An optional callback whose output denotes whether the item should be equipped */
     Equip?: (character: Character) => boolean,
     /** Optional crafted item data */
-    Craft?: Partial<CraftingItem>,
+    Craft?: Partial<CraftingPartialItem>,
     /** @deprecated superseded by the MBS 1.8 `afterItemEquip` event */
     ItemCallback?: never;
     /** Whether this is a custom user-specified item set */
@@ -115,7 +115,7 @@ interface FWItemBase {
 }
 
 interface FWItem extends Readonly<FWItemBase> {
-    readonly Craft: undefined | Readonly<CraftingItem>,
+    readonly Craft: undefined | Readonly<CraftingPartialItem>,
     readonly Custom: boolean,
     readonly TypeRecord: undefined | Readonly<TypeRecord>,
     /** @deprecated superseded by {@link FWItem.TypeRecord} */

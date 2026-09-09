@@ -1,5 +1,8 @@
 # MBS Changelog
 
+## v1.10.25
+* Add BC R132Beta1 support
+
 ## v1.10.24
 * Fix an ES2022-related crash
 
