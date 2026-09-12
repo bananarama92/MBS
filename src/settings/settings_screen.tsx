@@ -1,3 +1,5 @@
+import { iconPaths } from "bc-data";
+
 import { logger } from "../common";
 import { waitForBC } from "../common_bc";
 import { MBSScreen, ScreenProxy, ScreenParams } from "../screen_abc";
@@ -109,14 +111,14 @@ export class MBSPreferenceScreen extends MBSScreen {
                     ElementButton.Create(
                         ID.exit,
                         this.exit.bind(this),
-                        { image: "Icons/Exit.png", tooltip: "Exit" },
+                        { image: iconPaths.Exit, tooltip: "Exit" },
                     ),
                 ],
                 mainContent: [
                     <section aria-labelledby={ID.wheelHeader}>
                         <h2 id={ID.wheelHeader}>Wheel of fortune settings</h2>
                         <p class="mbs-preference-settings-pair">
-                            {ElementButton.Create(ID.wheelButton, this.#loadWheel.bind(this), { image: "Icons/Crafting.png" }, { button: { attributes: { "aria-labelledby": ID.wheelLabel } } })}
+                            {ElementButton.Create(ID.wheelButton, this.#loadWheel.bind(this), { image: iconPaths.Crafting }, { button: { attributes: { "aria-labelledby": ID.wheelLabel } } })}
                             <span id={ID.wheelLabel}>Configure the wheel of fortune</span>
                         </p>
                         <p class="mbs-preference-settings-pair">
@@ -171,22 +173,22 @@ export class MBSPreferenceScreen extends MBSScreen {
                         <li>{ElementButton.Create(
                             ID.resetButton,
                             this.#settingsReset.bind(this),
-                            { image: "Icons/ServiceBell.png", label: "Reset MBS", tooltip: "Clear all MBS data", labelPosition: "center" },
+                            { image: iconPaths.ServiceBell, label: "Reset MBS", tooltip: "Clear all MBS data", labelPosition: "center" },
                         )}</li>
                         <li>{ElementButton.Create(
                             ID.import,
                             this.#settingsImport.bind(this),
-                            { image: "Icons/Upload.png", label: "Import", tooltip: "Import MBS settings", labelPosition: "center" },
+                            { image: iconPaths.Upload, label: "Import", tooltip: "Import MBS settings", labelPosition: "center" },
                         )}</li>
                         <li>{ElementButton.Create(
                             ID.export,
                             this.#settingsExport.bind(this),
-                            { image: "Icons/Download.png", label: "Export", tooltip: "Export MBS settings", labelPosition: "center" },
+                            { image: iconPaths.Download, label: "Export", tooltip: "Export MBS settings", labelPosition: "center" },
                         )}</li>
                         <li>{ElementButton.Create(
                             ID.changelog,
                             () => open(getChangeLogURL(), "_blank"),
-                            { image: "Icons/Changelog.png", label: "Changelog", tooltip: "Open the MBS changelog", labelPosition: "center" },
+                            { image: iconPaths.Changelog, label: "Changelog", tooltip: "Open the MBS changelog", labelPosition: "center" },
                         )}</li>
                     </menu>,
                 ],
@@ -363,7 +365,7 @@ waitForBC("settings_screen", {
             click() {},
             exit() {},
             ButtonText: "MBS Settings",
-            Image: "Icons/Maid.png",
+            Image: iconPaths.Maid,
         });
     },
 });

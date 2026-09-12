@@ -1,4 +1,5 @@
 import { cloneDeep, range } from "lodash-es";
+import { iconPaths } from "bc-data";
 
 import { validateInt } from "../common";
 import { sanitizeWheelFortuneIDs, MBS_MAX_SETS, FWItemSet, waitForBC, FWCommand } from "../common_bc";
@@ -219,17 +220,17 @@ export class WheelPresetScreen extends MBSScreen {
                     ElementButton.Create(
                         ID.exit,
                         () => this.exit(false),
-                        { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
+                        { image: iconPaths.Exit, tooltip: "Exit", tooltipPosition: "left" },
                     ),
                     ElementButton.Create(
                         ID.save,
                         () => this.savePreset(),
-                        { image: "./Icons/Save.png", tooltip: "Save the current preset", tooltipPosition: "left" },
+                        { image: iconPaths.Save, tooltip: "Save the current preset", tooltipPosition: "left" },
                     ),
                     ElementButton.Create(
                         ID.accept,
                         () => this.equipPreset(),
-                        { disabled: true, image: "./Icons/Accept.png", tooltip: "Equip the current preset", tooltipPosition: "left" },
+                        { disabled: true, image: iconPaths.Accept, tooltip: "Equip the current preset", tooltipPosition: "left" },
                     ),
                 ],
                 mainContent: [
@@ -278,7 +279,7 @@ export class WheelPresetScreen extends MBSScreen {
                 ElementButton.Create(
                     ID.delete,
                     () => this.deletePreset(),
-                    { disabled: true, image: "./Icons/Trash.png", tooltip: "Delete the current preset", tooltipPosition: "right" },
+                    { disabled: true, image: iconPaths.Trash, tooltip: "Delete the current preset", tooltipPosition: "right" },
                 ),
             );
         }
