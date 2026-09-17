@@ -4,8 +4,6 @@ import { cloneDeep, clone } from "lodash-es";
 
 import { isArray, entries, isInteger, logger, keys } from "../common";
 
-import { getBaselineProperty } from "./type_setting";
-
 type PropValidator<T extends keyof ItemProperties> = (property: unknown, asset: Asset) => property is NonNullable<ItemProperties[T]>;
 type PropMappingType = {[T in keyof ItemProperties]?: PropValidator<T>};
 
@@ -216,53 +214,23 @@ const UNSUPPORTED_ASSET_CHECKS = Object.freeze(new Map([
  */
 export function fromItemBundle(
     asset: null | Asset,
-    item: ItemBundle,
+    itemBundle: ItemBundle,
     custom: boolean = true,
 ): FWItem {
     for (const [msgPrefix, validationCheck] of UNSUPPORTED_ASSET_CHECKS) {
         if (validationCheck(asset)) {
-            throw new Error(`${msgPrefix}: ${item.Group}${item.Name}`);
+            throw new Error(`${msgPrefix}: ${itemBundle.Group}${itemBundle}`);
         }
     }
-
-    let color: undefined | readonly BCColor[] = undefined;
-    if (typeof item.Color === "string") {
-        color = [item.Color];
-    } else if (Array.isArray(item.Color) && item.Color.every(i => typeof i === "string")) {
-        color = [...item.Color];
-    }
-
-    let craft: undefined | CraftingPartialItem = undefined;
-    if (item.Craft !== null && typeof item.Craft === "object") {
-        craft = Object.assign(
-            cloneDeep(item.Craft),
-            {
-                TypeRecord: undefined,
-                OverridePriority: null,
-                Lock: "",
-            },
-        );
-        CraftingValidate(craft, asset, false, false, true);
-    }
-
-    const property = item.Property ?? {};
-    let typeRecord: undefined | TypeRecord = undefined;
-    if (CommonIsObject(property.TypeRecord)) {
-        typeRecord = Object.freeze({ ...property.TypeRecord });
-    } else if (typeof property.Type === "string" || property.Type === null) {
-        typeRecord = ExtendedItemTypeToRecord(<Asset>asset, property.Type);
-    } else if (typeof property.Mode === "string") {
-        typeRecord = ExtendedItemTypeToRecord(<Asset>asset, property.Mode);
-    }
-
+    const item = ServerBundledItemToAppearanceItem("Female3DCG", itemBundle)!;
     return Object.freeze({
-        Name: item.Name,
-        Group: item.Group,
+        Name: item.Asset.Name,
+        Group: item.Asset.Group.Name,
         Custom: custom,
-        Property: Object.freeze(sanitizeProperties(<Asset>asset, item.Property)),
-        TypeRecord: typeRecord,
-        Color: color,
-        Craft: Object.freeze(craft),
+        Property: Object.freeze(sanitizeProperties(asset!, item.Property)),
+        TypeRecord: Object.freeze(item.Property.TypeRecord),
+        Color: Object.freeze(item.Color),
+        Craft: Object.freeze(item.Craft),
         Equip: undefined,
     });
 }
@@ -323,16 +291,17 @@ export function toItemBundle(item: FWItem, character: Character): ItemBundle {
     if (asset == null) {
         throw new Error(`Unknown asset: ${Group}${Name}`);
     }
-    return {
-        Group: Group,
-        Name: Name,
-        Color: clone(<BCColor[] | undefined>Color),
+    return ServerBundledItemFromAppearanceItem({
+        ...item,
+        Asset: asset,
+        Difficulty: 0,
+        Color: clone(Color ?? asset.DefaultColor) as BCColor[],
+        Property: {
+            ...cloneDeep(Property),
+            TypeRecord: clone(TypeRecord),
+        },
         Craft: cloneDeep(Craft),
-        Property: Object.assign(
-            getBaselineProperty(asset, character, TypeRecord),
-            cloneDeep(Property),
-        ),
-    };
+    });
 }
 
 /**
