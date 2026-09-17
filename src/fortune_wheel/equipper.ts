@@ -683,27 +683,12 @@ export function fortuneWheelEquip(
             );
             const craftingOutput = wheelHookRegister.run("craft", craftingEvent, hookKwargs, eventLog);
             craftingOutput.forEach((output) => {
-                if (!craft) {
-                    if (GameVersion === "R131") {
-                        craft = {
-                            Name: asset.Description,
-                            Description: "",
-                            Effects: {},
-                            Color: "",
-                            Lock: "",
-                            Private: true,
-                            Item: asset.Name,
-                            ItemProperty: null,
-                        } as CraftingPartialItem;
-                    } else {
-                        craft = {
-                            Name: asset.Description,
-                            Description: "",
-                            Effects: {},
-                            Private: true,
-                        };
-                    }
-                }
+                craft ??= {
+                    Name: asset.Description,
+                    Description: "",
+                    Effects: {},
+                    Private: true,
+                };
                 for (const prop of ["Name", "Description", "Property", "Effects"] as const) {
                     const value = output[prop];
                     if (value != null) {

@@ -654,26 +654,13 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     throw new Error(`Invalid ${setName} item: ${protoItem.Group}${protoItem.Name}`);
                 }
 
-                if (GameVersion === "R131") {
-                    craft = {
-                        ...protoItem.Craft,
-                        Item: protoItem.Name,
-                        Private: true,
-                        Lock: "",
-                        TypeRecord: undefined,
-                        Name: protoItem.Craft.Name || asset.Description,
-                        MemberNumber: undefined,
-                        MemberName: "",
-                    } as CraftingPartialItem;
-                } else {
-                    craft = {
-                        ...protoItem.Craft,
-                        Private: true,
-                        Name: protoItem.Craft.Name ?? asset.Description,
-                        Description: protoItem.Craft.Description ?? "",
-                        Effects: protoItem.Craft.Effects ?? {},
-                    };
-                }
+                craft = {
+                    ...protoItem.Craft,
+                    Private: true,
+                    Name: protoItem.Craft.Name ?? asset.Description,
+                    Description: protoItem.Craft.Description ?? "",
+                    Effects: protoItem.Craft.Effects ?? {},
+                };
                 CraftingValidate(craft, asset, false, false, true);
             }
 

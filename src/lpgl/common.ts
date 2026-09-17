@@ -269,7 +269,7 @@ export class Version {
 }
 
 /** The minimum supported BC version. */
-export const BC_MIN_VERSION = 131 satisfies number;
+export const BC_MIN_VERSION = 132 satisfies number;
 
 const bcListenerNames = [
     "api",
