@@ -94,7 +94,7 @@ type Node = {
 
 /** A minimalistic (extended) item representation as used in {@link itemsArgSort}. */
 type SimpleItem = Readonly<{
-    Name: string,
+    Name: AssetName,
     Group: AssetGroupName,
     TypeRecord?: TypeRecord,
 }>;
@@ -161,9 +161,9 @@ export function itemsArgSort(
             }
 
             const property = getBaselineProperty(asset, character, TypeRecord);
-            const node = <Node>{
+            const node: Node = {
                 superSet: i === 1,
-                block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
+                block: new Set([...(asset.Block ?? []), ...(property.Block ?? [])]),
             };
 
             // Enclosing items take priority over everything else

@@ -92,7 +92,7 @@ type StripLevel = 0 | 1 | 2 | 3 | 4;
 
 interface FWItemBase {
     /** The name of the item */
-    Name: string,
+    Name: AssetName,
     /** The group of the item */
     Group: AssetGroupName,
     /** The optional color of the item */
