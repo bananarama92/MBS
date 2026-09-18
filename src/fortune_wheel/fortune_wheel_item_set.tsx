@@ -1,6 +1,7 @@
 /** Configuration screen for custom wheel of fortune options */
 
 import { clamp } from "lodash-es";
+import { iconPaths } from "bc-data";
 
 import { FWSelectedItemSet, FWItemSet } from "../common_bc";
 import { MBSScreen, MBSObjectScreen, ExitAction, ScreenParams } from "../screen_abc";
@@ -394,19 +395,19 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
                     ElementButton.Create(
                         ID.exit,
                         () => this.exit(true, ExitAction.NONE),
-                        { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
+                        { image: iconPaths.Exit, tooltip: "Exit", tooltipPosition: "left" },
                         { button: { attributes: { "screen-generated": undefined } } },
                     ),
                     ElementButton.Create(
                         ID.cancel,
                         () => this.exit(false, ExitAction.NONE),
-                        { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left" },
+                        { image: iconPaths.Cancel, tooltip: "Cancel", tooltipPosition: "left" },
                         { button: { attributes: { "screen-generated": undefined } } },
                     ),
                     ElementButton.Create(
                         ID.accept,
                         () => this.exit(false, ExitAction.SAVE),
-                        { image: "./Icons/Accept.png", tooltip: "Save item set:\nMissing outfit", tooltipPosition: "left", disabled },
+                        { image: iconPaths.Accept, tooltip: "Save item set:\nMissing outfit", tooltipPosition: "left", disabled },
                         { button: { attributes: { form: "mbs-fwitemset-form", type: "submit", "screen-generated": undefined } } },
                     ),
                 ],
@@ -544,7 +545,7 @@ export class FWItemSetScreen extends MBSObjectScreen<FWItemSet> {
             ElementButton.Create(
                 ID.delete,
                 () => this.exit(false, ExitAction.DELETE),
-                { image: "./Icons/Trash.png", tooltip: "Delete item set", tooltipPosition: "right", disabled },
+                { image: iconPaths.Trash, tooltip: "Delete item set", tooltipPosition: "right", disabled },
             ),
         );
     }

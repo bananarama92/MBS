@@ -1,6 +1,7 @@
 /** Selection screen for custom wheel of fortune options */
 
 import { sumBy, clamp, range } from "lodash-es";
+import { iconPaths } from "bc-data";
 
 import { logger } from "../common";
 import { MBS_MAX_SETS, FWItemSet, FWCommand } from "../common_bc";
@@ -128,7 +129,7 @@ export class FWSelectScreen extends MBSScreen {
             {
                 parent: document.body,
                 menubarButtons: [
-                    ElementButton.Create(ID.exit, () => this.exit(), { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" }),
+                    ElementButton.Create(ID.exit, () => this.exit(), { image: iconPaths.Exit, tooltip: "Exit", tooltipPosition: "left" }),
                 ],
                 mainContent: [
                     <hgroup class="screen-hgroup">

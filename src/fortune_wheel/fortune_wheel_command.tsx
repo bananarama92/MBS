@@ -1,6 +1,7 @@
 /** Configuration screen for custom wheel of fortune options */
 
 import { clamp } from "lodash-es";
+import { iconPaths } from "bc-data";
 
 import {
     FWSelectedCommand,
@@ -64,17 +65,17 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
                     ElementButton.Create(
                         ID.exit,
                         () => this.exit(true, ExitAction.NONE),
-                        { image: "./Icons/Exit.png", tooltip: "Exit", tooltipPosition: "left" },
+                        { image: iconPaths.Exit, tooltip: "Exit", tooltipPosition: "left" },
                     ),
                     ElementButton.Create(
                         ID.cancel,
                         () => this.exit(false, ExitAction.NONE),
-                        { image: "./Icons/Cancel.png", tooltip: "Cancel", tooltipPosition: "left" },
+                        { image: iconPaths.Cancel, tooltip: "Cancel", tooltipPosition: "left" },
                     ),
                     ElementButton.Create(
                         ID.accept,
                         () => this.exit(false, ExitAction.SAVE),
-                        { image: "./Icons/Accept.png", tooltip: "Save command", tooltipPosition: "left" },
+                        { image: iconPaths.Accept, tooltip: "Save command", tooltipPosition: "left" },
                     ),
                 ],
                 mainContent: [
@@ -137,7 +138,7 @@ export class FWCommandScreen extends MBSObjectScreen<FWCommand> {
                 ElementButton.Create(
                     ID.delete,
                     () => this.exit(false, ExitAction.DELETE),
-                    { image: "./Icons/Trash.png", tooltip: "Delete command", tooltipPosition: "right" },
+                    { image: iconPaths.Trash, tooltip: "Delete command", tooltipPosition: "right" },
                 ),
             );
         }

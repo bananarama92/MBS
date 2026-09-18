@@ -1,6 +1,7 @@
 /** Main module for managing all fortune wheel-related additions */
 
 import { clone, sample } from "lodash-es";
+import { iconPaths } from "bc-data";
 
 import {
     MBS_MOD_API,
@@ -653,26 +654,13 @@ function generateItems(): Readonly<Record<FortuneWheelNames, readonly FWItem[]>>
                     throw new Error(`Invalid ${setName} item: ${protoItem.Group}${protoItem.Name}`);
                 }
 
-                if (GameVersion === "R131") {
-                    craft = {
-                        ...protoItem.Craft,
-                        Item: protoItem.Name,
-                        Private: true,
-                        Lock: "",
-                        TypeRecord: undefined,
-                        Name: protoItem.Craft.Name || asset.Description,
-                        MemberNumber: undefined,
-                        MemberName: "",
-                    } as CraftingPartialItem;
-                } else {
-                    craft = {
-                        ...protoItem.Craft,
-                        Private: true,
-                        Name: protoItem.Craft.Name ?? asset.Description,
-                        Description: protoItem.Craft.Description ?? "",
-                        Effects: protoItem.Craft.Effects ?? {},
-                    };
-                }
+                craft = {
+                    ...protoItem.Craft,
+                    Private: true,
+                    Name: protoItem.Craft.Name ?? asset.Description,
+                    Description: protoItem.Craft.Description ?? "",
+                    Effects: protoItem.Craft.Effects ?? {},
+                };
                 CraftingValidate(craft, asset, false, false, true);
             }
 
@@ -811,17 +799,17 @@ waitForBC("fortune_wheel", {
             const colorConfig = enabledConfig ? "White" : "Silver";
             const nameConfig = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
             const descriptionConfig = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure custom options" : `MBS: View ${nameConfig}'s option config`;
-            DrawButton(...COORDS.select, "", colorConfig, "Icons/Crafting.png", descriptionConfig, !enabledConfig);
+            DrawButton(...COORDS.select, "", colorConfig, iconPaths.Crafting, descriptionConfig, !enabledConfig);
 
             const enabledPreset = !!(WheelFortuneVelocity === 0 && WheelFortuneCharacter?.IsPlayer());
             const colorPreset = enabledPreset ? "White" : "Silver";
             const namePreset = WheelFortuneCharacter?.Nickname ?? WheelFortuneCharacter?.Name;
             const descriptionPreset = WheelFortuneCharacter?.IsPlayer() ? "MBS: Configure option presets" : `MBS: View ${namePreset}'s option presets`;
-            DrawButton(...COORDS.preset, "", colorPreset, "Icons/Crafting.png", descriptionPreset, !enabledPreset);
+            DrawButton(...COORDS.preset, "", colorPreset, iconPaths.Crafting, descriptionPreset, !enabledPreset);
 
             const backColor = (WheelFortuneVelocity == 0 && canSpin && WheelFortuneList.length > 0) ? "White" : "Silver";
             DrawButton(
-                ...COORDS.roll, "", backColor, "Icons/Random.png",
+                ...COORDS.roll, "", backColor, iconPaths.Random,
                 canSpin ? TextGet("Random") : "MBS: Cannot spin while restrained",
                 !canSpin,
             );

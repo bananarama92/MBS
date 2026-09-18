@@ -1,6 +1,7 @@
 /** Main module for managing all crafting-related additions */
 
 import { inRange } from "lodash";
+import { iconPaths } from "bc-data";
 
 import { MBS_MOD_API, padArray, logger } from "../common";
 import { waitForBC } from "../common_bc";
@@ -113,7 +114,7 @@ async function loadCraftingNameDOM() {
             IDs.button,
             () => null,
             {
-                image: "./Icons/Question.png",
+                image: iconPaths.Question,
                 tooltip: [
                     <span id={IDs.buttonBrowser}>
                         <p style={{ marginBottom: "0.5em" }}>Extra MBS crafting slot stored locally in your Browser.</p>

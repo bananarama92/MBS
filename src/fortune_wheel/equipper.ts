@@ -94,7 +94,7 @@ type Node = {
 
 /** A minimalistic (extended) item representation as used in {@link itemsArgSort}. */
 type SimpleItem = Readonly<{
-    Name: string,
+    Name: AssetName,
     Group: AssetGroupName,
     TypeRecord?: TypeRecord,
 }>;
@@ -161,9 +161,9 @@ export function itemsArgSort(
             }
 
             const property = getBaselineProperty(asset, character, TypeRecord);
-            const node = <Node>{
+            const node: Node = {
                 superSet: i === 1,
-                block: new Set(...(asset.Block ?? []), ...(property.Block ?? [])),
+                block: new Set([...(asset.Block ?? []), ...(property.Block ?? [])]),
             };
 
             // Enclosing items take priority over everything else
@@ -683,27 +683,12 @@ export function fortuneWheelEquip(
             );
             const craftingOutput = wheelHookRegister.run("craft", craftingEvent, hookKwargs, eventLog);
             craftingOutput.forEach((output) => {
-                if (!craft) {
-                    if (GameVersion === "R131") {
-                        craft = {
-                            Name: asset.Description,
-                            Description: "",
-                            Effects: {},
-                            Color: "",
-                            Lock: "",
-                            Private: true,
-                            Item: asset.Name,
-                            ItemProperty: null,
-                        } as CraftingPartialItem;
-                    } else {
-                        craft = {
-                            Name: asset.Description,
-                            Description: "",
-                            Effects: {},
-                            Private: true,
-                        };
-                    }
-                }
+                craft ??= {
+                    Name: asset.Description,
+                    Description: "",
+                    Effects: {},
+                    Private: true,
+                };
                 for (const prop of ["Name", "Description", "Property", "Effects"] as const) {
                     const value = output[prop];
                     if (value != null) {
