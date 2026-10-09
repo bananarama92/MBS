@@ -98,6 +98,9 @@ function craftingValidate(craft: unknown, index: number) {
     }
 
     const craftCandidate = craft as unknown as CraftingItem;
+    if (CommonIsObject(craftCandidate)) {
+        craftCandidate.Partial = false;
+    }
     switch (CraftingValidate(craftCandidate)) {
         case CraftingStatusType.OK:
         case CraftingStatusType.ERROR:
