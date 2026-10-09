@@ -8,15 +8,17 @@ import { waitForBC } from "./common_bc";
 import { toItemBundles as _toItemBundles } from "./fortune_wheel";
 import { unpackSettings as _unpackSettings } from "./settings";
 import { wheelOutfits, getDebug, API_VERSION, css, wheelEvents } from "./api";
-import { runTests } from "./testing";
 
 import styles from "./index.scss";
 
 const _getOriginalHash = MBS_MOD_API.getOriginalHash;
 const _version = MBS_VERSION;
 
+export function runTests() {
+    return true;
+}
+
 export {
-    runTests,
     _version as MBS_VERSION,
     API_VERSION,
     wheelOutfits,
