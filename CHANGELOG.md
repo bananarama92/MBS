@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.27
+* Add BC R131Beta1 support
+* Fix local crafts not initially being marked with the `Partial` property
+
 ## v1.10.26
 * Add full BC R132 support
 * Drop BC R131 support
