@@ -670,7 +670,12 @@ export function fortuneWheelEquip(
 
         // Handle crafting events
         if (asset.Group.IsItem() && !asset.IsLock && asset.Wear && asset.Enable) {
-            let craft: CraftingPartialItem | undefined = cloneDeep(Craft);
+            let craft: CraftingPartialItem | undefined = undefined;
+            if (Craft) {
+                craft = cloneDeep(Craft);
+                // Older wheel sets and outfit codes can have crafts without `Effects`
+                CraftingValidate(craft, asset, false, false, true);
+            }
             const craftingEvent: ExtendedWheelEvents.Events.Craft = getEventProxy(
                 {
                     character: charTarget,
@@ -699,8 +704,6 @@ export function fortuneWheelEquip(
             if (craft != undefined) {
                 craft.MemberNumber ??= charSource?.MemberNumber;
                 craft.MemberName ??= charSource ? CharacterNickname(charSource) : undefined;
-                // Older wheel sets and outfit codes can have crafts without `Effects`, which BC R133 chokes on
-                CraftingValidate(craft, asset, false, false, true);
                 newItem.Craft = craft;
                 if (craft.Effects?.Decoy) {
                     newItem.Difficulty = -50;
