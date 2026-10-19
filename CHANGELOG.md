@@ -1,7 +1,11 @@
 # MBS Changelog
 
+## v1.10.28
+* Fix old wheel of fortune crafts potentially using an invalid format (thanks [Maple](https://github.com/mochamaple))
+* Drop BC R132 support
+
 ## v1.10.27
-* Add BC R131Beta1 support
+* Add BC R133Beta1 support
 * Fix local crafts not initially being marked with the `Partial` property
 
 ## v1.10.26
