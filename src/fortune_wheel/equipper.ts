@@ -670,7 +670,12 @@ export function fortuneWheelEquip(
 
         // Handle crafting events
         if (asset.Group.IsItem() && !asset.IsLock && asset.Wear && asset.Enable) {
-            let craft: CraftingPartialItem | undefined = cloneDeep(Craft);
+            let craft: CraftingPartialItem | undefined = undefined;
+            if (Craft) {
+                craft = cloneDeep(Craft);
+                // Older wheel sets and outfit codes can have crafts without `Effects`
+                CraftingValidate(craft, asset, false, false, true);
+            }
             const craftingEvent: ExtendedWheelEvents.Events.Craft = getEventProxy(
                 {
                     character: charTarget,
