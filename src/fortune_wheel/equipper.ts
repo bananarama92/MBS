@@ -699,6 +699,8 @@ export function fortuneWheelEquip(
             if (craft != undefined) {
                 craft.MemberNumber ??= charSource?.MemberNumber;
                 craft.MemberName ??= charSource ? CharacterNickname(charSource) : undefined;
+                // Older wheel sets and outfit codes can have crafts without `Effects`, which BC R133 chokes on
+                CraftingValidate(craft, asset, false, false, true);
                 newItem.Craft = craft;
                 if (craft.Effects?.Decoy) {
                     newItem.Difficulty = -50;
