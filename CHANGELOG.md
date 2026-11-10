@@ -1,5 +1,9 @@
 # MBS Changelog
 
+## v1.10.29
+* Add BC R134Beta1 support
+* Ensure that the wheel of fortune item sorter can handle cyclic block graphs
+
 ## v1.10.28
 * Fix old wheel of fortune crafts potentially using an invalid format (thanks [Maple](https://github.com/mochamaple))
 * Drop BC R132 support

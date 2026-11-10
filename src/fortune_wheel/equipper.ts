@@ -107,9 +107,12 @@ type SimpleItem = Readonly<{
  * @returns A 2-tuple with the priority of the current `node` and whether a superset item blocks one or more subset items
  */
 function itemsArgSortDFS(
+    group: AssetGroupName,
     graph: Readonly<Map<AssetGroupName, Node>>,
+    visited: Set<AssetGroupName>,
     node?: Node,
 ): [priority: number, blocksSubSet: boolean] {
+    visited.add(group);
     if (node === undefined) {
         return [-1, false];
     } else if (node.priority !== undefined && node.blocksSubSet !== undefined) {
@@ -121,7 +124,11 @@ function itemsArgSortDFS(
     } else {
         const data: [priority: number, blocksSubSet: boolean][] = [];
         for (const group of node.block) {
-            data.push(itemsArgSortDFS(graph, graph.get(group)));
+            if (visited.has(group)) {
+                // Cyclic block graph, uhoh
+                return [0, false];
+            }
+            data.push(itemsArgSortDFS(group, graph, visited, graph.get(group)));
         }
         node.priority = 1 + Math.max(0, ...data.map(i => i[0]));
         node.blocksSubSet = node.superSet && data.some(i => i[1]);
@@ -178,8 +185,8 @@ export function itemsArgSort(
 
 
     // Traverse the graph, assign priorities and use them for sorting
-    for (const [_, node] of graph) {
-        itemsArgSortDFS(graph, node);
+    for (const [groupName, node] of graph) {
+        itemsArgSortDFS(groupName, graph, new Set(), node);
     }
     return graph;
 }
