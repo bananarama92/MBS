@@ -96,10 +96,6 @@ export abstract class MBSScreen {
     /** Called when screen is loaded */
     async load(): Promise<void> {
         CurrentScreenFunctions?.Unload?.();
-        if (ControllerIsActive()) {
-            ControllerClearAreas();
-        }
-
         CurrentScreen = this.screen;
         CurrentScreenFunctions = this.getFunctions();
         CurrentDarkFactor = 1.0;
